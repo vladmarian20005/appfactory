@@ -1,9 +1,12 @@
-# Usage, from factory/tools/fastlane:
-#   APP_DIR=../../apps/<slug>/ios SCHEME=<Target> BUNDLE_ID=<bundle> fastlane beta
-#   APP_DIR=../../apps/<slug>/ios SCHEME=<Target> BUNDLE_ID=<bundle> fastlane release
-# Needs the values written by factory/tools/setup-keys.sh into factory/tools/fastlane/.env
-# (fastlane loads that file automatically): ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, TEAM_ID,
-# BUNDLE_PREFIX, REVIEW_FIRST_NAME, REVIEW_LAST_NAME, REVIEW_PHONE, REVIEW_EMAIL.
+# Usage, from factory/tools/fastlane (fastlane loads ./.env, written by factory/tools/setup-keys.sh):
+#   fastlane check                                                    verify the key, list the team's apps
+#   APP_NAME="Name" BUNDLE_ID=com.x.slug fastlane create              create the app record
+#   APP_DIR=../../apps/<slug>/ios SCHEME=<Target> BUNDLE_ID=... fastlane beta      archive + TestFlight
+#   APP_DIR=../../apps/<slug>/ios SCHEME=<Target> BUNDLE_ID=... fastlane release   metadata + screenshots + submit
+# .env keys: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, TEAM_ID, BUNDLE_PREFIX,
+#            REVIEW_FIRST_NAME, REVIEW_LAST_NAME, REVIEW_PHONE, REVIEW_EMAIL, SUPPORT_EMAIL.
+
+require "json"
 
 default_platform(:ios)
 
@@ -21,11 +24,54 @@ platform :ios do
     )
   end
 
-  desc "Archive and upload to TestFlight"
+  desc "Read-only: verify the API key and list the apps on this team"
+  lane :check do
+    apps = Spaceship::ConnectAPI::App.all
+    UI.success("Key works. #{apps.size} app record(s) on this team:")
+    apps.sort_by(&:name).each { |a| UI.message("  #{a.name.ljust(36)} #{a.bundle_id}  id #{a.id}") }
+    UI.message("Team ID in .env: #{ENV['TEAM_ID']}  ·  bundle prefix: #{ENV['BUNDLE_PREFIX']}")
+    out = File.expand_path("../../your-apps.json", __dir__)
+    File.write(out, JSON.pretty_generate(apps.sort_by(&:name).map { |a| { id: a.id, name: a.name, bundleId: a.bundle_id } }) + "\n")
+    UI.message("Wrote #{out}; the daily scout reports on these apps.")
+  end
+
+  desc "Create the app record in App Store Connect (APP_NAME, BUNDLE_ID)"
+  lane :create do
+    produce(
+      app_name: ENV.fetch("APP_NAME"),
+      app_identifier: ENV.fetch("BUNDLE_ID"),
+      language: "English",
+      sku: ENV.fetch("BUNDLE_ID"),
+      team_id: ENV.fetch("TEAM_ID"),
+      platforms: ["ios"],
+    )
+  end
+
+  desc "Distribution certificate + App Store profile through the API key, then archive and upload to TestFlight"
   lane :beta do
+    get_certificates(development: false, team_id: ENV.fetch("TEAM_ID"), output_path: File.expand_path("~/.appstoreconnect"))
+    get_provisioning_profile(
+      app_identifier: ENV.fetch("BUNDLE_ID"),
+      team_id: ENV.fetch("TEAM_ID"),
+      output_path: File.expand_path("~/.appstoreconnect"),
+    )
+    profile = lane_context[SharedValues::SIGH_NAME]
     increment_build_number(xcodeproj: project, build_number: Time.now.strftime("%Y%m%d%H%M"))
-    build_app(project: project, scheme: scheme, export_method: "app-store", clean: true,
-              xcargs: "DEVELOPMENT_TEAM=#{ENV.fetch('TEAM_ID')} -allowProvisioningUpdates")
+    build_app(
+      project: project,
+      scheme: scheme,
+      export_method: "app-store",
+      clean: true,
+      output_directory: File.join(app_dir, ".build", "archive"),
+      xcargs: "CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=#{ENV.fetch('TEAM_ID')} " \
+              "CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER='#{profile}'",
+      export_options: {
+        method: "app-store",
+        signingStyle: "manual",
+        teamID: ENV.fetch("TEAM_ID"),
+        provisioningProfiles: { ENV.fetch("BUNDLE_ID") => profile },
+      },
+    )
     upload_to_testflight(skip_waiting_for_build_processing: true)
   end
 
@@ -39,22 +85,18 @@ platform :ios do
       notes: "The free tier needs no account. The Pro subscription can be tested with a sandbox account.",
     }.compact
     deliver(
-      app_review_information: (review.size > 1 ? review : nil),
+      app_identifier: ENV.fetch("BUNDLE_ID"),
       metadata_path: File.join(store, "metadata"),
       screenshots_path: File.join(store, "screenshots"),
       submit_for_review: true,
       automatic_release: true,
       force: true,
       precheck_include_in_app_purchases: false,
+      app_review_information: (review.size > 1 ? review : nil),
       submission_information: {
         add_id_info_uses_idfa: false,
         export_compliance_uses_encryption: false,
       },
     )
-  end
-
-  desc "Create the app record in App Store Connect"
-  lane :create do
-    produce(app_name: ENV.fetch("APP_NAME"), language: "English", sku: ENV.fetch("BUNDLE_ID"))
   end
 end
