@@ -1,0 +1,4 @@
+# Filled from the environment so one Fastfile serves every app.
+app_identifier(ENV["BUNDLE_ID"])
+apple_id(ENV["APPLE_ID"]) if ENV["APPLE_ID"]
+team_id(ENV["TEAM_ID"]) if ENV["TEAM_ID"]
