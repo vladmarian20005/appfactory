@@ -2,8 +2,10 @@
 # Scaffold a new app from the template.
 #   factory/tools/new-app.sh <slug> "<Display Name>" [bundle-id]
 set -euo pipefail
-slug=${1:?slug}; name=${2:?display name}; bundle=${3:-com.factory.$slug}
+slug=${1:?slug}; name=${2:?display name}
 root=$(cd "$(dirname "$0")/.." && pwd)
+if [ -f "$root/tools/fastlane/.env" ]; then set -a; . "$root/tools/fastlane/.env"; set +a; fi
+bundle=${3:-${BUNDLE_PREFIX:-com.factory}.$slug}
 dest="$root/apps/$slug/ios"
 [ -e "$dest" ] && { echo "$dest already exists"; exit 1; }
 target=$(echo "$name" | tr -cd '[:alnum:]')

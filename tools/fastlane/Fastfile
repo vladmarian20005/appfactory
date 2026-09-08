@@ -1,7 +1,9 @@
 # Usage, from factory/tools/fastlane:
 #   APP_DIR=../../apps/<slug>/ios SCHEME=<Target> BUNDLE_ID=<bundle> fastlane beta
 #   APP_DIR=../../apps/<slug>/ios SCHEME=<Target> BUNDLE_ID=<bundle> fastlane release
-# Needs: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH (App Store Connect API key .p8), TEAM_ID.
+# Needs the values written by factory/tools/setup-keys.sh into factory/tools/fastlane/.env
+# (fastlane loads that file automatically): ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, TEAM_ID,
+# BUNDLE_PREFIX, REVIEW_FIRST_NAME, REVIEW_LAST_NAME, REVIEW_PHONE, REVIEW_EMAIL.
 
 default_platform(:ios)
 
@@ -29,7 +31,15 @@ platform :ios do
 
   desc "Push metadata + screenshots and submit the latest build for review"
   lane :release do
+    review = {
+      first_name: ENV["REVIEW_FIRST_NAME"],
+      last_name: ENV["REVIEW_LAST_NAME"],
+      phone_number: ENV["REVIEW_PHONE"],
+      email_address: ENV["REVIEW_EMAIL"],
+      notes: "The free tier needs no account. The Pro subscription can be tested with a sandbox account.",
+    }.compact
     deliver(
+      app_review_information: (review.size > 1 ? review : nil),
       metadata_path: File.join(store, "metadata"),
       screenshots_path: File.join(store, "screenshots"),
       submit_for_review: true,
