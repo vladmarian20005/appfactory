@@ -9,6 +9,12 @@ public final class Store: ObservableObject {
     @Published public private(set) var purchasedIDs: Set<String> = []
     @Published public private(set) var isLoading = false
     @Published public private(set) var lastError: String?
+    /// When set, the paywall shows these instead of real products. Screenshot tooling only.
+    @Published public var debugOffers: [PaywallOffer]?
+
+    public var offers: [PaywallOffer] { debugOffers ?? products.map(PaywallOffer.init(product:)) }
+
+    public func product(for offer: PaywallOffer) -> Product? { products.first { $0.id == offer.id } }
 
     public var isPro: Bool { !purchasedIDs.isEmpty }
 

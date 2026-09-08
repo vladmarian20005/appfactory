@@ -1,0 +1,29 @@
+Plainfood is a calorie and macro tracker that keeps the basics free. Search a food, scan a barcode, or type it in. Your calories, protein, carbs and fat update on the home screen as you go. No account, no ads, no feed.
+
+WHAT STAYS FREE, ALWAYS
+• Food search powered by Open Food Facts, millions of products
+• Barcode scanning
+• Manual entry for home cooking
+• Daily calories and macros against your goals
+• Meals: breakfast, lunch, dinner, snacks
+• Goals with presets for maintain, cut and bulk
+• Recent foods, so repeat logging takes two taps
+
+We put that promise on the paywall itself. Nothing you use today moves behind a subscription later.
+
+PLAINFOOD PRO
+• Trends: 7 and 30 day calories and macros
+• Daily average against your goal
+• Streaks
+• CSV export, coming soon
+
+Pro is analysis, not access. Weekly or yearly, with a free trial.
+
+PRIVATE BY DESIGN
+Your food log lives on your device. Plainfood has no accounts and no analytics. The only network requests are food lookups.
+
+Food data from Open Food Facts, the open database, available under the Open Database License. https://openfoodfacts.org
+
+Plainfood counts what you log. It does not give medical or dietary advice.
+
+Terms of use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/

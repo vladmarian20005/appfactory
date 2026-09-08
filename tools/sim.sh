@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Simulator helper.
 #   factory/tools/sim.sh build <project-dir> <scheme>
-#   factory/tools/sim.sh run   <project-dir> <scheme>
+#   factory/tools/sim.sh run   <project-dir> <scheme> [launch args…]   e.g. -onboarded -sampleData -screen trends -pro
 #   factory/tools/sim.sh shot  <project-dir> <scheme> <out.png>
 #   factory/tools/sim.sh tap   <project-dir> <scheme> <x> <y>      (via xcrun simctl + AppleScript is unreliable; prefer UI tests)
 # SIM_DEVICE overrides the device name (default: iPhone 15 Pro Max, 6.7", 1290x2796).
@@ -28,7 +28,8 @@ case "$cmd" in
     [ -n "$app" ] || { echo "No .app found; run build first"; exit 1; }
     bundle=$(plutil -extract CFBundleIdentifier raw -o - "$app/Info.plist")
     xcrun simctl install "$udid" "$app"
-    xcrun simctl launch "$udid" "$bundle" >/dev/null
+    xcrun simctl terminate "$udid" "$bundle" 2>/dev/null || true
+    xcrun simctl launch "$udid" "$bundle" "${@:4}" >/dev/null
     echo "Launched $bundle on $DEVICE"
     ;;
   shot)

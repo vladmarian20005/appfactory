@@ -8,17 +8,19 @@ public struct PaywallView: View {
     let config: AppConfig
     let headline: String
     let bullets: [String]
+    let promise: String?
     let onDone: () -> Void
 
-    @State private var selected: Product?
+    @State private var selected: PaywallOffer?
     @State private var busy = false
     @State private var message: String?
 
-    public init(store: Store, config: AppConfig, headline: String, bullets: [String], onDone: @escaping () -> Void) {
+    public init(store: Store, config: AppConfig, headline: String, bullets: [String], promise: String? = nil, onDone: @escaping () -> Void) {
         self.store = store
         self.config = config
         self.headline = headline
         self.bullets = bullets
+        self.promise = promise
         self.onDone = onDone
     }
 
@@ -41,16 +43,22 @@ public struct PaywallView: View {
                     }
                     .factoryCard()
 
-                    if store.isLoading && store.products.isEmpty {
+                    if let promise {
+                        Label(promise, systemImage: "hand.raised.fill")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if store.isLoading && store.offers.isEmpty {
                         ProgressView().frame(maxWidth: .infinity)
-                    } else if store.products.isEmpty {
+                    } else if store.offers.isEmpty {
                         Text(store.lastError ?? "Products are not available right now.")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     } else {
                         VStack(spacing: 10) {
-                            ForEach(store.products, id: \.id) { p in
-                                productRow(p)
+                            ForEach(store.offers) { o in
+                                offerRow(o)
                             }
                         }
                     }
@@ -84,31 +92,31 @@ public struct PaywallView: View {
                     Button { onDone() } label: { Image(systemName: "xmark") }
                 }
             }
-            .onAppear { if selected == nil { selected = store.products.last } }
-            .onChange(of: store.products) { _, new in if selected == nil { selected = new.last } }
+            .onAppear { if selected == nil { selected = store.offers.last } }
+            .onChange(of: store.offers) { _, new in if selected == nil { selected = new.last } }
         }
     }
 
     private var ctaTitle: String {
-        if let selected, let trial = selected.trialDescription { return "Start \(trial)" }
+        if let selected, let trial = selected.trialText { return "Start \(trial)" }
         return "Continue"
     }
 
     @ViewBuilder
-    private func productRow(_ p: Product) -> some View {
-        let isSelected = selected?.id == p.id
+    private func offerRow(_ o: PaywallOffer) -> some View {
+        let isSelected = selected?.id == o.id
         Button {
             Haptics.tap()
-            selected = p
+            selected = o
         } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(p.displayName).font(.headline)
-                    if let trial = p.trialDescription {
-                        Text("\(trial), then \(p.displayPrice) \(p.periodDescription ?? "")")
+                    Text(o.title).font(.headline)
+                    if let trial = o.trialText {
+                        Text("\(trial), then \(o.priceText) \(o.periodText ?? "")")
                             .font(.footnote).foregroundStyle(.secondary)
                     } else {
-                        Text("\(p.displayPrice) \(p.periodDescription ?? "one time")")
+                        Text("\(o.priceText) \(o.periodText ?? "one time")")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                 }
@@ -126,10 +134,14 @@ public struct PaywallView: View {
 
     private func buy() async {
         guard let selected else { return }
+        guard let product = store.product(for: selected) else {
+            message = "Purchases are only available in the App Store build."
+            return
+        }
         busy = true
         defer { busy = false }
         do {
-            if try await store.purchase(selected) {
+            if try await store.purchase(product) {
                 Haptics.success()
                 onDone()
             }

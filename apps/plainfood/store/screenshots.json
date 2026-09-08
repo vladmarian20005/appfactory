@@ -1,0 +1,12 @@
+{
+  "background": "#B8420F",
+  "textColor": "#FFFFFF",
+  "accent": "#FFD8C2",
+  "shots": [
+    { "src": "raw/02-today.png",   "title": "Calories and macros. Free, always.", "subtitle": "No paywall on the basics. Nothing taken away later." },
+    { "src": "raw/03-add.png",     "title": "Search it. Scan it. Type it.",        "subtitle": "Millions of foods from Open Food Facts. Barcode included." },
+    { "src": "raw/04-trends.png",  "title": "See the week, not just today",       "subtitle": "Pro: 7 and 30 day trends, averages, streaks." },
+    { "src": "raw/05-goals.png",   "title": "Your budget, your macros",           "subtitle": "Presets for maintain, cut and bulk. Change them any time." },
+    { "src": "raw/06-paywall.png", "title": "Pro is analysis, not access",        "subtitle": "What is free today stays free. That is the deal." }
+  ]
+}
