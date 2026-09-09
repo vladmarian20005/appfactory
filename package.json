@@ -1,0 +1,20 @@
+{
+  "name": "appfactory-tools",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Build tooling for the app factory: screenshot composition, icon rendering, page generation.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "compose": "node tools/screenshots/compose.mjs",
+    "icon": "node tools/icon.mjs",
+    "pages": "node tools/pages/build.mjs",
+    "postinstall": "playwright install chromium || true"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0",
+    "pngjs": "^7.0.0"
+  }
+}

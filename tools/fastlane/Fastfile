@@ -1,12 +1,32 @@
-# Usage, from factory/tools/fastlane (fastlane loads ./.env, written by factory/tools/setup-keys.sh):
-#   fastlane check                                                    verify the key, list the team's apps
-#   APP_NAME="Name" BUNDLE_ID=com.x.slug fastlane create              create the app record
-#   APP_DIR=../../apps/<slug>/ios SCHEME=<Target> BUNDLE_ID=... fastlane beta      archive + TestFlight
-#   APP_DIR=../../apps/<slug>/ios SCHEME=<Target> BUNDLE_ID=... fastlane release   metadata + screenshots + submit
-# .env keys: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, TEAM_ID, BUNDLE_PREFIX,
-#            REVIEW_FIRST_NAME, REVIEW_LAST_NAME, REVIEW_PHONE, REVIEW_EMAIL, SUPPORT_EMAIL.
+# Usage, from tools/fastlane. Locally fastlane loads ./.env (written by tools/setup-keys.sh);
+# in CI the workflow exports the same names from Actions secrets, so the lanes are identical.
+#
+#   fastlane check                                                     verify the key, list the team's apps
+#   APP_NAME="Name" BUNDLE_ID=com.x.slug fastlane create               create the app record
+#   APP_DIR=../../apps/<slug>/ios SCHEME=<Target> BUNDLE_ID=... fastlane beta       archive + TestFlight
+#   APP_DIR=../../apps/<slug>/ios SCHEME=<Target> BUNDLE_ID=... fastlane release    metadata + screenshots + submit
+#
+# Env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, TEAM_ID, BUNDLE_PREFIX,
+#      REVIEW_FIRST_NAME, REVIEW_LAST_NAME, REVIEW_PHONE, REVIEW_EMAIL, SUPPORT_EMAIL,
+#      BUILD_NUMBER (CI sets it; falls back to a UTC timestamp).
+#
+# Two things this file deliberately does NOT do, because both break on an ephemeral runner:
+#
+#   get_certificates      finds no matching private key on a fresh runner and creates a NEW
+#                         Apple Distribution certificate every run. Apple caps those at 3 per
+#                         team, so the 4th run fails permanently and needs a browser to fix.
+#                         CI imports a .p12 into a temporary keychain instead; a laptop
+#                         already has the identity. Provisioning profiles are still fetched,
+#                         because sigh works unattended and profiles regenerate freely.
+#
+#   increment_build_number  writes into the .xcodeproj, which XcodeGen generates and git
+#                         ignores, so the bump evaporates before the next runner sees it and
+#                         TestFlight rejects the duplicate build number. The number goes
+#                         through xcargs instead.
 
 require "json"
+require "time"
+require "fileutils"
 
 default_platform(:ios)
 
@@ -14,6 +34,18 @@ def app_dir  = File.expand_path(ENV.fetch("APP_DIR"))
 def scheme   = ENV.fetch("SCHEME")
 def project  = File.join(app_dir, "#{scheme}.xcodeproj")
 def store    = File.expand_path("../store", app_dir)
+
+# The .xcodeproj is a build product. Regenerate it if this machine has not already.
+def ensure_project
+  return if File.directory?(project)
+  UI.message("No #{scheme}.xcodeproj; generating from project.yml")
+  Dir.chdir(app_dir) { sh("xcodegen", "generate", "-q") }
+  UI.user_error!("xcodegen did not produce #{project}") unless File.directory?(project)
+end
+
+def build_number
+  ENV["BUILD_NUMBER"].to_s.empty? ? Time.now.utc.strftime("%Y%m%d%H%M") : ENV["BUILD_NUMBER"]
+end
 
 platform :ios do
   before_all do
@@ -24,15 +56,59 @@ platform :ios do
     )
   end
 
-  desc "Read-only: verify the API key and list the apps on this team"
+  desc "Read-only: verify the API key, list the team's apps, warn on an expiring certificate"
   lane :check do
     apps = Spaceship::ConnectAPI::App.all
     UI.success("Key works. #{apps.size} app record(s) on this team:")
     apps.sort_by(&:name).each { |a| UI.message("  #{a.name.ljust(36)} #{a.bundle_id}  id #{a.id}") }
-    UI.message("Team ID in .env: #{ENV['TEAM_ID']}  ·  bundle prefix: #{ENV['BUNDLE_PREFIX']}")
-    out = File.expand_path("../../your-apps.json", __dir__)
+    UI.message("Team ID: #{ENV['TEAM_ID']}  ·  bundle prefix: #{ENV['BUNDLE_PREFIX']}")
+
+    # The daily scout over in the appmonkey repo reads this to track the owner's own apps.
+    out = ENV["APPS_JSON_OUT"] || File.expand_path("../../your-apps.json", __dir__)
     File.write(out, JSON.pretty_generate(apps.sort_by(&:name).map { |a| { id: a.id, name: a.name, bundleId: a.bundle_id } }) + "\n")
-    UI.message("Wrote #{out}; the daily scout reports on these apps.")
+    UI.message("Wrote #{out}")
+
+    # Surface an expiring distribution certificate on a Monday rather than on the Thursday
+    # it would block the week's submission.
+    begin
+      Spaceship::ConnectAPI::Certificate.all.each do |c|
+        next unless c.certificate_type.to_s.upcase.include?("DISTRIBUTION")
+        days = ((Time.parse(c.expiration_date.to_s) - Time.now) / 86_400).to_i
+        line = "Distribution certificate #{c.id} expires in #{days} days"
+        days <= 30 ? UI.important("#{line} — export a fresh .p12 and update DIST_CERT_P12_BASE64") : UI.message(line)
+      end
+    rescue StandardError => e
+      UI.important("Could not read certificates: #{e.message}")
+    end
+  end
+
+  desc "ONE-TIME, LOCAL ONLY: create the Apple Distribution certificate and write its .p12"
+  lane :certs do
+    # This is the one place get_certificates is correct. On a laptop it creates the identity
+    # once and keeps the private key; on an ephemeral runner it would create a brand new
+    # certificate every run and exhaust Apple's cap of 3 per team, which is why the beta
+    # lane imports a .p12 instead of calling this.
+    UI.user_error!("Refusing to run on CI. Run this once on a laptop; CI uses DIST_CERT_P12_BASE64.") if ENV["CI"]
+
+    out = File.expand_path("~/.appstoreconnect")
+    FileUtils.mkdir_p(out)
+    get_certificates(
+      development: false,
+      team_id: ENV.fetch("TEAM_ID"),
+      output_path: out,
+      generate_apple_certs: true,
+    )
+    id = lane_context[SharedValues::CERT_CERTIFICATE_ID]
+    p12 = File.join(out, "#{id}.p12")
+    UI.success("Distribution certificate #{id}")
+    if File.exist?(p12)
+      UI.success("Private key written to #{p12}")
+      UI.message("Publish it with:")
+      UI.message("  gh secret set DIST_CERT_P12_BASE64 --repo vladmarian20005/appfactory --body \"$(base64 -i #{p12})\"")
+    else
+      UI.important("No .p12 at #{p12}. The certificate already existed, so its private key is only in this Mac's keychain.")
+      UI.important("Export it: Keychain Access > My Certificates > 'Apple Distribution' > right-click > Export.")
+    end
   end
 
   desc "Create the app record in App Store Connect (APP_NAME, BUNDLE_ID)"
@@ -47,16 +123,19 @@ platform :ios do
     )
   end
 
-  desc "Distribution certificate + App Store profile through the API key, then archive and upload to TestFlight"
+  desc "Archive with a distribution profile and upload to TestFlight"
   lane :beta do
-    get_certificates(development: false, team_id: ENV.fetch("TEAM_ID"), output_path: File.expand_path("~/.appstoreconnect"))
+    ensure_project
+
     get_provisioning_profile(
       app_identifier: ENV.fetch("BUNDLE_ID"),
       team_id: ENV.fetch("TEAM_ID"),
       output_path: File.expand_path("~/.appstoreconnect"),
     )
     profile = lane_context[SharedValues::SIGH_NAME]
-    increment_build_number(xcodeproj: project, build_number: Time.now.strftime("%Y%m%d%H%M"))
+    number  = build_number
+    UI.message("Build number #{number}")
+
     build_app(
       project: project,
       scheme: scheme,
@@ -64,7 +143,8 @@ platform :ios do
       clean: true,
       output_directory: File.join(app_dir, ".build", "archive"),
       xcargs: "CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=#{ENV.fetch('TEAM_ID')} " \
-              "CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER='#{profile}'",
+              "CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER='#{profile}' " \
+              "CURRENT_PROJECT_VERSION=#{number}",
       export_options: {
         method: "app-store",
         signingStyle: "manual",
@@ -72,22 +152,47 @@ platform :ios do
         provisioningProfiles: { ENV.fetch("BUNDLE_ID") => profile },
       },
     )
+
+    # Never hold a macOS runner waiting for Apple to process a build. The release lane runs
+    # later, on Linux, and picks the processed build up there.
     upload_to_testflight(skip_waiting_for_build_processing: true)
+    UI.success("Uploaded build #{number} to TestFlight")
   end
 
-  desc "Push metadata + screenshots and submit the latest build for review"
+  desc "Push metadata, screenshots and privacy answers, then submit the latest build for review"
   lane :release do
+    shots = File.join(store, "screenshots")
+    locales = Dir.exist?(shots) ? Dir.children(shots).select { |d| File.directory?(File.join(shots, d)) && d.match?(/\A[a-z]{2}(-[A-Za-z]{2,4})?\z/) } : []
+    if locales.empty?
+      # deliver reads <screenshots_path>/<locale>/*.png. Handed a bare directory of PNGs it
+      # reports success and uploads nothing, so fail loudly rather than ship a listing with
+      # no screenshots.
+      UI.user_error!("No locale directory under #{shots}. Screenshots belong in #{shots}/en-US/, not directly in #{shots}.")
+    end
+    UI.message("Screenshot locales: #{locales.join(', ')}")
+
+    privacy = File.expand_path("app_privacy_details.json", __dir__)
+    if File.exist?(privacy)
+      upload_app_privacy_details_to_app_store(
+        app_identifier: ENV.fetch("BUNDLE_ID"),
+        json_path: privacy,
+      )
+    else
+      UI.important("No app_privacy_details.json; the App Privacy answers must be set by hand or the version cannot be submitted.")
+    end
+
     review = {
       first_name: ENV["REVIEW_FIRST_NAME"],
       last_name: ENV["REVIEW_LAST_NAME"],
       phone_number: ENV["REVIEW_PHONE"],
       email_address: ENV["REVIEW_EMAIL"],
-      notes: "The free tier needs no account. The Pro subscription can be tested with a sandbox account.",
+      notes: ENV["REVIEW_NOTES"] || "The free tier needs no account. The Pro subscription can be tested with a sandbox account.",
     }.compact
+
     deliver(
       app_identifier: ENV.fetch("BUNDLE_ID"),
       metadata_path: File.join(store, "metadata"),
-      screenshots_path: File.join(store, "screenshots"),
+      screenshots_path: shots,
       submit_for_review: true,
       automatic_release: true,
       force: true,
@@ -98,5 +203,6 @@ platform :ios do
         export_compliance_uses_encryption: false,
       },
     )
+    UI.success("Submitted for review")
   end
 end
