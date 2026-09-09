@@ -1,0 +1,37 @@
+# ── Never commit. This repo is public. ────────────────────────────────────────
+# App Store Connect keys, distribution certificates, provisioning profiles.
+*.p8
+*.p12
+*.pem
+*.cer
+*.mobileprovision
+secrets/
+tools/fastlane/.env
+.env
+.env.*
+!.env.example
+
+# ── Build products ────────────────────────────────────────────────────────────
+# XcodeGen regenerates every .xcodeproj from project.yml; sim.sh writes .build.
+**/.build/
+**/*.xcodeproj/
+**/*.xcworkspace/
+**/.swiftpm/
+DerivedData/
+**/.icon-*.html
+
+# Raw simulator captures are regenerated every run; only composed shots are kept.
+apps/*/store/raw/
+apps/*/content/raw/
+
+# fastlane run artifacts
+tools/fastlane/report.xml
+tools/fastlane/Preview.html
+tools/fastlane/test_output/
+tools/fastlane/README.md.bak
+
+# ── Local noise ───────────────────────────────────────────────────────────────
+node_modules/
+.DS_Store
+.gstack/
+*.log
