@@ -1,46 +1,75 @@
-stage: built
-date: 2026-09-09
+stage: ready-to-submit
+date: 2026-09-10
 plan: PLAN.md · spec: SPEC.md · pack source: pack/build.py · pack review: pack/REVIEW.md
 
-built:
-  - Xcode project factory/apps/quizday/ios (target Quizday, bundle com.starhiveconcept.quizday), builds clean with no warnings and runs on the iPhone 15 Pro Max simulator
-  - Today: date-seeded round (round 12 on 2026-09-09), ten questions, instant reveal with explanation, source and a report button, result screen with squares, streak and a live countdown to tomorrow
-  - Scorecard: today's score, current and best streak, days played, month calendar shaded by score with month paging, share text, daily reminder toggle with a time picker
-  - Practice (Pro): category and difficulty pickers, live rounds from the Open Trivia Database, per-category accuracy sorted weakest first, locked state with the Pro pitch for free users
-  - Settings: kit rows plus days played, pack size, reported questions with a detail list, erase history, OpenTDB attribution
-  - Content: 300 original questions in 30 rounds (App/questions.json), each with an explanation, a source, a category and a difficulty; every round ramps easy to hard; validated for duplicates, answer counts and field completeness by pack/build.py
-  - No ad SDK, no analytics, no account, no in-app currency. Network is used only inside Practice.
-  - Launch flags for tooling: -onboarded -sampleData -reset -pro -fakeProducts -screen <today|scorecard|practice|paywall|settings> -play -playStep <n> -reveal -answered <n> -practiceStart
+## Where it stands
 
-verified on the simulator:
-  - Cold start on a clean install with no crash; onboarding then Today
-  - A full ten-question round saves and survives relaunch (10/10 on 2026-09-09 still shown after a cold start)
-  - Empty state: no history shows 0 streak, 0 days played, an empty calendar and "Not played yet"
-  - Practice fetches, decodes and renders a live round from the Open Trivia Database
-  - Dark mode across Today, the question card and the Scorecard
-  - Dynamic Type at accessibility-large: text wraps, nothing clips
-  - Paywall with injected offers shows both products at $2.99 weekly and $19.99 yearly with the 3-day trial and the free-forever promise
+Everything the factory can do without a human has been done, in the cloud, on `macos-26`.
 
-fixed during QA:
-  - The QA reset flag ran in a .task that raced TodayView's onAppear and could delete a result the view had just written; reset and seeding now run in the App initialiser, before any view appears
-  - The calendar legend and the calendar cells used different opacities; both now come from one ScoreShade definition
-  - factoryReviewPrompt fired on the root view and interrupted a question mid-round; it is still wired but now asks on the result screen, the natural moment
+- **Builds and runs on iOS 26.** Xcode 26.6, iOS 26.5 simulator, iPhone 17 Pro Max. This is
+  the version that matters: App Store Connect has rejected anything built with an older SDK
+  since 28 April 2026, and the owner's Mac (Xcode 16.3) cannot produce a shippable binary.
+- **`app-verify` green.** All five screens in `qa.json` build, launch and render; no crash
+  reports belonging to the app.
+- **`app-compliance` green.** Privacy manifest valid and matching the code, paywall carries
+  the guideline 3.1.2 renewal terms, privacy and support URLs return 200, metadata inside
+  every limit, screenshots 1320×2868 with no alpha, no placeholder text, no frozen font
+  sizes, and the "no ads / no analytics" claims checked against the binary.
+- **`app-shots` green.** Five App Store screenshots captured on iOS 26 and composed in CI,
+  committed to `store/screenshots/en-US/`.
+- **Listing written.** `store/metadata/en-US/` — name 29/30, subtitle 28/30, keywords 84/100,
+  promo 113/170, description 1624/4000. Every claim verified against the source.
+- **Privacy published.** `privacy.json` is the source of truth; the manifest, the App Store
+  privacy answers and the policy page all generate from it, and drift fails the build. Live
+  at https://starhiveconcept.com/quizday-privacy-policy-terms/
+- **Signing ready.** Distribution certificate `Z8AF975P4B` created, a real password-protected
+  p12 built from it, and `keychain-up.sh` verified to import it and find a valid identity.
+  All 13 secrets are set on the appfactory repo.
+- **Bundle id registered** in the Developer Portal: `com.starhiveconcept.quizday`.
 
-not verified:
-  - Real purchases: the local StoreKit configuration only applies when Xcode launches the scheme, so a command-line launch shows "Products are not available right now" and the CTA stays disabled. Run the Quizday scheme from Xcode to test the sandbox purchase.
-  - Reminder notification actually firing, haptics and the share sheet: all need a real device (the owner's Thursday test).
-  - /ios-qa and /ios-design-review were not run: both need a physical iPhone over USB plus the DebugBridge package embedded in the app. Simulator QA above was run instead.
+## Blocked on the owner
 
-blocked:
-  - TestFlight upload and submission: needs Apple Developer Program, App Store Connect API key (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH) and TEAM_ID
-  - Support and privacy pages at https://vladmarian20005.github.io/appmonkey/quizday/ do not exist yet; the repo is private, so Pages needs a public repo or another host
+1. **Create the app record.** Apple's API does not allow it — verified against the live
+   endpoint: *"The resource 'apps' does not allow 'CREATE'"*. One form, once:
+   appstoreconnect.apple.com/apps → + → New App, iOS,
+   name `Quizday: Daily Trivia, No Ads`, English (U.S.), bundle id and SKU
+   `com.starhiveconcept.quizday`.
+2. **Create the subscriptions**: `node tools/asc/iap.mjs quizday --apply` once the record
+   exists. Then set the two prices ($2.99/week, $19.99/year), the 3-day introductory offer
+   and the subscription review screenshot in App Store Connect — the API takes an opaque
+   price-point id per territory and the wrong one silently misprices 175 countries.
+3. **Upload**: `gh workflow run app-submit.yml -f slug=quizday -f confirm=SUBMIT`.
+4. **Device pass** from TestFlight, on a phone: the daily reminder fires, haptics, the share
+   sheet, and **a real sandbox purchase**. None of these can be checked on CI — a scheme's
+   StoreKit configuration is never honoured by a `simctl launch`.
+5. **Submit**: `gh workflow run app-release.yml -f slug=quizday -f confirm=SUBMIT`.
 
-owner to do:
-  - Read pack/REVIEW.md and reject any question that looks wrong; a fix is a data change, not a release
-  - Thursday: device test (reminder fires, haptics, share sheet), then the submit approval
+## What the app is
 
-deviations from SPEC.md:
-  - Bundle id is com.starhiveconcept.quizday, not com.factory.quizday: the scaffolder reads BUNDLE_PREFIX from the fastlane env, which is the owner's real prefix. Product ids follow it.
-  - Streak is computed from the saved results rather than held in @AppStorage, so it cannot drift out of step with the calendar. @AppStorage still holds the reminder and practice settings.
+- Today: a date-seeded round of ten, identical for everyone, instant reveal with an
+  explanation, a source and a report button; result screen with squares, streak and a
+  countdown to tomorrow.
+- Scorecard: streaks computed from saved results, month calendar shaded by score, plain-text
+  share line, optional daily reminder.
+- Practice (Pro): live rounds from the Open Trivia Database with per-category accuracy,
+  weakest first. Network is used here and nowhere else.
+- 300 original questions across 30 rounds, each with an explanation, a source, a category and
+  a difficulty. No ad SDK, no analytics, no account, no in-app currency.
 
-next: /ship quizday
+## Not verified
+
+- Real purchases. `-fakeProducts` drives the paywall for screenshots; only a TestFlight build
+  with a sandbox account proves the real path.
+- Reminder delivery, haptics and the share sheet: all need hardware.
+
+## Deviations from SPEC.md
+
+- Bundle id is `com.starhiveconcept.quizday`, not `com.factory.quizday`: the scaffolder reads
+  `BUNDLE_PREFIX` from the fastlane env, which is the owner's real prefix. Product ids follow.
+- Streak is computed from the saved results rather than held in `@AppStorage`, so it cannot
+  drift out of step with the calendar.
+
+## Owner to do, unrelated to shipping
+
+- Read `pack/REVIEW.md` and reject any question that looks wrong. A fix is a data change, not
+  a release.
