@@ -1,0 +1,101 @@
+name: app-verify
+
+# Deterministic gate: build the app, launch every screen in its qa.json, prove each one
+# rendered, and prove nothing crashed. No agent runs here, so it is cheap, repeatable and
+# safe to run on every push. It is what the fix loop measures itself against.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/
+        required: true
+        type: string
+      xcode:
+        description: 'Xcode version, e.g. "26.6". Blank uses the runner default.'
+        required: false
+        type: string
+        default: ""
+  push:
+    branches: [main]
+    paths:
+      - "FactoryKit/**"
+      - "apps/*/ios/**"
+      - "apps/*/qa.json"
+      - "tools/sim.sh"
+      - "tools/qa/**"
+      - ".github/workflows/app-verify.yml"
+      - ".github/scripts/verify-app.sh"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-${{ inputs.slug || 'push' }}-verify
+  cancel-in-progress: true
+
+jobs:
+  pick:
+    # On a push we do not know which app changed, so verify every app that has a qa.json.
+    runs-on: ubuntu-latest
+    outputs:
+      slugs: ${{ steps.list.outputs.slugs }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        run: |
+          set -euo pipefail
+          if [ -n "${{ inputs.slug }}" ]; then
+            slugs='["${{ inputs.slug }}"]'
+          else
+            slugs=$(ls apps/*/qa.json 2>/dev/null | sed 's|apps/||; s|/qa.json||' | node -e '
+              let s="";process.stdin.on("data",d=>s+=d).on("end",()=>
+                console.log(JSON.stringify(s.split("\n").filter(Boolean))))')
+          fi
+          echo "slugs=$slugs" >> "$GITHUB_OUTPUT"
+          echo "Verifying: $slugs"
+
+  verify:
+    needs: pick
+    if: needs.pick.outputs.slugs != '[]'
+    runs-on: macos-26
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        slug: ${{ fromJSON(needs.pick.outputs.slugs) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/mac-setup
+        with:
+          slug: ${{ matrix.slug }}
+          xcode: ${{ inputs.xcode }}
+
+      - name: Verify
+        run: .github/scripts/verify-app.sh "${{ matrix.slug }}"
+
+      - name: Downscale the captures
+        if: always()
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          shots=(apps/${{ matrix.slug }}/qa/*.png)
+          [ ${#shots[@]} -gt 0 ] || exit 0
+          # Full 1320x2868 captures make a slow artifact to download just to glance at.
+          mkdir -p "$RUNNER_TEMP/small"
+          for f in "${shots[@]}"; do
+            sips -Z 900 "$f" --out "$RUNNER_TEMP/small/$(basename "$f")" >/dev/null
+          done
+          echo "Captured ${#shots[@]} screen(s) for \`${{ matrix.slug }}\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verify-${{ matrix.slug }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/small/**
+            apps/${{ matrix.slug }}/qa/**
+            ~/Library/Logs/DiagnosticReports/**
+          retention-days: 14
+          if-no-files-found: warn

@@ -1,0 +1,101 @@
+name: mac-setup
+description: >
+  Prepare a macOS runner to build a factory app: pin Xcode, install XcodeGen, warm the
+  DerivedData cache, install the Node tooling, and boot one deterministic simulator.
+
+inputs:
+  slug:
+    description: App slug, used to key the DerivedData cache.
+    required: true
+  xcode:
+    description: Xcode version to select (e.g. "26.6"). Defaults to the image default.
+    required: false
+    default: ""
+  boot-simulator:
+    description: Boot a simulator and export SIM_UDID. Set false for jobs that only archive.
+    required: false
+    default: "true"
+
+outputs:
+  sim-udid:
+    description: UDID of the booted simulator.
+    value: ${{ steps.sim.outputs.udid }}
+
+runs:
+  using: composite
+  steps:
+    - name: Select Xcode
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -n "${{ inputs.xcode }}" ]; then
+          app="/Applications/Xcode_${{ inputs.xcode }}.app"
+          [ -d "$app" ] || { echo "::error::$app is not on this runner image"; ls -d /Applications/Xcode*.app; exit 1; }
+          sudo xcode-select -s "$app/Contents/Developer"
+        fi
+        xcodebuild -version
+        # App Store Connect has rejected uploads built with an older SDK since 2026-04-28.
+        # Fail here, where the message is obvious, rather than at upload an hour later.
+        major=$(xcodebuild -version | sed -n '1s/Xcode \([0-9]*\).*/\1/p')
+        if [ "${major:-0}" -lt 26 ]; then
+          echo "::error::Xcode $major is too old. App Store Connect requires Xcode 26 / iOS 26 SDK or later."
+          exit 1
+        fi
+        echo "DEVELOPER_DIR=$(xcode-select -p)" >> "$GITHUB_ENV"
+
+    - name: Cache XcodeGen
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/xcodegen
+        key: xcodegen-2.46.0-${{ runner.arch }}
+
+    - name: Install XcodeGen
+      shell: bash
+      run: |
+        set -euo pipefail
+        # A pinned release zip, not `brew install`, which drags in a 2-4 minute auto-update.
+        if [ ! -x "$HOME/.local/xcodegen/bin/xcodegen" ]; then
+          curl -fsSL -o /tmp/xcodegen.zip \
+            https://github.com/yonaskolb/XcodeGen/releases/download/2.46.0/xcodegen.zip
+          unzip -q /tmp/xcodegen.zip -d /tmp/xcodegen
+          mkdir -p "$HOME/.local/xcodegen"
+          cp -R /tmp/xcodegen/xcodegen/* "$HOME/.local/xcodegen/"
+        fi
+        echo "$HOME/.local/xcodegen/bin" >> "$GITHUB_PATH"
+        "$HOME/.local/xcodegen/bin/xcodegen" --version
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: npm
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/Library/Caches/ms-playwright
+        key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+    - name: Install Node tooling
+      shell: bash
+      run: npm ci
+
+    - name: Cache DerivedData
+      uses: actions/cache@v4
+      with:
+        # Keyed on the Xcode build as well as the sources: a point release changes the Swift
+        # module format, and a stale cache then fails with "compiled with a different version".
+        path: apps/${{ inputs.slug }}/ios/.build/Build
+        key: dd-${{ inputs.slug }}-${{ hashFiles('FactoryKit/**/*.swift', format('apps/{0}/ios/project.yml', inputs.slug)) }}-${{ env.DEVELOPER_DIR }}
+        restore-keys: dd-${{ inputs.slug }}-
+
+    - name: Boot the simulator
+      id: sim
+      if: inputs.boot-simulator == 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        udid=$(tools/sim.sh boot)
+        echo "udid=$udid" >> "$GITHUB_OUTPUT"
+        echo "SIM_UDID=$udid" >> "$GITHUB_ENV"
+        echo "Booted $udid"
+        xcrun simctl list devices booted

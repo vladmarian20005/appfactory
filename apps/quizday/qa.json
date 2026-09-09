@@ -1,0 +1,31 @@
+{
+  "scheme": "Quizday",
+  "bundleId": "com.starhiveconcept.quizday",
+  "screens": [
+    {
+      "name": "01-today",
+      "args": ["-onboarded", "-reset"],
+      "note": "The daily round, unplayed. The promise screen."
+    },
+    {
+      "name": "02-question",
+      "args": ["-onboarded", "-reset", "-play", "-playStep", "3", "-reveal"],
+      "note": "A revealed answer with its explanation and source — the wedge."
+    },
+    {
+      "name": "03-result",
+      "args": ["-onboarded", "-answered", "8"],
+      "note": "Result screen: squares, streak, countdown to tomorrow."
+    },
+    {
+      "name": "04-scorecard",
+      "args": ["-onboarded", "-sampleData", "-screen", "scorecard"],
+      "note": "Month calendar shaded by score, streaks."
+    },
+    {
+      "name": "05-paywall",
+      "args": ["-onboarded", "-sampleData", "-fakeProducts", "-screen", "paywall"],
+      "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch, so real products are unavailable and the CTA would sit disabled."
+    }
+  ]
+}
