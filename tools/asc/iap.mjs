@@ -104,6 +104,28 @@ async function ascAll(url) {
   return out;
 }
 
+// App Store Connect's limits on subscription metadata. Hitting one of these mid-run leaves
+// half a subscription behind, so check every product before touching the API at all.
+{
+  const problems = [];
+  const cap = (label, value, max) => {
+    if (value && [...value].length > max) {
+      problems.push(`${label} is ${[...value].length} characters, max ${max}: "${value}"`);
+    }
+  };
+  cap("group.displayName", cfg.group.displayName, 30);
+  for (const p of cfg.products) {
+    cap(`${p.productId} name`, p.name, 64);
+    cap(`${p.productId} displayName`, p.displayName, 30);
+    cap(`${p.productId} description`, p.description, 55);
+  }
+  if (problems.length) {
+    console.error(`${cfgPath} has values App Store Connect will reject:\n`);
+    for (const p of problems) console.error(`  · ${p}`);
+    process.exit(1);
+  }
+}
+
 const money = (p) => `${p.attributes.customerPrice} ${p.relationships?.territory?.data?.id ?? ""}`.trim();
 let created = 0;
 let reused = 0;
@@ -204,19 +226,31 @@ for (const p of cfg.products) {
     })).data;
     console.log(`  sub          created  id ${sub.id}`);
     created++;
-
-    await asc("POST", "/subscriptionLocalizations", {
-      data: {
-        type: "subscriptionLocalizations",
-        attributes: { name: p.displayName, description: p.description, locale: "en-US" },
-        relationships: { subscription: { data: { type: "subscriptions", id: sub.id } } },
-      },
-    });
-    console.log(`  localization created  en-US`);
-    created++;
   }
 
   if (!sub) continue; // dry run, nothing further to inspect
+
+  // Checked independently of whether the subscription was just created: a run that failed
+  // partway can leave a subscription with no localization, and it would never get one if
+  // this only ran in the create branch.
+  {
+    const locs = await ascAll(`/subscriptions/${sub.id}/subscriptionLocalizations?limit=200`);
+    if (locs.some((l) => l.attributes.locale === "en-US")) {
+      reused++;
+    } else if (apply) {
+      await asc("POST", "/subscriptionLocalizations", {
+        data: {
+          type: "subscriptionLocalizations",
+          attributes: { name: p.displayName, description: p.description, locale: "en-US" },
+          relationships: { subscription: { data: { type: "subscriptions", id: sub.id } } },
+        },
+      });
+      console.log(`  localization created  en-US`);
+      created++;
+    } else {
+      console.log(`  localization create  en-US`);
+    }
+  }
 
   // ── price, in every territory ───────────────────────────────────────────────
   // The website lets you set one price and equalizes the rest. The API has no such call:
