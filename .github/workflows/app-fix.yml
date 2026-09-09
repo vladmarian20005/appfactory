@@ -1,0 +1,161 @@
+name: app-fix
+
+# When app-verify fails, hand the failure to Claude Code and let it fix the app.
+#
+# Bounded on purpose. The loop is: a non-agentic verify decides whether the app is broken,
+# an agentic fix tries to repair it, verify decides again. The agent never judges its own
+# work, and after 3 attempts the loop stops and asks a human rather than burning runner time
+# on something it cannot solve.
+
+on:
+  workflow_run:
+    workflows: [app-verify]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/
+        required: true
+        type: string
+      reason:
+        description: What to fix, if you are asking by hand
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+  actions: read
+  id-token: write
+
+jobs:
+  fix:
+    # workflow_run fires on success too; only act on a failure.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'failure'
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Work out which app, and whether to try
+        id: gate
+        env:
+          HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "::warning::CLAUDE_CODE_OAUTH_TOKEN is not set, so nothing can be fixed automatically. Generate one with 'claude setup-token'."
+            echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          slug="${{ inputs.slug }}"
+          if [ -z "$slug" ]; then
+            # A failed app-verify does not name the app, so take the one that has a qa.json
+            # and is not shelved. With several, the dispatch input is required.
+            picked=()
+            for d in apps/*/; do
+              s=$(basename "$d")
+              [ -f "$d/qa.json" ] || continue
+              stage=$(sed -n 's/^stage:[[:space:]]*//p' "$d/STATUS.md" 2>/dev/null | head -1)
+              case "$stage" in shelved*|stopped*|archived*) continue ;; esac
+              picked+=("$s")
+            done
+            if [ ${#picked[@]} -ne 1 ]; then
+              echo "::warning::cannot infer the app from a failed run (${#picked[@]} candidates). Dispatch app-fix with a slug."
+              echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            slug="${picked[0]}"
+          fi
+
+          attempts=$(.github/scripts/state.sh "$slug" get fix_attempts 0)
+          if [ "$attempts" -ge 3 ]; then
+            echo "::error::$slug has used all 3 fix attempts. A human needs to look at this."
+            echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
+          echo "attempt=$((attempts + 1))" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "Fixing $slug, attempt $((attempts + 1)) of 3"
+
+      - uses: ./.github/actions/mac-setup
+        if: steps.gate.outputs.skip == 'false'
+        with:
+          slug: ${{ steps.gate.outputs.slug }}
+
+      - name: Reproduce the failure
+        if: steps.gate.outputs.skip == 'false'
+        id: repro
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          .github/scripts/verify-app.sh "${{ steps.gate.outputs.slug }}" 2>&1 | tail -120 | tee "$RUNNER_TEMP/failure.log"
+
+      - name: Already fine
+        if: steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'success'
+        run: echo "Verify passes now; nothing to fix." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fix it
+        if: steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'failure'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            The app `${{ steps.gate.outputs.slug }}` fails verification. Fix it.
+
+            ${{ inputs.reason }}
+
+            Reproduce with:
+              .github/scripts/verify-app.sh ${{ steps.gate.outputs.slug }}
+
+            The tail of the failing run is at $RUNNER_TEMP/failure.log — read it first.
+
+            You are on a GitHub macOS runner: no Xcode GUI, no device, nobody to ask. A
+            simulator is booted and its UDID is in $SIM_UDID.
+
+            Fix the app, not the test. If verify is wrong about something, say so in the
+            commit message rather than weakening the check.
+
+            Read any screenshot you take. A screen that compiles and renders wrong is what
+            this loop exists to catch.
+
+            Commit your work, then make verify-app.sh pass.
+          claude_args: >-
+            --max-turns 60
+            --model claude-opus-5
+            --allowedTools "Read,Edit,Write,Glob,Grep,
+            Bash(xcodebuild:*),Bash(xcrun:*),Bash(xcodegen:*),Bash(swift:*),
+            Bash(tools/*),Bash(.github/scripts/*),Bash(node:*),
+            Bash(plutil:*),Bash(sips:*),Bash(git:*),Bash(ls:*),Bash(cat:*),
+            Bash(mkdir:*),Bash(cp:*),Bash(mv:*),Bash(rm:*),Bash(find:*),Bash(wc:*)"
+
+      - name: Record the attempt and push
+        if: steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'failure'
+        run: |
+          set -euo pipefail
+          slug="${{ steps.gate.outputs.slug }}"
+          .github/scripts/state.sh "$slug" set fix_attempts "${{ steps.gate.outputs.attempt }}"
+          git config user.name "factory"
+          git config user.email "factory@users.noreply.github.com"
+          git add -A "apps/$slug"
+          git diff --cached --quiet || git commit -m "$slug: fix attempt ${{ steps.gate.outputs.attempt }}"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Re-verify
+        if: steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'failure'
+        run: .github/scripts/verify-app.sh "${{ steps.gate.outputs.slug }}"
+
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.gate.outputs.skip == 'false'
+        with:
+          name: fix-${{ steps.gate.outputs.slug }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/failure.log
+            apps/${{ steps.gate.outputs.slug }}/qa/**
+          retention-days: 14
+          if-no-files-found: ignore

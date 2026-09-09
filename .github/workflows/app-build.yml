@@ -1,0 +1,146 @@
+name: app-build
+
+# Claude Code writes the app, on a macOS runner, from apps/<slug>/SPEC.md.
+#
+# Authentication is a subscription token from `claude setup-token`, not an API key, so runs
+# bill the owner's Claude plan rather than metered API usage.
+#
+# The agent is deliberately bounded: a turn cap, a job timeout, and an allowlist of tools.
+# What it produces is judged by app-verify, which runs no agent at all — the agent's own
+# opinion of its work is not what decides whether the build is good.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/ (must already have SPEC.md)
+        required: true
+        type: string
+      display_name:
+        description: 'Display name, e.g. "Quizday". Blank reuses an existing project.'
+        required: false
+        type: string
+        default: ""
+      max_turns:
+        description: Turn cap for the agent
+        required: false
+        type: string
+        default: "120"
+      model:
+        description: Model to build with
+        required: false
+        type: choice
+        options: [claude-opus-5, claude-sonnet-5]
+        default: claude-opus-5
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: app-${{ inputs.slug }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: macos-26
+    # A stuck agent on a macOS runner is the most expensive failure mode available, so the
+    # job is capped even though the turn limit should stop it first.
+    timeout-minutes: 180
+    env:
+      SLUG: ${{ inputs.slug }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Preflight
+        env:
+          HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          # Fail here with something actionable rather than 20 minutes later, deep inside the
+          # action, after a macOS runner has already booted a simulator.
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "::error::CLAUDE_CODE_OAUTH_TOKEN is not set. Generate one with 'claude setup-token' (it bills your Claude subscription, not the API) and add it: gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo vladmarian20005/appfactory"
+            exit 1
+          fi
+          if [ ! -f "apps/$SLUG/SPEC.md" ]; then
+            echo "::error::apps/$SLUG/SPEC.md is missing. Run /plan-app or /pick first — the agent needs something to build."
+            exit 1
+          fi
+          echo "Building from apps/$SLUG/SPEC.md"
+
+      - uses: ./.github/actions/mac-setup
+        with:
+          slug: ${{ inputs.slug }}
+          browser: "true"
+
+      - name: Reset the fix counter
+        run: .github/scripts/state.sh "$SLUG" set fix_attempts 0
+
+      - name: Write the app
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            /new-app ${{ inputs.slug }} "${{ inputs.display_name }}"
+
+            You are on a GitHub macOS runner. There is no Xcode GUI, no physical device and
+            nobody to ask. A simulator is already booted and its UDID is in $SIM_UDID, so
+            tools/sim.sh will use it without looking one up.
+
+            Commit after each screen works, not once at the end. If this run is cut short,
+            uncommitted work is destroyed with the runner.
+
+            Finish by making .github/scripts/verify-app.sh ${{ inputs.slug }} pass.
+          claude_args: >-
+            --max-turns ${{ inputs.max_turns }}
+            --model ${{ inputs.model }}
+            --allowedTools "Read,Edit,Write,Glob,Grep,
+            Bash(xcodebuild:*),Bash(xcrun:*),Bash(xcodegen:*),Bash(swift:*),
+            Bash(tools/*),Bash(.github/scripts/*),Bash(node:*),Bash(npm:*),
+            Bash(plutil:*),Bash(sips:*),Bash(git:*),Bash(ls:*),Bash(cat:*),
+            Bash(mkdir:*),Bash(cp:*),Bash(mv:*),Bash(rm:*),Bash(find:*),Bash(wc:*)"
+
+      - name: Verify what it produced
+        id: verify
+        run: .github/scripts/verify-app.sh "$SLUG"
+
+      - name: Commit anything the agent left uncommitted
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "factory"
+          git config user.email "factory@users.noreply.github.com"
+          git add -A "apps/$SLUG"
+          if git diff --cached --quiet; then
+            echo "nothing left uncommitted"
+          else
+            git commit -m "$SLUG: build leftovers from run ${{ github.run_id }}"
+          fi
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push origin "HEAD:${GITHUB_REF_NAME}" || echo "::warning::push failed; the artifact still has the work"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-${{ inputs.slug }}-${{ github.run_id }}
+          path: |
+            apps/${{ inputs.slug }}/qa/**
+            ${{ runner.temp }}/**/*.log
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## app-build \`${{ inputs.slug }}\` — ${{ job.status }}"
+            echo
+            if [ "${{ steps.verify.outcome }}" = "success" ]; then
+              echo "Verify passed. Next: \`app-shots\`, then \`/ship ${{ inputs.slug }}\`."
+            else
+              echo "Verify did not pass. \`app-fix\` will pick this up, up to 3 attempts."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
