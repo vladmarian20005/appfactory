@@ -1,21 +1,30 @@
 #!/usr/bin/env node
 /**
- * Create an app's subscription group and its subscriptions in App Store Connect.
+ * Take an app's in-app purchases from nothing to "Ready to Submit", without a browser.
  *
- *   node tools/asc/iap.mjs <slug>              # dry run: says what it would do, changes nothing
- *   node tools/asc/iap.mjs <slug> --apply      # actually create
+ *   node tools/asc/iap.mjs <slug>            # dry run: prints the plan, changes nothing
+ *   node tools/asc/iap.mjs <slug> --apply    # do it
  *
  * Reads apps/<slug>/iap.json. Credentials come from the same environment the Fastfile uses:
  * ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH (or ASC_KEY_P8 with the key's contents).
  *
- * Why this is not a fastlane lane: Spaceship has no subscription models at all, so fastlane
- * cannot create in-app purchases. Without this, every first submission needs someone in a
- * browser building a subscription group by hand, and a version whose products are not
- * "Ready to Submit" is rejected outright.
+ * Creates, in order: the subscription group and its localization, each subscription and its
+ * localization, the price in every territory, the introductory offer in every territory, and
+ * the review screenshot. A subscription missing any of these sits in "Missing Metadata" and
+ * takes the whole app version down with it at submission.
  *
- * Idempotent: anything that already exists is reused, not duplicated.
+ * Why this is not a fastlane lane: Spaceship has no subscription models at all, so fastlane
+ * cannot touch in-app purchases.
+ *
+ * Everything is idempotent — anything that already exists is reused, never duplicated.
+ *
+ * The one thing Apple will not let any of this touch is creating the app record itself.
+ * Their documentation is explicit: "Don't use this API to create new apps; instead, create
+ * new apps on the App Store Connect website." POST /v1/apps answers
+ * "The resource 'apps' does not allow 'CREATE'".
  */
 import fs from "node:fs";
+import path from "node:path";
 import crypto from "node:crypto";
 
 const [slug, ...flags] = process.argv.slice(2);
@@ -54,43 +63,83 @@ function token() {
 }
 
 const API = "https://api.appstoreconnect.apple.com/v1";
-async function asc(method, path, body) {
-  const res = await fetch(path.startsWith("http") ? path : `${API}${path}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${token()}`,
-      "Content-Type": "application/json",
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const text = await res.text();
-  const json = text ? JSON.parse(text) : {};
-  if (!res.ok) {
-    const detail = (json.errors ?? []).map((e) => `${e.title}: ${e.detail}`).join("; ") || text;
-    throw new Error(`${method} ${path} -> ${res.status}  ${detail}`);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function asc(method, url, body, { retries = 4 } = {}) {
+  const full = url.startsWith("http") ? url : `${API}${url}`;
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(full, {
+      method,
+      headers: { Authorization: `Bearer ${token()}`, "Content-Type": "application/json" },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (res.status === 429 && attempt < retries) {
+      await sleep(2000 * (attempt + 1));
+      continue;
+    }
+    const text = await res.text();
+    const json = text ? JSON.parse(text) : {};
+    if (!res.ok) {
+      const err = new Error(
+        `${method} ${full.replace(API, "")} -> ${res.status}  ` +
+        ((json.errors ?? []).map((e) => `${e.title}: ${e.detail}`).join("; ") || text)
+      );
+      err.status = res.status;
+      err.errors = json.errors ?? [];
+      throw err;
+    }
+    return json;
   }
-  return json;
 }
 
-// ── go ────────────────────────────────────────────────────────────────────────
-console.log(apply ? "APPLYING changes to App Store Connect" : "DRY RUN — nothing will be created (pass --apply)");
-console.log();
+/** Follow `links.next` so a 175-territory list is not silently truncated at the page size. */
+async function ascAll(url) {
+  const out = [];
+  let next = url;
+  while (next) {
+    const page = await asc("GET", next);
+    out.push(...(page.data ?? []));
+    next = page.links?.next ?? null;
+  }
+  return out;
+}
 
+const money = (p) => `${p.attributes.customerPrice} ${p.relationships?.territory?.data?.id ?? ""}`.trim();
+let created = 0;
+let reused = 0;
+const todo = [];
+
+console.log(apply ? "APPLYING to App Store Connect\n" : "DRY RUN — nothing will be changed (pass --apply)\n");
+
+// ── the app ───────────────────────────────────────────────────────────────────
 const apps = await asc("GET", `/apps?filter[bundleId]=${encodeURIComponent(cfg.bundleId)}&limit=1`);
 if (!apps.data?.length) {
-  console.error(`No app record for ${cfg.bundleId}. Create it first: fastlane create in tools/fastlane.`);
+  console.error(`No app record for ${cfg.bundleId}.
+
+Apple does not allow creating one through the API — their docs say to use the website, and
+POST /v1/apps answers "The resource 'apps' does not allow 'CREATE'". Create it once:
+
+  https://appstoreconnect.apple.com/apps  →  +  →  New App
+    Platform   iOS
+    Name       ${cfg.appName ?? "(the name from store/metadata/en-US/name.txt)"}
+    Language   English (U.S.)
+    Bundle ID  ${cfg.bundleId}
+    SKU        ${cfg.bundleId}
+
+then run this again.`);
   process.exit(1);
 }
 const app = apps.data[0];
-console.log(`app  ${app.attributes.name}  (${cfg.bundleId})  id ${app.id}`);
+console.log(`app    ${app.attributes.name}  id ${app.id}\n`);
 
-// Subscription group
-const groups = await asc("GET", `/apps/${app.id}/subscriptionGroups?limit=50`);
-let group = groups.data?.find((g) => g.attributes.referenceName === cfg.group.referenceName);
+// ── subscription group ────────────────────────────────────────────────────────
+const groups = await ascAll(`/apps/${app.id}/subscriptionGroups?limit=200`);
+let group = groups.find((g) => g.attributes.referenceName === cfg.group.referenceName);
 if (group) {
-  console.log(`group  reuse  "${cfg.group.referenceName}"  id ${group.id}`);
+  console.log(`group  reuse   "${cfg.group.referenceName}"  id ${group.id}`);
+  reused++;
 } else if (!apply) {
-  console.log(`group  WOULD CREATE  "${cfg.group.referenceName}"`);
+  console.log(`group  create  "${cfg.group.referenceName}"`);
 } else {
   group = (await asc("POST", "/subscriptionGroups", {
     data: {
@@ -99,18 +148,20 @@ if (group) {
       relationships: { app: { data: { type: "apps", id: app.id } } },
     },
   })).data;
-  console.log(`group  created  "${cfg.group.referenceName}"  id ${group.id}`);
+  console.log(`group  created  id ${group.id}`);
+  created++;
 }
-
 if (!group) {
-  console.log("\nStop: the rest needs the group to exist. Re-run with --apply.");
+  console.log("\nDry run stops here: everything below needs the group to exist.");
   process.exit(0);
 }
 
-// Group localization — the name customers see in Manage Subscriptions.
-if (apply) {
-  const locs = await asc("GET", `/subscriptionGroups/${group.id}/subscriptionGroupLocalizations?limit=50`);
-  if (!locs.data?.some((l) => l.attributes.locale === "en-US")) {
+// Group localization — the name a customer sees under Manage Subscriptions.
+{
+  const locs = await ascAll(`/subscriptionGroups/${group.id}/subscriptionGroupLocalizations?limit=200`);
+  if (locs.some((l) => l.attributes.locale === "en-US")) {
+    reused++;
+  } else if (apply) {
     await asc("POST", "/subscriptionGroupLocalizations", {
       data: {
         type: "subscriptionGroupLocalizations",
@@ -119,50 +170,211 @@ if (apply) {
       },
     });
     console.log(`group  localized en-US as "${cfg.group.displayName}"`);
+    created++;
+  } else {
+    console.log(`group  localize en-US as "${cfg.group.displayName}"`);
   }
 }
 
-// Subscriptions
-const existing = await asc("GET", `/subscriptionGroups/${group.id}/subscriptions?limit=200`);
+// ── subscriptions ─────────────────────────────────────────────────────────────
+const existingSubs = await ascAll(`/subscriptionGroups/${group.id}/subscriptions?limit=200`);
+
 for (const p of cfg.products) {
-  const hit = existing.data?.find((s) => s.attributes.productId === p.productId);
-  if (hit) {
-    console.log(`sub    reuse  ${p.productId}  (${hit.attributes.state})`);
-    continue;
-  }
-  if (!apply) {
-    console.log(`sub    WOULD CREATE  ${p.productId}  ${p.name}  ${p.subscriptionPeriod}`);
-    continue;
-  }
-  const sub = (await asc("POST", "/subscriptions", {
-    data: {
-      type: "subscriptions",
-      attributes: {
-        name: p.name,
-        productId: p.productId,
-        subscriptionPeriod: p.subscriptionPeriod,
-        familySharable: p.familySharable ?? false,
-        reviewNote: p.reviewNote ?? undefined,
-      },
-      relationships: { group: { data: { type: "subscriptionGroups", id: group.id } } },
-    },
-  })).data;
-  console.log(`sub    created  ${p.productId}  id ${sub.id}`);
+  console.log(`\n── ${p.productId}`);
+  let sub = existingSubs.find((s) => s.attributes.productId === p.productId);
 
-  await asc("POST", "/subscriptionLocalizations", {
-    data: {
-      type: "subscriptionLocalizations",
-      attributes: { name: p.displayName, description: p.description, locale: "en-US" },
-      relationships: { subscription: { data: { type: "subscriptions", id: sub.id } } },
-    },
-  });
-  console.log(`       localized en-US`);
+  if (sub) {
+    console.log(`  sub          reuse   id ${sub.id}  (${sub.attributes.state})`);
+    reused++;
+  } else if (!apply) {
+    console.log(`  sub          create  ${p.name}  ${p.subscriptionPeriod}`);
+  } else {
+    sub = (await asc("POST", "/subscriptions", {
+      data: {
+        type: "subscriptions",
+        attributes: {
+          name: p.name,
+          productId: p.productId,
+          subscriptionPeriod: p.subscriptionPeriod,
+          familySharable: p.familySharable ?? false,
+          reviewNote: p.reviewNote ?? undefined,
+        },
+        relationships: { group: { data: { type: "subscriptionGroups", id: group.id } } },
+      },
+    })).data;
+    console.log(`  sub          created  id ${sub.id}`);
+    created++;
+
+    await asc("POST", "/subscriptionLocalizations", {
+      data: {
+        type: "subscriptionLocalizations",
+        attributes: { name: p.displayName, description: p.description, locale: "en-US" },
+        relationships: { subscription: { data: { type: "subscriptions", id: sub.id } } },
+      },
+    });
+    console.log(`  localization created  en-US`);
+    created++;
+  }
+
+  if (!sub) continue; // dry run, nothing further to inspect
+
+  // ── price, in every territory ───────────────────────────────────────────────
+  // The website lets you set one price and equalizes the rest. The API has no such call:
+  // every territory needs its own POST. That tedium is exactly what a script is for.
+  const havePrices = await ascAll(`/subscriptions/${sub.id}/prices?limit=200`);
+  if (havePrices.length > 0) {
+    console.log(`  price        reuse   already set in ${havePrices.length} territor${havePrices.length === 1 ? "y" : "ies"}`);
+    reused++;
+  } else {
+    const base = cfg.baseTerritory ?? "USA";
+    const points = await ascAll(
+      `/subscriptions/${sub.id}/pricePoints?filter[territory]=${base}&limit=200`
+    );
+    const want = String(p.price);
+    const point = points.find((pp) => String(pp.attributes.customerPrice) === want);
+    if (!point) {
+      const near = points
+        .map((pp) => Number(pp.attributes.customerPrice))
+        .sort((a, b) => Math.abs(a - Number(want)) - Math.abs(b - Number(want)))
+        .slice(0, 5);
+      console.log(`  price        SKIP    no ${base} price point at ${want}. Nearest: ${near.join(", ")}`);
+      todo.push(`${p.productId}: pick a valid ${base} price (tried ${want})`);
+      continue;
+    }
+
+    // One base point expands into an equalized point per territory.
+    const equalized = await ascAll(`/subscriptionPricePoints/${point.id}/equalizations?limit=200`);
+    const all = [point, ...equalized];
+    if (!apply) {
+      console.log(`  price        set     ${want} ${base} → ${all.length} territories`);
+    } else {
+      let ok = 0;
+      let failed = 0;
+      for (const pp of all) {
+        try {
+          await asc("POST", "/subscriptionPrices", {
+            data: {
+              type: "subscriptionPrices",
+              attributes: { startDate: null, preserveCurrentPrice: false },
+              relationships: {
+                subscription: { data: { type: "subscriptions", id: sub.id } },
+                subscriptionPricePoint: { data: { type: "subscriptionPricePoints", id: pp.id } },
+              },
+            },
+          });
+          ok++;
+        } catch (e) {
+          failed++;
+          if (failed <= 2) console.log(`    price ${money(pp)}: ${e.message.split("  ").pop()}`);
+        }
+      }
+      console.log(`  price        set     ${want} ${base} → ${ok} territories${failed ? `, ${failed} failed` : ""}`);
+      created += ok;
+      if (failed) todo.push(`${p.productId}: ${failed} territories did not take a price`);
+    }
+  }
+
+  // ── introductory offer ──────────────────────────────────────────────────────
+  if (p.introOffer) {
+    const haveOffers = await ascAll(`/subscriptions/${sub.id}/introductoryOffers?limit=200`);
+    if (haveOffers.length > 0) {
+      console.log(`  intro offer  reuse   already set in ${haveOffers.length} territor${haveOffers.length === 1 ? "y" : "ies"}`);
+      reused++;
+    } else if (!apply) {
+      console.log(`  intro offer  set     ${p.introOffer.duration} ${p.introOffer.offerMode} in every territory`);
+    } else {
+      const territories = await ascAll(`/subscriptions/${sub.id}/prices?limit=200&include=territory`);
+      const ids = [...new Set(territories.map((t) => t.relationships?.territory?.data?.id).filter(Boolean))];
+      const list = ids.length ? ids : (await ascAll("/territories?limit=200")).map((t) => t.id);
+      let ok = 0;
+      let failed = 0;
+      for (const territory of list) {
+        try {
+          await asc("POST", "/subscriptionIntroductoryOffers", {
+            data: {
+              type: "subscriptionIntroductoryOffers",
+              attributes: {
+                duration: p.introOffer.duration,
+                offerMode: p.introOffer.offerMode,
+                numberOfPeriods: p.introOffer.numberOfPeriods ?? 1,
+                startDate: null,
+                endDate: null,
+              },
+              relationships: {
+                subscription: { data: { type: "subscriptions", id: sub.id } },
+                territory: { data: { type: "territories", id: territory } },
+              },
+            },
+          });
+          ok++;
+        } catch (e) {
+          failed++;
+          if (failed <= 2) console.log(`    offer ${territory}: ${e.message.split("  ").pop()}`);
+        }
+      }
+      console.log(`  intro offer  set     ${p.introOffer.duration} ${p.introOffer.offerMode} → ${ok} territories${failed ? `, ${failed} failed` : ""}`);
+      created += ok;
+      if (failed) todo.push(`${p.productId}: ${failed} territories rejected the introductory offer`);
+    }
+  }
+
+  // ── review screenshot ───────────────────────────────────────────────────────
+  // A subscription without one sits in "Missing Metadata" and blocks the whole version.
+  const shotPath = p.reviewScreenshot ?? cfg.reviewScreenshot;
+  if (shotPath) {
+    const file = path.resolve(shotPath);
+    const have = await asc("GET", `/subscriptions/${sub.id}/appStoreReviewScreenshot`).catch(() => ({ data: null }));
+    if (have.data) {
+      console.log(`  screenshot   reuse   already attached`);
+      reused++;
+    } else if (!fs.existsSync(file)) {
+      console.log(`  screenshot   SKIP    ${shotPath} does not exist`);
+      todo.push(`${p.productId}: review screenshot missing at ${shotPath}`);
+    } else if (!apply) {
+      console.log(`  screenshot   upload  ${shotPath}`);
+    } else {
+      const bytes = fs.readFileSync(file);
+      const reserved = (await asc("POST", "/subscriptionAppStoreReviewScreenshots", {
+        data: {
+          type: "subscriptionAppStoreReviewScreenshots",
+          attributes: { fileName: path.basename(file), fileSize: bytes.length },
+          relationships: { subscription: { data: { type: "subscriptions", id: sub.id } } },
+        },
+      })).data;
+
+      for (const op of reserved.attributes.uploadOperations ?? []) {
+        const headers = {};
+        for (const h of op.requestHeaders ?? []) headers[h.name] = h.value;
+        const chunk = bytes.subarray(op.offset, op.offset + op.length);
+        const put = await fetch(op.url, { method: op.method, headers, body: chunk });
+        if (!put.ok) throw new Error(`screenshot upload failed: ${put.status}`);
+      }
+
+      await asc("PATCH", `/subscriptionAppStoreReviewScreenshots/${reserved.id}`, {
+        data: {
+          type: "subscriptionAppStoreReviewScreenshots",
+          id: reserved.id,
+          attributes: {
+            uploaded: true,
+            sourceFileChecksum: crypto.createHash("md5").update(bytes).digest("hex"),
+          },
+        },
+      });
+      console.log(`  screenshot   uploaded  ${path.basename(file)}`);
+      created++;
+    }
+  }
 }
 
-console.log(`
-Still to do in App Store Connect, by hand:
-  · Price for each subscription. The API needs an opaque pricePoint id per territory, and
-    picking the wrong one silently sets the wrong price in 175 countries.
-  · The introductory offer (${cfg.products.find((p) => p.trial)?.trial ?? "free trial"}), if the plan calls for one.
-  · A screenshot for subscription review.
-A version whose products are not "Ready to Submit" is rejected, so finish these before submitting.`);
+// ── report ────────────────────────────────────────────────────────────────────
+console.log(`\n${apply ? `${created} created, ${reused} already existed.` : "Dry run complete."}`);
+if (todo.length) {
+  console.log("\nNeeds attention:");
+  for (const t of todo) console.log(`  · ${t}`);
+}
+if (apply) {
+  console.log(`
+Check the states at
+  https://appstoreconnect.apple.com/apps/${app.id}/distribution/subscriptions
+Anything still reading "Missing Metadata" will block the version at submission.`);
+}

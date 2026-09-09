@@ -1,13 +1,10 @@
 {
   "_comment": "In-app purchases to create in App Store Connect. Product ids must match AppInfo.swift's productIDs and App/Products.storekit exactly, or the paywall shows nothing in the real build. Create with: node tools/asc/iap.mjs quizday --apply",
-
   "bundleId": "com.starhiveconcept.quizday",
-
   "group": {
     "referenceName": "Quizday Pro",
     "displayName": "Quizday Pro"
   },
-
   "products": [
     {
       "productId": "com.starhiveconcept.quizday.pro.weekly",
@@ -16,9 +13,13 @@
       "description": "Practice any category as much as you like, at easy, medium or hard, with your accuracy broken down by category. The daily ten stays free.",
       "subscriptionPeriod": "ONE_WEEK",
       "price": "2.99",
-      "trial": "3-day free trial",
       "familySharable": false,
-      "reviewNote": "Unlocks the Practice tab. The daily ten-question round is free and unaffected."
+      "reviewNote": "Unlocks the Practice tab. The daily ten-question round is free and unaffected.",
+      "introOffer": {
+        "duration": "THREE_DAYS",
+        "offerMode": "FREE_TRIAL",
+        "numberOfPeriods": 1
+      }
     },
     {
       "productId": "com.starhiveconcept.quizday.pro.yearly",
@@ -27,9 +28,16 @@
       "description": "A year of practice: any category, any difficulty, with per-category accuracy so you can see what you are weakest at. The daily ten stays free.",
       "subscriptionPeriod": "ONE_YEAR",
       "price": "19.99",
-      "trial": "3-day free trial",
       "familySharable": false,
-      "reviewNote": "Unlocks the Practice tab. The daily ten-question round is free and unaffected."
+      "reviewNote": "Unlocks the Practice tab. The daily ten-question round is free and unaffected.",
+      "introOffer": {
+        "duration": "THREE_DAYS",
+        "offerMode": "FREE_TRIAL",
+        "numberOfPeriods": 1
+      }
     }
-  ]
+  ],
+  "appName": "Quizday: Daily Trivia, No Ads",
+  "baseTerritory": "USA",
+  "reviewScreenshot": "apps/quizday/store/screenshots/en-US/05.png"
 }
