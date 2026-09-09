@@ -1,0 +1,56 @@
+{
+  "_comment": "The single source of truth for what this app does with data. Three things are generated from it and must never drift apart: ios/App/PrivacyInfo.xcprivacy, store/app_privacy_details.json, and the published privacy policy page. Change this file, re-run the generators, do not hand-edit the outputs.",
+
+  "appName": "Quizday",
+  "company": "Starhive Concept Srl",
+  "companyURL": "https://starhiveconcept.com/",
+  "effectiveDate": "2026-09-09",
+  "supportEmail": "support@starhiveconcept.com",
+  "pageSlug": "quizday-privacy-policy-terms",
+
+  "collects": [],
+
+  "storesOnDevice": [
+    "Which of the daily ten you answered and whether each was right, so the app can show your score, your streak and your calendar.",
+    "Your settings: whether onboarding is done, whether the daily reminder is on and what time it is set to, and your last practice category and difficulty."
+  ],
+
+  "network": [
+    {
+      "service": "Open Trivia Database",
+      "url": "https://opentdb.com/",
+      "why": "Practice rounds are fetched live, because they are not part of the offline pack.",
+      "sends": "The category and difficulty you picked. No identifier, no account, nothing about you."
+    }
+  ],
+
+  "requiredReasonAPIs": [
+    {
+      "category": "NSPrivacyAccessedAPICategoryUserDefaults",
+      "reason": "CA92.1",
+      "why": "@AppStorage, used only for this app's own settings."
+    }
+  ],
+
+  "purchases": {
+    "type": "subscription",
+    "name": "Quizday Pro",
+    "products": ["Weekly", "Yearly"],
+    "trial": "3-day free trial",
+    "processor": "Apple",
+    "freeTier": "The daily ten is free forever, with no ads and nothing that runs out. Pro adds practice, not access."
+  },
+
+  "notifications": {
+    "used": true,
+    "why": "One optional daily reminder, scheduled on your device. It is off until you turn it on, and no reminder is ever sent from a server."
+  },
+
+  "ads": false,
+  "analytics": false,
+  "tracking": false,
+  "account": false,
+  "childDirected": false,
+
+  "attribution": "Practice questions come from the Open Trivia Database, used under CC BY-SA 4.0. The 300 questions in the daily pack are original and written for this app."
+}

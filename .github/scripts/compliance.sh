@@ -46,6 +46,18 @@ else
     warn "the manifest declares DiskSpace but nothing in the app appears to read it"
   fi
 fi
+
+# The manifest, the App Store answers and the published policy all generate from
+# privacy.json. If any has drifted, the app is telling Apple three different stories.
+if [ -f "$app/privacy.json" ]; then
+  if node tools/privacy/sync.mjs "$slug" --check >/dev/null 2>&1; then
+    pass "privacy artifacts match privacy.json"
+  else
+    fail "the privacy artifacts are out of date with $app/privacy.json. Run: node tools/privacy/sync.mjs $slug"
+  fi
+else
+  warn "no $app/privacy.json; the manifest and the App Store answers are hand-maintained and will drift"
+fi
 echo "::endgroup::"
 
 # ── 2. Subscription paywall, guideline 3.1.2 ──────────────────────────────────
