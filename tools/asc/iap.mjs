@@ -252,12 +252,57 @@ for (const p of cfg.products) {
     }
   }
 
+  // ── availability ────────────────────────────────────────────────────────────
+  // This has to come first. A subscription starts with no territories at all, and both
+  // prices and introductory offers are attached per territory, so without it every one of
+  // them fails — prices with an opaque "error processing the pricing information", offers
+  // with the message that actually gives the game away: "You need to set up availabilities
+  // first."
+  {
+    const have = await asc("GET", `/subscriptions/${sub.id}/subscriptionAvailability`).catch(() => ({ data: null }));
+    if (have.data) {
+      console.log(`  availability reuse   already set`);
+      reused++;
+    } else if (!apply) {
+      console.log(`  availability set     all territories`);
+    } else {
+      const territories = await ascAll("/territories?limit=200");
+      await asc("POST", "/subscriptionAvailabilities", {
+        data: {
+          type: "subscriptionAvailabilities",
+          attributes: { availableInNewTerritories: true },
+          relationships: {
+            subscription: { data: { type: "subscriptions", id: sub.id } },
+            availableTerritories: { data: territories.map((t) => ({ type: "territories", id: t.id })) },
+          },
+        },
+      });
+      console.log(`  availability set     ${territories.length} territories`);
+      created++;
+    }
+  }
+
   // ── price, in every territory ───────────────────────────────────────────────
   // The website lets you set one price and equalizes the rest. The API has no such call:
   // every territory needs its own POST. That tedium is exactly what a script is for.
-  const havePrices = await ascAll(`/subscriptions/${sub.id}/prices?limit=200`);
-  if (havePrices.length > 0) {
-    console.log(`  price        reuse   already set in ${havePrices.length} territor${havePrices.length === 1 ? "y" : "ies"}`);
+  // A price point id is base64 of {"s":<subscription>,"t":<territory>,"p":<point>}, which is
+  // the cheapest way to know which territory a point belongs to without another request.
+  const territoryOf = (pp) => {
+    if (pp.relationships?.territory?.data?.id) return pp.relationships.territory.data.id;
+    try {
+      return JSON.parse(Buffer.from(pp.id, "base64").toString("utf8")).t ?? null;
+    } catch {
+      return null;
+    }
+  };
+
+  const havePrices = await ascAll(`/subscriptions/${sub.id}/prices?limit=200&include=territory`);
+  const pricedIn = new Set(havePrices.map((r) => r.relationships?.territory?.data?.id).filter(Boolean));
+  // "Some prices exist" is not "prices are done": a run interrupted partway, or a price set by
+  // hand in the website, leaves a handful of territories covered and the rest silently unpriced.
+  // Compare against the territory list and fill the gaps.
+  if (pricedIn.size >= 170) {
+    console.log(`  price        reuse   already set in ${pricedIn.size} territories`);
     reused++;
   } else {
     const base = cfg.baseTerritory ?? "USA";
@@ -278,9 +323,14 @@ for (const p of cfg.products) {
 
     // One base point expands into an equalized point per territory.
     const equalized = await ascAll(`/subscriptionPricePoints/${point.id}/equalizations?limit=200`);
-    const all = [point, ...equalized];
+    // Apple's own equalized points, so the result matches what the website would have set —
+    // the website simply makes these calls for you.
+    const all = [point, ...equalized].filter((pp) => {
+      const terr = territoryOf(pp);
+      return !terr || !pricedIn.has(terr);
+    });
     if (!apply) {
-      console.log(`  price        set     ${want} ${base} → ${all.length} territories`);
+      console.log(`  price        set     ${want} ${base} → ${all.length} territories${pricedIn.size ? ` (${pricedIn.size} already priced)` : ""}`);
     } else {
       let ok = 0;
       let failed = 0;
@@ -310,16 +360,19 @@ for (const p of cfg.products) {
 
   // ── introductory offer ──────────────────────────────────────────────────────
   if (p.introOffer) {
-    const haveOffers = await ascAll(`/subscriptions/${sub.id}/introductoryOffers?limit=200`);
-    if (haveOffers.length > 0) {
-      console.log(`  intro offer  reuse   already set in ${haveOffers.length} territor${haveOffers.length === 1 ? "y" : "ies"}`);
+    const haveOffers = await ascAll(`/subscriptions/${sub.id}/introductoryOffers?limit=200&include=territory`);
+    const offeredIn = new Set(haveOffers.map((o) => o.relationships?.territory?.data?.id).filter(Boolean));
+    if (offeredIn.size >= 170) {
+      console.log(`  intro offer  reuse   already set in ${offeredIn.size} territories`);
       reused++;
     } else if (!apply) {
-      console.log(`  intro offer  set     ${p.introOffer.duration} ${p.introOffer.offerMode} in every territory`);
+      console.log(`  intro offer  set     ${p.introOffer.duration} ${p.introOffer.offerMode}${offeredIn.size ? ` (${offeredIn.size} already have one)` : " in every territory"}`);
     } else {
-      const territories = await ascAll(`/subscriptions/${sub.id}/prices?limit=200&include=territory`);
-      const ids = [...new Set(territories.map((t) => t.relationships?.territory?.data?.id).filter(Boolean))];
-      const list = ids.length ? ids : (await ascAll("/territories?limit=200")).map((t) => t.id);
+      // Offer a trial only where the subscription actually has a price.
+      const priced = await ascAll(`/subscriptions/${sub.id}/prices?limit=200&include=territory`);
+      const ids = [...new Set(priced.map((t) => t.relationships?.territory?.data?.id).filter(Boolean))];
+      const list = (ids.length ? ids : (await ascAll("/territories?limit=200")).map((t) => t.id))
+        .filter((id) => !offeredIn.has(id));
       let ok = 0;
       let failed = 0;
       for (const territory of list) {
