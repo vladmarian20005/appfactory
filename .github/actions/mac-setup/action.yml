@@ -15,6 +15,12 @@ inputs:
     description: Boot a simulator and export SIM_UDID. Set false for jobs that only archive.
     required: false
     default: "true"
+  browser:
+    description: >
+      Download Chromium for Playwright. Only the screenshot and page stages render HTML;
+      it is ~180 MB, so verify and submit skip it.
+    required: false
+    default: "false"
 
 outputs:
   sim-udid:
@@ -69,15 +75,21 @@ runs:
         node-version: 22
         cache: npm
 
+    - name: Install Node tooling
+      shell: bash
+      run: npm ci
+
     - name: Cache Playwright browsers
+      if: inputs.browser == 'true'
       uses: actions/cache@v4
       with:
         path: ~/Library/Caches/ms-playwright
         key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-    - name: Install Node tooling
+    - name: Install Chromium
+      if: inputs.browser == 'true'
       shell: bash
-      run: npm ci
+      run: npm run browser
 
     - name: Cache DerivedData
       uses: actions/cache@v4

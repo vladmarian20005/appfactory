@@ -1,0 +1,8 @@
+{
+  "_comment": "App Store 'App Privacy' answers, uploaded by the release lane so nobody fills the questionnaire in a browser. Quizday collects nothing: no account, no analytics SDK, no advertising SDK, scores stay in local SwiftData. The Open Trivia Database request in Practice sends no user data, and StoreKit purchases are handled by Apple rather than collected by us. Keep this in step with ios/App/PrivacyInfo.xcprivacy and the published privacy policy; all three describe the same app.",
+  "data_protections": [
+    {
+      "data_protection": "DATA_NOT_COLLECTED"
+    }
+  ]
+}

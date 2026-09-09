@@ -1,0 +1,147 @@
+name: app-submit
+
+# Archives with a real distribution signature and uploads to TestFlight.
+#
+# This is the gate. It only runs when a human dispatches it and types SUBMIT, because it is
+# the step that puts a build on Apple's servers under the owner's developer account. Every
+# stage before it runs unattended.
+#
+# It never runs on `pull_request`. This repository is public, and that is what keeps the
+# App Store Connect key and the distribution certificate out of reach of anyone who opens a
+# PR — GitHub withholds secrets from fork pull requests, and workflow_dispatch requires
+# write access.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/
+        required: true
+        type: string
+      confirm:
+        description: Type SUBMIT to confirm an upload to App Store Connect
+        required: true
+        type: string
+      create_app_record:
+        description: Create the App Store Connect app record first (first submission only)
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-${{ inputs.slug }}
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    if: inputs.confirm == 'SUBMIT'
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      SLUG: ${{ inputs.slug }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      BUNDLE_PREFIX: ${{ secrets.BUNDLE_PREFIX }}
+      REVIEW_FIRST_NAME: ${{ secrets.REVIEW_FIRST_NAME }}
+      REVIEW_LAST_NAME: ${{ secrets.REVIEW_LAST_NAME }}
+      REVIEW_PHONE: ${{ secrets.REVIEW_PHONE }}
+      REVIEW_EMAIL: ${{ secrets.REVIEW_EMAIL }}
+      SUPPORT_EMAIL: ${{ secrets.SUPPORT_EMAIL }}
+      # fastlane on a cold runner: the default 10s timeout for reading build settings is not
+      # enough, and a non-UTF8 locale makes deliver fail on any non-ASCII metadata.
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      FASTLANE_SKIP_UPDATE_CHECK: "1"
+      FASTLANE_HIDE_CHANGELOG: "1"
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "180"
+      FASTLANE_XCODEBUILD_SETTINGS_RETRIES: "6"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read the app's facts
+        run: |
+          set -euo pipefail
+          scheme=$(node -p "require('./apps/$SLUG/qa.json').scheme")
+          bundle=$(node -p "require('./apps/$SLUG/qa.json').bundleId")
+          name=$(cat "apps/$SLUG/store/metadata/en-US/name.txt")
+          {
+            echo "SCHEME=$scheme"
+            echo "BUNDLE_ID=$bundle"
+            echo "APP_NAME=$name"
+            # Monotonic and unique: the build number cannot come from the .xcodeproj, which
+            # XcodeGen regenerates on every runner.
+            echo "BUILD_NUMBER=$(date -u +%Y%m%d%H%M)"
+          } >> "$GITHUB_ENV"
+          echo "Submitting $name ($bundle), scheme $scheme"
+
+      # Archiving does not need a simulator, and booting one costs two minutes.
+      - uses: ./.github/actions/mac-setup
+        with:
+          slug: ${{ inputs.slug }}
+          boot-simulator: "false"
+
+      - name: App Store Connect API key
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          : "${ASC_KEY_P8:?ASC_KEY_P8 is not set; run tools/push-secrets.sh}"
+          mkdir -p ~/.appstoreconnect && chmod 700 ~/.appstoreconnect
+          printf '%s' "$ASC_KEY_P8" > ~/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8
+          chmod 600 ~/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8
+          echo "ASC_KEY_PATH=$HOME/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8" >> "$GITHUB_ENV"
+
+      - name: Import the distribution identity
+        env:
+          DIST_CERT_P12_BASE64: ${{ secrets.DIST_CERT_P12_BASE64 }}
+          DIST_CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: .github/scripts/keychain-up.sh
+
+      - name: Create the app record
+        if: inputs.create_app_record
+        run: cd tools/fastlane && fastlane create
+
+      - name: Archive and upload to TestFlight
+        run: |
+          cd tools/fastlane
+          APP_DIR="../../apps/$SLUG/ios" fastlane beta
+
+      - name: Destroy the keychain
+        if: always()
+        run: .github/scripts/keychain-down.sh
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-${{ inputs.slug }}-${{ env.BUILD_NUMBER }}
+          path: |
+            apps/${{ inputs.slug }}/ios/.build/archive/*.ipa
+            apps/${{ inputs.slug }}/ios/.build/archive/**/*.dSYM.zip
+            ~/Library/Logs/gym/**
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: What happens next
+        if: success()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'MD'
+          ## Uploaded to TestFlight
+
+          Build `${{ env.BUILD_NUMBER }}` of **${{ env.APP_NAME }}** is processing. Apple
+          usually takes 5–30 minutes.
+
+          Next, on a phone — no laptop needed:
+
+          1. Install the build from TestFlight.
+          2. Work the device checklist: the daily reminder fires, haptics feel right, the
+             share sheet opens, and **a sandbox purchase completes**. That last one cannot be
+             checked on CI: a scheme's StoreKit configuration is never honoured by a
+             `simctl launch`, so no runner can buy anything.
+          3. If it passes, run `app-release` to push metadata and screenshots and submit for
+             review.
+          MD

@@ -30,7 +30,7 @@ public struct OnboardingView: View {
                     VStack(spacing: 24) {
                         Spacer()
                         Image(systemName: page.symbol)
-                            .font(.system(size: 88, weight: .medium))
+                            .scaledFont(size: 88, weight: .medium)
                             .foregroundStyle(Color.accentColor)
                             .symbolRenderingMode(.hierarchical)
                         Text(page.title)

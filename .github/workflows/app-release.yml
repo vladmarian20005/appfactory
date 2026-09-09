@@ -1,0 +1,123 @@
+name: app-release
+
+# Pushes metadata, screenshots and the App Privacy answers, then submits the build for
+# review. Runs on Linux: `deliver` needs no Xcode and no keychain, and waiting for Apple to
+# finish processing a build is not something to do on a macOS runner.
+#
+# Split from app-submit on purpose. The beta lane passes
+# skip_waiting_for_build_processing: true, so the archive job ends as soon as the upload
+# does, and this job picks up the processed build later.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/
+        required: true
+        type: string
+      confirm:
+        description: Type SUBMIT to submit this version to App Review
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-${{ inputs.slug }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: inputs.confirm == 'SUBMIT'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SLUG: ${{ inputs.slug }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      BUNDLE_PREFIX: ${{ secrets.BUNDLE_PREFIX }}
+      REVIEW_FIRST_NAME: ${{ secrets.REVIEW_FIRST_NAME }}
+      REVIEW_LAST_NAME: ${{ secrets.REVIEW_LAST_NAME }}
+      REVIEW_PHONE: ${{ secrets.REVIEW_PHONE }}
+      REVIEW_EMAIL: ${{ secrets.REVIEW_EMAIL }}
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      FASTLANE_SKIP_UPDATE_CHECK: "1"
+      FASTLANE_HIDE_CHANGELOG: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Install fastlane
+        run: gem install fastlane --no-document -v '~> 2.228'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Read the app's facts
+        run: |
+          set -euo pipefail
+          {
+            echo "SCHEME=$(node -p "require('./apps/$SLUG/qa.json').scheme")"
+            echo "BUNDLE_ID=$(node -p "require('./apps/$SLUG/qa.json').bundleId")"
+          } >> "$GITHUB_ENV"
+
+      - name: Pre-flight the listing
+        run: |
+          set -euo pipefail
+          m="apps/$SLUG/store/metadata/en-US"
+          fail=0
+          check() { # check <file> <limit>
+            local f="$m/$1" lim=$2
+            [ -f "$f" ] || { echo "::error::missing $f"; fail=1; return; }
+            local n; n=$(wc -c < "$f" | tr -d ' ')
+            if [ "$n" -gt "$lim" ]; then echo "::error::$1 is $n bytes, limit $lim"; fail=1
+            else echo "  $1: $n / $lim"; fi
+          }
+          check name.txt 30
+          check subtitle.txt 30
+          check keywords.txt 100
+          check promotional_text.txt 170
+          check description.txt 4000
+
+          # precheck rejects a version whose privacy or support URL 404s, and it does so after
+          # the upload. Catch it here instead.
+          for u in privacy_url support_url; do
+            url=$(cat "$m/$u.txt")
+            code=$(curl -s -o /dev/null -w '%{http_code}' -L "$url")
+            if [ "$code" != "200" ]; then echo "::error::$u ($url) returned $code"; fail=1
+            else echo "  $u: 200  $url"; fi
+          done
+
+          shots="apps/$SLUG/store/screenshots/en-US"
+          n=$(ls "$shots"/*.png 2>/dev/null | wc -l | tr -d ' ')
+          [ "$n" -ge 1 ] || { echo "::error::no screenshots in $shots"; fail=1; }
+          echo "  screenshots: $n in en-US"
+
+          exit $fail
+
+      - name: App Store Connect API key
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          : "${ASC_KEY_P8:?ASC_KEY_P8 is not set; run tools/push-secrets.sh}"
+          mkdir -p ~/.appstoreconnect && chmod 700 ~/.appstoreconnect
+          printf '%s' "$ASC_KEY_P8" > ~/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8
+          chmod 600 ~/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8
+          echo "ASC_KEY_PATH=$HOME/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8" >> "$GITHUB_ENV"
+
+      - name: Submit for review
+        run: |
+          cd tools/fastlane
+          APP_DIR="../../apps/$SLUG/ios" fastlane release
+
+      - name: Done
+        if: success()
+        run: echo "**${{ env.BUNDLE_ID }}** submitted. App Store Connect should read *Waiting for Review*." >> "$GITHUB_STEP_SUMMARY"

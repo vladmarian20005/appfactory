@@ -155,7 +155,7 @@ struct CalorieRing: View {
                 .rotationEffect(.degrees(-90))
                 .animation(.easeOut(duration: 0.5), value: progress)
             VStack(spacing: 2) {
-                Text(consumed.kcal).font(.system(size: 34, weight: .bold, design: .rounded)).monospacedDigit()
+                Text(consumed.kcal).scaledFont(size: 34, weight: .bold, design: .rounded).monospacedDigit()
                 Text(over ? "\((consumed - goal).kcal) over" : "\((goal - consumed).kcal) left")
                     .font(.footnote).foregroundStyle(over ? .red : .secondary)
                 Text("of \(goal.kcal)").font(.caption2).foregroundStyle(.tertiary)

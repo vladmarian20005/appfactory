@@ -11,7 +11,7 @@
     "compose": "node tools/screenshots/compose.mjs",
     "icon": "node tools/icon.mjs",
     "pages": "node tools/pages/build.mjs",
-    "postinstall": "playwright install chromium || true"
+    "browser": "playwright install chromium"
   },
   "dependencies": {
     "playwright": "^1.49.0",

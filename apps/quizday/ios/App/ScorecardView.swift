@@ -72,7 +72,7 @@ struct ScorecardView: View {
                 .font(.headline)
             if let result = todayResult {
                 Text("\(result.score) out of \(result.total)")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .scaledFont(size: 36, weight: .bold, design: .rounded)
                 SquareRow(flags: result.flags)
                 ShareLink(item: ShareCard.text(roundNumber: result.roundNumber,
                                                flags: result.flags,

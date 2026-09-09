@@ -118,7 +118,7 @@ struct TodayView: View {
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(Color.accentColor)
                     Text("\(score) out of \(shownFlags.count)")
-                        .font(.system(size: 44, weight: .bold, design: .rounded))
+                        .scaledFont(size: 44, weight: .bold, design: .rounded)
                     Text(verdict(score: score, total: shownFlags.count))
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)

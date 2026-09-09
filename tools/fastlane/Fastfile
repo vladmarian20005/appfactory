@@ -171,8 +171,13 @@ platform :ios do
     end
     UI.message("Screenshot locales: #{locales.join(', ')}")
 
-    privacy = File.expand_path("app_privacy_details.json", __dir__)
-    if File.exist?(privacy)
+    # Per-app answers first: two apps rarely collect the same things. The shared file is only
+    # a fallback for an app that has not declared its own.
+    privacy = [
+      File.join(store, "app_privacy_details.json"),
+      File.expand_path("app_privacy_details.json", __dir__),
+    ].find { |p| File.exist?(p) }
+    if privacy
       upload_app_privacy_details_to_app_store(
         app_identifier: ENV.fetch("BUNDLE_ID"),
         json_path: privacy,

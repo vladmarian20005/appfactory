@@ -1,0 +1,33 @@
+{
+  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/quizday/store/screenshots.json apps/quizday/store/screenshots/en-US. Raw captures come from app-verify (apps/quizday/qa) and are copied into store/raw. Titles lead with the promise from SPEC.md, then the wedge: no ads, nothing runs out, every answer explained.",
+  "background": "linear-gradient(165deg,#2A1F6B 0%,#4C3DD6 62%,#6D5FF0 100%)",
+  "textColor": "#FFFFFF",
+  "accent": "rgba(255,255,255,.80)",
+  "shots": [
+    {
+      "src": "raw/01-today.png",
+      "title": "Ten questions a day",
+      "subtitle": "The same ten for everyone."
+    },
+    {
+      "src": "raw/02-question.png",
+      "title": "Every answer explained",
+      "subtitle": "With a source you can check."
+    },
+    {
+      "src": "raw/03-result.png",
+      "title": "No ad. Not even here.",
+      "subtitle": "No lives. No coins. Nothing to buy."
+    },
+    {
+      "src": "raw/04-scorecard.png",
+      "title": "Keep the streak going",
+      "subtitle": "Every day you played, at a glance."
+    },
+    {
+      "src": "raw/05-paywall.png",
+      "title": "The daily ten stays free",
+      "subtitle": "Pro adds practice, not access."
+    }
+  ]
+}

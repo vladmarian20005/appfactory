@@ -60,7 +60,7 @@ struct PracticeView: View {
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 8) {
                     Image(systemName: "infinity")
-                        .font(.system(size: 44, weight: .medium))
+                        .scaledFont(size: 44, weight: .medium)
                         .foregroundStyle(Color.accentColor)
                     Text("Practice is part of Pro")
                         .font(.title2.bold())
@@ -207,7 +207,7 @@ struct PracticeView: View {
     private var summary: some View {
         VStack(spacing: 16) {
             Text("\(correctCount) out of \(items.count)")
-                .font(.system(size: 40, weight: .bold, design: .rounded))
+                .scaledFont(size: 40, weight: .bold, design: .rounded)
             Text("\(category.name) · \(difficulty.label)")
                 .foregroundStyle(.secondary)
             Button("Another round") {
