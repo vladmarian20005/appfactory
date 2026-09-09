@@ -98,17 +98,40 @@ platform :ios do
       output_path: out,
       generate_apple_certs: true,
     )
-    id = lane_context[SharedValues::CERT_CERTIFICATE_ID]
-    p12 = File.join(out, "#{id}.p12")
+    id  = lane_context[SharedValues::CERT_CERTIFICATE_ID]
+    cer = File.join(out, "#{id}.cer")
+    key = File.join(out, "#{id}.p12")   # misnamed by `cert`: this is an unencrypted PEM key
+    p12 = File.join(out, "dist-#{id}.p12")
     UI.success("Distribution certificate #{id}")
-    if File.exist?(p12)
-      UI.success("Private key written to #{p12}")
-      UI.message("Publish it with:")
-      UI.message("  gh secret set DIST_CERT_P12_BASE64 --repo vladmarian20005/appfactory --body \"$(base64 -i #{p12})\"")
-    else
-      UI.important("No .p12 at #{p12}. The certificate already existed, so its private key is only in this Mac's keychain.")
-      UI.important("Export it: Keychain Access > My Certificates > 'Apple Distribution' > right-click > Export.")
+
+    unless File.exist?(cer) && File.exist?(key)
+      UI.important("`cert` produced no key material, so the certificate already existed and its")
+      UI.important("private key lives only in this Mac's keychain. Export it by hand:")
+      UI.important("  Keychain Access > My Certificates > 'Apple Distribution' > right-click > Export")
+      next
     end
+
+    # Two traps here. The file `cert` writes as <id>.p12 is not a PKCS#12 bundle at all — it
+    # is the RSA private key in PEM, unencrypted and world-readable — so a real, password
+    # protected p12 has to be assembled from the .cer and that key. And OpenSSL 3 defaults to
+    # AES-256/PBKDF2, which macOS `security import` frequently refuses; -legacy is what makes
+    # the bundle importable on a runner.
+    FileUtils.chmod(0o600, key)
+    password = ENV["DIST_CERT_PASSWORD"].to_s.empty? ? `openssl rand -base64 24`.strip : ENV["DIST_CERT_PASSWORD"]
+    leaf = File.join(out, "leaf-#{id}.pem")
+    sh("openssl", "x509", "-inform", "DER", "-in", cer, "-out", leaf)
+    sh("openssl", "pkcs12", "-export", "-legacy",
+       "-inkey", key, "-in", leaf,
+       "-name", "Apple Distribution",
+       "-out", p12, "-passout", "pass:#{password}")
+    FileUtils.chmod(0o600, p12)
+    FileUtils.rm_f(leaf)
+
+    UI.success("Signing bundle written to #{p12}")
+    UI.message("Add these two lines to tools/fastlane/.env, then run tools/push-secrets.sh:")
+    UI.message("  DIST_CERT_P12=\"#{p12}\"")
+    UI.message("  DIST_CERT_PASSWORD=\"#{password}\"")
+    UI.important("That password is the only copy. Nothing else can decrypt the bundle.")
   end
 
   desc "Create the app record in App Store Connect (APP_NAME, BUNDLE_ID)"
