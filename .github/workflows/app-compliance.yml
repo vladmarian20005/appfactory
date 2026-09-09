@@ -39,9 +39,21 @@ jobs:
           if [ -n "${{ inputs.slug }}" ]; then
             slugs='["${{ inputs.slug }}"]'
           else
-            # Only apps that have started a listing; a scaffolded app with no store/ yet
-            # would fail every check for no useful reason.
-            slugs=$(ls -d apps/*/store/metadata/en-US 2>/dev/null | sed 's|apps/||; s|/store.*||' | node -e '
+            # Only apps that are actually heading for the App Store. Two exclusions:
+            # one with no store/metadata has not started a listing, and one whose STATUS.md
+            # says shelved or stopped is never going to ship — plainfood is kept as the
+            # reference app and would otherwise fail this gate on every push forever.
+            picked=""
+            for d in apps/*/; do
+              slug=$(basename "$d")
+              [ -d "$d/store/metadata/en-US" ] || continue
+              stage=$(sed -n 's/^stage:[[:space:]]*//p' "$d/STATUS.md" 2>/dev/null | head -1)
+              case "$stage" in
+                shelved*|stopped*|archived*) echo "skipping $slug (stage: $stage)"; continue ;;
+              esac
+              picked="$picked$slug\n"
+            done
+            slugs=$(printf "$picked" | node -e '
               let s="";process.stdin.on("data",d=>s+=d).on("end",()=>
                 console.log(JSON.stringify(s.split("\n").filter(Boolean))))')
           fi
