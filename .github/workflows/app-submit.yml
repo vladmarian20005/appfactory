@@ -22,11 +22,6 @@ on:
         description: Type SUBMIT to confirm an upload to App Store Connect
         required: true
         type: string
-      create_app_record:
-        description: Create the App Store Connect app record first (first submission only)
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -102,9 +97,14 @@ jobs:
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: .github/scripts/keychain-up.sh
 
-      - name: Create the app record
-        if: inputs.create_app_record
-        run: cd tools/fastlane && fastlane create
+      # Registers the bundle id if needed and fails with instructions if the app record is
+      # missing. Apple's API cannot create an app record — POST /v1/apps is rejected — so
+      # that one form is a browser task, once per app. Failing here costs seconds; failing
+      # at the upload costs the whole archive.
+      - name: Check the app record exists
+        run: |
+          cd tools/fastlane
+          APP_NAME="$APP_NAME" BUNDLE_ID="$BUNDLE_ID" fastlane create
 
       - name: Archive and upload to TestFlight
         run: |

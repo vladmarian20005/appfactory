@@ -23,13 +23,21 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Read-only: verify the API key, list the team's apps, warn on an expiring certificate
 
+### ios certs
+
+```sh
+[bundle exec] fastlane ios certs
+```
+
+ONE-TIME, LOCAL ONLY: create the Apple Distribution certificate and write its .p12
+
 ### ios create
 
 ```sh
 [bundle exec] fastlane ios create
 ```
 
-Create the app record in App Store Connect (APP_NAME, BUNDLE_ID)
+Register the bundle id and create the app record (APP_NAME, BUNDLE_ID)
 
 ### ios beta
 
@@ -46,14 +54,6 @@ Archive with a distribution profile and upload to TestFlight
 ```
 
 Push metadata, screenshots and privacy answers, then submit the latest build for review
-
-### ios certprobe
-
-```sh
-[bundle exec] fastlane ios certprobe
-```
-
-
 
 ----
 

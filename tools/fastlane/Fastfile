@@ -134,16 +134,54 @@ platform :ios do
     UI.important("That password is the only copy. Nothing else can decrypt the bundle.")
   end
 
-  desc "Create the app record in App Store Connect (APP_NAME, BUNDLE_ID)"
+  desc "Register the bundle id and create the app record (APP_NAME, BUNDLE_ID)"
   lane :create do
-    produce(
-      app_name: ENV.fetch("APP_NAME"),
-      app_identifier: ENV.fetch("BUNDLE_ID"),
-      language: "English",
-      sku: ENV.fetch("BUNDLE_ID"),
-      team_id: ENV.fetch("TEAM_ID"),
-      platforms: ["ios"],
-    )
+    # Not `produce`: it authenticates with an Apple ID web session and has no api_key option,
+    # so on CI it stops and asks for a username. Spaceship talks to the same endpoints with
+    # the API key that before_all already installed. Both steps are idempotent.
+    name   = ENV.fetch("APP_NAME")
+    bundle = ENV.fetch("BUNDLE_ID")
+    team   = ENV.fetch("TEAM_ID")
+
+    if (existing = Spaceship::ConnectAPI::App.find(bundle))
+      UI.success("App record already exists: #{existing.name} (id #{existing.id})")
+      next
+    end
+
+    ids = Spaceship::ConnectAPI::BundleId.all.select { |b| b.identifier == bundle }
+    if ids.empty?
+      UI.message("Registering bundle id #{bundle}")
+      Spaceship::ConnectAPI::BundleId.create(
+        name: name.gsub(/[^A-Za-z0-9 ]/, " ").squeeze(" ").strip, # the portal rejects punctuation
+        identifier: bundle,
+        platform: "IOS",
+        seed_id: team,
+      )
+    else
+      UI.message("Bundle id #{bundle} is already registered")
+    end
+
+    # Creating the app record itself is the one step Apple does not expose. Verified against
+    # the live API on 2026-09-09: POST /v1/apps returns "The resource 'apps' does not allow
+    # 'CREATE'. Allowed operations are: GET_COLLECTION, GET_INSTANCE, UPDATE". `produce` gets
+    # around it only by driving the Apple ID web session, which needs a password and a 2FA
+    # code that expires monthly — a dependency this pipeline deliberately does not take.
+    #
+    # So: the bundle id is registered above, automatically, and the app record is one
+    # five-field form, once per app, in a browser. Everything after it is automated again.
+    UI.important("Bundle id is ready. The app record has to be created by hand — Apple's API")
+    UI.important("does not allow it (POST /v1/apps is rejected: 'apps' does not allow CREATE).")
+    UI.message("")
+    UI.message("  https://appstoreconnect.apple.com/apps  →  +  →  New App")
+    UI.message("    Platform  iOS")
+    UI.message("    Name      #{name}")
+    UI.message("    Language  English (U.S.)")
+    UI.message("    Bundle ID #{bundle}")
+    UI.message("    SKU       #{bundle}")
+    UI.message("")
+    UI.message("Then re-run this lane to confirm, and create the subscriptions with:")
+    UI.message("  node tools/asc/iap.mjs <slug> --apply")
+    UI.user_error!("App record does not exist yet.")
   end
 
   desc "Archive with a distribution profile and upload to TestFlight"
