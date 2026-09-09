@@ -18,6 +18,8 @@ out=${2:-"apps/$slug/qa"}
 [ -n "${SIM_UDID:-}" ] || { echo "::error::SIM_UDID is not set; run tools/sim.sh boot first"; exit 1; }
 
 scheme=$(node -p "require('./$qa_json').scheme")
+bundle_id=$(node -p "require('./$qa_json').bundleId || ''")
+[ -n "$bundle_id" ] || { echo "::error::$qa_json has no bundleId; the crash check needs it to tell this app's crashes from the simulator's"; exit 1; }
 mkdir -p "$out"
 
 echo "::group::Generate the Xcode project"
@@ -70,12 +72,32 @@ echo "::endgroup::"
 echo "::group::Crash reports"
 new_crashes=$(find "$crash_dir" -name "*.ips" -newer "$marker" 2>/dev/null | head -20)
 if [ -n "$new_crashes" ]; then
-  echo "::error::the app left crash reports:"
+  # Only crashes belonging to the app under test. A simulator writes reports for its own
+  # system processes too — a MobileCal crash failed this step once, which is a red build
+  # nobody can act on and trains everyone to ignore the check.
+  mine=""
+  others=0
   while IFS= read -r c; do
-    echo "--- $c"
-    head -40 "$c"
+    [ -n "$c" ] || continue
+    if grep -q "$bundle_id" "$c" 2>/dev/null; then
+      mine="$mine$c"$'\n'
+    else
+      others=$((others + 1))
+    fi
   done <<< "$new_crashes"
-  failures=$((failures + 1))
+
+  if [ -n "$mine" ]; then
+    echo "::error::$scheme left crash reports:"
+    while IFS= read -r c; do
+      [ -n "$c" ] || continue
+      echo "--- $c"
+      head -40 "$c"
+    done <<< "$mine"
+    failures=$((failures + 1))
+  else
+    echo "none for $bundle_id"
+  fi
+  [ "$others" -gt 0 ] && echo "  ($others unrelated simulator crash report(s) ignored)"
 else
   echo "none"
 fi
