@@ -1,0 +1,102 @@
+name: app-compliance
+
+# The gate between "built" and "submittable". Runs on Linux: it needs no Xcode, no
+# simulator and no credentials, so it is cheap enough to run on every push.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/
+        required: true
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - "apps/*/store/**"
+      - "apps/*/ios/App/PrivacyInfo.xcprivacy"
+      - "FactoryKit/Sources/FactoryKit/PaywallView.swift"
+      - ".github/scripts/compliance.sh"
+      - ".github/workflows/app-compliance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: compliance-${{ inputs.slug || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pick:
+    runs-on: ubuntu-latest
+    outputs:
+      slugs: ${{ steps.list.outputs.slugs }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        run: |
+          set -euo pipefail
+          if [ -n "${{ inputs.slug }}" ]; then
+            slugs='["${{ inputs.slug }}"]'
+          else
+            # Only apps that have started a listing; a scaffolded app with no store/ yet
+            # would fail every check for no useful reason.
+            slugs=$(ls -d apps/*/store/metadata/en-US 2>/dev/null | sed 's|apps/||; s|/store.*||' | node -e '
+              let s="";process.stdin.on("data",d=>s+=d).on("end",()=>
+                console.log(JSON.stringify(s.split("\n").filter(Boolean))))')
+          fi
+          echo "slugs=$slugs" >> "$GITHUB_OUTPUT"
+          echo "Checking: $slugs"
+
+  compliance:
+    needs: pick
+    if: needs.pick.outputs.slugs != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        slug: ${{ fromJSON(needs.pick.outputs.slugs) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # compliance.sh uses plutil to validate the privacy manifest; Linux has no plutil.
+      - name: Provide plutil
+        run: |
+          set -euo pipefail
+          sudo tee /usr/local/bin/plutil >/dev/null <<'SH'
+          #!/usr/bin/env bash
+          # Minimal stand-in: `plutil -lint <file>` well-formedness check via Python.
+          [ "${1:-}" = "-lint" ] || { echo "plutil shim: only -lint is supported" >&2; exit 2; }
+          shift
+          rc=0
+          for f in "$@"; do
+            if python3 -c "import plistlib,sys; plistlib.load(open(sys.argv[1],'rb'))" "$f" 2>/dev/null; then
+              echo "$f: OK"
+            else
+              echo "$f: parse error"; rc=1
+            fi
+          done
+          exit $rc
+          SH
+          sudo chmod +x /usr/local/bin/plutil
+          plutil -lint apps/${{ matrix.slug }}/ios/App/PrivacyInfo.xcprivacy || true
+
+      - name: Compliance gate
+        run: .github/scripts/compliance.sh "${{ matrix.slug }}"
+
+      - name: Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ \`${{ matrix.slug }}\` passes the compliance gate." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "❌ \`${{ matrix.slug }}\` is not ready for App Review. See the errors above." >> "$GITHUB_STEP_SUMMARY"
+          fi

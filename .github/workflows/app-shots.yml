@@ -1,0 +1,95 @@
+name: app-shots
+
+# Capture the app on a simulator and compose the App Store screenshots, then commit them.
+#
+# Both halves run on the same macOS runner. Composing on Linux was the original plan, but
+# the frame's font stack starts with -apple-system, which resolves to real SF Pro on macOS
+# and to something with different metrics on Linux, silently re-wrapping every headline.
+# macOS runners are free on a public repository, so there is nothing to save by splitting.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/
+        required: true
+        type: string
+      commit:
+        description: Commit the composed screenshots back to the branch
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: app-${{ inputs.slug }}
+  cancel-in-progress: false
+
+jobs:
+  shots:
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      SLUG: ${{ inputs.slug }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/mac-setup
+        with:
+          slug: ${{ inputs.slug }}
+          browser: "true"
+
+      - name: Capture the screens
+        run: |
+          set -euo pipefail
+          # verify-app.sh already builds, launches each screen in qa.json and asserts that
+          # every capture actually rendered. Reuse it rather than duplicating the logic, so
+          # the screenshots can never be of a blank screen.
+          .github/scripts/verify-app.sh "$SLUG" "apps/$SLUG/store/raw"
+
+      - name: Compose
+        run: |
+          set -euo pipefail
+          spec="apps/$SLUG/store/screenshots.json"
+          [ -f "$spec" ] || { echo "::error::no $spec — it maps captures to titles"; exit 1; }
+          rm -rf "apps/$SLUG/store/screenshots/en-US"
+          node tools/screenshots/compose.mjs "$spec" "apps/$SLUG/store/screenshots/en-US"
+
+      - name: Check them against Apple's rules
+        run: |
+          set -euo pipefail
+          for f in apps/$SLUG/store/screenshots/en-US/*.png; do
+            node -e '
+              const {PNG}=require("pngjs");const fs=require("fs");
+              const p=PNG.sync.read(fs.readFileSync(process.argv[1]));
+              const bad=[];
+              if (p.alpha) bad.push("has an alpha channel");
+              if (p.width!==1320||p.height!==2868) bad.push(`is ${p.width}x${p.height}, expected 1320x2868`);
+              if (bad.length) { console.error(`::error::${process.argv[1]} ${bad.join(", ")}`); process.exit(1); }
+              console.log(`  ok ${process.argv[1]}`);
+            ' "$f"
+          done
+
+      - name: Commit
+        if: inputs.commit
+        run: |
+          set -euo pipefail
+          git config user.name "factory"
+          git config user.email "factory@users.noreply.github.com"
+          git add "apps/$SLUG/store/screenshots"
+          if git diff --cached --quiet; then echo "screenshots unchanged"; exit 0; fi
+          git commit -m "$SLUG: composed App Store screenshots from a $(sw_vers -productVersion) runner"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shots-${{ inputs.slug }}-${{ github.run_id }}
+          path: |
+            apps/${{ inputs.slug }}/store/screenshots/**
+            apps/${{ inputs.slug }}/store/raw/**
+          retention-days: 14
+          if-no-files-found: warn
