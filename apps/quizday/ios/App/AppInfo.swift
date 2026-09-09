@@ -5,8 +5,8 @@ import Foundation
 enum AppInfo {
     static let config = AppConfig(
         name: "Quizday",
-        supportURL: URL(string: "https://vladmarian20005.github.io/appmonkey/quizday/support")!,
-        privacyURL: URL(string: "https://vladmarian20005.github.io/appmonkey/quizday/privacy")!,
+        supportURL: URL(string: "https://starhiveconcept.com/quizday-privacy-policy-terms/#support")!,
+        privacyURL: URL(string: "https://starhiveconcept.com/quizday-privacy-policy-terms/")!,
         termsURL: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!,
         productIDs: ["com.starhiveconcept.quizday.pro.weekly", "com.starhiveconcept.quizday.pro.yearly"],
         appStoreID: nil
