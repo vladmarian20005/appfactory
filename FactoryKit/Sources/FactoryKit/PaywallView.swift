@@ -75,11 +75,29 @@ public struct PaywallView: View {
                         Text(message).font(.footnote).foregroundStyle(.secondary)
                     }
 
-                    HStack(spacing: 16) {
+                    // App Review guideline 3.1.2 wants the renewal terms on the paywall
+                    // itself, not only in the App Store description. Missing this is one of
+                    // the most common subscription rejections.
+                    if let renewalDisclosure {
+                        Text(renewalDisclosure)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityLabel("Subscription terms. \(renewalDisclosure)")
+                    }
+
+                    // A plain VStack rather than one HStack: at accessibility text sizes four
+                    // items in a row overlap, and these links have to stay reachable.
+                    VStack(alignment: .leading, spacing: 10) {
                         Button("Restore purchases") { Task { await store.restore(); if store.isPro { onDone() } } }
-                        Spacer()
-                        Link("Terms", destination: config.termsURL)
-                        Link("Privacy", destination: config.privacyURL)
+                        HStack(spacing: 16) {
+                            Link("Terms of use", destination: config.termsURL)
+                            Link("Privacy policy", destination: config.privacyURL)
+                            Spacer(minLength: 0)
+                        }
+                        if store.isPro {
+                            Link("Manage subscription", destination: Self.manageSubscriptionsURL)
+                        }
                     }
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -90,6 +108,7 @@ public struct PaywallView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button { onDone() } label: { Image(systemName: "xmark") }
+                        .accessibilityLabel("Close")
                 }
             }
             .onAppear { if selected == nil { selected = store.offers.last } }
@@ -100,6 +119,31 @@ public struct PaywallView: View {
     private var ctaTitle: String {
         if let selected, let trial = selected.trialText { return "Start \(trial)" }
         return "Continue"
+    }
+
+    /// Where iOS sends a customer to cancel. Opens the App Store's subscription settings.
+    static let manageSubscriptionsURL = URL(string: "https://apps.apple.com/account/subscriptions")!
+
+    /// The renewal terms App Review expects to see before the customer buys. Nil for a
+    /// one-time unlock, which does not renew and must not claim to.
+    private var renewalDisclosure: String? {
+        guard let selected, selected.isSubscription else { return nil }
+        var parts: [String] = []
+        if let period = selected.periodText {
+            parts.append("\(selected.title) is \(selected.priceText) \(period) and renews automatically.")
+        } else {
+            parts.append("\(selected.title) renews automatically.")
+        }
+        if selected.trialText != nil {
+            parts.append("Any unused part of a free trial is forfeited when you buy a subscription.")
+        }
+        parts.append(
+            "Payment is charged to your Apple Account at confirmation of purchase. "
+            + "Your account is charged for renewal within 24 hours before the current period ends, "
+            + "unless you cancel at least 24 hours before then. "
+            + "Manage and cancel subscriptions in your Apple Account settings."
+        )
+        return parts.joined(separator: " ")
     }
 
     @ViewBuilder

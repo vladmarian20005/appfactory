@@ -16,11 +16,16 @@
 import fs from "node:fs";
 import { PNG } from "pngjs";
 
-const files = process.argv.slice(2);
+// --quiet reports only through the exit code, so sim.sh can use this as a predicate while
+// it waits for an app to finish drawing.
+const quiet = process.argv.includes("--quiet");
+const files = process.argv.slice(2).filter((a) => a !== "--quiet");
 if (files.length === 0) {
-  console.error("usage: check-shot.mjs <shot.png> [...]");
+  console.error("usage: check-shot.mjs [--quiet] <shot.png> [...]");
   process.exit(1);
 }
+const say = (...a) => { if (!quiet) console.log(...a); };
+const warn = (...a) => { if (!quiet) console.error(...a); };
 
 // Below this fraction of distinct coarse colours the image is treated as flat.
 const MIN_DISTINCT = Number(process.env.QA_MIN_DISTINCT ?? 12);
@@ -31,7 +36,7 @@ let failed = 0;
 
 for (const file of files) {
   if (!fs.existsSync(file)) {
-    console.error(`FAIL ${file}: does not exist`);
+    warn(`FAIL ${file}: does not exist`);
     failed++;
     continue;
   }
@@ -63,15 +68,15 @@ for (const file of files) {
   if (varied < MIN_VARIED) problems.push(`${(varied * 100).toFixed(1)}% of pixels differ from the modal colour (min ${(MIN_VARIED * 100).toFixed(0)}%)`);
 
   if (problems.length) {
-    console.error(`FAIL ${file}: ${problems.join("; ")} — looks like a blank or unrendered screen`);
+    warn(`FAIL ${file}: ${problems.join("; ")} — looks like a blank or unrendered screen`);
     failed++;
   } else {
-    console.log(`ok   ${file}  ${width}x${height}  ${distinct} colours  ${(varied * 100).toFixed(1)}% varied`);
+    say(`ok   ${file}  ${width}x${height}  ${distinct} colours  ${(varied * 100).toFixed(1)}% varied`);
   }
 }
 
 if (failed) {
-  console.error(`\n${failed} of ${files.length} capture(s) look blank.`);
+  warn(`\n${failed} of ${files.length} capture(s) look blank.`);
   process.exit(1);
 }
-console.log(`\n${files.length} capture(s) look rendered.`);
+say(`\n${files.length} capture(s) look rendered.`);

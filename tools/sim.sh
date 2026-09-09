@@ -17,6 +17,8 @@
 # failure: a device stuck in Creating used to produce a green step and a black PNG.
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 FACTORY_DEVICE="${SIM_DEVICE:-factory-69}"
 # Preference list, first available wins. Every entry is a 6.9" device (1320x2868), the size
 # App Store Connect wants as the primary iPhone screenshot. A list rather than one name
@@ -96,9 +98,22 @@ cmd_boot() {
 capture_stable() {
   local udid=$1 out=$2 tmp_a tmp_b deadline
   tmp_a=$(mktemp -t simshot); tmp_b=$(mktemp -t simshot)
-  deadline=$(( $(date +%s) + ${SHOT_TIMEOUT:-15} ))
+  deadline=$(( $(date +%s) + ${SHOT_TIMEOUT:-30} ))
   sleep "${SHOT_DELAY:-1}"
-  xcrun simctl io "$udid" screenshot --type=png "$tmp_a" >/dev/null 2>&1 || die "screenshot failed"
+
+  # Phase 1: wait until the app has actually drawn something.
+  #
+  # Stability alone is not enough, and assuming otherwise is what produced three blank
+  # screenshots on the first CI run: an app that has launched but not yet rendered shows a
+  # flat white window, and two consecutive captures of flat white are identical, so the
+  # stability test below declares victory on an empty screen. Wait for content first.
+  while [ "$(date +%s)" -lt "$deadline" ]; do
+    xcrun simctl io "$udid" screenshot --type=png "$tmp_a" >/dev/null 2>&1 || die "screenshot failed"
+    if node "$SCRIPT_DIR/qa/check-shot.mjs" --quiet "$tmp_a"; then break; fi
+    sleep 0.5
+  done
+
+  # Phase 2: now that there is content, wait for it to stop moving.
   while [ "$(date +%s)" -lt "$deadline" ]; do
     sleep 0.5
     xcrun simctl io "$udid" screenshot --type=png "$tmp_b" >/dev/null 2>&1 || die "screenshot failed"
@@ -108,7 +123,10 @@ capture_stable() {
     fi
     mv "$tmp_b" "$tmp_a"
   done
-  echo "sim.sh: screen never settled in ${SHOT_TIMEOUT:-15}s; capturing anyway" >&2
+
+  # A screen with a live countdown never settles. Capturing the last frame is correct; the
+  # blank check in verify-app.sh is what decides whether it is usable.
+  echo "sim.sh: screen never settled in ${SHOT_TIMEOUT:-30}s; capturing the last frame" >&2
   mv "$tmp_a" "$out"; rm -f "$tmp_b"
 }
 

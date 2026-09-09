@@ -17,6 +17,10 @@ public struct PaywallOffer: Identifiable, Hashable, Sendable {
         self.trialText = trialText
     }
 
+    /// A subscription renews; a one-time unlock does not. Drives the auto-renewal disclosure
+    /// App Review guideline 3.1.2 requires on the paywall itself.
+    public var isSubscription: Bool { periodText != nil }
+
     public init(product: Product) {
         self.init(id: product.id, title: product.displayName, priceText: product.displayPrice, periodText: product.periodDescription, trialText: product.trialDescription)
     }

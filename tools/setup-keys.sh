@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 # Interactive key setup for the factory. Safe to re-run: Enter keeps the current value.
 #
-#   factory/tools/setup-keys.sh
+#   tools/setup-keys.sh
 #
 # Writes:
-#   factory/tools/fastlane/.env   App Store Connect key, team, bundle prefix, review contact (gitignored, chmod 600)
+#   tools/fastlane/.env         App Store Connect key, team, bundle prefix, review contact (gitignored, chmod 600)
 #   ~/.appstoreconnect/*.p8       the private key file (chmod 600)
 #   .env.local                    ANTHROPIC_API_KEY for the Guide page (gitignored)
 #   GitHub repository secrets     DATABASE_URL, DATABASE_AUTH_TOKEN, IFTTT_WEBHOOK_KEY (all optional)
 set -euo pipefail
 
-root=$(cd "$(dirname "$0")/../.." && pwd)
-envf="$root/factory/tools/fastlane/.env"
+root=$(cd "$(dirname "$0")/.." && pwd)
+envf="$root/tools/fastlane/.env"
 localf="$root/.env.local"
 keydir="$HOME/.appstoreconnect"
 mkdir -p "$keydir" && chmod 700 "$keydir"
