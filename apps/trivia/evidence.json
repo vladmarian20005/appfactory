@@ -1,0 +1,366 @@
+{
+  "query": "trivia",
+  "slug": "trivia",
+  "generatedAt": "2026-09-09T06:46:23.747Z",
+  "niche": {
+    "query": "trivia",
+    "appCount": 43,
+    "totalRevenueMid": 11022170,
+    "topAppRevenueMid": 2300000,
+    "topAppShare": 0.20867034349860328,
+    "medianRevenueMid": 64000,
+    "topAppName": "Trivia Crack: Brain Quiz Games",
+    "topAppRating": 4.6009,
+    "topAppExternalId": "651510680",
+    "grade": "open",
+    "gradeLabel": "Open field",
+    "headline": "$11M a month across 43 apps, top app takes 21%",
+    "verdict": "Demand is spread out. No single leader to dislodge, so distribution decides it.",
+    "computedAt": "2026-09-09T06:40:51.230Z",
+    "source": "cache"
+  },
+  "apps": [
+    {
+      "id": "651510680",
+      "name": "Trivia Crack: Brain Quiz Games",
+      "publisher": "Etermax",
+      "category": "Games",
+      "rating": 4.6009,
+      "ratingCount": 747778,
+      "released": "2013-10-26",
+      "version": "3.386.0",
+      "updated": "2026-09-07",
+      "price": 0,
+      "locales": 13,
+      "revenue": {
+        "low": 920000,
+        "mid": 2300000,
+        "high": 5800000
+      },
+      "downloadsMid": 170000,
+      "confidence": "medium",
+      "chartRanks": [],
+      "versionsSeen": 1,
+      "keywords": [
+        "trivia",
+        "crack",
+        "quiz",
+        "questions",
+        "artificial",
+        "intelligence",
+        "create",
+        "com",
+        "play",
+        "https"
+      ],
+      "descriptionOpening": "AI-Powered Quiz Creator from Trivia Crack Introducing AI-Powered Quiz Creator, a brand new quiz experience within Trivia Crack that takes trivia gaming to the next level of questions. Thanks to artificial intelligence (AI), you can now play endless, unique trivia games! This advanced artificial intelligence is key. The artificial intelligence (AI) lets you play any trivia topic you want, arrange letters, answer true or false questions, and much more. And the best part is that you can create it in just a few minutes! The questions from the artificial intelligence AI are fantastic. Create your o",
+      "reviewsSampled": 0,
+      "feedEmpty": true,
+      "unhappyShare": 0,
+      "complaints": {
+        "themes": [],
+        "quotes": []
+      },
+      "praise": {
+        "themes": [],
+        "quotes": []
+      },
+      "recentVersionsInReviews": []
+    },
+    {
+      "id": "1448693888",
+      "name": "QuizTime - Trivia",
+      "publisher": "HUNDRED YEARS LIMITED",
+      "category": "Entertainment",
+      "rating": 4.50225,
+      "ratingCount": 60132,
+      "released": "2019-02-05",
+      "version": "1.39.0",
+      "updated": "2026-03-27",
+      "price": 0,
+      "locales": 8,
+      "revenue": {
+        "low": 440000,
+        "mid": 1100000,
+        "high": 2800000
+      },
+      "downloadsMid": 30000,
+      "confidence": "medium",
+      "chartRanks": [],
+      "versionsSeen": 1,
+      "keywords": [
+        "quiz",
+        "subscription",
+        "period",
+        "quiztime",
+        "renewal",
+        "music",
+        "charged",
+        "account",
+        "interesting",
+        "test"
+      ],
+      "descriptionOpening": "Answer interesting quizzes and test your knowledge! *Description* Quiztime is a fun quiz app involving logos, animals, music, sports, movies and more. It combines thousands of interesting pictures and questions. If you are a logo enthusiast, we have thousands of interesting logo quizzes for you to answer; If you are a music and movie enthusiast, we have thousands of music lyrics and movie lines to test your memory; If you study animals or flowers, our topics of animals and plants can test your ability. Come to Quiz Time, check what you know, learn what you don't know! *Quiz type offered* 1. Lo",
+      "reviewsSampled": 0,
+      "feedEmpty": true,
+      "unhappyShare": 0,
+      "complaints": {
+        "themes": [],
+        "quotes": []
+      },
+      "praise": {
+        "themes": [],
+        "quotes": []
+      },
+      "recentVersionsInReviews": []
+    },
+    {
+      "id": "1508418993",
+      "name": "Trivia Star: Trivia Games Quiz",
+      "publisher": "Super Lucky Games LLC",
+      "category": "Games",
+      "rating": 4.91523,
+      "ratingCount": 314256,
+      "released": "2020-06-19",
+      "version": "1.418",
+      "updated": "2026-08-14",
+      "price": 0,
+      "locales": 8,
+      "revenue": {
+        "low": 400000,
+        "mid": 1000000,
+        "high": 2500000
+      },
+      "downloadsMid": 150000,
+      "confidence": "medium",
+      "chartRanks": [],
+      "versionsSeen": 1,
+      "keywords": [
+        "trivia",
+        "subscription",
+        "star",
+        "account",
+        "end",
+        "period",
+        "hours",
+        "com",
+        "itunes",
+        "brain"
+      ],
+      "descriptionOpening": "⁕ Join the Ultimate Brain Challenge with Trivia Star! Whether you're a movie buff, a sports fanatic, or a science geek, there's something for everyone. ⁕ ► Massive Variety, Endless Fun: With over 60+ categories ranging from General Knowledge to Music, and 10,000+ trivia questions, the fun never stops! ► Increasing Challenge: Starts easy and becomes challenging. Perfect for sharpening your brain! ► Live Events: Participate in tournaments and fun challenges. ► Brain Training: Enhance your knowledge, memory, and quick-thinking skills. ► Engaging for All Ages: Perfect for a solo challenge or playi",
+      "reviewsSampled": 0,
+      "feedEmpty": true,
+      "unhappyShare": 0,
+      "complaints": {
+        "themes": [],
+        "quotes": []
+      },
+      "praise": {
+        "themes": [],
+        "quotes": []
+      },
+      "recentVersionsInReviews": []
+    },
+    {
+      "id": "1424533120",
+      "name": "Trivia Crack Retro Brain Games",
+      "publisher": "Etermax",
+      "category": "Games",
+      "rating": 4.65186,
+      "ratingCount": 285804,
+      "released": "2018-10-23",
+      "version": "1.228.0",
+      "updated": "2026-08-11",
+      "price": 0,
+      "locales": 28,
+      "revenue": {
+        "low": 370000,
+        "mid": 920000,
+        "high": 2300000
+      },
+      "downloadsMid": 100000,
+      "confidence": "medium",
+      "chartRanks": [],
+      "versionsSeen": 1,
+      "keywords": [
+        "find",
+        "guess",
+        "study",
+        "train",
+        "connect",
+        "etermax",
+        "trivia",
+        "brain",
+        "fun",
+        "knowledge"
+      ],
+      "descriptionOpening": "Guess what! You can rediscover the fun of answering questions, challenging friends, and exploring the world, and find joy in a timeless experience. Train your brain, connect with other players, study new facts, find your favorite topics, and guess every answer that comes your way. Get ready to train your mind through endless questions in this quizz. Train daily to sharpen your memory, train your thinking speed, and train your curiosity. Train your focus in every match. Study with joy and passion. The more you train, the more you’ll find your potential growing for studying. Connect with people ",
+      "reviewsSampled": 0,
+      "feedEmpty": true,
+      "unhappyShare": 0,
+      "complaints": {
+        "themes": [],
+        "quotes": []
+      },
+      "praise": {
+        "themes": [],
+        "quotes": []
+      },
+      "recentVersionsInReviews": []
+    },
+    {
+      "id": "1275023828",
+      "name": "QuizzLand. Quiz & Trivia game",
+      "publisher": "MNO GO APPS LTD",
+      "category": "Games",
+      "rating": 4.70639,
+      "ratingCount": 221910,
+      "released": "2018-02-14",
+      "version": "3.16.007",
+      "updated": "2026-06-26",
+      "price": 0,
+      "locales": 36,
+      "revenue": {
+        "low": 280000,
+        "mid": 710000,
+        "high": 1800000
+      },
+      "downloadsMid": 74000,
+      "confidence": "medium",
+      "chartRanks": [],
+      "versionsSeen": 1,
+      "keywords": [
+        "trivia",
+        "quizzland",
+        "questions",
+        "game",
+        "play",
+        "friends",
+        "fun",
+        "levels",
+        "games",
+        "players"
+      ],
+      "descriptionOpening": "Join over 100 million happy users. Challenge your brain and play with friends. Enjoy the most addictive quiz game! Play QuizzLand for free! Discover 50,000 trivia questions in multiple languages. HIGHLIGHTS • fun for the entire family • absorbing learning process • fast lives’ refilling • unique multiplayer and solo modes • detailed explanation for each question • easy, normal and hard difficulty levels • challenging mind games QuizzLand makes learning easy and fun! HOW TO PLAY ••••••••••••••• Each level consists of 21 trivia questions that cover a wide range of topics. To complete a level, yo",
+      "reviewsSampled": 0,
+      "feedEmpty": true,
+      "unhappyShare": 0,
+      "complaints": {
+        "themes": [],
+        "quotes": []
+      },
+      "praise": {
+        "themes": [],
+        "quotes": []
+      },
+      "recentVersionsInReviews": []
+    }
+  ],
+  "others": [
+    {
+      "id": "6468810871",
+      "name": "Quiz & IQ test: Triviascapes",
+      "rating": 4.6855,
+      "ratingCount": 153460,
+      "revenueMid": 590000
+    },
+    {
+      "id": "6447509943",
+      "name": "Trivia Crush - Quiz Games",
+      "rating": 4.80205,
+      "ratingCount": 144363,
+      "revenueMid": 530000
+    },
+    {
+      "id": "352969997",
+      "name": "BuzzFeed - Quiz, Trivia & News",
+      "rating": 4.6547,
+      "ratingCount": 233654,
+      "revenueMid": 490000
+    },
+    {
+      "id": "723795263",
+      "name": "Trivia Crack Premium Quiz Game",
+      "rating": 4.66475,
+      "ratingCount": 101263,
+      "revenueMid": 480000
+    },
+    {
+      "id": "1467771859",
+      "name": "Logo Quiz 2026: Guess the logo",
+      "rating": 4.93689,
+      "ratingCount": 106652,
+      "revenueMid": 350000
+    },
+    {
+      "id": "6738333688",
+      "name": "Bible Trivia - Bible Quiz Game",
+      "rating": 4.85208,
+      "ratingCount": 76177,
+      "revenueMid": 340000
+    },
+    {
+      "id": "1096884447",
+      "name": "Jeopardy! Trivia TV Game Show",
+      "rating": 4.34612,
+      "ratingCount": 87576,
+      "revenueMid": 280000
+    },
+    {
+      "id": "1565866365",
+      "name": "Trivia Puzzle Fortune Games!",
+      "rating": 4.94118,
+      "ratingCount": 81573,
+      "revenueMid": 270000
+    },
+    {
+      "id": "652945710",
+      "name": "100 PICS Quiz - Picture Trivia",
+      "rating": 4.63452,
+      "ratingCount": 73161,
+      "revenueMid": 230000
+    },
+    {
+      "id": "975364678",
+      "name": "SongPop Classic - Music Trivia",
+      "rating": 4.67936,
+      "ratingCount": 63207,
+      "revenueMid": 200000
+    },
+    {
+      "id": "1527770686",
+      "name": "Adventure Trivia Crack",
+      "rating": 4.75684,
+      "ratingCount": 57476,
+      "revenueMid": 190000
+    },
+    {
+      "id": "1418794453",
+      "name": "Millionaire Quiz: Trivia Game",
+      "rating": 4.54882,
+      "ratingCount": 49522,
+      "revenueMid": 160000
+    },
+    {
+      "id": "1115249449",
+      "name": "Fight List - Categories Game",
+      "rating": 4.35972,
+      "ratingCount": 46634,
+      "revenueMid": 150000
+    },
+    {
+      "id": "1325285782",
+      "name": "Swagbucks Trivia for Money",
+      "rating": 4.76605,
+      "ratingCount": 44210,
+      "revenueMid": 140000
+    },
+    {
+      "id": "1611741868",
+      "name": "People Say - Trivia Quiz game",
+      "rating": 4.75634,
+      "ratingCount": 21940,
+      "revenueMid": 76000
+    }
+  ]
+}
