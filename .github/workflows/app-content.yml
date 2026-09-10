@@ -1,0 +1,135 @@
+name: app-content
+
+# The launch kit: landing page, video footage and scripts, posts, the listing copy.
+#
+# On macOS because step 2 of the skill records the app running on a simulator, which no
+# Linux runner can do. Everything else in here would be happy on ubuntu, but splitting the
+# job to save nothing is not worth the handoff — macOS runners are free on a public repo.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/
+        required: true
+        type: string
+      publish:
+        description: Push the landing page to starhiveconcept-site
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: app-content-${{ inputs.slug }}
+  cancel-in-progress: false
+
+jobs:
+  content:
+    runs-on: macos-26
+    timeout-minutes: 120
+    env:
+      SLUG: ${{ inputs.slug }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Preflight
+        env:
+          HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "::error::CLAUDE_CODE_OAUTH_TOKEN is not set. Generate one with 'claude setup-token' and add it: gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo ${{ github.repository }}"
+            exit 1
+          fi
+          # The skill's whole first step is "mirror the screenshot titles", so without
+          # screenshots it would invent them.
+          shots="apps/$SLUG/store/screenshots/en-US"
+          n=$(ls "$shots"/*.png 2>/dev/null | wc -l | tr -d ' ')
+          [ "$n" -ge 1 ] || { echo "::error::no screenshots in $shots. Run app-shots first."; exit 1; }
+          echo "Writing the launch kit for $SLUG from $n screenshot(s)"
+
+      - uses: ./.github/actions/mac-setup
+        with:
+          slug: ${{ inputs.slug }}
+          browser: "true"
+
+      - name: Write the launch kit
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Read .claude/skills/content/SKILL.md and follow it for the app `${{ inputs.slug }}`.
+
+            You are on a GitHub macOS runner. There is no GUI and nobody to ask. A simulator
+            is booted and its UDID is in $SIM_UDID. Use Playwright (tools/screenshots/ shows
+            how) to render and read any HTML page — the `browse` binary the skill may mention
+            exists only on the owner's laptop.
+
+            Do not push anything to another repository. Write the landing page to
+            apps/${{ inputs.slug }}/content/site/index.html and stop there; a later step
+            publishes it.
+
+            Commit as you go, not once at the end.
+          claude_args: >-
+            --max-turns 80
+            --model claude-opus-5
+            --setting-sources project
+            --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
+            Bash(xcrun:*),Bash(ffmpeg:*),Bash(sips:*),Bash(node:*),Bash(npm:*),
+            Bash(tools/*),Bash(.github/scripts/*),Bash(git:*),Bash(ls:*),Bash(cat:*),
+            Bash(mkdir:*),Bash(cp:*),Bash(mv:*),Bash(rm:*),Bash(find:*),Bash(wc:*)"
+
+      - name: Commit whatever it left
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "factory"
+          git config user.email "factory@users.noreply.github.com"
+          git add "apps/$SLUG/content"
+          git diff --cached --quiet || git commit -m "$SLUG: launch kit"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push origin "HEAD:${GITHUB_REF_NAME}" || echo "::warning::push failed; the artifact has the work"
+
+      - name: Publish the landing page
+        if: inputs.publish && success()
+        env:
+          SITE_REPO_TOKEN: ${{ secrets.SITE_REPO_TOKEN }}
+        run: |
+          set -euo pipefail
+          page="apps/$SLUG/content/site/index.html"
+          [ -f "$page" ] || { echo "::error::$page was never written"; exit 1; }
+          : "${SITE_REPO_TOKEN:?not set}"
+          git clone --depth 1 \
+            "https://x-access-token:${SITE_REPO_TOKEN}@github.com/vladmarian20005/starhiveconcept-site.git" site-repo
+          mkdir -p "site-repo/site/$SLUG"
+          cp "$page" "site-repo/site/$SLUG/index.html"
+          cd site-repo
+          git config user.name "factory"
+          git config user.email "factory@users.noreply.github.com"
+          git add "site/$SLUG/index.html"
+          if git diff --cached --quiet; then
+            echo "landing page unchanged"
+          else
+            git commit -m "$SLUG: landing page"
+            git push origin HEAD:main
+          fi
+
+      - name: Record the result
+        if: always()
+        run: |
+          .github/scripts/record-stage.sh "$SLUG" content \
+            "${{ job.status == 'success' && 'ok' || 'fail' }}"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: content-${{ inputs.slug }}-${{ github.run_id }}
+          path: apps/${{ inputs.slug }}/content/**
+          retention-days: 14
+          if-no-files-found: warn
