@@ -3,10 +3,10 @@
   "slug": "tallies",
   "stages": {
     "compliance": {
-      "status": "ok",
-      "sha": "5a478ce58a6b72f002b75d195a047d6abc035af8",
-      "at": "2026-09-10T12:09:36.954Z",
-      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34475124168"
+      "status": "fail",
+      "sha": "a32a10daa56f84dac757b98aed93505e51c712cb",
+      "at": "2026-09-10T14:02:02.888Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34486347848"
     },
     "verify": {
       "status": "ok",
