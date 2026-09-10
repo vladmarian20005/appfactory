@@ -12,8 +12,11 @@ no Xcode window. Everything below works there. Nothing below needs a human.
 
 ## Rules that are not negotiable
 
-- **Commit after each screen works, never once at the end.** If the run dies mid-task the
-  runner is destroyed and uncommitted work is gone with it.
+- **Commit *and push* after each screen works, never once at the end.** A commit alone does
+  not save anything here: the repository you are committing into is on an ephemeral runner
+  and is destroyed with it. `git pull --rebase origin "$GITHUB_REF_NAME" && git push origin
+  HEAD:"$GITHUB_REF_NAME"`. A half-finished app on the branch is worth far more than three
+  hours of work that no longer exists.
 - **Build against the iOS 26 SDK.** App Store Connect rejects anything older. Deployment
   target stays iOS 17 — SDK and deployment target are independent.
 - **Use standard SwiftUI components.** Building against the iOS 26 SDK applies Liquid Glass

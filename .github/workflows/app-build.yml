@@ -105,8 +105,9 @@ jobs:
             nobody to ask. A simulator is already booted and its UDID is in $SIM_UDID, so
             tools/sim.sh will use it without looking one up.
 
-            Commit after each screen works, not once at the end. If this run is cut short,
-            uncommitted work is destroyed with the runner.
+            Commit AND PUSH after each screen works, not once at the end. Committing alone
+            saves nothing: this checkout is on an ephemeral runner and dies with it. Push to
+            the branch as you go, even when the app is half finished.
 
             Finish by making .github/scripts/verify-app.sh ${{ inputs.slug }} pass.
           claude_args: >-

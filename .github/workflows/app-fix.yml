@@ -125,7 +125,8 @@ jobs:
             Read any screenshot you take. A screen that compiles and renders wrong is what
             this loop exists to catch.
 
-            Commit your work, then make verify-app.sh pass.
+            Commit and push your work as you go — this checkout is on an ephemeral runner
+            and a commit that is never pushed dies with it. Then make verify-app.sh pass.
           claude_args: >-
             --max-turns 60
             --model claude-opus-5
