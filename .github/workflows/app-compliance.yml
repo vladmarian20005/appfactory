@@ -129,7 +129,7 @@ jobs:
         run: .github/scripts/compliance.sh "${{ matrix.slug }}"
 
       - name: Record the result
-        if: always()
+        if: ${{ !cancelled() }}
         run: |
           .github/scripts/record-stage.sh "${{ matrix.slug }}" compliance \
             "${{ steps.gate.outcome == 'success' && 'ok' || 'fail' }}"

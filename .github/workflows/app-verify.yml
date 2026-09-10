@@ -105,8 +105,9 @@ jobs:
         continue-on-error: true
         run: .github/scripts/verify-app.sh "${{ matrix.slug }}"
 
+      # not always(): a cancelled run has judged nothing, and always() fires on cancel.
       - name: Record the result
-        if: always()
+        if: ${{ !cancelled() }}
         run: |
           .github/scripts/record-stage.sh "${{ matrix.slug }}" verify \
             "${{ steps.verify.outcome == 'success' && 'ok' || 'fail' }}"

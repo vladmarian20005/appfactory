@@ -127,7 +127,7 @@ jobs:
           echo "app-compliance dispatched — the last stage before a human is asked." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Record the result
-        if: always()
+        if: ${{ !cancelled() }}
         run: |
           .github/scripts/record-stage.sh "$SLUG" pages \
             "${{ job.status == 'success' && 'ok' || 'fail' }}"

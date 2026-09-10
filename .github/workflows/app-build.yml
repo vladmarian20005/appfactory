@@ -188,7 +188,7 @@ jobs:
           git push origin "HEAD:${FACTORY_BRANCH}" || echo "::warning::push failed; the artifact still has the work"
 
       - name: Record the result
-        if: always()
+        if: ${{ !cancelled() }}
         run: |
           v="${{ steps.verify.outcome == 'success' && 'ok' || 'fail' }}"
           .github/scripts/record-stage.sh "$SLUG" build "$v"
