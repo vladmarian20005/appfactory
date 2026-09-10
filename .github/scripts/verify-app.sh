@@ -31,6 +31,13 @@ echo "::group::Build $scheme"
 tools/sim.sh build "$app_dir" "$scheme"
 echo "::endgroup::"
 
+# What App Store Connect would reject at upload, caught on the simulator build instead.
+echo "::group::Check the bundle"
+built=$(find "$app_dir/.build/Build/Products/Debug-iphonesimulator" -maxdepth 1 -name "*.app" | head -1)
+[ -n "$built" ] || { echo "::error::the build produced no .app"; exit 1; }
+.github/scripts/bundle-check.sh "$built"
+echo "::endgroup::"
+
 # Crash reports written before this run must not be blamed on it. A marker file rather than
 # `find -newermt`, which is GNU-only and silently matches nothing on macOS's BSD find.
 crash_dir="$HOME/Library/Logs/DiagnosticReports"

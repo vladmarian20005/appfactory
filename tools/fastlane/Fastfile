@@ -27,6 +27,7 @@
 require "json"
 require "time"
 require "fileutils"
+require "tmpdir"
 
 default_platform(:ios)
 
@@ -213,6 +214,17 @@ platform :ios do
         provisioningProfiles: { ENV.fetch("BUNDLE_ID") => profile },
       },
     )
+
+    # The facts App Store Connect checks at upload, checked on the IPA first. The same script
+    # judged the simulator build in verify; here it judges the exact bundle about to be sent,
+    # because a rejection from Apple arrives after the archive and costs the whole run.
+    ipa = lane_context[SharedValues::IPA_OUTPUT_PATH]
+    Dir.mktmpdir("bundle-check") do |tmp|
+      sh("unzip", "-q", ipa, "Payload/*", "-d", tmp)
+      built = Dir.glob(File.join(tmp, "Payload", "*.app")).first
+      UI.user_error!("no .app inside #{ipa}") unless built
+      sh(File.expand_path("../../.github/scripts/bundle-check.sh", __dir__), built)
+    end
 
     # Never hold a macOS runner waiting for Apple to process a build. The release lane runs
     # later, on Linux, and picks the processed build up there.
