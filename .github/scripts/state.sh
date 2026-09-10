@@ -3,7 +3,7 @@
 #
 #   state.sh <slug> get   <field> [default]
 #   state.sh <slug> set   <field> <value>
-#   state.sh <slug> stage <name> ok|fail
+#   state.sh <slug> stage <name> ok|fail [sha]
 #
 # Kept deliberately small: STATUS.md is the prose record for humans, this is the handful of
 # machine-readable facts a workflow needs — how many fix attempts have been spent, whether
@@ -60,9 +60,9 @@ case "$op" in
       };
       s.slug ??= file.split("/")[1];
       fs.writeFileSync(file, JSON.stringify(s,null,2)+"\n");
-    ' "$file" "$field" "$status" "$(git rev-parse HEAD)" \
+    ' "$file" "$field" "$status" "${5:-$(git rev-parse HEAD)}" \
       "${GITHUB_RUN_ID:-}" "${GITHUB_SERVER_URL:-https://github.com}" "${GITHUB_REPOSITORY:-}"
-    echo "$slug: stage $field = $status at $(git rev-parse --short HEAD)"
+    echo "$slug: stage $field = $status at $(git rev-parse --short "${5:-HEAD}")"
     ;;
   *) echo "state.sh: unknown op '$op'" >&2; exit 1 ;;
 esac
