@@ -23,10 +23,10 @@
       "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34459765252"
     },
     "submit": {
-      "status": "fail",
-      "sha": "be79728616de5ec72de1b07474564e08397cbf4a",
-      "at": "2026-09-10T11:51:54.714Z",
-      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34473347095"
+      "status": "ok",
+      "sha": "bf678c56dd52242355e1141ba232fc53fc84cfc9",
+      "at": "2026-09-10T12:43:27.366Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34478005203"
     }
   }
 }
