@@ -127,51 +127,105 @@ struct CounterRow: View {
     let counter: Counter
     let onIncrement: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
+        Group {
+            // Side by side there is no room for a name, a total and a button at an
+            // accessibility text size: the total wrapped mid-number, so 334 read as "33 4".
+            if dynamicTypeSize.isAccessibilitySize {
+                stacked
+            } else {
+                sideBySide
+            }
+        }
+        .padding(16)
+        .frame(minHeight: 76)
+        .background(Color(.secondarySystemGroupedBackground),
+                    in: RoundedRectangle(cornerRadius: FactoryTheme.cornerRadius, style: .continuous))
+    }
+
+    private var sideBySide: some View {
         HStack(spacing: 12) {
             NavigationLink(value: counter) {
                 HStack(spacing: 14) {
                     Capsule()
                         .fill(counter.swatch.color)
                         .frame(width: 6, height: 40)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(counter.name)
-                            .font(.headline)
-                            .lineLimit(2)
-                        Text(counter.dailyGoal > 0
-                             ? "\(counter.todayTotal) of \(counter.dailyGoal) today"
-                             : "\(counter.todayTotal) today")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-
+                    labels
                     Spacer(minLength: 8)
-
-                    Text("\(counter.total)")
-                        .scaledFont(size: 32, weight: .semibold, design: .rounded, relativeTo: .title)
-                        .monospacedDigit()
-                        .contentTransition(.numericText())
-                        .foregroundStyle(.primary)
+                    total
                 }
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityHint("Opens the counter")
 
-            Button(action: onIncrement) {
-                Image(systemName: "plus")
-                    .font(.title3.weight(.semibold))
-                    .frame(width: 44, height: 44)
-                    .background(counter.swatch.color.opacity(0.16), in: Circle())
-                    .foregroundStyle(counter.swatch.color)
+            plusButton
+                .frame(width: 44, height: 44)
+        }
+    }
+
+    private var stacked: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            NavigationLink(value: counter) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 10) {
+                        Circle()
+                            .fill(counter.swatch.color)
+                            .frame(width: 14, height: 14)
+                        labels
+                    }
+                    total
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Add one to \(counter.name)")
+            .accessibilityHint("Opens the counter")
+
+            plusButton
+                .frame(maxWidth: .infinity, minHeight: 56)
         }
-        .padding(16)
-        .frame(minHeight: 76)
-        .background(Color(.secondarySystemGroupedBackground),
-                    in: RoundedRectangle(cornerRadius: FactoryTheme.cornerRadius, style: .continuous))
+    }
+
+    private var labels: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(counter.name)
+                .font(.headline)
+                .lineLimit(3)
+                // Without this the name truncates to one line instead of using the three it
+                // is allowed: the enclosing HStack will not grow the text's height for it.
+                .fixedSize(horizontal: false, vertical: true)
+            Text(counter.dailyGoal > 0
+                 ? "\(counter.todayTotal) of \(counter.dailyGoal) today"
+                 : "\(counter.todayTotal) today")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private var total: some View {
+        Text("\(counter.total)")
+            .scaledFont(size: 32, weight: .semibold, design: .rounded, relativeTo: .title)
+            .monospacedDigit()
+            .contentTransition(.numericText())
+            .foregroundStyle(.primary)
+            // A wrapped number is a different number. Shrink it rather than break it.
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
+    }
+
+    private var plusButton: some View {
+        Button(action: onIncrement) {
+            Image(systemName: "plus")
+                .font(.title3.weight(.semibold))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(counter.swatch.color.opacity(0.16),
+                            in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+                .foregroundStyle(counter.swatch.color)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Add one to \(counter.name)")
     }
 }

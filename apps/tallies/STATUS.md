@@ -61,10 +61,24 @@ pipeline smoke test the spec asked for, and the pipeline ran.
   ambiguous — but there is no tap driver on the runner, so this was reasoned about and
   checked visually (the system draws its own disclosure chevron for the link), not tapped.
 
+## Dark mode and large text
+
+Both passes were run on the simulator and the captures read back.
+
+- **Dark mode holds** on the counters list and the detail screen. Everything is a system
+  colour or a palette colour over `secondarySystemGroupedBackground`, so there was nothing
+  to fix.
+- **Large text needed a fix, and got one.** At
+  `accessibility-extra-extra-extra-large` the counter row broke: the total wrapped
+  mid-number, so 334 rendered as "33" over "4" — a wrapped number is a different number.
+  The row now lays out vertically at accessibility sizes, with the name over the total over a
+  full-width `+`, and the total carries `lineLimit(1)` and `minimumScaleFactor` so it shrinks
+  instead of breaking. The name needed `fixedSize(horizontal: false, vertical: true)` as
+  well, or the enclosing `HStack` truncated it to one line instead of the three it was
+  allowed. The default-size layout is unchanged, and `verify-app.sh` passes after the change.
+- The detail screen already held at that size: the number, the ring and the buttons all
+  scale, and the card scrolls rather than clipping.
+
 ## Not done yet
 
-- Dark mode and large-text passes have not been run. Everything on screen is a standard
-  SwiftUI component with system colours and no frozen font sizes — the one display-size
-  number uses `scaledFont`, which scales with Dynamic Type — so both are expected to hold,
-  but expected is not checked.
 - `/ship tallies` is the next stage: screenshots, then compliance, then the page.
