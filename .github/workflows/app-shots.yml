@@ -104,6 +104,8 @@ jobs:
         run: |
           .github/scripts/record-stage.sh "$SLUG" shots \
             "${{ job.status == 'success' && 'ok' || 'fail' }}"
+          # The capture step is verify-app.sh, so a green here is a green verify too.
+          [ "${{ job.status }}" = "success" ] && .github/scripts/record-stage.sh "$SLUG" verify ok || true
 
       - uses: actions/upload-artifact@v4
         if: always()
