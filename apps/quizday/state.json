@@ -2,5 +2,13 @@
   "fix_attempts": 0,
   "slug": "quizday",
   "device_tested": false,
-  "storekit_verified": false
+  "storekit_verified": false,
+  "stages": {
+    "compliance": {
+      "status": "ok",
+      "sha": "478f69e751d411c8c69c51514dd5ab06ccdad5f2",
+      "at": "2026-09-10T08:55:52.305Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34457815276"
+    }
+  }
 }
