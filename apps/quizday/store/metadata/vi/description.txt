@@ -1,0 +1,23 @@
+Mười câu đố mỗi ngày. Cùng một bộ mười câu cho tất cả mọi người, ở mọi nơi. Chơi trong hai phút là xong, hẹn ngày mai.
+
+Không quảng cáo. Không xen giữa các câu, không sau khi trả lời sai, không ở đâu cả. Không có lượt chơi phải chờ, không có xu phải mua, không có gì cạn đi rồi đòi tiền để chơi tiếp.
+
+CÂU NÀO CŨNG CÓ GIẢI THÍCH
+Sai một câu, bạn biết ngay vì sao, kèm lời giải ngắn và nguồn của nó. Bạn học được điều gì đó ngay cả ở những câu trả lời sai. Thấy đáp án chưa đúng? Báo lỗi ngay trên màn hình đó.
+
+MỘT VÒNG MỖI NGÀY
+Mười câu của hôm nay xuất hiện lúc nửa đêm và giống nhau với mọi người, nên bạn có thể so điểm với bạn bè mà không lộ đáp án. Chia sẻ kết quả bằng một hàng ô màu — chỉ có con số, không có đáp án.
+
+GIỮ CHUỖI NGÀY
+Lịch hiển thị mọi ngày bạn đã chơi, đậm nhạt theo kết quả. Chuỗi hiện tại, chuỗi dài nhất, số ngày đã chơi. Bật một lời nhắc nhẹ nhàng nếu bạn muốn, hoặc không bật gì cả.
+
+BA MƯƠI VÒNG CÂU HỎI TỰ BIÊN SOẠN
+Ba trăm câu về thiên nhiên, lịch sử, khoa học, địa lý, phim ảnh và truyền hình, âm nhạc, thể thao, ẩm thực và công nghệ. Mỗi vòng đi từ dễ đến khó.
+
+QUIZDAY PRO — TÙY CHỌN
+Mười câu mỗi ngày miễn phí mãi mãi. Pro thêm phần luyện tập: số vòng không giới hạn ở bất kỳ chủ đề nào, mức dễ, trung bình hoặc khó, cùng tỉ lệ đúng theo từng chủ đề để thấy bạn yếu ở đâu. Pro thêm phần luyện tập, không phải quyền truy cập.
+
+RIÊNG TƯ NGAY TỪ ĐẦU
+Không tài khoản. Không đăng ký. Không phân tích, không trình theo dõi, không SDK quảng cáo. Kết quả của bạn nằm trên máy bạn. Quizday chỉ dùng mạng khi bạn bắt đầu một vòng luyện tập.
+
+Câu hỏi ở chế độ luyện tập lấy từ Open Trivia Database.
