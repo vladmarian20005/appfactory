@@ -11,10 +11,10 @@
       "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34463905553"
     },
     "verify": {
-      "status": "ok",
-      "sha": "d94c2df137eb4ce6b06c401fa92522e264b77f79",
-      "at": "2026-09-10T09:15:54.646Z",
-      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34458916782"
+      "status": "fail",
+      "sha": "88c805ed95101e2e5702c528ba33210da2baeccc",
+      "at": "2026-09-10T10:10:32.990Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34463905543"
     },
     "pages": {
       "status": "ok",
