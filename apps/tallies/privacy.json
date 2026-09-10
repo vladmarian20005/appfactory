@@ -1,0 +1,50 @@
+{
+  "_comment": "The single source of truth for what this app does with data. Three things are generated from it and must never drift apart: ios/App/PrivacyInfo.xcprivacy, store/app_privacy_details.json, and the published privacy policy page. Change this file, re-run the generators, do not hand-edit the outputs.",
+
+  "appName": "Tallies",
+  "company": "Starhive Concept Srl",
+  "companyURL": "https://starhiveconcept.com/",
+  "effectiveDate": "2026-09-10",
+  "supportEmail": "support@starhiveconcept.com",
+  "pageSlug": "tallies-privacy-policy-terms",
+
+  "collects": [],
+
+  "storesOnDevice": [
+    "Your counters: the name you gave each one, the colour you picked and the daily goal you set, if you set one.",
+    "Every tap, with the time it happened, so the app can show a total, a chart of the last fortnight and the history screen.",
+    "One setting: whether you have been through onboarding."
+  ],
+
+  "network": [],
+
+  "requiredReasonAPIs": [
+    {
+      "category": "NSPrivacyAccessedAPICategoryUserDefaults",
+      "reason": "CA92.1",
+      "why": "@AppStorage, used only for this app's own settings."
+    }
+  ],
+
+  "purchases": {
+    "type": "subscription",
+    "name": "Tallies Pro",
+    "products": ["Weekly", "Yearly"],
+    "trial": "3-day free trial",
+    "processor": "Apple",
+    "freeTier": "Three counters and the last seven days of each counter's chart are free forever, with no ads. Pro adds room and the history screen, not access to what you have already counted."
+  },
+
+  "notifications": {
+    "used": false,
+    "why": "Tallies sends no notifications. It has nothing to remind you about that you did not ask it to count."
+  },
+
+  "ads": false,
+  "analytics": false,
+  "tracking": false,
+  "account": false,
+  "childDirected": false,
+
+  "attribution": "Tallies makes no network connection of any kind. There is no server to talk to, no account to make, and nothing to sync."
+}

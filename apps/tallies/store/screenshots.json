@@ -1,0 +1,33 @@
+{
+  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/tallies/store/screenshots.json apps/tallies/store/screenshots/en-US. Raw captures come from app-verify (apps/tallies/qa) and are copied into store/raw. The first title is the Promise from SPEC.md; the fourth is the Wedge said plainly.",
+  "background": "linear-gradient(165deg,#7C2D12 0%,#C2410C 58%,#F2994A 100%)",
+  "textColor": "#FFFFFF",
+  "accent": "rgba(255,255,255,.80)",
+  "shots": [
+    {
+      "src": "raw/01-counters.png",
+      "title": "Count anything, no account",
+      "subtitle": "Tap the plus. That is the whole app."
+    },
+    {
+      "src": "raw/02-detail.png",
+      "title": "See what the week looked like",
+      "subtitle": "Every tap is kept with the day it happened."
+    },
+    {
+      "src": "raw/03-history.png",
+      "title": "A history you can read back",
+      "subtitle": "Grouped by day, across every counter."
+    },
+    {
+      "src": "raw/04-settings.png",
+      "title": "No ads. No sign-in. No network.",
+      "subtitle": "Nothing you count ever leaves this phone."
+    },
+    {
+      "src": "raw/05-paywall.png",
+      "title": "Three counters stay free",
+      "subtitle": "Pro adds room, not access."
+    }
+  ]
+}

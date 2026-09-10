@@ -1,0 +1,1 @@
+First release. Counters on one screen, a goal ring, a fortnight of bars on every counter, and a history grouped by day.
