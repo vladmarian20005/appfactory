@@ -25,7 +25,9 @@ on:
 
 permissions:
   contents: write
-  actions: read
+  # read to inspect the failed run, write to dispatch the next attempt. A push made with
+  # GITHUB_TOKEN never fires app-verify, so the loop has to re-arm itself.
+  actions: write
   id-token: write
 
 jobs:
@@ -147,8 +149,34 @@ jobs:
           git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - name: Re-verify
+        id: reverify
         if: steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'failure'
+        continue-on-error: true
         run: .github/scripts/verify-app.sh "${{ steps.gate.outputs.slug }}"
+
+      - name: Try again, or stop and ask
+        if: steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLUG: ${{ steps.gate.outputs.slug }}
+          ATTEMPT: ${{ steps.gate.outputs.attempt }}
+        run: |
+          set -euo pipefail
+          if [ "${{ steps.reverify.outcome }}" = "success" ]; then
+            echo "✅ \`$SLUG\` fixed on attempt $ATTEMPT of 3." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if [ "$ATTEMPT" -lt 3 ]; then
+            gh workflow run app-fix.yml \
+              -f slug="$SLUG" \
+              -f reason="attempt $ATTEMPT did not fix it; run ${{ github.run_id }}" \
+              --ref "${GITHUB_REF_NAME}"
+            echo "Attempt $ATTEMPT failed; attempt $((ATTEMPT + 1)) dispatched." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::error::$SLUG is still broken after 3 attempts. A human needs to look at this."
+            echo "🛑 \`$SLUG\` still fails after 3 attempts. Read the artifact and take it by hand." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit 1
 
       - uses: actions/upload-artifact@v4
         if: always() && steps.gate.outputs.skip == 'false'
