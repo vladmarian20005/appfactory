@@ -31,6 +31,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Shape only. A length, a prefix match and a whitespace flag say whether the secret was
+      # pasted wrong or is a well-formed token Anthropic is rejecting — two different fixes —
+      # and none of the three reveals anything. This repository is public; the value is not
+      # printed and GitHub masks it regardless.
+      - name: Is the token even shaped like a token
+        env:
+          T: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          set -uo pipefail
+          if [ -z "${T:-}" ]; then echo "::error::the secret is empty"; exit 1; fi
+          printf 'length: %s\n' "${#T}"
+          case "$T" in
+            sk-ant-oat01-*) echo "prefix: sk-ant-oat01- ✅ (what 'claude setup-token' emits)" ;;
+            sk-ant-*)       echo "prefix: sk-ant-… but NOT sk-ant-oat01- — this looks like an API key, not a setup-token" ;;
+            *)              echo "prefix: ❌ does not start with sk-ant- at all" ;;
+          esac
+          case "$T" in
+            *[[:space:]]*) echo "::warning::the value contains whitespace — a stray newline or space came along with the paste" ;;
+            *)             echo "whitespace: none ✅" ;;
+          esac
+
       - name: Bare call, no claude_args
         if: ${{ !inputs.pass_args }}
         uses: anthropics/claude-code-action@v1

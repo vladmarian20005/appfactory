@@ -1,0 +1,154 @@
+name: app-preflight
+
+# The Monday health check on everything Apple can break without telling you.
+#
+# All three of these fail a Thursday submission, and all three are only fixable by a human
+# in Apple's console: an expired distribution certificate, a lapsed program membership or
+# an unsigned agreement, and a privacy URL that stopped answering. Finding them on Monday
+# turns each one into a ten-minute phone task instead of a blocked release day.
+
+on:
+  schedule:
+    # 06:00 UTC Monday, so the result is waiting before the week's first dispatch.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      BUNDLE_PREFIX: ${{ secrets.BUNDLE_PREFIX }}
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      FASTLANE_SKIP_UPDATE_CHECK: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: gem install fastlane --no-document -v '~> 2.228'
+
+      - name: App Store Connect API key
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          : "${ASC_KEY_P8:?ASC_KEY_P8 is not set; run tools/push-secrets.sh}"
+          mkdir -p ~/.appstoreconnect && chmod 700 ~/.appstoreconnect
+          printf '%s' "$ASC_KEY_P8" > ~/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8
+          chmod 600 ~/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8
+          echo "ASC_KEY_PATH=$HOME/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8" >> "$GITHUB_ENV"
+
+      # `check` proves the key still authenticates, lists the team's app records, writes
+      # your-apps.json for the scout, and warns on a distribution certificate inside 30 days.
+      - name: Key, app records and certificate expiry
+        id: asc
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          cd tools/fastlane
+          APPS_JSON_OUT="$GITHUB_WORKSPACE/your-apps.json" fastlane check 2>&1 | tee "$RUNNER_TEMP/check.log"
+
+      - name: Every live app's privacy and support URL
+        id: urls
+        continue-on-error: true
+        run: |
+          set -uo pipefail
+          fail=0
+          checked=0
+          for d in apps/*/; do
+            slug=$(basename "$d")
+            [ -f "$d/privacy.json" ] || continue
+            stage=$(sed -n 's/^stage:[[:space:]]*//p' "$d/STATUS.md" 2>/dev/null | head -1)
+            case "$stage" in shelved*|stopped*|archived*) continue ;; esac
+
+            base=$(node -p "const p=require('./$d/privacy.json'); (p.companyURL||'').replace(/\/$/,'')+'/'+p.pageSlug+'/'" 2>/dev/null) || continue
+            for url in "$base" "$base#support"; do
+              code=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 20 "$url" || echo 000)
+              checked=$((checked + 1))
+              if [ "$code" = "200" ]; then
+                echo "  ok   $code  $url"
+              else
+                echo "::error::$slug: $url returned $code. App Review rejects a version whose privacy URL does not answer."
+                fail=1
+              fi
+            done
+          done
+          echo "checked $checked URL(s)"
+          exit $fail
+
+      - name: Summarise, and raise an issue if a human is needed
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          asc="${{ steps.asc.outcome }}"
+          urls="${{ steps.urls.outcome }}"
+
+          # `check` reports an expiring certificate as a warning, not a failure, so grep for it.
+          expiring=$(grep -c "export a fresh .p12" "$RUNNER_TEMP/check.log" 2>/dev/null || echo 0)
+
+          {
+            echo "## Monday preflight"
+            echo
+            echo "| Check | Result |"
+            echo "| --- | --- |"
+            echo "| App Store Connect key | $([ "$asc" = success ] && echo '✅ authenticates' || echo '❌ failed') |"
+            echo "| Privacy and support URLs | $([ "$urls" = success ] && echo '✅ all 200' || echo '❌ one or more did not answer') |"
+            echo "| Distribution certificate | $([ "$expiring" -gt 0 ] && echo '⚠️ expires within 30 days' || echo '✅ more than 30 days left') |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          [ "$asc" = success ] && [ "$urls" = success ] && [ "$expiring" -eq 0 ] && {
+            echo "Nothing needs you this week." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          }
+
+          body=$(cat <<EOF
+          The Monday preflight found something only you can fix.
+
+          - App Store Connect key: $([ "$asc" = success ] && echo "fine" || echo "**did not authenticate.** The key may be revoked or the program membership lapsed. Check App Store Connect → Users and Access → Integrations.")
+          - Privacy and support URLs: $([ "$urls" = success ] && echo "fine" || echo "**one did not return 200.** App Review rejects a version whose privacy URL 404s, and it does so after the upload. See the run log for which.")
+          - Distribution certificate: $([ "$expiring" -gt 0 ] && echo "**expires within 30 days.** Export a fresh .p12 from Keychain Access (the *Apple Distribution* identity, with its private key) and update DIST_CERT_P12_BASE64." || echo "fine")
+
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          EOF
+          )
+
+          # One issue, reopened and updated, rather than a new one every Monday.
+          existing=$(gh issue list --label "blocked:owner" --state open \
+            --search "Preflight in:title" --json number -q '.[0].number' 2>/dev/null || echo "")
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+            echo "Updated issue #$existing" >> "$GITHUB_STEP_SUMMARY"
+          else
+            gh label create "blocked:owner" --color B60205 --description "Needs the owner in Apple's console" 2>/dev/null || true
+            n=$(gh issue create --title "Preflight: something needs you in Apple's console" \
+              --label "blocked:owner" --body "$body" | grep -oE '[0-9]+$')
+            echo "Opened issue #$n" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit 1
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: preflight-${{ github.run_id }}
+          path: |
+            your-apps.json
+            ${{ runner.temp }}/check.log
+          retention-days: 30
+          if-no-files-found: warn
