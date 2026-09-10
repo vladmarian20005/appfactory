@@ -1,0 +1,50 @@
+name: claude-selftest
+
+# Throwaway. Answers one question: does claude-code-action authenticate and answer at all
+# on this repo, with this token? The prompt and its answer are trivial on purpose, because
+# this repository is public and its logs are public with it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: Model to try
+        required: false
+        type: string
+        default: ""
+      pass_args:
+        description: Also pass the claude_args app-build uses
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bare call, no claude_args
+        if: ${{ !inputs.pass_args }}
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          show_full_output: true
+          prompt: "Reply with exactly: SELFTEST OK. Do not use any tools."
+          claude_args: ${{ inputs.model != '' && format('--model {0}', inputs.model) || '' }}
+
+      - name: With the args app-build passes
+        if: ${{ inputs.pass_args }}
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          show_full_output: true
+          prompt: "Reply with exactly: SELFTEST OK. Do not use any tools."
+          claude_args: >-
+            --max-turns 3
+            --model ${{ inputs.model != '' && inputs.model || 'claude-opus-5' }}
+            --allowedTools "Read,Glob,Grep"
