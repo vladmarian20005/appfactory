@@ -101,7 +101,11 @@ jobs:
           urls="${{ steps.urls.outcome }}"
 
           # `check` reports an expiring certificate as a warning, not a failure, so grep for it.
-          expiring=$(grep -c "export a fresh .p12" "$RUNNER_TEMP/check.log" 2>/dev/null || echo 0)
+          # grep -c prints "0" AND exits 1 on no match, so "|| echo 0" produced "0\n0" and the
+          # integer tests below failed — which took the failure branch and opened an issue
+          # saying everything was fine. Never combine grep -c with a fallback echo.
+          expiring=$(grep -c "export a fresh .p12" "$RUNNER_TEMP/check.log" 2>/dev/null || true)
+          expiring=${expiring:-0}
 
           {
             echo "## Monday preflight"

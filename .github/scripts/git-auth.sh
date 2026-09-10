@@ -15,5 +15,5 @@ git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${G
 
 # Prove it, cheaply, so a broken token fails here with a clear message rather than at the
 # push after an hour of work.
-git ls-remote --exit-code --heads origin "${GITHUB_REF_NAME:-main}" >/dev/null
+git ls-remote --exit-code --heads origin "${FACTORY_BRANCH:-${GITHUB_REF_NAME:-main}}" >/dev/null
 echo "push credentials restored for ${GITHUB_REPOSITORY}"

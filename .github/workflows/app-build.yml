@@ -10,6 +10,11 @@ name: app-build
 # opinion of its work is not what decides whether the build is good.
 
 on:
+  # A push to build/<slug> starts a build of that slug from main. The branch is a signal,
+  # not a source: the routine that plans the week has git but no gh, and a branch push is
+  # the one dispatch mechanism it is proven to have (the scout has used scout-run daily).
+  push:
+    branches: ["build/**"]
   workflow_dispatch:
     inputs:
       slug:
@@ -46,7 +51,7 @@ permissions:
   actions: write
 
 concurrency:
-  group: app-${{ inputs.slug }}
+  group: app-${{ inputs.slug || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
@@ -56,10 +61,18 @@ jobs:
     # job is capped even though the turn limit should stop it first.
     timeout-minutes: 180
     env:
+      # Resolved in Preflight when started from a trigger branch.
       SLUG: ${{ inputs.slug }}
+      DISPLAY_NAME: ${{ inputs.display_name }}
+      MAX_TURNS: ${{ inputs.max_turns || '200' }}
+      MODEL: ${{ inputs.model || 'claude-opus-5' }}
+      CHAIN: ${{ github.event_name == 'push' || inputs.chain }}
+      # Where the work lands. From a trigger branch that is main, never the trigger itself.
+      FACTORY_BRANCH: ${{ github.event_name == 'push' && 'main' || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event_name == 'push' && 'main' || github.ref_name }}
           fetch-depth: 0
 
       - name: Preflight
@@ -67,6 +80,18 @@ jobs:
           HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
         run: |
           set -euo pipefail
+          if [ "${{ github.event_name }}" = "push" ]; then
+            SLUG="${GITHUB_REF_NAME#build/}"
+            echo "SLUG=$SLUG" >> "$GITHUB_ENV"
+            # Consume the signal so the next push to the same name fires again.
+            git push origin --delete "$GITHUB_REF_NAME" 2>/dev/null || true
+            echo "Started from trigger branch $GITHUB_REF_NAME → slug $SLUG, working on main"
+          fi
+          if [ -z "${DISPLAY_NAME:-}" ] && [ -f "apps/$SLUG/SPEC.md" ]; then
+            # The spec's title is the display name; the routine does not pass one.
+            DISPLAY_NAME=$(sed -n 's/^# //p' "apps/$SLUG/SPEC.md" | head -1)
+            echo "DISPLAY_NAME=$DISPLAY_NAME" >> "$GITHUB_ENV"
+          fi
           # Fail here with something actionable rather than 20 minutes later, deep inside the
           # action, after a macOS runner has already booted a simulator.
           if [ "$HAS_TOKEN" != "true" ]; then
@@ -81,7 +106,7 @@ jobs:
 
       - uses: ./.github/actions/mac-setup
         with:
-          slug: ${{ inputs.slug }}
+          slug: ${{ env.SLUG }}
           browser: "true"
 
       - name: Reset the fix counter
@@ -101,8 +126,8 @@ jobs:
           # one turn and no model usage. Naming the file works whatever the SDK loads.
           prompt: |
             Read .claude/skills/new-app/SKILL.md and follow it exactly to build the app
-            `${{ inputs.slug }}`, display name "${{ inputs.display_name }}", from its
-            apps/${{ inputs.slug }}/SPEC.md. Read the repository's CLAUDE.md first if there
+            `${{ env.SLUG }}`, display name "${{ env.DISPLAY_NAME }}", from its
+            apps/${{ env.SLUG }}/SPEC.md. Read the repository's CLAUDE.md first if there
             is one.
 
             You are on a GitHub macOS runner. There is no Xcode GUI, no physical device and
@@ -112,18 +137,18 @@ jobs:
             Commit AND PUSH after each screen works, not once at the end. Committing alone
             saves nothing: this checkout is on an ephemeral runner and dies with it. Push to
             the branch as you go, even when the app is half finished:
-              git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }}
+              git pull --rebase origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
 
             Order of work, because the turn budget is finite and the first run hit it:
             1. Scaffold, icon, AppInfo, build clean. Push.
             2. Every screen in the spec, minimal but real. qa.json. Push.
-            3. Make .github/scripts/verify-app.sh ${{ inputs.slug }} pass. Push.
+            3. Make .github/scripts/verify-app.sh ${{ env.SLUG }} pass. Push.
             4. privacy.json + sync, the listing files, STATUS.md. Push.
             5. Only then dark mode and large-text passes, and only if turns remain.
             A verified app with no dark-mode check beats a beautiful one that never landed.
           claude_args: >-
-            --max-turns ${{ inputs.max_turns }}
-            --model ${{ inputs.model }}
+            --max-turns ${{ env.MAX_TURNS }}
+            --model ${{ env.MODEL }}
             --setting-sources project
             --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
             Bash(xcodebuild:*),Bash(xcrun:*),Bash(xcodegen:*),Bash(swift:*),
@@ -159,8 +184,8 @@ jobs:
           else
             git commit -m "$SLUG: build leftovers from run ${{ github.run_id }}"
           fi
-          git pull --rebase origin "${GITHUB_REF_NAME}" || true
-          git push origin "HEAD:${GITHUB_REF_NAME}" || echo "::warning::push failed; the artifact still has the work"
+          git pull --rebase origin "${FACTORY_BRANCH}" || true
+          git push origin "HEAD:${FACTORY_BRANCH}" || echo "::warning::push failed; the artifact still has the work"
 
       - name: Record the result
         if: always()
@@ -173,12 +198,12 @@ jobs:
       # its own. Order matters — app-pages before app-compliance, because the compliance
       # gate asks whether the privacy URL answers 200, and app-pages is what publishes it.
       - name: Start the screenshots
-        if: always() && steps.verify.outcome == 'success' && inputs.chain
+        if: always() && steps.verify.outcome == 'success' && env.CHAIN == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          gh workflow run app-shots.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
+          gh workflow run app-shots.yml -f slug="$SLUG" --ref "${FACTORY_BRANCH}"
           echo "Verify passed; app-shots dispatched." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Hand a failure to the fix loop
@@ -197,15 +222,15 @@ jobs:
           gh workflow run app-fix.yml \
             -f slug="$SLUG" \
             -f reason="app-build run ${{ github.run_id }} finished but verify-app.sh failed." \
-            --ref "${GITHUB_REF_NAME}"
+            --ref "${FACTORY_BRANCH}"
           echo "::warning::verify failed; dispatched app-fix for $SLUG"
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: build-${{ inputs.slug }}-${{ github.run_id }}
+          name: build-${{ env.SLUG }}-${{ github.run_id }}
           path: |
-            apps/${{ inputs.slug }}/qa/**
+            apps/${{ env.SLUG }}/qa/**
             ${{ runner.temp }}/**/*.log
           retention-days: 14
           if-no-files-found: ignore
@@ -214,10 +239,10 @@ jobs:
         if: always()
         run: |
           {
-            echo "## app-build \`${{ inputs.slug }}\` — ${{ steps.verify.outcome }}"
+            echo "## app-build \`$SLUG\` — ${{ steps.verify.outcome }}"
             echo
             if [ "${{ steps.verify.outcome }}" = "success" ]; then
-              echo "Verify passed. Next: \`app-shots\`, then \`/ship ${{ inputs.slug }}\`."
+              echo "Verify passed. Next: \`app-shots\`, then \`/ship $SLUG\`."
             else
               echo "Verify did not pass. \`app-fix\` was dispatched, up to 3 attempts."
             fi

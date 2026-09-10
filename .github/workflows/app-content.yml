@@ -7,6 +7,9 @@ name: app-content
 # job to save nothing is not worth the handoff — macOS runners are free on a public repo.
 
 on:
+  # A push to content/<slug> runs this for that slug from main; see app-build.yml for why.
+  push:
+    branches: ["content/**"]
   workflow_dispatch:
     inputs:
       slug:
@@ -24,7 +27,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: app-content-${{ inputs.slug }}
+  group: app-content-${{ inputs.slug || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
@@ -33,9 +36,11 @@ jobs:
     timeout-minutes: 120
     env:
       SLUG: ${{ inputs.slug }}
+      FACTORY_BRANCH: ${{ github.event_name == 'push' && 'main' || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event_name == 'push' && 'main' || github.ref_name }}
           fetch-depth: 0
 
       - name: Preflight
@@ -43,6 +48,11 @@ jobs:
           HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
         run: |
           set -euo pipefail
+          if [ "${{ github.event_name }}" = "push" ]; then
+            SLUG="${GITHUB_REF_NAME#content/}"
+            echo "SLUG=$SLUG" >> "$GITHUB_ENV"
+            git push origin --delete "$GITHUB_REF_NAME" 2>/dev/null || true
+          fi
           if [ "$HAS_TOKEN" != "true" ]; then
             echo "::error::CLAUDE_CODE_OAUTH_TOKEN is not set. Generate one with 'claude setup-token' and add it: gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo ${{ github.repository }}"
             exit 1
@@ -56,7 +66,7 @@ jobs:
 
       - uses: ./.github/actions/mac-setup
         with:
-          slug: ${{ inputs.slug }}
+          slug: ${{ env.SLUG }}
           browser: "true"
 
       - name: Write the launch kit
@@ -65,7 +75,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           allowed_bots: "github-actions"
           prompt: |
-            Read .claude/skills/content/SKILL.md and follow it for the app `${{ inputs.slug }}`.
+            Read .claude/skills/content/SKILL.md and follow it for the app `${{ env.SLUG }}`.
 
             You are on a GitHub macOS runner. There is no GUI and nobody to ask. A simulator
             is booted and its UDID is in $SIM_UDID. Use Playwright (tools/screenshots/ shows
@@ -73,7 +83,7 @@ jobs:
             exists only on the owner's laptop.
 
             Do not push anything to another repository. Write the landing page to
-            apps/${{ inputs.slug }}/content/site/index.html and stop there; a later step
+            apps/${{ env.SLUG }}/content/site/index.html and stop there; a later step
             publishes it.
 
             Commit as you go, not once at the end.
@@ -102,11 +112,11 @@ jobs:
           git config user.email "factory@users.noreply.github.com"
           git add "apps/$SLUG/content"
           git diff --cached --quiet || git commit -m "$SLUG: launch kit"
-          git pull --rebase origin "${GITHUB_REF_NAME}" || true
-          git push origin "HEAD:${GITHUB_REF_NAME}" || echo "::warning::push failed; the artifact has the work"
+          git pull --rebase origin "${FACTORY_BRANCH}" || true
+          git push origin "HEAD:${FACTORY_BRANCH}" || echo "::warning::push failed; the artifact has the work"
 
       - name: Publish the landing page
-        if: inputs.publish && success()
+        if: (github.event_name == 'push' || inputs.publish) && success()
         env:
           SITE_REPO_TOKEN: ${{ secrets.SITE_REPO_TOKEN }}
         run: |
@@ -138,7 +148,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: content-${{ inputs.slug }}-${{ github.run_id }}
-          path: apps/${{ inputs.slug }}/content/**
+          name: content-${{ env.SLUG }}-${{ github.run_id }}
+          path: apps/${{ env.SLUG }}/content/**
           retention-days: 14
           if-no-files-found: warn

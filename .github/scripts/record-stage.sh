@@ -27,7 +27,9 @@ case "$status" in ok|fail) ;; *) echo "record-stage.sh: status must be ok or fai
 
 judged=$(git rev-parse HEAD)
 file="apps/$slug/state.json"
-branch="${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
+# FACTORY_BRANCH is set by workflows started from a trigger branch (build/<slug> etc.), whose
+# GITHUB_REF_NAME is the trigger, not the branch the work belongs on.
+branch="${FACTORY_BRANCH:-${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD)}}"
 
 git config user.name "factory"
 git config user.email "factory@users.noreply.github.com"
