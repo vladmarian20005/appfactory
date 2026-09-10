@@ -72,15 +72,33 @@ struct Tallies: App {
                                   createdAt: calendar.date(byAdding: .day, value: -20 + index, to: today) ?? today)
             context.insert(counter)
             // days is oldest-first; the last element is today.
-            for (offset, count) in spec.days.enumerated() {
+            for (offset, count) in spec.days.enumerated() where count > 0 {
                 let dayStart = calendar.date(byAdding: .day, value: -(spec.days.count - 1 - offset), to: today) ?? today
+                // Spread the taps evenly across a window that has actually happened, so the
+                // history list reads like use. Clamping each tap to `now` instead stacked
+                // every one of today's onto the same minute, which looks like a bug.
+                let (open, close) = window(for: dayStart, today: today, calendar: calendar)
                 for tap in 0..<count {
-                    // Spread the taps across the waking day so the history list reads like use.
-                    let at = calendar.date(byAdding: .minute, value: 8 * 60 + tap * 37, to: dayStart) ?? dayStart
-                    context.insert(Tap(delta: 1, at: min(at, .now), counter: counter))
+                    let fraction = count == 1 ? 0.5 : Double(tap) / Double(count - 1)
+                    let at = open.addingTimeInterval(close.timeIntervalSince(open) * fraction)
+                    context.insert(Tap(delta: 1, at: at, counter: counter))
                 }
             }
         }
         try? context.save()
+    }
+
+    /// The stretch of a day the seeded taps are spread over. A past day gets 8am to 10pm; the
+    /// current day gets the last six hours up to now, so no seeded tap is in the future and
+    /// the run still has a window wide enough to give every tap its own minute.
+    private static func window(for dayStart: Date, today: Date, calendar: Calendar) -> (open: Date, close: Date) {
+        guard dayStart >= today else {
+            let open = calendar.date(byAdding: .hour, value: 8, to: dayStart) ?? dayStart
+            let close = calendar.date(byAdding: .hour, value: 22, to: dayStart) ?? dayStart
+            return (open, close)
+        }
+        let now = Date.now
+        let open = max(dayStart, calendar.date(byAdding: .hour, value: -6, to: now) ?? dayStart)
+        return (open, max(open.addingTimeInterval(60), now))
     }
 }

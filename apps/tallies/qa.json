@@ -1,0 +1,31 @@
+{
+  "scheme": "Tallies",
+  "bundleId": "com.starhiveconcept.tallies",
+  "screens": [
+    {
+      "name": "01-counters",
+      "args": ["-onboarded", "-reset", "-sampleData"],
+      "note": "The counters list: name, running total and the + that increments without leaving the screen. The promise."
+    },
+    {
+      "name": "02-detail",
+      "args": ["-onboarded", "-reset", "-sampleData", "-screen", "detail"],
+      "note": "One counter: the number big, + and -, the goal ring, and the last 7 days as bars. Free tier, so 7 rather than 14."
+    },
+    {
+      "name": "03-history",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-screen", "history"],
+      "note": "The Pro history: every tap across every counter, newest first, grouped by day, over the week and month totals. Needs -pro because no runner can complete a purchase."
+    },
+    {
+      "name": "04-settings",
+      "args": ["-onboarded", "-reset", "-sampleData", "-screen", "settings"],
+      "note": "The kit's settings with the Tallies rows: what is on the device, and the erase-everything control."
+    },
+    {
+      "name": "05-paywall",
+      "args": ["-onboarded", "-reset", "-sampleData", "-fakeProducts", "-screen", "paywall"],
+      "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch, so real products are unavailable and the CTA would sit disabled."
+    }
+  ]
+}
