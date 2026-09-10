@@ -19,9 +19,15 @@ on:
         required: false
         type: boolean
         default: true
+      chain:
+        description: On success, start the next stage automatically
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: app-${{ inputs.slug }}
@@ -83,6 +89,15 @@ jobs:
           git commit -m "$SLUG: composed App Store screenshots from a $(sw_vers -productVersion) runner"
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Publish the privacy page next
+        if: success() && inputs.chain
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh workflow run app-pages.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
+          echo "app-pages dispatched." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Record the result
         if: always()

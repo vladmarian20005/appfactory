@@ -75,14 +75,35 @@ no Xcode window. Everything below works there. Nothing below needs a human.
 9. **Verify.** `.github/scripts/verify-app.sh <slug>` builds, launches every screen in
    qa.json, proves each rendered and that nothing crashed. It must pass.
 
-10. **Update `apps/<slug>/STATUS.md`** — `stage: built`, what works, what is stubbed, what
+10. **Write the listing, while the app is fresh in mind.** Everything here comes straight
+    out of SPEC.md's Store section, and writing it now is what lets the screenshot,
+    compliance and page stages run afterwards without another agent.
+
+    `apps/<slug>/store/screenshots.json` — `background` (a CSS gradient), `textColor`,
+    `accent`, and one entry per screen in qa.json with a `title` under 40 characters and an
+    optional `subtitle`. Titles state a benefit, not a feature: the first is the Promise,
+    and at least one is the Wedge said plainly.
+
+    `apps/<slug>/store/metadata/en-US/` — `name.txt` (30), `subtitle.txt` (30),
+    `keywords.txt` (100, comma-separated, **no spaces after the commas**),
+    `promotional_text.txt` (170), `description.txt` (4000), `release_notes.txt`,
+    `support_url.txt`, `privacy_url.txt`. Check every one with `wc -c`.
+
+    Two rules that cost nothing now and a rejection later: do not repeat a word from the
+    name or subtitle in `keywords.txt`, because Apple indexes all three together and a
+    repeat spends the characters twice; and every claim in `description.txt` must be true
+    of the binary you just built — if it says "no ads", grep for an ad SDK before writing it.
+
+11. **Update `apps/<slug>/STATUS.md`** — `stage: built`, what works, what is stubbed, what
     could not be checked without hardware. Commit.
 
 ## Done means
 
 `verify-app.sh` passes, every screen in the spec exists and renders, the paywall shows both
-products with `-fakeProducts`, there is no placeholder text, and `factoryReviewPrompt` is
-still wired. Then `/ship <slug>` takes it to the App Store.
+products with `-fakeProducts`, there is no placeholder text, `factoryReviewPrompt` is still
+wired, and the listing files in step 10 exist and are inside their limits. Then `/ship
+<slug>` takes it to the App Store — and because step 10 is done, its first four stages run
+on their own.
 
 ## What you cannot do here, and must not pretend to
 

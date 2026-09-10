@@ -32,6 +32,11 @@ on:
         type: choice
         options: [claude-opus-5, claude-sonnet-5]
         default: claude-opus-5
+      chain:
+        description: On success, start the next stage automatically
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -142,6 +147,19 @@ jobs:
         run: |
           .github/scripts/record-stage.sh "$SLUG" build \
             "${{ steps.verify.outcome == 'success' && 'ok' || 'fail' }}"
+
+      # The chain is explicit the whole way down, for the same reason app-fix is: a commit
+      # pushed with GITHUB_TOKEN fires no `push` workflow, so nothing downstream wakes on
+      # its own. Order matters — app-pages before app-compliance, because the compliance
+      # gate asks whether the privacy URL answers 200, and app-pages is what publishes it.
+      - name: Start the screenshots
+        if: steps.verify.outcome == 'success' && inputs.chain
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh workflow run app-shots.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
+          echo "Verify passed; app-shots dispatched." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Hand a failure to the fix loop
         if: always() && steps.verify.outcome == 'failure'

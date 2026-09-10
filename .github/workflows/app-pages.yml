@@ -20,9 +20,15 @@ on:
         required: false
         type: boolean
         default: true
+      chain:
+        description: On success, start the next stage automatically
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: app-pages-${{ inputs.slug }}
@@ -108,6 +114,17 @@ jobs:
           done
           echo "::error::$url never returned 200. App Review needs a reachable privacy policy."
           exit 1
+
+      # Last automatic stage. The compliance gate is the one that decides whether a human
+      # should be asked to type SUBMIT, so the chain stops there by design.
+      - name: Run the compliance gate
+        if: success() && inputs.chain
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh workflow run app-compliance.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
+          echo "app-compliance dispatched — the last stage before a human is asked." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Record the result
         if: always()
