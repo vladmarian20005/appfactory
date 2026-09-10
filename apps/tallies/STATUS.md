@@ -79,6 +79,23 @@ Both passes were run on the simulator and the captures read back.
 - The detail screen already held at that size: the number, the ring and the buttons all
   scale, and the card scrolls rather than clipping.
 
+## Where the compliance gate stands
+
+`.github/scripts/compliance.sh tallies` was run at this commit. It reports 3 failures, and
+all three are artifacts a later stage produces — none is a defect in the app:
+
+1. `privacy_url returned 404` and 2. `support_url returned 404` for
+   https://starhiveconcept.com/tallies-privacy-policy-terms/ — the policy page has not been
+   published yet. It generates from `privacy.json` in `app-pages`.
+3. `no apps/tallies/store/screenshots/en-US` — the composed App Store screenshots come from
+   `app-shots`, out of the raw captures and `store/screenshots.json`, which is written.
+
+Everything the gate can check at this stage passes: the privacy manifest is present, valid
+and in sync with `privacy.json`; the paywall carries the renewal terms, restore and both
+legal links; every metadata file is inside its limit; there is no placeholder text and no
+frozen font size; and the "no ads" and "no analytics" claims were checked against the binary.
+
 ## Not done yet
 
-- `/ship tallies` is the next stage: screenshots, then compliance, then the page.
+- `/ship tallies` is the next stage: screenshots, then compliance, then the page. Those three
+  failures above are exactly what it clears.
