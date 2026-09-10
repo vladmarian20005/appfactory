@@ -1,0 +1,1 @@
+Bản đầu tiên. Các bộ đếm trên một màn hình, vòng mục tiêu, biểu đồ cột hai tuần cho mỗi bộ đếm, và lịch sử nhóm theo ngày.

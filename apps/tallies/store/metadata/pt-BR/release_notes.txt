@@ -1,0 +1,1 @@
+Primeira versão. Contadores numa tela só, anel de meta, duas semanas de barras em cada contador e um histórico agrupado por dia.

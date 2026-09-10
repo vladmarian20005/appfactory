@@ -1,0 +1,38 @@
+Cuenta lo que sea, desde tu teléfono y sin crear una cuenta.
+
+Toca para sumar. Toca para restar. Eso es toda la app.
+
+La mayoría de los contadores son un número en una pantalla lisa con un banner de publicidad abajo. Los demás son rastreadores de hábitos que piden un correo antes de contar hasta tres. Tallies no es ninguno de los dos. Ten varios contadores uno al lado del otro, dale a cada uno su color y una meta diaria si la quieres, y vuelve a leer cómo fue la semana en realidad.
+
+LO QUE HACE
+
+• Varios contadores a la vez, cada uno con su nombre y su total en una sola pantalla
+• Un botón de más grande en cada fila, para que sumar uno nunca implique abrir nada antes
+• Toca un contador para ver el número en grande, un más y un menos, y las últimas dos semanas como gráfica de barras (la última semana en el plan gratis)
+• Ponle una meta diaria y el contador dibuja un anillo que se llena conforme avanzas
+• Desliza un contador para borrarlo cuando ya no lo necesitas
+• Reinicia el día, o reinicia un contador por completo: los dos preguntan antes de hacerlo
+• Historial: cada toque que has dado, del más reciente al más antiguo, agrupado por día, con el total de la semana y del mes junto a cada contador
+
+LO QUE NO HACE
+
+• Sin cuenta. No hay pantalla de registro, porque no hay ningún servidor detrás de esto.
+• Sin anuncios. Ni banner, ni pantalla completa, ni video que ver antes de seguir.
+• Sin red. Tallies nunca se conecta a nada y funciona igual en modo avión.
+• Sin rastreo, sin analítica, sin kits de terceros de ningún tipo.
+
+Todo lo que cuentas se queda en este teléfono.
+
+GRATIS Y PRO
+
+Gratis: hasta tres contadores y los últimos siete días en la gráfica de cada uno.
+
+Tallies Pro: todos los contadores que quieras, la gráfica completa de catorce días y la pantalla de Historial con todos los contadores juntos.
+
+Pro da espacio, no acceso. Nada de lo que ya contaste se te queda bajo llave.
+
+Tallies Pro es una suscripción de renovación automática de $2.99 por semana o $19.99 por año, cada una con 3 días de prueba gratis. El pago se carga a tu Cuenta de Apple al confirmar la compra. Se renueva automáticamente a menos que la canceles al menos 24 horas antes de que termine el periodo en curso, y puedes administrarla o cancelarla en los ajustes de tu Cuenta de Apple.
+
+Política de privacidad y términos: https://starhiveconcept.com/tallies-privacy-policy-terms/
+
+Para series, vueltas, vasos de agua, cafés, hileras de tejido, pájaros en el comedero, coches que salen de la línea, personas que cruzan la puerta, o para lo que sea que necesites un número.

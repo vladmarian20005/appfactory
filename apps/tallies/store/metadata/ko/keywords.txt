@@ -1,0 +1,1 @@
+goal counter,event counter,set counter,no ads counter,tap count,숫자세기,개수세기,계수기,카운트앱
