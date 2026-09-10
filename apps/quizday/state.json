@@ -6,9 +6,9 @@
   "stages": {
     "compliance": {
       "status": "ok",
-      "sha": "0b240f72907b9d17068e1fbcf84fe1c059ff452b",
-      "at": "2026-09-10T09:18:09.070Z",
-      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34459784889"
+      "sha": "88c805ed95101e2e5702c528ba33210da2baeccc",
+      "at": "2026-09-10T10:02:32.552Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34463905553"
     },
     "verify": {
       "status": "ok",
