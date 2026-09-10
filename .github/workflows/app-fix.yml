@@ -129,7 +129,8 @@ jobs:
           claude_args: >-
             --max-turns 60
             --model claude-opus-5
-            --allowedTools "Read,Edit,Write,Glob,Grep,
+            --setting-sources project
+            --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
             Bash(xcodebuild:*),Bash(xcrun:*),Bash(xcodegen:*),Bash(swift:*),
             Bash(tools/*),Bash(.github/scripts/*),Bash(node:*),
             Bash(plutil:*),Bash(sips:*),Bash(git:*),Bash(ls:*),Bash(cat:*),

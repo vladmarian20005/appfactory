@@ -86,8 +86,15 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Deliberately not "/new-app ...". A leading slash command is resolved before any
+          # model call, and the action runs the SDK, which does not load .claude/skills
+          # unless it is told to. An unresolved command ends the run in three seconds with
+          # one turn and no model usage. Naming the file works whatever the SDK loads.
           prompt: |
-            /new-app ${{ inputs.slug }} "${{ inputs.display_name }}"
+            Read .claude/skills/new-app/SKILL.md and follow it exactly to build the app
+            `${{ inputs.slug }}`, display name "${{ inputs.display_name }}", from its
+            apps/${{ inputs.slug }}/SPEC.md. Read the repository's CLAUDE.md first if there
+            is one.
 
             You are on a GitHub macOS runner. There is no Xcode GUI, no physical device and
             nobody to ask. A simulator is already booted and its UDID is in $SIM_UDID, so
@@ -100,14 +107,18 @@ jobs:
           claude_args: >-
             --max-turns ${{ inputs.max_turns }}
             --model ${{ inputs.model }}
-            --allowedTools "Read,Edit,Write,Glob,Grep,
+            --setting-sources project
+            --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
             Bash(xcodebuild:*),Bash(xcrun:*),Bash(xcodegen:*),Bash(swift:*),
             Bash(tools/*),Bash(.github/scripts/*),Bash(node:*),Bash(npm:*),
             Bash(plutil:*),Bash(sips:*),Bash(git:*),Bash(ls:*),Bash(cat:*),
             Bash(mkdir:*),Bash(cp:*),Bash(mv:*),Bash(rm:*),Bash(find:*),Bash(wc:*)"
 
+      # always(): if the agent step itself dies, whatever it did commit still deserves a
+      # verdict, and a failed verdict is what wakes the fix loop.
       - name: Verify what it produced
         id: verify
+        if: always()
         continue-on-error: true
         run: .github/scripts/verify-app.sh "$SLUG"
 

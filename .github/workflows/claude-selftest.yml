@@ -20,6 +20,9 @@ on:
 
 permissions:
   contents: read
+  # The action exchanges an OIDC token before it will talk to Anthropic at all, even when
+  # authenticating with an OAuth token. Without this it dies before the first model call.
+  id-token: write
 
 jobs:
   selftest:
