@@ -84,6 +84,12 @@ jobs:
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
 
+      - name: Record the result
+        if: always()
+        run: |
+          .github/scripts/record-stage.sh "$SLUG" shots \
+            "${{ job.status == 'success' && 'ok' || 'fail' }}"
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:

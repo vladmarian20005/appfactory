@@ -22,9 +22,15 @@ on:
         description: Type SUBMIT to confirm an upload to App Store Connect
         required: true
         type: string
+      override_gate:
+        description: Upload even if a prior stage did not pass on this code. Say why in the run.
+        required: false
+        type: boolean
+        default: false
 
 permissions:
-  contents: read
+  # write only to record that the submit happened, in apps/<slug>/state.json.
+  contents: write
 
 concurrency:
   group: app-${{ inputs.slug }}
@@ -56,6 +62,27 @@ jobs:
       FASTLANE_XCODEBUILD_SETTINGS_RETRIES: "6"
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The gate below asks whether a stage's commit is an ancestor of HEAD, which needs
+          # the history to answer.
+          fetch-depth: 0
+
+      # Everything expensive is below this. An upload is the one irreversible thing the
+      # factory does, so it refuses code whose green results belong to a different version
+      # of itself: an agent can fix a build, get a green verify, then rewrite three screens.
+      - name: Refuse to upload unverified or stale code
+        run: |
+          set -euo pipefail
+          if .github/scripts/require-stage.sh "$SLUG" verify compliance pages; then
+            exit 0
+          fi
+          if [ "${{ inputs.override_gate }}" = "true" ]; then
+            echo "::warning::The stage gate failed and override_gate was set. Uploading anyway."
+            echo "⚠️ Uploaded past a failed stage gate, by explicit override." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "Re-run the stage named above, or dispatch again with override_gate." >> "$GITHUB_STEP_SUMMARY"
+          exit 1
 
       - name: Read the app's facts
         run: |
@@ -114,6 +141,12 @@ jobs:
       - name: Destroy the keychain
         if: always()
         run: .github/scripts/keychain-down.sh
+
+      - name: Record the result
+        if: always()
+        run: |
+          .github/scripts/record-stage.sh "$SLUG" submit \
+            "${{ job.status == 'success' && 'ok' || 'fail' }}"
 
       - uses: actions/upload-artifact@v4
         if: always()

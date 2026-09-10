@@ -109,6 +109,12 @@ jobs:
           echo "::error::$url never returned 200. App Review needs a reachable privacy policy."
           exit 1
 
+      - name: Record the result
+        if: always()
+        run: |
+          .github/scripts/record-stage.sh "$SLUG" pages \
+            "${{ job.status == 'success' && 'ok' || 'fail' }}"
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:

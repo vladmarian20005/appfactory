@@ -126,6 +126,12 @@ jobs:
           git pull --rebase origin "${GITHUB_REF_NAME}" || true
           git push origin "HEAD:${GITHUB_REF_NAME}" || echo "::warning::push failed; the artifact still has the work"
 
+      - name: Record the result
+        if: always()
+        run: |
+          .github/scripts/record-stage.sh "$SLUG" build \
+            "${{ steps.verify.outcome == 'success' && 'ok' || 'fail' }}"
+
       - name: Hand a failure to the fix loop
         if: always() && steps.verify.outcome == 'failure'
         env:

@@ -28,7 +28,9 @@ on:
       - ".github/scripts/verify-app.sh"
 
 permissions:
-  contents: read
+  # write so each leg can record its result in apps/<slug>/state.json. Later stages read
+  # that to tell "verified" from "verified, then rewritten".
+  contents: write
 
 concurrency:
   group: app-${{ inputs.slug || 'push' }}-verify
@@ -66,14 +68,26 @@ jobs:
         slug: ${{ fromJSON(needs.pick.outputs.slugs) }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          # record-stage.sh rebases when two legs push at once, which a shallow clone cannot.
+          fetch-depth: 0
 
       - uses: ./.github/actions/mac-setup
         with:
           slug: ${{ matrix.slug }}
           xcode: ${{ inputs.xcode }}
 
+      # continue-on-error so the result is recorded either way; the job is failed at the end.
       - name: Verify
+        id: verify
+        continue-on-error: true
         run: .github/scripts/verify-app.sh "${{ matrix.slug }}"
+
+      - name: Record the result
+        if: always()
+        run: |
+          .github/scripts/record-stage.sh "${{ matrix.slug }}" verify \
+            "${{ steps.verify.outcome == 'success' && 'ok' || 'fail' }}"
 
       - name: Downscale the captures
         if: always()
@@ -99,3 +113,9 @@ jobs:
             ~/Library/Logs/DiagnosticReports/**
           retention-days: 14
           if-no-files-found: warn
+
+      - name: Fail the job if verify failed
+        if: steps.verify.outcome != 'success'
+        run: |
+          echo "::error::${{ matrix.slug }} did not pass verification."
+          exit 1

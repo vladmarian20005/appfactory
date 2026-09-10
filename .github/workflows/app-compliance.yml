@@ -20,7 +20,8 @@ on:
       - ".github/workflows/app-compliance.yml"
 
 permissions:
-  contents: read
+  # write only to record the outcome in apps/<slug>/state.json.
+  contents: write
 
 concurrency:
   group: compliance-${{ inputs.slug || github.ref }}
@@ -102,12 +103,24 @@ jobs:
           plutil -lint apps/${{ matrix.slug }}/ios/App/PrivacyInfo.xcprivacy || true
 
       - name: Compliance gate
+        id: gate
+        continue-on-error: true
         run: .github/scripts/compliance.sh "${{ matrix.slug }}"
+
+      - name: Record the result
+        if: always()
+        run: |
+          .github/scripts/record-stage.sh "${{ matrix.slug }}" compliance \
+            "${{ steps.gate.outcome == 'success' && 'ok' || 'fail' }}"
+
+      - name: Fail the job if the gate failed
+        if: steps.gate.outcome != 'success'
+        run: exit 1
 
       - name: Summary
         if: always()
         run: |
-          if [ "${{ job.status }}" = "success" ]; then
+          if [ "${{ steps.gate.outcome }}" = "success" ]; then
             echo "✅ \`${{ matrix.slug }}\` passes the compliance gate." >> "$GITHUB_STEP_SUMMARY"
           else
             echo "❌ \`${{ matrix.slug }}\` is not ready for App Review. See the errors above." >> "$GITHUB_STEP_SUMMARY"

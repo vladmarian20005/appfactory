@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Tiny reader/writer for apps/<slug>/state.json, the file stages use to hand off.
 #
-#   state.sh <slug> get <field> [default]
-#   state.sh <slug> set <field> <value>
+#   state.sh <slug> get   <field> [default]
+#   state.sh <slug> set   <field> <value>
+#   state.sh <slug> stage <name> ok|fail
 #
 # Kept deliberately small: STATUS.md is the prose record for humans, this is the handful of
 # machine-readable facts a workflow needs — how many fix attempts have been spent, whether
@@ -39,6 +40,29 @@ case "$op" in
       s.slug ??= file.split("/")[1];
       fs.writeFileSync(file, JSON.stringify(s,null,2)+"\n");
     ' "$file" "$field" "$value"
+    ;;
+  stage)
+    # Record the outcome of a stage together with the commit it judged. The sha is the point:
+    # a later stage must be able to tell "the previous stage passed" from "the previous stage
+    # passed on code that has since been rewritten".
+    status=${4:?stage needs ok or fail}
+    mkdir -p "apps/$slug"
+    node -e '
+      const fs=require("fs");
+      const [file,name,status,sha,run,server,repo]=process.argv.slice(1);
+      const s=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,"utf8")):{};
+      s.stages ??= {};
+      s.stages[name]={
+        status,
+        sha,
+        at: new Date().toISOString(),
+        run: run ? `${server}/${repo}/actions/runs/${run}` : null,
+      };
+      s.slug ??= file.split("/")[1];
+      fs.writeFileSync(file, JSON.stringify(s,null,2)+"\n");
+    ' "$file" "$field" "$status" "$(git rev-parse HEAD)" \
+      "${GITHUB_RUN_ID:-}" "${GITHUB_SERVER_URL:-https://github.com}" "${GITHUB_REPOSITORY:-}"
+    echo "$slug: stage $field = $status at $(git rev-parse --short HEAD)"
     ;;
   *) echo "state.sh: unknown op '$op'" >&2; exit 1 ;;
 esac
