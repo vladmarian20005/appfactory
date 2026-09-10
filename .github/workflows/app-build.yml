@@ -25,7 +25,7 @@ on:
         description: Turn cap for the agent
         required: false
         type: string
-        default: "120"
+        default: "200"
       model:
         description: Model to build with
         required: false
@@ -88,9 +88,13 @@ jobs:
         run: .github/scripts/state.sh "$SLUG" set fix_attempts 0
 
       - name: Write the app
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # The dispatcher routine runs this as the owner, but app-fix and re-runs arrive
+          # as github-actions[bot], which the action refuses by default.
+          allowed_bots: "github-actions"
           # Deliberately not "/new-app ...". A leading slash command is resolved before any
           # model call, and the action runs the SDK, which does not load .claude/skills
           # unless it is told to. An unresolved command ends the run in three seconds with
@@ -107,9 +111,16 @@ jobs:
 
             Commit AND PUSH after each screen works, not once at the end. Committing alone
             saves nothing: this checkout is on an ephemeral runner and dies with it. Push to
-            the branch as you go, even when the app is half finished.
+            the branch as you go, even when the app is half finished:
+              git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }}
 
-            Finish by making .github/scripts/verify-app.sh ${{ inputs.slug }} pass.
+            Order of work, because the turn budget is finite and the first run hit it:
+            1. Scaffold, icon, AppInfo, build clean. Push.
+            2. Every screen in the spec, minimal but real. qa.json. Push.
+            3. Make .github/scripts/verify-app.sh ${{ inputs.slug }} pass. Push.
+            4. privacy.json + sync, the listing files, STATUS.md. Push.
+            5. Only then dark mode and large-text passes, and only if turns remain.
+            A verified app with no dark-mode check beats a beautiful one that never landed.
           claude_args: >-
             --max-turns ${{ inputs.max_turns }}
             --model ${{ inputs.model }}
@@ -122,6 +133,14 @@ jobs:
 
       # always(): if the agent step itself dies, whatever it did commit still deserves a
       # verdict, and a failed verdict is what wakes the fix loop.
+      # The action revokes its own token in its post-step; without this every push below
+      # fails and the work dies with the runner. See .github/scripts/git-auth.sh.
+      - name: Restore push credentials
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: .github/scripts/git-auth.sh
+
       - name: Verify what it produced
         id: verify
         if: always()
@@ -154,7 +173,7 @@ jobs:
       # its own. Order matters — app-pages before app-compliance, because the compliance
       # gate asks whether the privacy URL answers 200, and app-pages is what publishes it.
       - name: Start the screenshots
-        if: steps.verify.outcome == 'success' && inputs.chain
+        if: always() && steps.verify.outcome == 'success' && inputs.chain
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -168,6 +187,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          # A fix loop repairs an app; it cannot conjure one. If the agent never got as far
+          # as qa.json there is nothing to iterate on, and three more agent runs would each
+          # start from zero. Say so and stop.
+          if [ ! -f "apps/$SLUG/qa.json" ]; then
+            echo "::error::$SLUG has no qa.json — the build agent never finished scaffolding, so app-fix has nothing to repair. Re-run app-build, with more turns if it ran out."
+            exit 0
+          fi
           gh workflow run app-fix.yml \
             -f slug="$SLUG" \
             -f reason="app-build run ${{ github.run_id }} finished but verify-app.sh failed." \

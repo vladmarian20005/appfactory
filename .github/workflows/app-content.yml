@@ -63,6 +63,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "github-actions"
           prompt: |
             Read .claude/skills/content/SKILL.md and follow it for the app `${{ inputs.slug }}`.
 
@@ -84,6 +85,14 @@ jobs:
             Bash(xcrun:*),Bash(ffmpeg:*),Bash(sips:*),Bash(node:*),Bash(npm:*),
             Bash(tools/*),Bash(.github/scripts/*),Bash(git:*),Bash(ls:*),Bash(cat:*),
             Bash(mkdir:*),Bash(cp:*),Bash(mv:*),Bash(rm:*),Bash(find:*),Bash(wc:*)"
+
+      # The action revokes its own token in its post-step; without this every push below
+      # fails and the work dies with the runner. See .github/scripts/git-auth.sh.
+      - name: Restore push credentials
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: .github/scripts/git-auth.sh
 
       - name: Commit whatever it left
         if: always()

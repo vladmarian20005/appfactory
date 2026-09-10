@@ -103,9 +103,13 @@ jobs:
 
       - name: Fix it
         if: steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'failure'
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # This workflow is almost always started by another workflow, so the actor is
+          # github-actions[bot]. The action refuses bots unless told otherwise.
+          allowed_bots: "github-actions"
           prompt: |
             The app `${{ steps.gate.outputs.slug }}` fails verification. Fix it.
 
@@ -137,8 +141,14 @@ jobs:
             Bash(plutil:*),Bash(sips:*),Bash(git:*),Bash(ls:*),Bash(cat:*),
             Bash(mkdir:*),Bash(cp:*),Bash(mv:*),Bash(rm:*),Bash(find:*),Bash(wc:*)"
 
+      - name: Restore push credentials
+        if: always() && steps.gate.outputs.skip == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: .github/scripts/git-auth.sh
+
       - name: Record the attempt and push
-        if: steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'failure'
+        if: always() && steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'failure'
         run: |
           set -euo pipefail
           slug="${{ steps.gate.outputs.slug }}"
