@@ -5,10 +5,10 @@
   "storekit_verified": false,
   "stages": {
     "compliance": {
-      "status": "fail",
-      "sha": "a32a10daa56f84dac757b98aed93505e51c712cb",
-      "at": "2026-09-10T14:01:55.154Z",
-      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34486347848"
+      "status": "ok",
+      "sha": "370e885034ecd6178127955d693592746b9020e3",
+      "at": "2026-09-10T14:17:55.791Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34488088659"
     },
     "verify": {
       "status": "ok",
