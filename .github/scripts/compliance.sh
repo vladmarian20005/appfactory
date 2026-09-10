@@ -86,29 +86,14 @@ for u in privacy_url support_url; do
 done
 echo "::endgroup::"
 
-# ── 4. Listing limits ─────────────────────────────────────────────────────────
+# ── 4. The listing, in every localization Apple indexes on the US storefront ──
+# Limits, hygiene and the nine extra localizations live in one script, shared with app-aso
+# (which writes them) and app-release (which uploads them).
 echo "::group::Store metadata"
-check_len() {
-  local f="$meta/$1" lim=$2
-  if [ ! -f "$f" ]; then fail "missing $f"; return; fi
-  local n; n=$(wc -c < "$f" | tr -d ' ')
-  if [ "$n" -gt "$lim" ]; then fail "$1 is $n bytes, limit $lim"; else pass "$1 $n/$lim"; fi
-}
-check_len name.txt 30
-check_len subtitle.txt 30
-check_len keywords.txt 100
-check_len promotional_text.txt 170
-check_len description.txt 4000
-
-# Words already in the name or subtitle are indexed anyway; repeating them in the keyword
-# field spends characters twice.
-if [ -f "$meta/keywords.txt" ] && [ -f "$meta/name.txt" ] && [ -f "$meta/subtitle.txt" ]; then
-  title_words=$(cat "$meta/name.txt" "$meta/subtitle.txt" | tr '[:upper:]' '[:lower:]' | tr -cs '[:alnum:]' '\n' | sort -u)
-  while IFS= read -r kw; do
-    kw=$(echo "$kw" | tr '[:upper:]' '[:lower:]' | xargs)
-    [ -n "$kw" ] || continue
-    if echo "$title_words" | grep -qx "$kw"; then warn "keyword \"$kw\" already appears in the name or subtitle"; fi
-  done < <(tr ',' '\n' < "$meta/keywords.txt")
+if .github/scripts/listing-check.sh "$slug"; then
+  pass "listing is complete and inside every limit"
+else
+  fail "the listing failed listing-check.sh; see the errors above"
 fi
 echo "::endgroup::"
 

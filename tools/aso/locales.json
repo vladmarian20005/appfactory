@@ -1,0 +1,16 @@
+{
+  "_comment": "Every App Store localization whose metadata Apple indexes on the United States storefront. Text in these localizations ranks in US search, so each one is another 30-character name, 30-character subtitle and 100-character keyword field aimed at US searchers. Screenshots are not needed: App Store Connect shows the primary language's screenshots for a localization that has none. Verified 2026-09-10 against aso.dev/metadata/cross-localization (updated 2026-07-10) and AppTweak/Phiture's storefront table; re-check yearly, Apple does not publish this list.",
+  "storefront": "US",
+  "locales": [
+    { "code": "en-US", "language": "English (United States)", "primary": true },
+    { "code": "es-MX", "language": "Spanish (Mexico)" },
+    { "code": "zh-Hans", "language": "Chinese, Simplified" },
+    { "code": "zh-Hant", "language": "Chinese, Traditional" },
+    { "code": "fr-FR", "language": "French" },
+    { "code": "ko", "language": "Korean" },
+    { "code": "pt-BR", "language": "Portuguese (Brazil)" },
+    { "code": "ru", "language": "Russian" },
+    { "code": "ar-SA", "language": "Arabic" },
+    { "code": "vi", "language": "Vietnamese" }
+  ]
+}

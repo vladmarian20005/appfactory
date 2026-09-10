@@ -95,18 +95,8 @@ jobs:
           set -euo pipefail
           m="apps/$SLUG/store/metadata/en-US"
           fail=0
-          check() { # check <file> <limit>
-            local f="$m/$1" lim=$2
-            [ -f "$f" ] || { echo "::error::missing $f"; fail=1; return; }
-            local n; n=$(wc -c < "$f" | tr -d ' ')
-            if [ "$n" -gt "$lim" ]; then echo "::error::$1 is $n bytes, limit $lim"; fail=1
-            else echo "  $1: $n / $lim"; fi
-          }
-          check name.txt 30
-          check subtitle.txt 30
-          check keywords.txt 100
-          check promotional_text.txt 170
-          check description.txt 4000
+          # Every localization Apple indexes on the US storefront, each inside its limits.
+          .github/scripts/listing-check.sh "$SLUG" || fail=1
 
           # precheck rejects a version whose privacy or support URL 404s, and it does so after
           # the upload. Catch it here instead.

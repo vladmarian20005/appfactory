@@ -1,0 +1,147 @@
+name: app-aso
+
+# Writes the App Store listing in the nine localizations, besides English, whose metadata
+# Apple indexes on the US storefront (tools/aso/locales.json). Each one is another name,
+# subtitle and keyword field that ranks in US search, at the cost of a few minutes on a
+# Linux runner. Screenshots are not needed: App Store Connect shows the English ones.
+#
+# Agentic, so it follows the factory's rule: the agent writes, a script judges.
+# .github/scripts/listing-check.sh decides whether the listing is complete and inside every
+# limit, and app-compliance runs the same check again before anything is submitted.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/ (must have store/metadata/en-US)
+        required: true
+        type: string
+      max_turns:
+        description: Turn cap for the agent
+        required: false
+        type: string
+        default: "120"
+      chain:
+        description: When done, start app-shots automatically
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  id-token: write
+  # to dispatch app-shots; a push made with GITHUB_TOKEN fires no `push` workflow.
+  actions: write
+
+concurrency:
+  group: app-${{ inputs.slug }}
+  cancel-in-progress: false
+
+jobs:
+  aso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SLUG: ${{ inputs.slug }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Preflight
+        env:
+          HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "::error::CLAUDE_CODE_OAUTH_TOKEN is not set. Generate one with 'claude setup-token' and add it: gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo vladmarian20005/appfactory"
+            exit 1
+          fi
+          [ -f "apps/$SLUG/store/metadata/en-US/name.txt" ] || {
+            echo "::error::apps/$SLUG/store/metadata/en-US is missing. The build agent writes the English listing first (new-app skill, step 10)."
+            exit 1
+          }
+          echo "Localizing the listing of $SLUG from apps/$SLUG/store/metadata/en-US"
+
+      - name: Write the other nine localizations
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Started by app-build or app-fix, so the actor is github-actions[bot].
+          allowed_bots: "github-actions"
+          prompt: |
+            Read .claude/skills/aso/SKILL.md and follow it exactly for the app
+            `${{ env.SLUG }}`. Write all nine non-English localizations listed in
+            tools/aso/locales.json, run .github/scripts/listing-check.sh ${{ env.SLUG }},
+            and fix everything it reports until it prints "listing: clean".
+            Do not commit or push; this workflow commits when the check passes.
+          # No git: the workflow commits once at the end, so nothing the agent does can
+          # fire a push-triggered check mid-run.
+          claude_args: >-
+            --max-turns ${{ inputs.max_turns || '120' }}
+            --model claude-opus-5
+            --setting-sources project
+            --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
+            Bash(node:*),Bash(tools/*),Bash(.github/scripts/*),
+            Bash(ls:*),Bash(cat:*),Bash(wc:*),Bash(mkdir:*),Bash(cp:*)"
+
+      # The action revokes its own git token in its post-step; see git-auth.sh.
+      - name: Restore push credentials
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: .github/scripts/git-auth.sh
+
+      - name: Check the listing
+        id: check
+        if: always()
+        continue-on-error: true
+        run: .github/scripts/listing-check.sh "$SLUG"
+
+      - name: Commit the localizations
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "factory"
+          git config user.email "factory@users.noreply.github.com"
+          git add "apps/$SLUG/store/metadata"
+          if git diff --cached --quiet; then
+            echo "metadata unchanged"
+            exit 0
+          fi
+          git commit -m "$SLUG: listing for the nine other localizations Apple indexes in the US"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Record the result
+        if: ${{ !cancelled() }}
+        run: |
+          .github/scripts/record-stage.sh "$SLUG" aso \
+            "${{ steps.check.outcome == 'success' && 'ok' || 'fail' }}"
+
+      # Chain whatever the verdict: the screenshots and the privacy page do not depend on
+      # the listing, and app-compliance repeats this check, so a bad listing surfaces there
+      # with the same message rather than stalling the whole chain here.
+      - name: Start the screenshots
+        if: always() && inputs.chain
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh workflow run app-shots.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
+          echo "app-shots dispatched." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Summary
+        if: always()
+        run: |
+          if [ "${{ steps.check.outcome }}" = "success" ]; then
+            echo "✅ \`$SLUG\`: listing complete in all $(node -p 'require("./tools/aso/locales.json").locales.length') localizations." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "❌ \`$SLUG\`: the listing is not complete. Re-run app-aso; app-compliance will fail until it is." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi

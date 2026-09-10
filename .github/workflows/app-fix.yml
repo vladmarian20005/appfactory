@@ -178,8 +178,8 @@ jobs:
           # runs, so nothing else records it. Same recording and same next hop as app-build.
           if [ "${{ steps.reverify.outcome }}" = "success" ]; then
             .github/scripts/record-stage.sh "$SLUG" verify ok
-            gh workflow run app-shots.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
-            echo "✅ \`$SLUG\` fixed on attempt $ATTEMPT of 3; app-shots dispatched." >> "$GITHUB_STEP_SUMMARY"
+            gh workflow run app-aso.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
+            echo "✅ \`$SLUG\` fixed on attempt $ATTEMPT of 3; app-aso dispatched." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           .github/scripts/record-stage.sh "$SLUG" verify fail

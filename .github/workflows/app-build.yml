@@ -200,14 +200,16 @@ jobs:
       # pushed with GITHUB_TOKEN fires no `push` workflow, so nothing downstream wakes on
       # its own. Order matters — app-pages before app-compliance, because the compliance
       # gate asks whether the privacy URL answers 200, and app-pages is what publishes it.
-      - name: Start the screenshots
+      - name: Start the listing in the other nine languages
         if: always() && steps.verify.outcome == 'success' && env.CHAIN == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          gh workflow run app-shots.yml -f slug="$SLUG" --ref "${FACTORY_BRANCH}"
-          echo "Verify passed; app-shots dispatched." >> "$GITHUB_STEP_SUMMARY"
+          # app-aso writes the nine localizations Apple indexes on the US storefront, then
+          # chains into app-shots itself.
+          gh workflow run app-aso.yml -f slug="$SLUG" --ref "${FACTORY_BRANCH}"
+          echo "Verify passed; app-aso dispatched." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Hand a failure to the fix loop
         if: always() && steps.verify.outcome == 'failure'
@@ -245,7 +247,7 @@ jobs:
             echo "## app-build \`$SLUG\` — ${{ steps.verify.outcome }}"
             echo
             if [ "${{ steps.verify.outcome }}" = "success" ]; then
-              echo "Verify passed. Next: \`app-shots\`, then \`/ship $SLUG\`."
+              echo "Verify passed. Next: \`app-aso\`, \`app-shots\`, \`app-pages\`, \`app-compliance\`, then SUBMIT."
             else
               echo "Verify did not pass. \`app-fix\` was dispatched, up to 3 attempts."
             fi
