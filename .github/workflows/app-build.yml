@@ -190,8 +190,11 @@ jobs:
       - name: Record the result
         if: always()
         run: |
-          .github/scripts/record-stage.sh "$SLUG" build \
-            "${{ steps.verify.outcome == 'success' && 'ok' || 'fail' }}"
+          v="${{ steps.verify.outcome == 'success' && 'ok' || 'fail' }}"
+          .github/scripts/record-stage.sh "$SLUG" build "$v"
+          # Same script, same judgment as app-verify — and `verify` is what the submit
+          # gate reads. Without this a green build still shows the mid-build `verify fail`.
+          .github/scripts/record-stage.sh "$SLUG" verify "$v"
 
       # The chain is explicit the whole way down, for the same reason app-fix is: a commit
       # pushed with GITHUB_TOKEN fires no `push` workflow, so nothing downstream wakes on

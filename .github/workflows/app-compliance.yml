@@ -29,6 +29,11 @@ concurrency:
 
 jobs:
   pick:
+    # The build agent pushes as claude[bot], and unlike GITHUB_TOKEN that DOES fire push
+    # workflows. Verifying a half-written app mid-build records a misleading failure and,
+    # through workflow_run, wakes app-fix onto files another agent is still editing.
+    # app-build runs this same script itself when the agent is done.
+    if: github.event_name != 'push' || github.actor != 'claude[bot]'
     runs-on: ubuntu-latest
     outputs:
       slugs: ${{ steps.list.outputs.slugs }}
