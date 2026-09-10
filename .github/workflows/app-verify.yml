@@ -22,10 +22,12 @@ on:
       - "FactoryKit/**"
       - "apps/*/ios/**"
       - "apps/*/qa.json"
+      - "apps/*/STATUS.md"
       - "tools/sim.sh"
       - "tools/qa/**"
       - ".github/workflows/app-verify.yml"
       - ".github/scripts/verify-app.sh"
+      - ".github/scripts/bundle-check.sh"
 
 permissions:
   # write so each leg can record its result in apps/<slug>/state.json. Later stages read
@@ -40,42 +42,74 @@ concurrency:
 
 jobs:
   pick:
-    # On a push we do not know which app changed, so verify every app that has a qa.json.
+    # On a push the event does not say which app changed, so ask the diff.
     runs-on: ubuntu-latest
     outputs:
       slugs: ${{ steps.list.outputs.slugs }}
     steps:
       - uses: actions/checkout@v4
-      # The build agent's pushes fire this (they are not made with GITHUB_TOKEN), and a run
-      # that starts on a half-written app can finish after app-build's own verdict and
-      # overwrite a green verify with a stale red one. So on a push, if any app-build is in
-      # progress, stand down: app-build runs this same script itself when the agent is done.
+      # The build and fix agents' pushes fire this (they are not made with GITHUB_TOKEN),
+      # and a run that starts on a half-written app can finish after the agent's own
+      # verdict and overwrite a green verify with a stale red one. So on a push, if any
+      # app-build or app-fix is in progress, stand down: both run this same script
+      # themselves when their agent is done, and record the verdict.
       - name: Stand down while the factory is building
         id: building
         if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          n=$(gh run list --workflow=app-build.yml --repo "$GITHUB_REPOSITORY" \
-                --json status -q '[.[] | select(.status=="in_progress" or .status=="queued")] | length' 2>/dev/null || echo 0)
-          if [ "${n:-0}" -gt 0 ]; then
+          n=0
+          for wf in app-build.yml app-fix.yml; do
+            k=$(gh run list --workflow="$wf" --repo "$GITHUB_REPOSITORY" \
+                  --json status -q '[.[] | select(.status=="in_progress" or .status=="queued")] | length' 2>/dev/null || echo 0)
+            n=$((n + ${k:-0}))
+          done
+          if [ "$n" -gt 0 ]; then
             echo "building=true" >> "$GITHUB_OUTPUT"
-            echo "::notice::$n app-build run(s) in progress; skipping the push-triggered check so it cannot race the build's own verdict."
+            echo "::notice::$n agent run(s) in progress; skipping the push-triggered check so it cannot race their verdict."
           else
             echo "building=false" >> "$GITHUB_OUTPUT"
           fi
       - id: list
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BEFORE: ${{ github.event.before }}
         run: |
           set -euo pipefail
+          # Apps that are going somewhere: a qa.json to verify against, and not shelved.
+          # plainfood is kept as the reference app and would otherwise cost a macOS runner
+          # on every push forever.
+          shipping() {
+            for d in apps/*/; do
+              s=$(basename "$d")
+              [ -f "$d/qa.json" ] || continue
+              stage=$(sed -n 's/^stage:[[:space:]]*//p' "$d/STATUS.md" 2>/dev/null | head -1)
+              case "$stage" in shelved*|stopped*|archived*) continue ;; esac
+              echo "$s"
+            done
+          }
           if [ "${{ steps.building.outputs.building }}" = "true" ]; then
-            slugs='[]'
+            picked=""
           elif [ -n "${{ inputs.slug }}" ]; then
-            slugs='["${{ inputs.slug }}"]'
+            picked="${{ inputs.slug }}"
           else
-            slugs=$(ls apps/*/qa.json 2>/dev/null | sed 's|apps/||; s|/qa.json||' | node -e '
-              let s="";process.stdin.on("data",d=>s+=d).on("end",()=>
-                console.log(JSON.stringify(s.split("\n").filter(Boolean))))')
+            # Only the apps this push touched. A change outside apps/ (FactoryKit, sim.sh,
+            # this workflow) can affect every app, so then verify them all. The compare API
+            # needs no history, which keeps this checkout shallow.
+            changed=$(gh api "repos/$GITHUB_REPOSITORY/compare/$BEFORE...$GITHUB_SHA" \
+                        --paginate -q '.files[].filename' 2>/dev/null || echo "")
+            if [ -z "$changed" ] || echo "$changed" | grep -qv '^apps/'; then
+              picked=$(shipping)
+            else
+              picked=$(shipping | while read -r s; do
+                echo "$changed" | grep -q "^apps/$s/" && echo "$s" || true
+              done)
+            fi
           fi
+          slugs=$(printf '%s\n' "$picked" | node -e '
+            let s="";process.stdin.on("data",d=>s+=d).on("end",()=>
+              console.log(JSON.stringify(s.split("\n").map(x=>x.trim()).filter(Boolean))))')
           echo "slugs=$slugs" >> "$GITHUB_OUTPUT"
           echo "Verifying: $slugs"
 

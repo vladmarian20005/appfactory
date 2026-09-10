@@ -174,10 +174,15 @@ jobs:
           ATTEMPT: ${{ steps.gate.outputs.attempt }}
         run: |
           set -euo pipefail
+          # This verdict is the only one: push-triggered verify stands down while app-fix
+          # runs, so nothing else records it. Same recording and same next hop as app-build.
           if [ "${{ steps.reverify.outcome }}" = "success" ]; then
-            echo "✅ \`$SLUG\` fixed on attempt $ATTEMPT of 3." >> "$GITHUB_STEP_SUMMARY"
+            .github/scripts/record-stage.sh "$SLUG" verify ok
+            gh workflow run app-shots.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
+            echo "✅ \`$SLUG\` fixed on attempt $ATTEMPT of 3; app-shots dispatched." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
+          .github/scripts/record-stage.sh "$SLUG" verify fail
           if [ "$ATTEMPT" -lt 3 ]; then
             gh workflow run app-fix.yml \
               -f slug="$SLUG" \
