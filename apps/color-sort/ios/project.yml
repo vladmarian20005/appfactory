@@ -1,0 +1,51 @@
+name: Tidepour
+options:
+  bundleIdPrefix: com.factory
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+packages:
+  FactoryKit:
+    path: ../../../FactoryKit
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Automatic
+    GENERATE_INFOPLIST_FILE: YES
+    INFOPLIST_KEY_UILaunchScreen_Generation: YES
+    # No custom or non-exempt crypto. Without this answer in the bundle every TestFlight
+    # build sits at "Missing Compliance" until someone clicks through it in a browser.
+    INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+    INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+    INFOPLIST_KEY_CFBundleDisplayName: "Tidepour"
+    INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.puzzle-games
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+targets:
+  Tidepour:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+    dependencies:
+      - package: FactoryKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.starhiveconcept.colorsort
+        # iPhone only, and it has to be here on the target. XcodeGen's iOS preset writes
+        # TARGETED_DEVICE_FAMILY "1,2" at target level, and a target setting beats the
+        # project one, so the same key under the top-level `settings` is silently
+        # ignored. A bundle that claims iPad with portrait-only orientations fails the
+        # upload (ITMS-90474), and would need iPad screenshots besides.
+        TARGETED_DEVICE_FAMILY: "1"
+schemes:
+  Tidepour:
+    build:
+      targets:
+        Tidepour: all
+    run:
+      config: Debug
+      storeKitConfiguration: App/Products.storekit
