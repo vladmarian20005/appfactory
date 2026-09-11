@@ -503,9 +503,17 @@ async function oneTime() {
     await reviewScreenshot(p, "inAppPurchase", "inAppPurchases", iap.id, `/v2/inAppPurchases/${iap.id}/appStoreReviewScreenshot`);
 
     if (apply) {
-      const now = (await asc("GET", `/v2/inAppPurchases/${iap.id}`)).data.attributes.state;
+      // Apple processes the review screenshot after the upload is committed, and the product
+      // reads Missing Metadata until it has: Tidepour's did for a few seconds, then became
+      // Ready to Submit. Give it two minutes before calling anything missing.
+      let now;
+      for (let i = 0; i < 12; i++) {
+        now = (await asc("GET", `/v2/inAppPurchases/${iap.id}`)).data.attributes.state;
+        if (now !== "MISSING_METADATA") break;
+        await new Promise((r) => setTimeout(r, 10_000));
+      }
       console.log(`  state        ${now}`);
-      if (now === "MISSING_METADATA") todo.push(`${p.productId}: still Missing Metadata in App Store Connect`);
+      if (now === "MISSING_METADATA") todo.push(`${p.productId}: still Missing Metadata in App Store Connect after two minutes`);
     }
   }
 }
