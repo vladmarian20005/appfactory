@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 260" fill="none">
+  <!-- Tidepour · the empty state — "An unlit rack."
+       Four vials standing empty in the flat, one still holding a little light. Quiet on purpose:
+       an empty state should look like the shore before anyone came, not like an error. -->
+  <defs>
+    <radialGradient id="eFlat" cx="50%" cy="40%" r="56%">
+      <stop offset="0" stop-color="#E5D6BC" stop-opacity=".85"/>
+      <stop offset=".58" stop-color="#D6C6AA" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#CCBCA2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="eSky" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9FC3C8" stop-opacity="0"/><stop offset=".35" stop-color="#9FC3C8" stop-opacity=".55"/>
+      <stop offset=".65" stop-color="#9FC3C8" stop-opacity=".55"/><stop offset="1" stop-color="#9FC3C8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="eGlass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#F4FCFB" stop-opacity=".40"/>
+      <stop offset=".42" stop-color="#DCF0EE" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#F4FCFB" stop-opacity=".26"/>
+    </linearGradient>
+    <linearGradient id="eLantern" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD265"/><stop offset="1" stop-color="#DCA027"/></linearGradient>
+    <filter id="eGlow" x="-90%" y="-90%" width="280%" height="280%"><feGaussianBlur stdDeviation="7"/></filter>
+  </defs>
+
+  <path d="M20 88h340" stroke="url(#eSky)" stroke-width="1.6"/>
+  <ellipse cx="190" cy="196" rx="176" ry="48" fill="url(#eFlat)"/>
+  <path d="M40 176c46-8 88 6 132 1s94-13 150-2" stroke="#FFFFFF" stroke-opacity=".28" stroke-width="1.3" fill="none"/>
+
+  <!-- three empty, one with the last of a light in it -->
+  <g stroke="#1E4C55" stroke-opacity=".18" stroke-width="3.6">
+    <path d="M86 128a8 8 0 0 1 8-8h24a8 8 0 0 1 8 8v48a20 20 0 0 1-40 0z"/>
+    <path d="M222 128a8 8 0 0 1 8-8h24a8 8 0 0 1 8 8v48a20 20 0 0 1-40 0z"/>
+    <path d="M290 128a8 8 0 0 1 8-8h24a8 8 0 0 1 8 8v48a20 20 0 0 1-40 0z"/>
+  </g>
+  <g fill="url(#eGlass)" stroke="#EAF7F5" stroke-opacity=".9" stroke-width="2.2">
+    <path d="M86 128a8 8 0 0 1 8-8h24a8 8 0 0 1 8 8v48a20 20 0 0 1-40 0z"/>
+    <path d="M222 128a8 8 0 0 1 8-8h24a8 8 0 0 1 8 8v48a20 20 0 0 1-40 0z"/>
+    <path d="M290 128a8 8 0 0 1 8-8h24a8 8 0 0 1 8 8v48a20 20 0 0 1-40 0z"/>
+  </g>
+  <g stroke="#FFFFFF" stroke-opacity=".5" stroke-width="2.3" stroke-linecap="round">
+    <path d="M93 134v42"/><path d="M229 134v42"/><path d="M297 134v42"/>
+  </g>
+
+  <ellipse cx="174" cy="202" rx="34" ry="9" fill="#DCA027" opacity=".24" filter="url(#eGlow)"/>
+  <path d="M154 128a8 8 0 0 1 8-8h24a8 8 0 0 1 8 8v48a20 20 0 0 1-40 0z" stroke="#1E4C55" stroke-opacity=".18" stroke-width="3.6"/>
+  <path d="M154 166h40v10a20 20 0 0 1-40 0z" fill="url(#eLantern)"/>
+  <path d="M154 128a8 8 0 0 1 8-8h24a8 8 0 0 1 8 8v48a20 20 0 0 1-40 0z" fill="url(#eGlass)" stroke="#EAF7F5" stroke-width="2.2"/>
+  <path d="M161 134v42" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="2.3" stroke-linecap="round"/>
+
+  <g fill="#FFD79E" opacity=".55">
+    <circle cx="126" cy="104" r="2"/><circle cx="262" cy="96" r="1.8"/><circle cx="60" cy="132" r="1.8"/>
+  </g>
+</svg>

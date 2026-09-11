@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tidepour · the tide comes in</title>
+<style>
+  :root{
+    --ink:#E8F4F2; --inkSoft:#9DBAC0; --accent:#4FE3D2; --onAccent:#062A2B; --highlight:#FFB27A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+  html,body{width:440px;height:956px;overflow:hidden}
+  body{
+    font-family:-apple-system,"SF Pro Text",system-ui,sans-serif;color:var(--ink);position:relative;
+    background:
+      radial-gradient(120% 34% at 50% 12%, rgba(255,201,77,.13) 0%, rgba(255,201,77,0) 68%),
+      linear-gradient(174deg,#16323F 0%,#0D2B37 28%,#0A2833 46%,#082733 62%,#051F29 100%);
+  }
+  .moon{position:absolute;left:50%;transform:translateX(-50%);top:104px;width:54px;height:54px;border-radius:50%;
+    background:radial-gradient(52% 52% at 42% 36%,#FFF6E9,#FFDCB4 62%,#F7C48F);
+    box-shadow:0 0 64px 16px rgba(255,201,77,.22),0 0 150px 46px rgba(255,178,122,.10)}
+  .skyline{position:absolute;left:0;right:0;top:158px;height:1px;
+    background:linear-gradient(90deg,rgba(255,201,77,0),rgba(255,201,77,.44) 30%,rgba(255,223,171,.6) 50%,rgba(255,201,77,.44) 70%,rgba(255,201,77,0))}
+
+  .status{height:var(--safe-top,62px);display:flex;align-items:flex-end;justify-content:space-between;
+    padding:0 28px 8px;font-size:15px;font-weight:600;position:relative;z-index:9}
+  .status .right{display:flex;gap:6px;align-items:center}
+
+  /* ── the headline block ──────────────────────────────────────── */
+  .win{position:absolute;left:0;right:0;top:196px;z-index:6;text-align:center;padding:0 28px}
+  .kicker{font-size:11.5px;letter-spacing:2.8px;text-transform:uppercase;color:var(--highlight);opacity:.92}
+  .numwrap{position:relative;height:124px;margin-top:6px}
+  .numring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:150px;height:150px;
+    border-radius:50%;border:1px solid rgba(255,178,122,.42);
+    box-shadow:0 0 40px rgba(255,178,122,.14),inset 0 0 30px rgba(255,178,122,.07)}
+  .num{position:absolute;left:0;right:0;top:4px;font-family:ui-serif,"New York",Georgia,serif;font-weight:600;
+    font-size:104px;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-3px;
+    background:linear-gradient(180deg,#FFFFFF,#B7EAE2);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 38px rgba(79,227,210,.40))}
+  .head{font-family:ui-serif,"New York",Georgia,serif;font-weight:600;font-size:26px;line-height:1.2;
+    margin-top:4px;letter-spacing:-.2px}
+  .sub{margin-top:10px;font-size:14.5px;color:var(--inkSoft)}
+
+  .mark{margin:24px auto 0;width:296px;height:40px;position:relative}
+  .mark .rule{position:absolute;left:0;right:0;top:7px;height:1.5px;border-radius:2px;background:rgba(157,186,192,.26)}
+  .mark .filled{position:absolute;left:0;width:100%;top:7px;height:1.5px;border-radius:2px;
+    background:linear-gradient(90deg,rgba(79,227,210,.22),var(--accent))}
+  .mark .tick{position:absolute;top:1px;width:1.5px;height:14px;border-radius:2px}
+  .mark .dot{position:absolute;left:100%;top:1.5px;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;
+    background:var(--accent);box-shadow:0 0 22px rgba(79,227,210,.95),0 0 3px #fff}
+  .mark .lab{position:absolute;top:24px;font-size:10.5px;letter-spacing:1.6px;text-transform:uppercase;white-space:nowrap}
+
+  /* ── the tide, risen over the rack ───────────────────────────── */
+  .waterline{position:absolute;left:0;top:508px;width:440px;height:28px;z-index:5}
+  .water{position:absolute;left:0;right:0;top:526px;bottom:0;z-index:4;
+    background:linear-gradient(180deg,rgba(14,74,88,.42) 0%,rgba(8,58,72,.62) 22%,rgba(5,42,54,.80) 62%,rgba(4,32,42,.92) 100%)}
+  .caustic{position:absolute;left:0;right:0;top:526px;height:210px;z-index:6;opacity:.32;
+    background:repeating-linear-gradient(102deg,rgba(180,240,234,.09) 0 3px,rgba(180,240,234,0) 3px 34px);
+    filter:blur(4px);-webkit-mask-image:radial-gradient(72% 100% at 50% 0%,rgba(0,0,0,.85),rgba(0,0,0,0) 80%)}
+  /* everything under the line is seen through water */
+  .tint{position:absolute;left:0;right:0;top:526px;bottom:0;z-index:8;pointer-events:none;
+    background:linear-gradient(180deg,rgba(12,70,86,.13),rgba(6,44,58,.30))}
+
+  /* ── the rack, lifted off the sand, bobbing under the water ──── */
+  .rack{position:absolute;left:0;right:0;top:558px;display:flex;justify-content:center;align-items:flex-start;
+    gap:14px;z-index:7}
+  .vial{width:48px;height:136px;position:relative}
+  .glass{position:absolute;inset:0;border-radius:12px 12px 23px 23px;overflow:hidden;
+    background:linear-gradient(100deg,rgba(226,242,240,.14),rgba(226,242,240,.04) 40%,rgba(226,242,240,.12));
+    box-shadow:inset 0 0 0 1.4px rgba(235,250,248,.46), inset 0 -10px 16px rgba(0,0,0,.20)}
+  .glass::after{content:"";position:absolute;left:6px;top:9px;width:4px;bottom:15px;border-radius:3px;
+    background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.05))}
+  .fill{position:absolute;inset:0;display:flex;flex-direction:column-reverse}
+  .u{height:34px;position:relative}
+  .u.top::before{content:"";position:absolute;left:0;right:0;top:-1px;height:4px;border-radius:50%;
+    background:rgba(255,255,255,.36);filter:blur(1px)}
+  .halo{position:absolute;left:-24px;right:-24px;top:-20px;bottom:-28px;border-radius:32px;z-index:-1;filter:blur(19px)}
+  .anemone{position:absolute;left:50%;transform:translateX(-50%);bottom:-28px;width:56px;height:30px;opacity:.92}
+  .e-ember{background:linear-gradient(180deg,#FF8A57,#DE5C2F)}
+  .e-tide{background:linear-gradient(180deg,#5CB2F0,#2479BC)}
+  .e-lantern{background:linear-gradient(180deg,#FFD265,#DCA027)}
+  .e-kelp{background:linear-gradient(180deg,#5FD8A9,#269C74)}
+  .e-dusk{background:linear-gradient(180deg,#B69AF5,#7A5CCD)}
+  .e-coral{background:linear-gradient(180deg,#FF93AC,#D8597B)}
+
+  .mote{position:absolute;border-radius:50%;z-index:8}
+
+  .actions{position:absolute;left:0;right:0;bottom:calc(var(--safe-bottom,34px) + 22px);z-index:9;padding:0 26px}
+  .primary{height:54px;border-radius:27px;display:flex;align-items:center;justify-content:center;
+    font-size:17px;font-weight:600;color:var(--onAccent);
+    background:linear-gradient(180deg,#6BEEDE,#34CCBB);
+    box-shadow:0 8px 28px rgba(79,227,210,.28),inset 0 1px 0 rgba(255,255,255,.5)}
+  .second{display:flex;gap:12px;margin-top:12px}
+  .ghost{flex:1;height:48px;border-radius:24px;display:flex;align-items:center;justify-content:center;gap:7px;
+    font-size:15.5px;color:var(--ink);background:rgba(226,242,240,.10);backdrop-filter:blur(16px);
+    box-shadow:inset 0 0 0 .5px rgba(226,242,240,.24)}
+  .home{position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:140px;height:5px;
+    border-radius:3px;background:rgba(226,242,240,.42);z-index:10}
+</style>
+</head>
+<body>
+  <div class="moon"></div>
+  <div class="skyline"></div>
+
+  <div class="status">
+    <div>9:41</div>
+    <div class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="#E8F4F2"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="#E8F4F2"><path d="M8.5 11.4 6.2 8.9a3.4 3.4 0 0 1 4.6 0zM3.6 6.2 1.9 4.4a9.6 9.6 0 0 1 13.2 0l-1.7 1.8a7.2 7.2 0 0 0-9.8 0z"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="20" height="11" rx="3.2" fill="none" stroke="#E8F4F2" stroke-opacity=".5"/><rect x="2.2" y="2.2" width="14" height="7.6" rx="1.8" fill="#E8F4F2"/><path d="M22.2 4.2v3.6a2 2 0 0 0 0-3.6z" fill="#E8F4F2" fill-opacity=".5"/></svg>
+    </div>
+  </div>
+
+  <div class="win">
+    <div class="kicker">pours</div>
+    <div class="numwrap">
+      <div class="numring"></div>
+      <div class="num">13</div>
+    </div>
+    <div class="head">You found the shortest line.</div>
+    <div class="sub">Level 34 · the charted line was 13</div>
+    <div class="mark">
+      <div class="rule"></div><div class="filled"></div>
+      <div class="tick" style="left:0;background:rgba(157,186,192,.45)"></div>
+      <div class="lab" style="left:0;color:var(--inkSoft)">start</div>
+      <div class="tick" style="left:100%;background:var(--highlight)"></div>
+      <div class="lab" style="right:0;color:var(--highlight)">the line</div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+  <svg class="waterline" viewBox="0 0 440 28" preserveAspectRatio="none">
+    <path d="M0 17 C 58 6, 116 27, 176 17 S 298 6, 358 17 S 420 25, 440 17 L440 28 L0 28 Z" fill="rgba(14,74,88,.5)"/>
+    <path d="M0 17 C 58 6, 116 27, 176 17 S 298 6, 358 17 S 420 25, 440 17"
+          stroke="rgba(172,246,236,.55)" stroke-width="1.5" fill="none"/>
+    <path d="M0 17 C 58 6, 116 27, 176 17 S 298 6, 358 17 S 420 25, 440 17"
+          stroke="rgba(172,246,236,.25)" stroke-width="5" fill="none" filter="blur(4px)"/>
+  </svg>
+  <div class="water"></div>
+  <div class="caustic"></div>
+  <div class="tint"></div>
+
+  <div class="rack">
+    <div class="vial" style="margin-top:8px">
+      <div class="halo" style="background:radial-gradient(50% 50% at 50% 55%,rgba(255,122,69,.55),rgba(255,122,69,0) 70%)"></div>
+      <div class="glass"><div class="fill"><div class="u e-ember"></div><div class="u e-ember"></div><div class="u e-ember"></div><div class="u e-ember top"></div></div></div>
+      <svg class="anemone" viewBox="0 0 56 30" fill="none"><g stroke="#FF9061" stroke-width="2.1" stroke-linecap="round" opacity=".9"><path d="M28 26c-4-3-7-8-7-13"/><path d="M28 26c4-3 7-8 7-13"/><path d="M28 26c-7-2-12-5-14-9"/><path d="M28 26c7-2 12-5 14-9"/><path d="M28 26V11"/></g></svg>
+    </div>
+    <div class="vial" style="margin-top:20px">
+      <div class="halo" style="background:radial-gradient(50% 50% at 50% 55%,rgba(73,169,238,.55),rgba(73,169,238,0) 70%)"></div>
+      <div class="glass"><div class="fill"><div class="u e-tide"></div><div class="u e-tide"></div><div class="u e-tide"></div><div class="u e-tide top"></div></div></div>
+      <svg class="anemone" viewBox="0 0 56 30" fill="none"><g stroke="#6BBCF4" stroke-width="2.1" stroke-linecap="round" opacity=".9"><path d="M28 26c-4-3-7-8-7-13"/><path d="M28 26c4-3 7-8 7-13"/><path d="M28 26c-7-2-12-5-14-9"/><path d="M28 26c7-2 12-5 14-9"/><path d="M28 26V11"/></g></svg>
+    </div>
+    <div class="vial" style="margin-top:0">
+      <div class="halo" style="background:radial-gradient(50% 50% at 50% 55%,rgba(255,201,77,.55),rgba(255,201,77,0) 70%)"></div>
+      <div class="glass"><div class="fill"><div class="u e-lantern"></div><div class="u e-lantern"></div><div class="u e-lantern"></div><div class="u e-lantern top"></div></div></div>
+      <svg class="anemone" viewBox="0 0 56 30" fill="none"><g stroke="#FFD265" stroke-width="2.1" stroke-linecap="round" opacity=".9"><path d="M28 26c-4-3-7-8-7-13"/><path d="M28 26c4-3 7-8 7-13"/><path d="M28 26c-7-2-12-5-14-9"/><path d="M28 26c7-2 12-5 14-9"/><path d="M28 26V11"/></g></svg>
+    </div>
+    <div class="vial" style="margin-top:24px">
+      <div class="halo" style="background:radial-gradient(50% 50% at 50% 55%,rgba(79,209,160,.55),rgba(79,209,160,0) 70%)"></div>
+      <div class="glass"><div class="fill"><div class="u e-kelp"></div><div class="u e-kelp"></div><div class="u e-kelp"></div><div class="u e-kelp top"></div></div></div>
+      <svg class="anemone" viewBox="0 0 56 30" fill="none"><g stroke="#5FD8A9" stroke-width="2.1" stroke-linecap="round" opacity=".9"><path d="M28 26c-4-3-7-8-7-13"/><path d="M28 26c4-3 7-8 7-13"/><path d="M28 26c-7-2-12-5-14-9"/><path d="M28 26c7-2 12-5 14-9"/><path d="M28 26V11"/></g></svg>
+    </div>
+    <div class="vial" style="margin-top:10px">
+      <div class="halo" style="background:radial-gradient(50% 50% at 50% 55%,rgba(169,140,240,.55),rgba(169,140,240,0) 70%)"></div>
+      <div class="glass"><div class="fill"><div class="u e-dusk"></div><div class="u e-dusk"></div><div class="u e-dusk"></div><div class="u e-dusk top"></div></div></div>
+      <svg class="anemone" viewBox="0 0 56 30" fill="none"><g stroke="#B69AF5" stroke-width="2.1" stroke-linecap="round" opacity=".9"><path d="M28 26c-4-3-7-8-7-13"/><path d="M28 26c4-3 7-8 7-13"/><path d="M28 26c-7-2-12-5-14-9"/><path d="M28 26c7-2 12-5 14-9"/><path d="M28 26V11"/></g></svg>
+    </div>
+    <div class="vial" style="margin-top:28px">
+      <div class="halo" style="background:radial-gradient(50% 50% at 50% 55%,rgba(255,131,161,.55),rgba(255,131,161,0) 70%)"></div>
+      <div class="glass"><div class="fill"><div class="u e-coral"></div><div class="u e-coral"></div><div class="u e-coral"></div><div class="u e-coral top"></div></div></div>
+      <svg class="anemone" viewBox="0 0 56 30" fill="none"><g stroke="#FF93AC" stroke-width="2.1" stroke-linecap="round" opacity=".9"><path d="M28 26c-4-3-7-8-7-13"/><path d="M28 26c4-3 7-8 7-13"/><path d="M28 26c-7-2-12-5-14-9"/><path d="M28 26c7-2 12-5 14-9"/><path d="M28 26V11"/></g></svg>
+    </div>
+  </div>
+
+  <!-- motes of light rising through the water -->
+  <div class="mote" style="left:46px;top:604px;width:5px;height:5px;background:rgba(255,201,77,.9);box-shadow:0 0 15px rgba(255,201,77,.8)"></div>
+  <div class="mote" style="left:98px;top:700px;width:3.5px;height:3.5px;background:rgba(79,227,210,.95);box-shadow:0 0 13px rgba(79,227,210,.85)"></div>
+  <div class="mote" style="left:150px;top:556px;width:3px;height:3px;background:rgba(255,131,161,.9);box-shadow:0 0 12px rgba(255,131,161,.8)"></div>
+  <div class="mote" style="left:210px;top:770px;width:6px;height:6px;background:rgba(79,209,160,.9);box-shadow:0 0 18px rgba(79,209,160,.8)"></div>
+  <div class="mote" style="left:266px;top:660px;width:4px;height:4px;background:rgba(169,140,240,.95);box-shadow:0 0 15px rgba(169,140,240,.8)"></div>
+  <div class="mote" style="left:316px;top:742px;width:3px;height:3px;background:rgba(255,122,69,.95);box-shadow:0 0 12px rgba(255,122,69,.85)"></div>
+  <div class="mote" style="left:372px;top:596px;width:4.5px;height:4.5px;background:rgba(255,201,77,.85);box-shadow:0 0 15px rgba(255,201,77,.7)"></div>
+  <div class="mote" style="left:404px;top:696px;width:3px;height:3px;background:rgba(79,227,210,.85);box-shadow:0 0 12px rgba(79,227,210,.7)"></div>
+  <div class="mote" style="left:64px;top:790px;width:3.5px;height:3.5px;background:rgba(73,169,238,.85);box-shadow:0 0 13px rgba(73,169,238,.7)"></div>
+  <div class="mote" style="left:246px;top:812px;width:4px;height:4px;background:rgba(255,201,77,.7);box-shadow:0 0 13px rgba(255,201,77,.6)"></div>
+  <div class="mote" style="left:150px;top:836px;width:2.5px;height:2.5px;background:rgba(79,227,210,.7);box-shadow:0 0 11px rgba(79,227,210,.6)"></div>
+  <div class="mote" style="left:344px;top:824px;width:3px;height:3px;background:rgba(255,131,161,.7);box-shadow:0 0 11px rgba(255,131,161,.6)"></div>
+
+  <div class="actions">
+    <div class="primary">Take the next one</div>
+    <div class="second">
+      <div class="ghost">Pour it again</div>
+      <div class="ghost">
+        <svg width="15" height="17" viewBox="0 0 15 17" fill="none" stroke="#E8F4F2" stroke-width="1.6" stroke-linecap="round"><path d="M7.5 11V1.6"/><path d="M4.2 4.6 7.5 1.3l3.3 3.3"/><path d="M2 8.4v6.2h11V8.4"/></svg>
+        Share the rack
+      </div>
+    </div>
+  </div>
+  <div class="home"></div>
+</body>
+</html>

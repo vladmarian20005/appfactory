@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tidepour · the first thing you see</title>
+<style>
+  :root{
+    --ink:#12333A; --inkSoft:#37585F; --surface:#F2E9DA;
+    --accent:#076B67; --onAccent:#F2FBFA; --highlight:#9C3F24;
+    --ember:#E8572A; --tide:#1E7BC4; --lantern:#E0A012; --kelp:#1E9A73; --dusk:#7B55D6; --coral:#DC4A70;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+  html,body{width:440px;height:956px;overflow:hidden}
+  body{
+    font-family:-apple-system,"SF Pro Text",system-ui,sans-serif;color:var(--ink);position:relative;
+    /* the light-mode canvas: the last of the light over a falling tide */
+    background:
+      radial-gradient(120% 44% at 24% 10%, #F6E7D4 0%, rgba(246,231,212,0) 66%),
+      radial-gradient(110% 40% at 84% 26%, #EFDCC9 0%, rgba(239,220,201,0) 62%),
+      linear-gradient(178deg,#F1E2CF 0%,#DCE4DC 26%,#B9D2D2 56%,#A0C1C4 80%,#9ABDC1 100%);
+  }
+  .status{height:var(--safe-top,62px);display:flex;align-items:flex-end;justify-content:space-between;
+    padding:0 28px 8px;font-size:15px;font-weight:600;position:relative;z-index:9}
+  .status .right{display:flex;gap:6px;align-items:center}
+
+  .hero{position:absolute;left:0;right:0;top:96px;height:300px;display:flex;align-items:center;justify-content:center;z-index:3}
+  .copy{position:absolute;left:0;right:0;top:432px;padding:0 34px;text-align:center;z-index:4}
+  .title{font-family:ui-serif,"New York",Georgia,serif;font-weight:600;font-size:38px;line-height:1.08;
+    letter-spacing:-.6px}
+  .sub{margin-top:16px;font-size:19px;line-height:1.42;color:var(--inkSoft)}
+
+  .dots{position:absolute;left:0;right:0;bottom:164px;display:flex;justify-content:center;gap:8px;z-index:5}
+  .dot{width:8px;height:8px;border-radius:50%;background:rgba(18,51,58,.22)}
+  .dot.on{background:var(--accent)}
+
+  .cta{position:absolute;left:20px;right:20px;bottom:calc(var(--safe-bottom,34px) + 24px);height:54px;
+    border-radius:27px;display:flex;align-items:center;justify-content:center;z-index:6;
+    font-size:17px;font-weight:600;color:var(--onAccent);
+    background:linear-gradient(180deg,#0A8580,#05615D);
+    box-shadow:0 8px 24px rgba(7,107,103,.30),inset 0 1px 0 rgba(255,255,255,.28)}
+  .home{position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:140px;height:5px;
+    border-radius:3px;background:rgba(18,51,58,.38);z-index:9}
+</style>
+</head>
+<body>
+  <div class="status">
+    <div>9:41</div>
+    <div class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="#12333A"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="#12333A"><path d="M8.5 11.4 6.2 8.9a3.4 3.4 0 0 1 4.6 0zM3.6 6.2 1.9 4.4a9.6 9.6 0 0 1 13.2 0l-1.7 1.8a7.2 7.2 0 0 0-9.8 0z"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="20" height="11" rx="3.2" fill="none" stroke="#12333A" stroke-opacity=".45"/><rect x="2.2" y="2.2" width="14" height="7.6" rx="1.8" fill="#12333A"/><path d="M22.2 4.2v3.6a2 2 0 0 0 0-3.6z" fill="#12333A" fill-opacity=".45"/></svg>
+    </div>
+  </div>
+
+  <!-- design/art/rack-at-dusk.svg -->
+  <div class="hero">
+  <svg width="380" height="300" viewBox="0 0 380 300" fill="none">
+    <defs>
+      <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+        <stop offset="0" stop-color="#FFE6BF" stop-opacity=".95"/><stop offset="1" stop-color="#FFD2A0" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#A9C7CA"/><stop offset="1" stop-color="#8FB6BC"/>
+      </linearGradient>
+      <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#E7D9C2"/><stop offset="1" stop-color="#D3C4AC"/>
+      </linearGradient>
+      <linearGradient id="lEmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF9760"/><stop offset="1" stop-color="#E8572A"/></linearGradient>
+      <linearGradient id="lTide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#55A7E4"/><stop offset="1" stop-color="#1E7BC4"/></linearGradient>
+      <linearGradient id="lKelp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#48C09A"/><stop offset="1" stop-color="#1E9A73"/></linearGradient>
+      <linearGradient id="lLantern" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFCE5C"/><stop offset="1" stop-color="#E0A012"/></linearGradient>
+      <linearGradient id="glassG" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#FFFFFF" stop-opacity=".62"/>
+        <stop offset=".45" stop-color="#FFFFFF" stop-opacity=".14"/>
+        <stop offset="1" stop-color="#FFFFFF" stop-opacity=".44"/>
+      </linearGradient>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="7"/>
+      </filter>
+      <clipPath id="v1"><path d="M96 118h40a8 8 0 0 1 8 8v88a28 28 0 0 1-56 0v-88a8 8 0 0 1 8-8z"/></clipPath>
+      <clipPath id="v2"><path d="M158 108h40a8 8 0 0 1 8 8v98a28 28 0 0 1-56 0v-98a8 8 0 0 1 8-8z"/></clipPath>
+      <clipPath id="v3"><path d="M220 118h40a8 8 0 0 1 8 8v88a28 28 0 0 1-56 0v-88a8 8 0 0 1 8-8z"/></clipPath>
+    </defs>
+
+    <!-- the sky, low sun, sea -->
+    <circle cx="268" cy="84" r="66" fill="url(#sun)"/>
+    <circle cx="268" cy="84" r="17" fill="#FFE9C6"/>
+    <rect x="0" y="98" width="380" height="60" fill="url(#sea)" opacity=".55"/>
+    <path d="M0 98h380" stroke="#FFD2A0" stroke-opacity=".55" stroke-width="1.5"/>
+    <g stroke="#FFFFFF" stroke-opacity=".38" stroke-width="1.4" stroke-linecap="round">
+      <path d="M28 118h44"/><path d="M96 128h34"/><path d="M300 122h52"/><path d="M236 136h30"/>
+    </g>
+
+    <!-- the wet flat -->
+    <path d="M0 158 C 90 148, 180 166, 268 156 S 360 150, 380 158 L380 300 L0 300Z" fill="url(#sand)"/>
+    <path d="M0 158 C 90 148, 180 166, 268 156 S 360 150, 380 158" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="1.4"/>
+    <ellipse cx="188" cy="248" rx="150" ry="34" fill="#B9D2D2" opacity=".45"/>
+
+    <!-- the pouring vial, tipped, off to one side -->
+    <g transform="rotate(-118 92 92)">
+      <path d="M74 46h36a7 7 0 0 1 7 7v78a25 25 0 0 1-50 0V53a7 7 0 0 1 7-7z" fill="url(#glassG)" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="2.2"/>
+      <path d="M74 92h50v39a25 25 0 0 1-50 0z" fill="url(#lEmber)" opacity=".9"/>
+    </g>
+    <!-- the ribbon of light leaving its lip -->
+    <path d="M128 108 C 134 132, 140 152, 146 168 L138 168 C 132 150, 126 130, 121 107 Z"
+          fill="#FF7A45" filter="url(#glow)" opacity=".55"/>
+    <path d="M128 108 C 134 132, 140 152, 146 168 L139 168 C 133 150, 127 130, 122 107 Z" fill="url(#lEmber)"/>
+
+    <!-- glow pools under the standing vials -->
+    <ellipse cx="116" cy="244" rx="46" ry="12" fill="#E8572A" opacity=".22" filter="url(#glow)"/>
+    <ellipse cx="178" cy="244" rx="46" ry="12" fill="#1E7BC4" opacity=".22" filter="url(#glow)"/>
+    <ellipse cx="240" cy="244" rx="46" ry="12" fill="#1E9A73" opacity=".22" filter="url(#glow)"/>
+
+    <!-- three vials in the sand -->
+    <g clip-path="url(#v1)"><rect x="88" y="168" width="56" height="80" fill="url(#lEmber)"/></g>
+    <path d="M96 118h40a8 8 0 0 1 8 8v88a28 28 0 0 1-56 0v-88a8 8 0 0 1 8-8z" fill="url(#glassG)" stroke="#FFFFFF" stroke-opacity=".85" stroke-width="2.4"/>
+    <path d="M103 132v72" stroke="#FFFFFF" stroke-opacity=".65" stroke-width="3" stroke-linecap="round"/>
+
+    <g clip-path="url(#v2)"><rect x="150" y="146" width="56" height="100" fill="url(#lTide)"/><rect x="150" y="188" width="56" height="58" fill="url(#lLantern)"/></g>
+    <path d="M158 108h40a8 8 0 0 1 8 8v98a28 28 0 0 1-56 0v-98a8 8 0 0 1 8-8z" fill="url(#glassG)" stroke="#FFFFFF" stroke-opacity=".85" stroke-width="2.4"/>
+    <path d="M165 122v82" stroke="#FFFFFF" stroke-opacity=".65" stroke-width="3" stroke-linecap="round"/>
+
+    <g clip-path="url(#v3)"><rect x="212" y="176" width="56" height="72" fill="url(#lKelp)"/></g>
+    <path d="M220 118h40a8 8 0 0 1 8 8v88a28 28 0 0 1-56 0v-88a8 8 0 0 1 8-8z" fill="url(#glassG)" stroke="#FFFFFF" stroke-opacity=".85" stroke-width="2.4"/>
+    <path d="M227 132v72" stroke="#FFFFFF" stroke-opacity=".65" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- an anemone already open beside the rack -->
+    <g stroke="#1E9A73" stroke-width="2.6" stroke-linecap="round" opacity=".75">
+      <path d="M300 252c-5-5-8-12-8-18"/><path d="M300 252c5-5 8-12 8-18"/>
+      <path d="M300 252c-10-2-17-8-20-13"/><path d="M300 252c10-2 17-8 20-13"/><path d="M300 252v-20"/>
+    </g>
+    <ellipse cx="300" cy="253" rx="14" ry="4" fill="#1E9A73" opacity=".25"/>
+  </svg>
+  </div>
+
+  <div class="copy">
+    <div class="title">Every light wants<br>its own glass.</div>
+    <div class="sub">Decant one glow into another until every vial holds a single color.</div>
+  </div>
+
+  <div class="dots"><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div>
+  <div class="cta">Continue</div>
+  <div class="home"></div>
+</body>
+</html>

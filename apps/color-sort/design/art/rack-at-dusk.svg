@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 300" fill="none">
+  <!-- Tidepour · onboarding 1 — a rack in the wet flat at dusk, one vial tipped and pouring.
+       Everything fades to transparent at the edges: this is an object, not a framed picture.
+       Each vial is drawn three times: a dark seat so the glass holds its edge on a pale canvas,
+       the body, then the white rim highlight that makes it read as glass. -->
+  <defs>
+    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFE7C4" stop-opacity=".9"/><stop offset="1" stop-color="#FFD2A0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="seaBand" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#8FB8BE" stop-opacity=".70"/>
+      <stop offset=".62" stop-color="#9FC3C8" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#9FC3C8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="flat" cx="50%" cy="42%" r="54%">
+      <stop offset="0" stop-color="#E5D6BC" stop-opacity=".95"/>
+      <stop offset=".58" stop-color="#D6C6AA" stop-opacity=".70"/>
+      <stop offset="1" stop-color="#CCBCA2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="skylineFade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFD2A0" stop-opacity="0"/><stop offset=".3" stop-color="#FFD2A0" stop-opacity=".85"/>
+      <stop offset=".7" stop-color="#FFD2A0" stop-opacity=".85"/><stop offset="1" stop-color="#FFD2A0" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="lEmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A57"/><stop offset="1" stop-color="#D9542A"/></linearGradient>
+    <linearGradient id="lTide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5CB2F0"/><stop offset="1" stop-color="#2276B8"/></linearGradient>
+    <linearGradient id="lKelp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FD8A9"/><stop offset="1" stop-color="#23976F"/></linearGradient>
+    <linearGradient id="glassBody" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#F4FCFB" stop-opacity=".46"/>
+      <stop offset=".42" stop-color="#DCF0EE" stop-opacity=".10"/>
+      <stop offset="1" stop-color="#F4FCFB" stop-opacity=".30"/>
+    </linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="softer" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>
+
+    <clipPath id="cv1"><path d="M95 124a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z"/></clipPath>
+    <clipPath id="cv2"><path d="M155 124a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z"/></clipPath>
+    <clipPath id="cv3"><path d="M215 124a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z"/></clipPath>
+    <clipPath id="cvTip"><path d="M103 19a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z"/></clipPath>
+  </defs>
+
+  <!-- sky: the sun just down, its light still on the water -->
+  <circle cx="288" cy="92" r="58" fill="url(#sunGlow)"/>
+  <circle cx="288" cy="92" r="15" fill="#FFEDD2"/>
+  <ellipse cx="190" cy="126" rx="200" ry="30" fill="url(#seaBand)"/>
+  <path d="M10 110h360" stroke="url(#skylineFade)" stroke-width="1.6"/>
+  <g stroke="#FFFFFF" stroke-opacity=".32" stroke-width="1.4" stroke-linecap="round">
+    <path d="M40 132h34"/><path d="M300 128h46"/><path d="M262 142h24"/>
+  </g>
+
+  <!-- the wet flat the rack stands in -->
+  <ellipse cx="190" cy="238" rx="182" ry="52" fill="url(#flat)"/>
+  <path d="M28 212c48-9 92 6 138 1s96-14 150-3" stroke="#FFFFFF" stroke-opacity=".34" stroke-width="1.4" fill="none"/>
+
+  <!-- pools of light each vial casts in the wet sand -->
+  <ellipse cx="120" cy="248" rx="40" ry="10" fill="#2276B8" opacity=".24" filter="url(#glow)"/>
+  <ellipse cx="180" cy="248" rx="40" ry="10" fill="#D9542A" opacity=".26" filter="url(#glow)"/>
+  <ellipse cx="240" cy="248" rx="44" ry="11" fill="#23976F" opacity=".30" filter="url(#glow)"/>
+
+  <!-- vial 1 · tide, two units -->
+  <path d="M95 124a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z" stroke="#1E4C55" stroke-opacity=".22" stroke-width="4"/>
+  <g clip-path="url(#cv1)"><rect x="95" y="179" width="50" height="70" fill="url(#lTide)"/>
+    <ellipse cx="120" cy="179" rx="25" ry="3.4" fill="#FFFFFF" fill-opacity=".36"/></g>
+  <path d="M95 124a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z" fill="url(#glassBody)" stroke="#EAF7F5" stroke-opacity=".95" stroke-width="2.2"/>
+  <path d="M103 130v76" stroke="#FFFFFF" stroke-opacity=".62" stroke-width="2.6" stroke-linecap="round"/>
+
+  <!-- vial 2 · ember, receiving the pour -->
+  <path d="M155 124a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z" stroke="#1E4C55" stroke-opacity=".22" stroke-width="4"/>
+  <g clip-path="url(#cv2)"><rect x="155" y="179" width="50" height="70" fill="url(#lEmber)"/>
+    <ellipse cx="180" cy="179" rx="25" ry="3.4" fill="#FFFFFF" fill-opacity=".42"/></g>
+  <path d="M155 124a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z" fill="url(#glassBody)" stroke="#EAF7F5" stroke-opacity=".95" stroke-width="2.2"/>
+  <path d="M163 130v76" stroke="#FFFFFF" stroke-opacity=".62" stroke-width="2.6" stroke-linecap="round"/>
+
+  <!-- vial 3 · kelp, settled: full, steady, an anemone open at its foot -->
+  <path d="M215 124a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z" stroke="#1E4C55" stroke-opacity=".22" stroke-width="4"/>
+  <g clip-path="url(#cv3)"><rect x="215" y="114" width="50" height="135" fill="url(#lKelp)"/>
+    <ellipse cx="240" cy="116" rx="25" ry="3.4" fill="#FFFFFF" fill-opacity=".42"/></g>
+  <path d="M215 124a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z" fill="url(#glassBody)" stroke="#EAF7F5" stroke-width="2.4"/>
+  <path d="M223 130v76" stroke="#FFFFFF" stroke-opacity=".62" stroke-width="2.6" stroke-linecap="round"/>
+  <ellipse cx="240" cy="250" rx="40" ry="10" fill="none" stroke="#23976F" stroke-opacity=".42" stroke-width="1.5"/>
+  <g stroke="#23976F" stroke-width="2.6" stroke-linecap="round" opacity=".88" transform="translate(26 4)">
+    <path d="M240 256c-5-5-8-12-8-18"/><path d="M240 256c5-5 8-12 8-18"/>
+    <path d="M240 256c-10-2-17-8-20-13"/><path d="M240 256c10-2 17-8 20-13"/><path d="M240 256v-20"/>
+  </g>
+
+  <!-- the tipped vial: lip over vial 2's mouth, the liquid run down to the lip -->
+  <g transform="rotate(118 128 76)">
+    <path d="M103 19a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z" stroke="#1E4C55" stroke-opacity=".22" stroke-width="4"/>
+    <g clip-path="url(#cvTip)"><rect x="103" y="9" width="50" height="66" fill="url(#lEmber)"/>
+      <ellipse cx="128" cy="75" rx="25" ry="3.4" fill="#FFFFFF" fill-opacity=".34"/></g>
+    <path d="M103 19a10 10 0 0 1 10-10h30a10 10 0 0 1 10 10v97a25 25 0 0 1-50 0z" fill="url(#glassBody)" stroke="#EAF7F5" stroke-width="2.4"/>
+    <path d="M111 86v22" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="2.6" stroke-linecap="round"/>
+  </g>
+
+  <!-- the ribbon of light leaving the lip -->
+  <path d="M186 112c2 14 0 28-4 44l-9-1c4-15 6-29 5-43z" fill="#FF7A45" opacity=".5" filter="url(#softer)"/>
+  <path d="M186 112c2 14 0 28-4 44l-6-1c4-15 6-29 5-43z" fill="url(#lEmber)"/>
+  <ellipse cx="180" cy="177" rx="20" ry="4.6" fill="#FFB58C" opacity=".7" filter="url(#softer)"/>
+  <circle cx="190" cy="164" r="2.4" fill="#FFC49E"/>
+  <circle cx="171" cy="169" r="1.7" fill="#FFC49E" opacity=".8"/>
+</svg>

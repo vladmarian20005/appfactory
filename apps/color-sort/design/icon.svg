@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none">
+  <!-- Tidepour · the app icon.
+       One hand-blown vial standing in the wet flat at dusk, three-quarters full of an ember
+       tincture, with a ribbon of light arcing into it from off-frame and a ring of light
+       spreading in the sand at its foot. A drawing of the idea — not a letter, not a number. -->
+  <defs>
+    <linearGradient id="dusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#17414C"/>
+      <stop offset=".30" stop-color="#103743"/>
+      <stop offset=".62" stop-color="#0B2C38"/>
+      <stop offset="1" stop-color="#06222C"/>
+    </linearGradient>
+    <radialGradient id="lastLight" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFC27A" stop-opacity=".55"/>
+      <stop offset=".55" stop-color="#F0A063" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#F0A063" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="horizonFade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFCE94" stop-opacity="0"/><stop offset=".26" stop-color="#FFCE94" stop-opacity=".62"/>
+      <stop offset=".74" stop-color="#FFCE94" stop-opacity=".62"/><stop offset="1" stop-color="#FFCE94" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="wetSand" cx="50%" cy="26%" r="62%">
+      <stop offset="0" stop-color="#2C5A63" stop-opacity=".85"/>
+      <stop offset=".55" stop-color="#1C4550" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#0E313C" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tincture" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFB177"/>
+      <stop offset=".18" stop-color="#FF8A4E"/>
+      <stop offset="1" stop-color="#D84F24"/>
+    </linearGradient>
+    <linearGradient id="glassSkin" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#EAFBF9" stop-opacity=".26"/>
+      <stop offset=".38" stop-color="#CFEDEA" stop-opacity=".04"/>
+      <stop offset=".82" stop-color="#EAFBF9" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#EAFBF9" stop-opacity=".22"/>
+    </linearGradient>
+    <linearGradient id="ribbon" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE0BC"/><stop offset=".4" stop-color="#FFA463"/><stop offset="1" stop-color="#FF7A45"/>
+    </linearGradient>
+    <filter id="bigGlow" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="34"/></filter>
+    <filter id="midGlow" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="tinyGlow" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="6"/></filter>
+    <clipPath id="vialClip">
+      <path d="M396 352a44 44 0 0 1 44-44h144a44 44 0 0 1 44 44v352a116 116 0 0 1-232 0z"/>
+    </clipPath>
+  </defs>
+
+  <!-- the dusk, full bleed, square corners -->
+  <rect width="1024" height="1024" fill="url(#dusk)"/>
+  <circle cx="512" cy="330" r="360" fill="url(#lastLight)"/>
+  <path d="M40 372h944" stroke="url(#horizonFade)" stroke-width="7"/>
+  <ellipse cx="512" cy="792" rx="470" ry="190" fill="url(#wetSand)"/>
+
+  <!-- the light spreading in the sand at the vial's foot -->
+  <ellipse cx="512" cy="800" rx="290" ry="74" fill="#FF7A45" opacity=".26" filter="url(#bigGlow)"/>
+  <ellipse cx="512" cy="802" rx="252" ry="62" fill="none" stroke="#4FE3D2" stroke-opacity=".42" stroke-width="7"/>
+  <ellipse cx="512" cy="822" rx="318" ry="78" fill="none" stroke="#4FE3D2" stroke-opacity=".18" stroke-width="5"/>
+
+  <!-- the ribbon of light arriving from off-frame and running down into the vial's mouth -->
+  <path d="M948 16C902 226 788 342 566 372L544 292C744 266 842 178 878 -14Z"
+        fill="#FF9B5E" opacity=".40" filter="url(#midGlow)"/>
+  <path d="M944 24C900 220 786 330 566 356L550 296C742 272 838 172 876 -6Z" fill="url(#ribbon)"/>
+  <circle cx="700" cy="276" r="14" fill="#FFE3C8" opacity=".85"/>
+  <circle cx="780" cy="212" r="9" fill="#FFE3C8" opacity=".65"/>
+
+  <!-- the vial: the tincture inside, then the glass over it -->
+  <g filter="url(#bigGlow)" opacity=".8">
+    <ellipse cx="512" cy="600" rx="180" ry="230" fill="#FF7A45" opacity=".42"/>
+  </g>
+  <g clip-path="url(#vialClip)">
+    <rect x="396" y="440" width="232" height="392" fill="url(#tincture)"/>
+    <!-- the meniscus, lit -->
+    <ellipse cx="512" cy="442" rx="116" ry="18" fill="#FFD9B8" opacity=".75"/>
+    <ellipse cx="512" cy="446" rx="116" ry="14" fill="#FFF0DE" opacity=".35" filter="url(#tinyGlow)"/>
+    <!-- a mote of light rising through the tincture -->
+    <circle cx="468" cy="560" r="13" fill="#FFE2C6" opacity=".45"/>
+    <circle cx="556" cy="662" r="9" fill="#FFE2C6" opacity=".35"/>
+  </g>
+  <path d="M396 352a44 44 0 0 1 44-44h144a44 44 0 0 1 44 44v352a116 116 0 0 1-232 0z"
+        fill="url(#glassSkin)" stroke="#E4F7F5" stroke-opacity=".92" stroke-width="15"/>
+  <!-- the blown-glass highlight down one side, and a short one down the other -->
+  <path d="M436 372v298" stroke="#FFFFFF" stroke-opacity=".68" stroke-width="17" stroke-linecap="round"/>
+  <path d="M590 398v120" stroke="#FFFFFF" stroke-opacity=".30" stroke-width="10" stroke-linecap="round"/>
+  <!-- the rim, catching the last of the light -->
+  <path d="M400 350a40 40 0 0 1 40-40h144a40 40 0 0 1 40 40" stroke="#FFE1BE" stroke-opacity=".8"
+        stroke-width="13" stroke-linecap="round"/>
+</svg>

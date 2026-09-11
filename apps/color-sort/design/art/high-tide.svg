@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 300" fill="none">
+  <!-- Tidepour · the paywall hero — "Open the whole shore."
+       The tide fully in: vials floating at different depths, anemones below them, motes rising,
+       the moon over the line. The richest picture in the app, and the only one that sells. -->
+  <defs>
+    <radialGradient id="hMoon" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#FFF1DB" stop-opacity=".9"/><stop offset="1" stop-color="#FFD2A0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hWater" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#57A9B0" stop-opacity=".50"/>
+      <stop offset=".45" stop-color="#2E7E8C" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#14505E" stop-opacity=".10"/>
+    </linearGradient>
+    <linearGradient id="hFade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset=".18" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset=".82" stop-color="#FFFFFF" stop-opacity="1"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="hMask"><rect x="0" y="96" width="380" height="204" fill="url(#hFade)"/></mask>
+    <linearGradient id="hGlass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#F4FCFB" stop-opacity=".5"/>
+      <stop offset=".42" stop-color="#DCF0EE" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#F4FCFB" stop-opacity=".34"/>
+    </linearGradient>
+    <linearGradient id="hEmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A57"/><stop offset="1" stop-color="#DE5C2F"/></linearGradient>
+    <linearGradient id="hTide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5CB2F0"/><stop offset="1" stop-color="#2479BC"/></linearGradient>
+    <linearGradient id="hLantern" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD265"/><stop offset="1" stop-color="#DCA027"/></linearGradient>
+    <linearGradient id="hKelp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FD8A9"/><stop offset="1" stop-color="#269C74"/></linearGradient>
+    <linearGradient id="hDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B69AF5"/><stop offset="1" stop-color="#7A5CCD"/></linearGradient>
+    <filter id="hGlow" x="-90%" y="-90%" width="280%" height="280%"><feGaussianBlur stdDeviation="8"/></filter>
+  </defs>
+
+  <circle cx="190" cy="52" r="46" fill="url(#hMoon)"/>
+  <circle cx="190" cy="52" r="13" fill="#FFF6E8"/>
+
+  <g mask="url(#hMask)">
+    <rect x="0" y="104" width="380" height="196" fill="url(#hWater)"/>
+    <!-- the line itself, wavy and lit -->
+    <path d="M0 106c44-9 76 10 120 2s78-14 122-4 92 12 138 2" stroke="#BDF3EC" stroke-opacity=".7" stroke-width="2" fill="none"/>
+    <path d="M0 106c44-9 76 10 120 2s78-14 122-4 92 12 138 2" stroke="#BDF3EC" stroke-opacity=".25" stroke-width="7" fill="none" filter="url(#hGlow)"/>
+    <!-- light falling through the water -->
+    <g opacity=".22" stroke="#D9F7F2" stroke-width="3" stroke-linecap="round">
+      <path d="M96 116l-20 120"/><path d="M188 114l-6 130"/><path d="M280 118l18 118"/>
+    </g>
+  </g>
+
+  <!-- five vials afloat, bobbing at their own depths, each with its anemone below -->
+  <g>
+    <ellipse cx="58" cy="182" rx="34" ry="30" fill="#DE5C2F" opacity=".34" filter="url(#hGlow)"/>
+    <path d="M40 150a8 8 0 0 1 8-8h20a8 8 0 0 1 8 8v52a20 20 0 0 1-40 0z" stroke="#0E3B46" stroke-opacity=".22" stroke-width="4"/>
+    <path d="M40 158h40v44a20 20 0 0 1-40 0z" fill="url(#hEmber)"/>
+    <path d="M40 150a8 8 0 0 1 8-8h20a8 8 0 0 1 8 8v52a20 20 0 0 1-40 0z" fill="url(#hGlass)" stroke="#EAF7F5" stroke-width="2.2"/>
+    <g stroke="#FF9061" stroke-width="2.2" stroke-linecap="round" opacity=".8">
+      <path d="M60 250c-5-5-8-12-8-18"/><path d="M60 250c5-5 8-12 8-18"/><path d="M60 250v-20"/>
+      <path d="M60 250c-10-2-17-8-20-13"/><path d="M60 250c10-2 17-8 20-13"/></g>
+  </g>
+  <g>
+    <ellipse cx="124" cy="212" rx="34" ry="30" fill="#2479BC" opacity=".34" filter="url(#hGlow)"/>
+    <path d="M106 180a8 8 0 0 1 8-8h20a8 8 0 0 1 8 8v52a20 20 0 0 1-40 0z" stroke="#0E3B46" stroke-opacity=".22" stroke-width="4"/>
+    <path d="M106 188h40v44a20 20 0 0 1-40 0z" fill="url(#hTide)"/>
+    <path d="M106 180a8 8 0 0 1 8-8h20a8 8 0 0 1 8 8v52a20 20 0 0 1-40 0z" fill="url(#hGlass)" stroke="#EAF7F5" stroke-width="2.2"/>
+    <g stroke="#6BBCF4" stroke-width="2.2" stroke-linecap="round" opacity=".8">
+      <path d="M126 280c-5-5-8-12-8-18"/><path d="M126 280c5-5 8-12 8-18"/><path d="M126 280v-20"/>
+      <path d="M126 280c-10-2-17-8-20-13"/><path d="M126 280c10-2 17-8 20-13"/></g>
+  </g>
+  <g>
+    <ellipse cx="190" cy="176" rx="36" ry="32" fill="#DCA027" opacity=".36" filter="url(#hGlow)"/>
+    <path d="M172 142a8 8 0 0 1 8-8h20a8 8 0 0 1 8 8v54a20 20 0 0 1-40 0z" stroke="#0E3B46" stroke-opacity=".22" stroke-width="4"/>
+    <path d="M172 150h40v46a20 20 0 0 1-40 0z" fill="url(#hLantern)"/>
+    <path d="M172 142a8 8 0 0 1 8-8h20a8 8 0 0 1 8 8v54a20 20 0 0 1-40 0z" fill="url(#hGlass)" stroke="#EAF7F5" stroke-width="2.2"/>
+    <g stroke="#FFD265" stroke-width="2.2" stroke-linecap="round" opacity=".8">
+      <path d="M192 246c-5-5-8-12-8-18"/><path d="M192 246c5-5 8-12 8-18"/><path d="M192 246v-20"/>
+      <path d="M192 246c-10-2-17-8-20-13"/><path d="M192 246c10-2 17-8 20-13"/></g>
+  </g>
+  <g>
+    <ellipse cx="256" cy="206" rx="34" ry="30" fill="#269C74" opacity=".34" filter="url(#hGlow)"/>
+    <path d="M238 174a8 8 0 0 1 8-8h20a8 8 0 0 1 8 8v52a20 20 0 0 1-40 0z" stroke="#0E3B46" stroke-opacity=".22" stroke-width="4"/>
+    <path d="M238 182h40v44a20 20 0 0 1-40 0z" fill="url(#hKelp)"/>
+    <path d="M238 174a8 8 0 0 1 8-8h20a8 8 0 0 1 8 8v52a20 20 0 0 1-40 0z" fill="url(#hGlass)" stroke="#EAF7F5" stroke-width="2.2"/>
+    <g stroke="#5FD8A9" stroke-width="2.2" stroke-linecap="round" opacity=".8">
+      <path d="M258 274c-5-5-8-12-8-18"/><path d="M258 274c5-5 8-12 8-18"/><path d="M258 274v-20"/>
+      <path d="M258 274c-10-2-17-8-20-13"/><path d="M258 274c10-2 17-8 20-13"/></g>
+  </g>
+  <g>
+    <ellipse cx="322" cy="188" rx="34" ry="30" fill="#7A5CCD" opacity=".34" filter="url(#hGlow)"/>
+    <path d="M304 156a8 8 0 0 1 8-8h20a8 8 0 0 1 8 8v52a20 20 0 0 1-40 0z" stroke="#0E3B46" stroke-opacity=".22" stroke-width="4"/>
+    <path d="M304 164h40v44a20 20 0 0 1-40 0z" fill="url(#hDusk)"/>
+    <path d="M304 156a8 8 0 0 1 8-8h20a8 8 0 0 1 8 8v52a20 20 0 0 1-40 0z" fill="url(#hGlass)" stroke="#EAF7F5" stroke-width="2.2"/>
+    <g stroke="#B69AF5" stroke-width="2.2" stroke-linecap="round" opacity=".8">
+      <path d="M324 256c-5-5-8-12-8-18"/><path d="M324 256c5-5 8-12 8-18"/><path d="M324 256v-20"/>
+      <path d="M324 256c-10-2-17-8-20-13"/><path d="M324 256c10-2 17-8 20-13"/></g>
+  </g>
+
+  <!-- motes of light rising -->
+  <g>
+    <circle cx="84" cy="238" r="3.4" fill="#FFD79E" opacity=".9"/>
+    <circle cx="160" cy="264" r="2.4" fill="#9FF0E6" opacity=".85"/>
+    <circle cx="222" cy="226" r="3" fill="#FFB8CA" opacity=".8"/>
+    <circle cx="292" cy="258" r="2.6" fill="#9FF0E6" opacity=".7"/>
+    <circle cx="350" cy="232" r="2.2" fill="#FFD79E" opacity=".65"/>
+    <circle cx="30" cy="216" r="2.4" fill="#9FF0E6" opacity=".6"/>
+  </g>
+</svg>
