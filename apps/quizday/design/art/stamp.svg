@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" fill="none">
+  <!-- The rubber stamp from the side, caught mid-press: wooden handle, ink block,
+       the pad meeting the paper and a bloom of red spreading out from under it. -->
+
+  <!-- the bloom, under everything -->
+  <ellipse cx="160" cy="238" rx="104" ry="15" fill="#C1362C" opacity="0.18"/>
+  <ellipse cx="160" cy="238" rx="70" ry="9" fill="#C1362C" opacity="0.30"/>
+
+  <g stroke="#1B2027" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- the sheet it is pressing on -->
+    <path d="M28 238h264v34H28z" fill="#FBF7EC"/>
+    <path d="M56 256h60M228 256h36" stroke-width="2.5" opacity="0.45"/>
+
+    <!-- the pad -->
+    <path d="M96 214h128v24H96z" fill="#C1362C"/>
+
+    <!-- the mount block -->
+    <path d="M102 178h116v36H102z" fill="#1B2027"/>
+
+    <!-- the shaft -->
+    <path d="M146 128h28v50h-28z" fill="#8E6214"/>
+
+    <!-- the handle: a turned wooden knob -->
+    <path d="M112 92c0-26 18-42 48-42s48 16 48 42c0 22-20 36-48 36s-48-14-48-36z" fill="#8E6214"/>
+    <path d="M124 80h72" stroke-width="4" opacity="0.5"/>
+
+    <!-- the impression it has already left, off to the right -->
+    <g stroke="#C1362C" stroke-width="5" opacity="0.85">
+      <path d="M258 196a28 28 0 1 1-4-14"/>
+      <path d="M246 176 266 190"/>
+    </g>
+  </g>
+</svg>

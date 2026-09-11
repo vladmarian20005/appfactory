@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quizday · the first screen</title>
+<style>
+  :root {
+    --canvas:  #F5EFE2;
+    --glow:    #FFFDF6;
+    --surface: #FBF7EC;
+    --ink:     #1B2027;
+    --inkSoft: #5E6470;
+    --accent:  #C1362C;
+    --onAccent:#FFF8EC;
+    --brass:   #8E6214;
+    --safe-top: 62px;
+    --safe-bottom: 34px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body {
+    width: 440px; height: 956px; overflow: hidden; position: relative;
+    background: var(--canvas);
+    font-family: ui-serif, "New York", Georgia, serif;
+    color: var(--ink);
+  }
+  .glow { position: absolute; inset: 0;
+    background: radial-gradient(120% 62% at 50% 10%, var(--glow) 0%, rgba(255,253,246,0) 72%); }
+  #grain { position: absolute; inset: 0; }
+  .rules { position: absolute; inset: 0; }
+  .rules i { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(27,32,39,.08); }
+
+  .screen { position: relative; height: 100%; display: flex; flex-direction: column; }
+
+  .status { height: var(--safe-top); padding: 20px 32px 0; display: flex;
+    align-items: flex-start; justify-content: space-between;
+    font-family: -apple-system, system-ui, sans-serif; font-size: 16px; font-weight: 600; }
+  .status .right { display: flex; gap: 6px; align-items: center; }
+  .bars { display: flex; align-items: flex-end; gap: 2px; height: 11px; }
+  .bars b { width: 3px; background: var(--ink); border-radius: 1px; }
+  .bars b:nth-child(1){height:4px} .bars b:nth-child(2){height:6px}
+  .bars b:nth-child(3){height:9px} .bars b:nth-child(4){height:11px}
+  .batt { width: 25px; height: 12px; border: 1.4px solid var(--ink); border-radius: 3.5px; padding: 1.6px; }
+  .batt i { display: block; height: 100%; width: 72%; background: var(--ink); border-radius: 1.5px; }
+
+  /* the paper's own masthead, above the art */
+  .head { padding: 18px 24px 0; text-align: center; }
+  .hair { height: 1px; background: rgba(27,32,39,.45); }
+  .heavy { height: 2.5px; background: var(--ink); }
+  .wordmark { font-size: 26px; font-weight: 700; letter-spacing: 6px; padding: 8px 0 7px; }
+  .est { margin-top: 8px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+         font-size: 10px; letter-spacing: 2.4px; text-transform: uppercase; color: var(--inkSoft); }
+
+  .art { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+  .art .plate { position: relative; width: 376px; }
+  .art svg.body { width: 376px; display: block; }
+  .art svg.wheel { position: absolute; width: 113px; height: 113px; left: 248px; top: 118px; }
+
+  .copy { padding: 0 34px; text-align: center; }
+  .copy h1 { font-size: 34px; font-weight: 700; line-height: 1.1; letter-spacing: -.4px; }
+  .copy p { margin-top: 14px; font-size: 17.5px; line-height: 1.44; color: var(--inkSoft); }
+
+  .dots { display: flex; justify-content: center; gap: 8px; margin-top: 34px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(27,32,39,.20); }
+  .dots i.on { background: var(--accent); }
+
+  .cta {
+    margin: 28px 24px 0; display: block; text-align: center; padding: 16px 0;
+    background: var(--accent); color: var(--onAccent); border-radius: 999px;
+    font-family: -apple-system, system-ui, sans-serif; font-size: 17px; font-weight: 600;
+    box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 6px 16px rgba(193,54,44,.22);
+  }
+  .pad { height: calc(24px + var(--safe-bottom)); }
+  .home { position: absolute; left: 50%; bottom: 9px; transform: translateX(-50%);
+          width: 140px; height: 5px; border-radius: 3px; background: rgba(27,32,39,.55); }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<canvas id="grain" width="880" height="1912"></canvas>
+<div class="rules"><i style="left:20px"></i><i style="left:419px"></i></div>
+
+<div class="screen">
+  <div class="status">
+    <div>9:41</div>
+    <div class="right">
+      <div class="bars"><b></b><b></b><b></b><b></b></div>
+      <svg width="17" height="13" viewBox="0 0 17 13" fill="#1B2027"><path d="M8.5 12.2 5.4 8.9a4.4 4.4 0 0 1 6.2 0zM2.9 6.3a8 8 0 0 1 11.2 0l1.5-1.6a10.2 10.2 0 0 0-14.2 0z"/></svg>
+      <div class="batt"><i></i></div>
+    </div>
+  </div>
+
+  <div class="head">
+    <div class="hair"></div>
+    <div class="wordmark">QUIZDAY</div>
+    <div class="heavy"></div>
+    <div class="est">A new edition every morning</div>
+  </div>
+
+  <div class="art">
+    <div class="plate">
+      <!-- design/art/press-body.svg -->
+      <svg class="body" viewBox="0 0 400 320" fill="none">
+        <g stroke="#1B2027" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 268h96v10H18z" fill="#FBF7EC"/>
+          <path d="M22 256h96v10H22z" fill="#FBF7EC"/>
+          <path d="M26 244h96v10H26z" fill="#FBF7EC"/>
+          <path d="M30 232h96v10H30z" fill="#FBF7EC"/>
+          <path d="M46 236h30M46 248h44M50 260h38" stroke-width="2.5" opacity="0.5"/>
+          <path d="M96 286h224l14 22H82z" fill="#1B2027"/>
+          <path d="M112 264h192v22H112z" fill="#FBF7EC"/>
+          <path d="M128 236h160v28H128z" fill="#1B2027"/>
+          <path d="M150 214h116v22H150z" fill="#FBF7EC"/>
+          <path d="M166 222h64" stroke="#C1362C" stroke-width="4"/>
+          <path d="M124 88h26v148h-26z" fill="#1B2027"/>
+          <path d="M266 88h26v148h-26z" fill="#1B2027"/>
+          <path d="M142 160h132v34H142z" fill="#FBF7EC"/>
+          <path d="M162 177h92" stroke-width="3" opacity="0.45"/>
+          <path d="M112 56h192v34H112z" fill="#1B2027"/>
+          <path d="M198 90v70" stroke="#8E6214" stroke-width="12"/>
+          <path d="M188 36h40v22h-40z" fill="#8E6214"/>
+          <path d="M228 46 348 14" stroke-width="11"/>
+          <circle cx="352" cy="13" r="13" fill="#C1362C"/>
+          <path d="M96 206h34v14H96z" fill="#C1362C"/>
+          <path d="M88 213h8M130 213h10" stroke-width="4"/>
+          <path d="M292 168h44v16h-44z" fill="#1B2027"/>
+        </g>
+      </svg>
+      <!-- design/art/press-wheel.svg, on the axle, turning once every 20 s -->
+      <svg class="wheel" viewBox="0 0 120 120" fill="none" style="transform:rotate(-14deg)">
+        <g stroke="#1B2027" stroke-linecap="round">
+          <circle cx="60" cy="60" r="50" stroke-width="9" fill="none"/>
+          <g stroke-width="5">
+            <path d="M60 16v88"/>
+            <path d="M60 16v88" transform="rotate(60 60 60)"/>
+            <path d="M60 16v88" transform="rotate(120 60 60)"/>
+          </g>
+          <circle cx="60" cy="60" r="13" fill="#8E6214" stroke-width="5"/>
+          <circle cx="60" cy="60" r="3.5" fill="#1B2027" stroke="none"/>
+          <circle cx="60" cy="10" r="7" fill="#C1362C" stroke-width="4"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="copy">
+    <h1>One edition a day</h1>
+    <p>Ten questions, the same ten for everyone, set fresh each morning.</p>
+  </div>
+
+  <div class="dots"><i class="on"></i><i></i><i></i></div>
+  <div class="cta">Continue</div>
+  <div class="pad"></div>
+  <div class="home"></div>
+</div>
+
+<script>
+(function () {
+  const g = document.getElementById('grain').getContext('2d');
+  g.scale(2, 2);
+  let s = 20260911;
+  const rnd = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
+  g.strokeStyle = 'rgba(27,32,39,0.030)'; g.lineWidth = 1;
+  for (let i = 0; i < 1400; i++) {
+    const x = rnd() * 440, y = rnd() * 956, a = (rnd() - 0.5) * 0.42, len = 2 + rnd() * 4;
+    g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len); g.stroke();
+  }
+})();
+</script>
+</body>
+</html>

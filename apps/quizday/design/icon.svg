@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- The day's edition, stamped. Newsprint ground, an abstracted masthead and
+       column rules, and the stamp pressed across them off true. No letters, no
+       numbers, no gradient. -->
+
+  <!-- the newsprint -->
+  <rect width="1024" height="1024" fill="#F5EFE2"/>
+
+  <!-- fibre in the stock -->
+  <g stroke="#1B2027" stroke-width="4" stroke-linecap="round" opacity="0.05">
+    <path d="M96 148h34M742 206h28M180 402h40M846 470h30M120 640h26M760 700h34M300 856h32M620 900h28"/>
+    <path d="M420 120h24M560 300h30M240 540h28M690 580h26M400 760h30M880 320h24M140 260h30M820 820h28"/>
+  </g>
+
+  <!-- the masthead: hairline, heavy bar, hairline -->
+  <rect x="112" y="196" width="800" height="6" fill="#1B2027" opacity="0.55"/>
+  <rect x="112" y="228" width="800" height="52" fill="#1B2027"/>
+  <rect x="112" y="300" width="800" height="6" fill="#1B2027" opacity="0.55"/>
+
+  <!-- a brass hairline under it -->
+  <rect x="112" y="318" width="800" height="7" fill="#8E6214"/>
+
+  <!-- the dateline, three knocked-out blocks -->
+  <g fill="#1B2027" opacity="0.62">
+    <rect x="112" y="356" width="196" height="18" rx="4"/>
+    <rect x="336" y="356" width="122" height="18" rx="4"/>
+    <rect x="486" y="356" width="164" height="18" rx="4"/>
+  </g>
+
+  <!-- the body of the page: column rules fading down -->
+  <g fill="#1B2027">
+    <rect x="112" y="440" width="800" height="10" rx="4" opacity="0.34"/>
+    <rect x="112" y="506" width="800" height="10" rx="4" opacity="0.29"/>
+    <rect x="112" y="572" width="800" height="10" rx="4" opacity="0.24"/>
+    <rect x="112" y="638" width="800" height="10" rx="4" opacity="0.19"/>
+    <rect x="112" y="704" width="606" height="10" rx="4" opacity="0.15"/>
+    <rect x="112" y="770" width="800" height="10" rx="4" opacity="0.11"/>
+    <rect x="112" y="836" width="452" height="10" rx="4" opacity="0.08"/>
+  </g>
+
+  <!-- the stamp, pressed across the page and off true. A rubber stamp lifts unevenly:
+       the rim breaks, the ink blooms past it, and it never lands square. -->
+  <g transform="rotate(-13 596 656)">
+    <!-- the bloom that got past the rim -->
+    <ellipse cx="580" cy="676" rx="268" ry="240" fill="#C1362C" opacity="0.11"/>
+    <ellipse cx="592" cy="664" rx="222" ry="206" fill="#C1362C" opacity="0.07"/>
+
+    <!-- the rim: a broken ring, and a lighter ring inside it -->
+    <circle cx="596" cy="656" r="208" fill="none" stroke="#C1362C" stroke-width="36"
+            stroke-linecap="round" stroke-dasharray="446 74 618 168" stroke-dashoffset="120"/>
+    <circle cx="596" cy="656" r="158" fill="none" stroke="#C1362C" stroke-width="11"
+            stroke-linecap="round" stroke-dasharray="372 56 468 97" stroke-dashoffset="280"
+            opacity="0.8"/>
+
+    <!-- the mark inside it: one stroke, pressed harder on the upstroke -->
+    <path d="M504 664 570 730" fill="none" stroke="#C1362C"
+          stroke-width="54" stroke-linecap="round"/>
+    <path d="M566 730 706 568" fill="none" stroke="#C1362C"
+          stroke-width="66" stroke-linecap="round"/>
+  </g>
+</svg>

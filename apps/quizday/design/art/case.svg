@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320" fill="none">
+  <!-- A composing stick with loose sorts set in it, over the type case it came from.
+       The composing room: where you set your own line instead of reading ours. -->
+  <g stroke="#1B2027" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- the type case behind, its compartments uneven as a real one is -->
+    <path d="M26 24h348v152H26z" fill="#FBF7EC"/>
+    <g stroke-width="3" opacity="0.55">
+      <path d="M26 76h348M26 128h348"/>
+      <path d="M96 24v52M166 24v52M236 24v52M306 24v52"/>
+      <path d="M122 76v52M218 76v52M288 76v52"/>
+      <path d="M78 128v48M140 128v48M202 128v48M264 128v48M326 128v48"/>
+    </g>
+
+    <!-- a few sorts still in their boxes -->
+    <g fill="#1B2027" stroke="none">
+      <rect x="44" y="42" width="24" height="22" rx="2"/>
+      <rect x="182" y="42" width="24" height="22" rx="2"/>
+      <rect x="252" y="94" width="24" height="22" rx="2"/>
+      <rect x="96" y="144" width="24" height="22" rx="2"/>
+      <rect x="286" y="144" width="24" height="22" rx="2"/>
+    </g>
+    <g fill="#C1362C" stroke="none">
+      <rect x="140" y="94" width="24" height="22" rx="2"/>
+      <rect x="318" y="42" width="24" height="22" rx="2"/>
+    </g>
+
+    <!-- the composing stick: an L of brass, held out in front -->
+    <path d="M34 244h306v42H34z" fill="#8E6214"/>
+    <path d="M34 206h26v80H34z" fill="#8E6214"/>
+
+    <!-- the line of type set in it: sorts standing on their feet, each with the
+         face of the letter catching the light on its top edge -->
+    <g stroke-width="4">
+      <path d="M72 202h22v42H72z" fill="#1B2027"/>
+      <path d="M100 202h16v42h-16z" fill="#1B2027"/>
+      <path d="M122 202h24v42h-24z" fill="#1B2027"/>
+      <path d="M152 202h20v42h-20z" fill="#1B2027"/>
+      <path d="M192 202h24v42h-24z" fill="#1B2027"/>
+      <path d="M222 202h16v42h-16z" fill="#1B2027"/>
+      <path d="M244 202h22v42h-22z" fill="#1B2027"/>
+      <path d="M272 202h20v42h-20z" fill="#C1362C"/>
+    </g>
+    <g fill="#FBF7EC" stroke="none">
+      <rect x="78" y="208" width="10" height="7" rx="1"/>
+      <rect x="104" y="208" width="8" height="7" rx="1"/>
+      <rect x="128" y="208" width="12" height="7" rx="1"/>
+      <rect x="157" y="208" width="10" height="7" rx="1"/>
+      <rect x="198" y="208" width="12" height="7" rx="1"/>
+      <rect x="226" y="208" width="8" height="7" rx="1"/>
+      <rect x="250" y="208" width="10" height="7" rx="1"/>
+      <rect x="277" y="208" width="10" height="7" rx="1"/>
+    </g>
+  </g>
+</svg>

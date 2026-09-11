@@ -49,10 +49,10 @@ Beat by beat:
 | 0–220 | **The ink sweep.** The chosen box fills left to right from the gutter — `success` green if right, `miss` graphite if wrong — driven by a linear-gradient mask on `inkProgress` 0→1 with a 14 pt soft leading edge. The answer's type knocks out to paper colour as the ink passes under it (a second copy of the text in `canvas`, masked by the same sweep). Spring: `.spring(response: 0.26, dampingFraction: 0.85)` through `Motion.resolved`. |
 | 200 | `Haptics.rigid()` — the impression lands. |
 | 210 | `Tones.shared.play(.pop)` when right, `.miss` when wrong. |
-| 230–420 | **The stamp.** The verdict stamp — a 2 pt ruled ring in accent red with one word inside it in New York bold, tracking 3 — drops from scale 1.6 / −14° / opacity 0 to scale 1.0 / −6° / opacity 1 on `Motion.bouncy`, overlapping the right edge of the chosen box by 18 pt. It lands at ~380 ms with `Haptics.thud()` and settles on the spring's own overshoot. The word is from the praise pool when right, the near-miss pool when wrong — **the stamp is red either way**, so red never means "you are wrong". |
+| 230–420 | **The stamp.** The verdict stamp — a **double-ruled box**: a 2 pt accent rule at 3 pt radius with a 0.8 pt inner rule inset 3 pt, the line inside it in New York bold italic 13 pt, tracking 1.6, uppercase, on `canvas.opacity(0.86)` so the paper shows through — drops from scale 1.6 / −14° / opacity 0 to scale 1.0 / −6° / opacity 1 on `Motion.bouncy`. It lands at ~380 ms with `Haptics.thud()` and settles on the spring's own overshoot. It sits over **the box she answered**, hanging 16 pt past the right margin, and never over the correct one — that is the line she came to read. The text is from the praise pool when right, the near-miss pool when wrong: **the stamp is red either way**, so red never means "you are wrong". (Mock 1 shows it.) |
 | 320–660 | On a miss only: **the pencil correction.** A hand-drawn ellipse — a `Path` of two offset arcs, `.trim(to:)` animated 0→1 over 0.34 s — circles the correct answer in `inkSoft` graphite, and a single struck line is drawn the same way through the one she picked. The sheet takes one `.shake(trigger:)`. No red border. No buzzer. |
 | 420–620 | **The footnote sets.** A hairline rule draws itself across the sheet (trim 0→1, 0.2 s) and the explanation rises from +14 pt on `Motion.gentle`, New York 17 pt. The source follows as a mono dateline, `SOURCE · BRITANNICA`, 11 pt tracking 1.6. Reporting a problem is a small printer's mark (a ¶ and "something wrong here?") at the end of that rule — not a button in a card. |
-| 520 | **The tally inks in.** The row of ten squares at the top of the sheet fills its next square: solid ink for a hit, an empty ruled square for a miss, with `Haptics.selection()` and `Tones.shared.play(.step(runningCorrect))`, so a good round audibly climbs the scale by question six. |
+| 520 | **The tally inks in.** The row of ten squares at the top of the sheet fills its next square, with `Haptics.selection()` and `Tones.shared.play(.step(runningCorrect))`, so a good round audibly climbs the scale by question six. Three states, and they are legible from across a room: a **hit** is a solid ink square; a **miss** is a 1.4 pt ruled square with a single graphite diagonal struck through it, the same pencil as the correction; a question **not yet reached** is a 1 pt square at `ink.opacity(0.20)`. |
 
 **Between questions**, the sheet turns: the answered sheet lifts 8 pt, rotates 1.5° and slides
 up out of frame over 0.28 s on `Motion.gentle` while the next rises from +60 pt with a 0.5°
@@ -194,6 +194,12 @@ whole brand. Nothing in this app is a 20 pt white card with a shadow.
 The second shape is **the rule**: hairline at 0.5 pt for structure, 1.2 pt for a box, 2.5 pt
 under a masthead, 3 pt for the press sweep. Rules do the work that borders and shadows do in
 the template.
+
+The third is **the printer's ornament** that closes a column: two 54 pt hairlines with a 5 pt
+ink lozenge (a square at 45°) between them, centred, at `ink.opacity(0.28)`. It goes at the
+foot of any screen whose content ends before the page does — the question sheet after the
+footnote, the Practice setup under the attribution — so a short page reads as finished rather
+than as a screen that ran out.
 
 ### Art
 
@@ -343,13 +349,17 @@ paper.*
 
 Every MVP screen the spec names, kept. What changes is what they are like.
 
+The `TabView` and its four tabs stay the system's, in the brand's tint — on the iOS 26 SDK
+that bar is Liquid Glass and it should be. The symbols: `newspaper.fill` (Today),
+`calendar` (Scorecard), `tray.full.fill` (Practice), `gearshape.fill` (Settings).
+
 ### 1 · Today, unplayed — *mock 1 shows the question; this one is described here*
 
 One job: make her want to start, in three seconds. Hero: the press, turning.
 
 Top to bottom: the **masthead** — `QUIZDAY` in New York bold 30 pt, tracking 6, a 0.5 pt rule
-above and a 2.5 pt rule below — then the **dateline** in mono, `THURSDAY 11 SEPTEMBER ·
-ROUND 12`. Then `press-body.svg` at 200 pt tall with `press-wheel.svg` composited at its hub,
+above and a 2.5 pt rule below, with the strapline `A NEW EDITION EVERY MORNING` in mono 10 pt
+tracking 2.4 under it — then the **dateline** in mono, `THURSDAY 11 SEPTEMBER · ROUND 12`. Then `press-body.svg` at 200 pt tall with `press-wheel.svg` composited at its hub,
 turning once every 20 s. Then a line of New York 19 pt italic: *"Ten questions, set this
 morning."* Then **today's sections**, as a printers' section line — the category names in mono
 uppercase separated by `·`, wrapped, with a hairline above and below and each name preceded by
@@ -380,10 +390,12 @@ interaction".
 One job: be worth screenshotting. Hero: the score at 112 pt.
 
 The front page, in the order it prints: masthead, dateline, score and `/10`, the tally, the
-tier headline stamped in its ruled box, the streak ribbon in brass, then — below the fold, so
-it never competes — the countdown block (`Tomorrow's edition goes to press in 6:12:44`, mono
-34 pt, a `Text(timerInterval:)`) and `ShareLink` labelled **Share the edition**, drawn as a
-ruled box with a printer's mark, not a filled tile.
+tier headline stamped in its ruled box, the streak ribbon in brass, then — below a hairline
+fold, so they never compete — two ruled boxes side by side: the countdown
+(`TOMORROW'S EDITION GOES TO PRESS IN` in mono over `6:12:44` at mono 28 pt, a
+`Text(timerInterval:)`) and the `ShareLink` labelled **Share the edition**, a ruled box with
+the share glyph in accent above it, not a filled tile. The page closes on a hairline and the
+mono footer `QUIZDAY · A NEW EDITION EVERY MORNING`, pinned to the bottom of the column.
 
 The rating prompt stays here, after the page has settled, never mid-question.
 
@@ -465,12 +477,13 @@ York, its code and date in mono beneath, swipe to delete, and a link to support 
 **The concept:** the day's edition, stamped. Full-bleed newsprint ivory with a faint fibre
 texture. Across the top third, an abstracted masthead — one 0.5 pt hairline, one heavy ink
 bar, one hairline, and beneath them three short knocked-out blocks that read as a dateline at
-any size (no letters, no words). Across the lower two thirds, six hairline body rules
-suggesting columns, fading as they go down. Over the whole thing, off-centre and rotated −8°,
-the **stamp**: a 44 pt-wide ring in `#C1362C` with a deliberately imperfect edge — two
-concentric arcs with small gaps, so it looks pressed rather than printed — and inside it a
-single thick ink tick, also in stamp red, with a soft bleed of red at 18 % spreading past the
-ring's lower left.
+any size (no letters, no words). Across the lower two thirds, seven body rules
+suggesting columns, fading from 34 % to 8 % as they go down. Over all of it, off-centre and
+rotated −13°, the **stamp**: a 36 pt rim in `#C1362C` broken by two gaps (a dashed circle, so
+the rim reads as rubber lifting unevenly rather than as a printed ring), a lighter 11 pt ring
+inside it, and a tick drawn as two strokes of different weight — 54 pt down, 66 pt up — as a
+hand pressing harder on the upstroke. Two soft ellipses of red at 11 % and 7 % bloom past the
+rim where the ink got out.
 
 **The colors:** `#F5EFE2` ground, `#1B2027` masthead and rules, `#C1362C` stamp, `#8E6214` a
 single brass hairline under the masthead bar. Nothing else.

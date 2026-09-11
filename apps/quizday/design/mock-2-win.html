@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quizday · the edition prints</title>
+<style>
+  :root {
+    --canvas:  #F5EFE2;
+    --glow:    #FFFDF6;
+    --surface: #FBF7EC;
+    --ink:     #1B2027;
+    --inkSoft: #5E6470;
+    --accent:  #C1362C;
+    --onAccent:#FFF8EC;
+    --brass:   #8E6214;
+    --miss:    #6F6A60;
+    --safe-top: 62px;
+    --safe-bottom: 34px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body {
+    width: 440px; height: 956px; overflow: hidden; position: relative;
+    background: var(--canvas);
+    font-family: ui-serif, "New York", Georgia, serif;
+    color: var(--ink);
+  }
+  .glow { position: absolute; inset: 0;
+    background: radial-gradient(120% 62% at 50% 10%, var(--glow) 0%, rgba(255,253,246,0) 72%); }
+  #grain, #paper { position: absolute; inset: 0; }
+  #paper { z-index: 5; pointer-events: none; }
+  .rules { position: absolute; inset: 0; }
+  .rules i { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(27,32,39,.08); }
+
+  .screen { position: relative; height: 100%; display: flex; flex-direction: column; }
+
+  .status { height: var(--safe-top); padding: 20px 32px 0; display: flex;
+    align-items: flex-start; justify-content: space-between;
+    font-family: -apple-system, system-ui, sans-serif; font-size: 16px; font-weight: 600; }
+  .status .right { display: flex; gap: 6px; align-items: center; }
+  .bars { display: flex; align-items: flex-end; gap: 2px; height: 11px; }
+  .bars b { width: 3px; background: var(--ink); border-radius: 1px; }
+  .bars b:nth-child(1){height:4px} .bars b:nth-child(2){height:6px}
+  .bars b:nth-child(3){height:9px} .bars b:nth-child(4){height:11px}
+  .batt { width: 25px; height: 12px; border: 1.4px solid var(--ink); border-radius: 3.5px; padding: 1.6px; }
+  .batt i { display: block; height: 100%; width: 72%; background: var(--ink); border-radius: 1.5px; }
+  .navbar { height: 36px; }
+
+  .content { flex: 1; padding: 0 24px; position: relative; z-index: 6; }
+
+  /* ---- the masthead ---- */
+  .hair { height: 1px; background: rgba(27,32,39,.45); }
+  .heavy { height: 2.5px; background: var(--ink); }
+  .masthead { text-align: center; font-size: 34px; font-weight: 700; letter-spacing: 6px;
+              padding: 9px 0 8px; }
+  .dateline { text-align: center; margin-top: 9px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--inkSoft); }
+
+  /* ---- the score ---- */
+  .score { display: flex; align-items: baseline; justify-content: center; gap: 12px; margin-top: 22px; }
+  .score .n { font-size: 112px; font-weight: 700; line-height: .96; letter-spacing: -3px; }
+  .score .d { font-size: 34px; font-weight: 700; color: var(--inkSoft); }
+
+  /* ---- the tally ---- */
+  .tally { display: flex; gap: 5px; margin-top: 22px; }
+  .tally span { flex: 1; height: 26px; border-radius: 3px; }
+  .tally .hit { background: var(--ink); }
+  .tally .out { border: 1.4px solid rgba(27,32,39,.55); position: relative; overflow: hidden; }
+  .tally .out::after { content: ""; position: absolute; left: -4px; top: 50%;
+    width: 52px; height: 1.6px; background: var(--miss); transform: rotate(-26deg); transform-origin: left center; }
+
+  /* ---- the headline, stamped ---- */
+  .stampwrap { display: flex; justify-content: center; margin-top: 36px; }
+  .stamp { transform: rotate(-3deg); border: 2.4px solid var(--accent); border-radius: 3px; padding: 4px;
+           background: rgba(245,239,226,.72); }
+  .stamp i { display: block; border: 1px solid var(--accent); border-radius: 2px; padding: 10px 20px;
+             color: var(--accent); font-size: 26px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; }
+  .subline { text-align: center; margin-top: 16px; font-size: 18px; font-style: italic; color: var(--inkSoft); }
+
+  /* ---- the streak ribbon ---- */
+  .ribbonrow { display: flex; justify-content: flex-end; margin-top: 30px; }
+  .ribbon { position: relative; background: var(--brass); color: var(--surface);
+            padding: 9px 26px 9px 22px; display: flex; align-items: baseline; gap: 9px;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%); }
+  .ribbon .n { font-size: 44px; font-weight: 700; line-height: 1; }
+  .ribbon .l { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+               font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; }
+
+  /* ---- below the fold ---- */
+  .fold { margin-top: 34px; }
+  .below { display: flex; gap: 12px; margin-top: 18px; align-items: stretch; }
+  /* the page's own foot, so the column closes instead of trailing off */
+  .foot { margin-top: auto; padding-bottom: 14px; }
+  .foot .line { height: 1px; background: rgba(27,32,39,.30); }
+  .foot .mark { margin-top: 9px; text-align: center;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 9.5px; letter-spacing: 2.2px; text-transform: uppercase; color: var(--inkSoft); }
+  .content { display: flex; flex-direction: column; }
+  .box { border: 1.2px solid var(--ink); border-radius: 6px; background: var(--surface); padding: 13px 15px; }
+  .box .cap { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+              font-size: 9.5px; letter-spacing: 1.7px; text-transform: uppercase; color: var(--inkSoft); }
+  .box .clock { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+                font-size: 28px; font-weight: 600; margin-top: 5px; letter-spacing: -.5px; }
+  .share { flex: none; width: 132px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; }
+  .share .t { font-size: 16px; font-weight: 700; }
+
+  .tabs { height: calc(49px + var(--safe-bottom)); padding-bottom: var(--safe-bottom);
+    display: flex; background: rgba(245,239,226,.72); backdrop-filter: blur(24px);
+    border-top: .5px solid rgba(27,32,39,.18); position: relative; z-index: 6; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+         font-family: -apple-system, system-ui, sans-serif; font-size: 10px; color: var(--inkSoft); }
+  .tab.on { color: var(--accent); }
+  .home { position: absolute; left: 50%; bottom: 9px; transform: translateX(-50%); z-index: 7;
+          width: 140px; height: 5px; border-radius: 3px; background: rgba(27,32,39,.55); }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<canvas id="grain" width="880" height="1912"></canvas>
+<div class="rules"><i style="left:20px"></i><i style="left:419px"></i></div>
+
+<div class="screen">
+  <div class="status">
+    <div>9:41</div>
+    <div class="right">
+      <div class="bars"><b></b><b></b><b></b><b></b></div>
+      <svg width="17" height="13" viewBox="0 0 17 13" fill="#1B2027"><path d="M8.5 12.2 5.4 8.9a4.4 4.4 0 0 1 6.2 0zM2.9 6.3a8 8 0 0 1 11.2 0l1.5-1.6a10.2 10.2 0 0 0-14.2 0z"/></svg>
+      <div class="batt"><i></i></div>
+    </div>
+  </div>
+  <div class="navbar"></div>
+
+  <div class="content">
+    <div class="hair"></div>
+    <div class="masthead">QUIZDAY</div>
+    <div class="heavy"></div>
+    <div class="dateline">Round 12 · Thursday 11 September</div>
+
+    <div class="score"><div class="n">9</div><div class="d">/10</div></div>
+
+    <div class="tally">
+      <span class="hit"></span><span class="hit"></span><span class="hit"></span>
+      <span class="out"></span><span class="hit"></span><span class="hit"></span>
+      <span class="hit"></span><span class="hit"></span><span class="hit"></span><span class="hit"></span>
+    </div>
+
+    <div class="stampwrap"><div class="stamp"><i>Stop the press</i></div></div>
+    <div class="subline">One got past you. One.</div>
+
+    <div class="ribbonrow">
+      <div class="ribbon"><div class="n">12</div><div class="l">Days<br>running</div></div>
+    </div>
+
+    <div class="fold hair"></div>
+    <div class="below">
+      <div class="box" style="flex:1">
+        <div class="cap">Tomorrow's edition goes to press in</div>
+        <div class="clock">6:12:44</div>
+      </div>
+      <div class="box share">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C1362C" stroke-width="1.8" stroke-linecap="round">
+          <path d="M12 15.5V3.5M8 7l4-3.5L16 7"/><path d="M5 12.5v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>
+        </svg>
+        <div class="t">Share the<br>edition</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="line"></div>
+      <div class="mark">Quizday · a new edition every morning</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h13a2 2 0 0 1 2 2v10a2 2 0 0 0 2 2H5a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1m2 3h8v3H6zm0 5h9v1.4H6zm0 3h9v1.4H6z"/></svg>
+      Today</div>
+    <div class="tab">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/></svg>
+      Scorecard</div>
+    <div class="tab">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="6" width="17" height="12" rx="2"/><path d="M3.5 11h17M9 6v5M15 11v7"/></svg>
+      Practice</div>
+    <div class="tab">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.5v2.6M12 17.9v2.6M20.5 12h-2.6M6.1 12H3.5M18 6l-1.8 1.8M7.8 16.2 6 18M18 18l-1.8-1.8M7.8 7.8 6 6"/></svg>
+      Settings</div>
+  </div>
+  <div class="home"></div>
+</div>
+
+<canvas id="paper" width="880" height="1912"></canvas>
+
+<script>
+const seeded = (s) => () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
+
+// Paper grain, under everything.
+(function () {
+  const g = document.getElementById('grain').getContext('2d');
+  g.scale(2, 2);
+  const rnd = seeded(20260911);
+  g.strokeStyle = 'rgba(27,32,39,0.030)'; g.lineWidth = 1;
+  for (let i = 0; i < 1400; i++) {
+    const x = rnd() * 440, y = rnd() * 956, a = (rnd() - 0.5) * 0.42, len = 2 + rnd() * 4;
+    g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len); g.stroke();
+  }
+})();
+
+// The burst at its peak — FactoryKit's .confetti frozen the way -stillFrames freezes it,
+// in paper colours so it reads as shredded newsprint and ticker tape.
+(function () {
+  const g = document.getElementById('paper').getContext('2d');
+  g.scale(2, 2);
+  const rnd = seeded(4410912);
+  const colors = ['#F5EFE2', '#FBF7EC', '#1B2027', '#C1362C', '#8E6214'];
+  const ox = 220, oy = 330, t = 0.5, drag = 2.1, gravity = 420;
+  const decay = (1 - Math.exp(-drag * t)) / drag;
+  for (let i = 0; i < 70; i++) {
+    const angle = -Math.PI / 2 + (rnd() - 0.5) * Math.PI * 1.3;
+    const speed = (420 + rnd() * 720) * 0.9;
+    const x = ox + Math.cos(angle) * speed * decay;
+    const y = oy + (Math.sin(angle) * speed - gravity / drag) * decay + gravity / drag * t;
+    const w = 5 + rnd() * 6, h = w * (0.45 + rnd() * 0.9);
+    const spin = (rnd() - 0.5) * 14 * t;
+    const flip = Math.max(0.15, Math.abs(Math.cos(rnd() * Math.PI * 2 + t * 6)));
+    g.save();
+    g.translate(x, y); g.rotate(spin); g.scale(flip, 1);
+    g.fillStyle = colors[Math.floor(rnd() * colors.length) % colors.length];
+    g.strokeStyle = 'rgba(27,32,39,.22)'; g.lineWidth = .6;
+    const shape = Math.floor(rnd() * 3);
+    g.beginPath();
+    if (shape === 0) g.ellipse(0, 0, w / 2, w / 2, 0, 0, Math.PI * 2);
+    else if (shape === 1) g.rect(-w / 2, -h / 2, w, h);
+    else { g.moveTo(0, -h / 2); g.lineTo(w / 2, h / 2); g.lineTo(-w / 2, h / 2); g.closePath(); }
+    g.fill(); g.stroke();
+    g.restore();
+  }
+})();
+</script>
+</body>
+</html>

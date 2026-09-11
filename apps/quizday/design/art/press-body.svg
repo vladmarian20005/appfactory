@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320" fill="none">
+  <!-- An iron platen hand-press, three-quarter view. Ink line over three flat fills.
+       The flywheel is a separate file so it can turn on its own hub: composite
+       press-wheel.svg centred on (330, 176) — at 200 pt wide that is 165 pt from
+       the left edge and 88 pt from the top, 60 pt across. -->
+  <g stroke="#1B2027" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- the stack of printed sheets, on the left -->
+    <path d="M18 268h96v10H18z" fill="#FBF7EC"/>
+    <path d="M22 256h96v10H22z" fill="#FBF7EC"/>
+    <path d="M26 244h96v10H26z" fill="#FBF7EC"/>
+    <path d="M30 232h96v10H30z" fill="#FBF7EC"/>
+    <path d="M46 236h30M46 248h44M50 260h38" stroke-width="2.5" opacity="0.5"/>
+
+    <!-- plinth -->
+    <path d="M96 286h224l14 22H82z" fill="#1B2027"/>
+    <path d="M112 264h192v22H112z" fill="#FBF7EC"/>
+
+    <!-- the bed, with a sheet on it -->
+    <path d="M128 236h160v28H128z" fill="#1B2027"/>
+    <path d="M150 214h116v22H150z" fill="#FBF7EC"/>
+    <path d="M166 222h64" stroke="#C1362C" stroke-width="4"/>
+
+    <!-- frame columns -->
+    <path d="M124 88h26v148h-26z" fill="#1B2027"/>
+    <path d="M266 88h26v148h-26z" fill="#1B2027"/>
+
+    <!-- the platen, held between them -->
+    <path d="M142 160h132v34H142z" fill="#FBF7EC"/>
+    <path d="M162 177h92" stroke-width="3" opacity="0.45"/>
+
+    <!-- crosshead -->
+    <path d="M112 56h192v34H112z" fill="#1B2027"/>
+
+    <!-- the screw through the crosshead, brass -->
+    <path d="M198 90v70" stroke="#8E6214" stroke-width="12"/>
+    <path d="M188 36h40v22h-40z" fill="#8E6214"/>
+
+    <!-- the lever arm, swung up and to the right -->
+    <path d="M228 46 348 14" stroke-width="11"/>
+    <circle cx="352" cy="13" r="13" fill="#C1362C"/>
+
+    <!-- the ink roller resting on its rail -->
+    <path d="M96 206h34v14H96z" fill="#C1362C"/>
+    <path d="M88 213h8M130 213h10" stroke-width="4"/>
+
+    <!-- the axle the flywheel turns on: press-wheel.svg is centred on (330, 176) -->
+    <path d="M292 168h44v16h-44z" fill="#1B2027"/>
+  </g>
+</svg>

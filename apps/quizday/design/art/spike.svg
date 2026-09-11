@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" fill="none">
+  <!-- A spindle spike through a stack of filed back issues. The empty state of the
+       file: draw it with the stack removed and only the base and needle showing. -->
+  <g stroke="#1B2027" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- the needle, behind the papers -->
+    <path d="M160 30v212" stroke-width="7"/>
+    <path d="M160 24 152 44h16z" fill="#1B2027"/>
+
+    <!-- the stack, each sheet a little off true -->
+    <g fill="#FBF7EC">
+      <path d="M44 226h232v22H44z"/>
+      <path d="M50 204h224v22H50z" transform="rotate(-1.6 162 215)"/>
+      <path d="M46 182h228v22H46z" transform="rotate(1.4 160 193)"/>
+      <path d="M54 160h216v22H54z" transform="rotate(-1.1 162 171)"/>
+      <path d="M50 138h220v22H50z" transform="rotate(0.9 160 149)"/>
+    </g>
+
+    <!-- ruled lines on the visible edges -->
+    <g stroke-width="2.5" opacity="0.45">
+      <path d="M68 237h54M198 237h54"/>
+      <path d="M72 215h48M204 215h46"/>
+      <path d="M70 193h50M200 193h52"/>
+    </g>
+
+    <!-- the topmost issue is dated, in red -->
+    <path d="M72 149h42" stroke="#C1362C" stroke-width="5"/>
+
+    <!-- the weighted base -->
+    <path d="M104 248h112l18 30H86z" fill="#8E6214"/>
+  </g>
+</svg>
