@@ -1,39 +1,23 @@
 {
-  "pass": false,
+  "pass": true,
   "scores": {
-    "idea": 1,
-    "look": 2,
-    "signature": 2,
-    "reward": 1,
-    "voice": 2,
-    "craft": 3,
-    "firstMinute": 2
+    "idea": 5,
+    "look": 4,
+    "signature": 4,
+    "reward": 4,
+    "voice": 5,
+    "craft": 4,
+    "firstMinute": 4
   },
-  "tells": [
-    "kit-default-brand",
-    "gray-canvas",
-    "accent-on-gray",
-    "sf-symbol-hero",
-    "score-in-a-card",
-    "stats-tiles",
-    "pitch-in-product",
-    "ease-only",
-    "no-display-type",
-    "no-reward",
-    "silent-game",
-    "text-share",
-    "paywall-no-hero",
-    "icon-is-text",
-    "praise-never-changes"
-  ],
-  "summary": "DESIGN.md's newspaper never reached the build: the app is the kit's default brand on systemGroupedBackground with purple chips, green-and-red answers, SF Symbol heroes, a '10' on a gradient for an icon, and a win that reads '8 out of 10 / Come back tomorrow for ten more'.",
+  "tells": [],
+  "summary": "DESIGN.md's newspaper is built: grained newsprint under a lamp with column rules, New York throughout, a drawn hand press, answers as ruled boxes that take ink under a red stamp that judges nobody, and an edition that prints itself at 112pt with tiers, newsprint confetti, a brass ribbon and a front page to share — held off a higher score by two unfilmed moments, the stamp burying long lines, and the kit's paywall and Settings where the paper stops.",
   "fixes": [
-    "Add AppBrand.swift from DESIGN.md's tokens, apply .brand() to RootView and OnboardingView, and replace all eleven systemGroupedBackground sites with .brandBackground()/.brandSurface() plus the paper grain and column rules",
-    "Rebuild the answer as the ink press: ruled boxes with mono A-D gutters, a spring-driven ink sweep, Haptics.rigid at 200ms, .pop/.miss tones, and the red stamp landing on Motion.bouncy - no green/red borders, no circle symbols",
-    "Replace TodayView.done with the edition printing: masthead, CountUp at brandDisplay(size: 112) with climbing .step tones, the tally printing square by square, a tiered headline stamp and newsprint confetti; delete the verdict() switch",
-    "Strip the pitch from TodayView:49, TodayView:144, RootView:93, Reminders:27 and onboarding page 2 - the paywall is the only place the promise appears",
-    "Render design/art/*.svg into the catalog and use all six (press, stamp, desk, spike, case) as heroes, and overwrite AppIcon's icon-1024.png with the drawn stamp icon instead of '10' on purple",
-    "Replace the three Scorecard stat tiles with one 96pt streak, a brass ribbon and a mono ledger line, and recolour the calendar to ink density with today circled in pencil",
-    "Wire Tones and SoundsToggle, swap ShareCard.text for a 1080x1350 ShareImage front page, and add a -demo flag plus qa.json moments so the answer and the win are actually filmed"
+    "Film the moments for real: the demo presses at 1.8-4.2s and the win at 2.0-3.6s land before the camera starts, so both filmstrips are identical frames - move them to 6/10/14s and 8/11s and raise qa.json's moments to 24 frames",
+    "Cap the verdict stamp (QuestionSheet.swift:180-190) to maxWidth 190 with minimumScaleFactor and anchor it bottom-trailing on a miss, so long pool lines stop covering the answer they land on in dark and at AX5",
+    "Hold the largest text: scale the SectionLine names inside the column rules and clamp the line's Dynamic Type (ax-01-today), and pad the question sheet's scroll content so answer D clears the bottom strip (ax-02-question)",
+    "Give PaywallView a subtitle and bullet-mark option in FactoryKit and pass the editor's line plus the printers' fist, dropping 'Unlock everything in Quizday.', the checkmark circles and the hand.raised.fill glyph",
+    "Put the brand's surface and a 1.2pt ink rule at radius 6 on the kit's Settings rows, and clear the version footer from behind the tab bar",
+    "Size the result's streak ribbon to its type instead of a 260pt brass slab, and print 'Day one on the desk.' on day one rather than '1 DAY RUNNING'",
+    "Fire Haptics.selection() per square and a .tap tone on every third as the result's tally prints, the one beat of the edition that currently lands in silence"
   ]
 }

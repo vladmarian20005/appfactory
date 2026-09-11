@@ -1,175 +1,142 @@
 # Quizday · critique
 
-**Verdict: fail.** This is the template with a trivia schema poured into it: system gray canvas,
-white rounded cards, one purple accent, green-and-red answers, an SF Symbol wherever art should
-be, and a win that is the sentence "8 out of 10" followed by "Come back tomorrow for ten more."
-The one thing that decides it: **DESIGN.md's newspaper — the paper canvas, the ink press, the
-stamp, New York throughout — is not in the build at all**; `tells.mjs` reports 17 hard FAILs
-including `kit-default-brand`, and none of `AppBrand`, `.brand(…)`, `brandDisplay`, `confetti`,
-`CountUp`, `Tones`, `Motion.*`, `popIn` or `ShareImage` appears anywhere in `ios/App/`.
+**Verdict: pass.** The newspaper arrived: newsprint with grain and column rules under a lamp,
+New York everywhere, a drawn hand press turning on the step, answers as ruled boxes that take
+ink, a red stamp that lands off-axis on every answer either way, and a front page that prints
+itself at 112 pt with a brass ribbon and shredded newsprint in the air. The one thing that
+decides it: the ink press and the edition are now *built* — `QuestionSheet.press(correct:)` and
+`EditionView.printEdition()` hold the exact beats, springs, haptics and tones DESIGN.md wrote —
+where the last build had a 0.18 s ease and "8 out of 10 / Come back tomorrow".
 
 | | Score | Evidence |
 | --- | --- | --- |
-| Idea | 1 | `qa/01-today.png` is "Today / Friday, September 11 / Round 14" over gray with purple chips — no masthead, no dateline, no press, nothing that says newspaper. Cover the word "Round" and it is any daily quiz on the store. |
-| Look | 2 | `Color(.systemGroupedBackground)` on eleven lines across four files (`TodayView.swift:84,164`, `QuestionCard.swift:44`, `ScorecardView.swift:63`, `PracticeView.swift:94,151,222`); white cards; the palette is one purple plus system green/red/orange. `qa/design/dark-01-today.png` is the same screen on pure black — inverted, not designed. |
-| Signature interaction | 2 | The answer tap is a color swap under `.animation(.easeOut(duration: 0.18), value: selected)` (`QuestionCard.swift:58`) with `Haptics.tap` then `.success`/`.warning` (`TodayView.swift:231`). No ink sweep, no stamp, no spring, no tone, no tally inking in — the four beats DESIGN.md specifies are absent. `qa/02-question.png` shows the result: a green bordered pill and a red one. |
-| Reward | 1 | `TodayView.swift:120–124` prints `Text("\(score) out of \(shownFlags.count)")` at 44 pt above "A solid round. Come back tomorrow for ten more." — TASTE.md's slop tell quoted line for line. `qa/03-result.png` confirms: ten flat purple squares, a "Streak started" card, a countdown card, a gray share card. `tells.mjs` → `no-reward`. |
-| Voice | 2 | Four fixed verdict strings in a `switch` (`TodayView.swift:176–183`), so the tenth win reads exactly like the first, and the product recites its own pitch in four places: `TodayView.swift:49`, `:144`, `RootView.swift:93`, `Reminders.swift:27`. No night editor, no newsroom vocabulary, no pools. |
-| Craft | 3 | Tidy and aligned at default size in light mode — consistent 16 pt gutters, the calendar's three-step density ramp in `qa/04-scorecard.png` is genuine information design. But `qa/design/ax-02-question.png` hyphenates the difficulty pill to "Medi-/um" and the bottom button covers two of the four answers, and `ax-01-today.png` pushes the categories card entirely under the tab bar. (Also: `qa/03-result.png` and `dark-03-result.png` show different squares for the same `-answered 8` — `Quizday.swift`'s sample `flags.shuffle()` is unseeded, so the captures are not reproducible.) |
-| First minute | 2 | Onboarding is three SF Symbols at hero size — `10.circle.fill`, `hand.raised.fill`, `text.book.closed.fill` (`AppInfo.swift:17,22,27`) — and page two *is* the pitch ("No ads. Nothing runs out." / "That is the whole point."). It lands on a gray screen with a purple button. Nothing in the first ten seconds makes a promise about a world. |
+| Idea | 5 | Cover the word "Quizday" on any capture and it is still a paper: `01-today` is a masthead, strapline, dateline and an iron hand-press over grain; `02-question` heads with a section tick in ink blue and `Q4 OF 10 · MEDIUM`; `04-scorecard` is `THE FILE` with a ledger line and a month printed in ink density; `06-practice` is a type case with printers' fists. No competitor screenshot looks remotely like this. |
+| Look | 4 | Paper canvas at `#F5EFE2` with 1,400-stroke grain, two column rules and a lamp glow, one radius (6), one shape (the ruled box) at four sizes, nine named colours plus six section inks, and dark genuinely designed — `dark-01-today` is blue-black press stock with warm ivory type and brighter brass, not an inversion. Held off 5 because the paper stops at the kit's two screens: `05-paywall` puts red `checkmark.circle.fill` bullets in a filled card with a `hand.raised.fill` glyph, and `08-settings` is white rows (near-black in `dark-08`) rather than `surface`. |
+| Signature interaction | 4 | `QuestionSheet.swift:304–337` is the four beats as written: `InkSweep` masked 0→1 on `.spring(response: 0.26, dampingFraction: 0.85)`, `Haptics.rigid()` at 200 ms, `.pop`/`.miss` at 210 ms, the stamp on `Motion.bouncy` at 230, the pencil ellipse and strike trimming over 0.34 s, the footnote rule drawing itself, and the tally square at 520 ms with `Tones.play(.step(runningCorrect))`. `02-question` shows the result — knocked-out type in proof green, the answered line struck in graphite, a red stamp hanging past the right margin. Not 5: `moment-answer.png` is 18 identical frames, so nothing is proven on camera, and a long stamp line (`dark-02-question`, "CLOSE. THE DESK HAS IT HERE.") covers the answer it lands on. |
+| Reward | 4 | `EditionView.printEdition()` prints the page in order — press rule sweeping, masthead `.popIn(0.18)`, `CountUp(to:duration: 0.7)` at `.brandDisplay(size: 112)` firing `Haptics.impact(0.4 + 0.05n)` and a climbing `.step(n)` per tick, the tally 34 ms apart, the tier stamp with `Haptics.celebrate()` and `.fanfare`, newsprint confetti in the paper palette, then the brass ribbon unrolling — five tiers with their own bursts, plus the `PERSONAL BEST` stamp. `03-result` is a front page worth screenshotting, and `09-share` is the 1080 × 1350 version of it. Not 5: `moment-win.png` shows only the settled page for sixteen frames, the result's tally prints silently (`EditionView.swift:56` — no per-square `Haptics.selection()` or `.tap` tone), and the ribbon is an over-wide brass slab with "1 DAY RUNNING" crammed into its left third. |
+| Voice | 5 | Ten praise lines and eight near-miss lines drawn without replacement (`Voice.swift`, `VoicePool`), five tier headlines with their own sublines ("One got past you. One."), `Today is still blank.`, `¶ something wrong here?`, `One knock at the door, at the hour you choose.`, and buttons that say what happens — `Open today's edition`, `Print the edition`, `See the composing room`. The pitch appears once, on the paywall (`AppInfo.swift:56`), and nowhere else: the reminder is now "Today's edition is on the step." |
+| Craft | 4 | Hierarchy is unambiguous — one thing over 44 pt per screen (112 on the result, 96 on the file), rhythm on a 10/16/18 pt grid, and the captures are reproducible now (`03-result` and `dark-03-result` show the same eight). Against it: at AX5 `ax-01-today` overflows `GENERAL KNOWLEDGE` past the right column rule to the screen edge and runs the rest of the section line under the tab bar, and `ax-02-question` hides answer D behind the bottom strip while the stamp, still at its fixed size, buries "Superman". Today, Practice and the result all end a third of a page above the fold with only the ornament in the gap. |
+| First minute | 4 | `07-onboarding` opens on the masthead, the strapline and the drawn press over paper with a red `Continue` — the promise "this is a newspaper" is made in the first second and the app keeps it. Nothing explains the controls: the first box breathes ink 12 % and the stamp ghosts above it (`QuestionSheet.swift:211–222, 345–347`), and only the VoiceOver hint says "Tap to stamp this answer". Not 5 because the page is empty from the subtitle to the dots, and the onboarding masthead's rules run full-bleed against an inset glow, leaving a visible seam across `dark-07-onboarding` at the top rule. |
 
-Missing captures, scored as unseen rather than assumed good:
+`node tools/design/tells.mjs quizday` → **0 hard tells, 0 smells** (was 17 FAILs).
 
-- **No `qa/design/moment-*.png` at all.** `qa.json` has no `moments` key and `LaunchOptions.swift`
-  has no `-demo` flag, so neither the signature interaction nor the win was filmed. The motion
-  scores above come from reading `QuestionCard.swift` and `TodayView.swift`, which contain a
-  single 0.18 s ease and no choreography — but a filmstrip would have been the evidence.
-- No `ax-*` capture of the result, the scorecard or the paywall; no capture of onboarding, of
-  Practice (locked or setup), or of Settings.
-- The app icon in the build (`ios/App/Assets.xcassets/AppIcon.appiconset/icon-1024.png`) is
-  **"10" in white on a purple gradient** — TASTE.md's "the icon is text on a gradient", verbatim.
-  The drawn stamp-on-newsprint icon exists at `design/icon-1024.png` and has never been rendered
-  into the asset catalog.
+All captures listed in the skill are present and were read: nine light screens, nine dark, two
+AX, two filmstrips, the icon. The icon is now the drawn one — cream newsprint, an ink masthead
+bar, a brass hairline and a broken red stamp rim with a hand-weighted tick; at 60 pt it will be
+the only warm, light, non-gradient square in a row of blue question marks.
 
 ## Slop tells present
 
-- **Gray canvas with white cards** — `qa/01-today.png`, `qa/02-question.png`, `qa/03-result.png`,
-  `qa/04-scorecard.png`, `qa/05-paywall.png`; `TodayView.swift:84`, `TodayView.swift:164`,
-  `QuestionCard.swift:44`, `ScorecardView.swift:63`, `PracticeView.swift:94`.
-- **One accent on gray, green and red the only other color** — `QuestionCard.swift:129,135`
-  (`Color.green.opacity(0.16)` / `Color.red.opacity(0.14)`), visible in `qa/02-question.png`.
-- **An SF Symbol as a hero** — onboarding `AppInfo.swift:17,22,27`; Practice locked
-  `PracticeView.swift:62` (`Image(systemName: "infinity")`).
-- **"8 out of 10" in a card followed by "Come back tomorrow"** — `TodayView.swift:120–124,181`,
-  `qa/03-result.png`.
-- **Stats as a row of identical number tiles with gray captions** — `ScorecardView.swift:97–99`
-  ("13 day streak", "13 best streak", "19 days played"), `qa/04-scorecard.png`.
-- **Copy that explains the business model inside the product** — `TodayView.swift:49`,
-  `TodayView.swift:144`, `RootView.swift:93`, `Reminders.swift:27`, `AppInfo.swift:23–24`.
-- **`.easeOut` the only motion there is** — `QuestionCard.swift:58`; no `Motion.*` anywhere.
-- **Nothing bigger than `.largeTitle`** — the biggest type in the app is `scaledFont(size: 44)`
-  on the result; `tells.mjs` → `no-display-type`.
-- **Praise that never changes** — `TodayView.swift:176–183`.
-- **The icon is text on a gradient** — `ios/App/Assets.xcassets/AppIcon.appiconset/icon-1024.png`.
+**None.** Specifically checked and clear: no `systemGroupedBackground` anywhere; no green/red
+pair (a miss is graphite and a pencil, and the stamp is red on right answers too); no SF Symbol
+hero — six drawn SVGs carry Today, onboarding, the paywall, Practice and the empty file; no
+"out of ten" sentence and no "come back tomorrow"; no stat tiles (one 96 pt run over a mono
+ledger line); no `.sheet` win; no pitch outside the paywall; no `.easeOut`-only motion; the
+icon is a drawing; praise comes from pools.
+
+Two things sit close to the line without crossing it, and both are in the *Fix* list: the
+kit's paywall card and the kit's Settings rows are the only white-card surfaces in the app.
 
 ## Keep
 
-- **The mechanic and the pack.** One shared round a day, every answer carrying an explanation,
-  a source and a report affordance (`qa/02-question.png`) is the wedge and it works. The reveal
-  content — explanation, `Source: Britannica`, report — is the right *information*; only its
-  dress is wrong.
-- **The calendar's density ramp.** `ScorecardView` shades a played day by score in three steps
-  with a legend (`qa/04-scorecard.png`). Recolour it ink instead of purple and it is DESIGN.md's
-  printed month almost as-is.
-- **The restraint.** No HUD, no coins, no interstitials, the rating prompt deliberately on the
-  result and never mid-question (`TodayView.swift:165–167`). That judgement is right; keep it.
-- **The compliance and accessibility scaffolding** — combined accessibility elements on the
-  header and the square row, `accessibilityHint` on every answer, the auto-renew disclosure on
-  the paywall.
+- **The ink press, exactly as built.** The sweep with the knocked-out second copy of the type,
+  the off-axis stamp, and the hand-drawn correction. Do not tidy the ellipse — the overshoot
+  past the box edge is why it reads as a pencil.
+- **Red carries no judgement.** The stamp is red on a right answer too; a miss is graphite.
+  That single decision is what keeps this out of the genre.
+- **The tally as three legible states** — solid, struck, ruled — used identically in the sheet,
+  the result and the share card.
+- **The printed month.** `04-scorecard`'s ink-density calendar with the score knocked out at 8+
+  and today circled in pencil is real information design, and the mono legend beats chips.
+- **The ledger line** `BEST 13 · 19 EDITIONS FILED · 148 OF 190 ANSWERED`.
+- **The share image.** `09-share` is a front page, not a screenshot of a score.
+- **The voice pools and the tier sublines**, and the reveal's content — explanation, mono
+  source dateline, `¶ something wrong here?`.
 
 ## Fix, in this order
 
-1. **Put the brand in the app.** `ios/App/` has no `AppBrand.swift`. Paste DESIGN.md §Tokens
-   verbatim into one, and apply `.brand(AppBrand.brand)` to `RootView` *and* to `OnboardingView`
-   in `Quizday.swift:36–41`. Then delete every `Color(.systemGroupedBackground)` and
-   `Color(.secondarySystemGroupedBackground)` (eleven sites, listed above) and replace the screen
-   backgrounds with `.brandBackground()` and the card surfaces with `.brandSurface()`. Add the
-   paper grain and the two 0.5 pt column rules as DESIGN.md §Canvas describes. *Next capture:*
-   `01-today` is ivory `#F5EFE2` with visible column rules, not `#F2F2F7`; `dark-01-today` is
-   `#151821` with warm type, not black; `tells.mjs` loses `kit-default-brand` and all eleven
-   `gray-canvas` FAILs.
+1. **Film the two moments — they still show nothing.** `moment-answer.png` is 18 identical
+   frames of an already-revealed question and `moment-win.png` is two blank frames then sixteen
+   of a settled page with only the countdown ticking. The demo fires too early for the camera:
+   `TodayView.swift:202–208` presses at 1.8 / 3.4 / 4.2 s and `:226–230` at 2.0 / 3.6 s, while
+   the filmstrip's first usable frame lands several seconds after launch. Push the first press
+   to ~6 s and space the rest ~4 s apart (`at(6.0)`, `at(10.0)`, `at(14.0)`; the win's tenth
+   answer at `at(8.0)` and `next()` at `at(11.0)`), and raise `frames` in `qa.json`'s moments
+   to 24. *Next capture:* consecutive frames of `moment-answer` differ — one shows the box part
+   inked, one the stamp mid-drop, one the tally square arriving — and `moment-win` catches the
+   count-up between 0 and the score with confetti in the air.
 
-2. **Build the ink press on the answer.** Rewrite `QuestionCard.answerButton` as DESIGN.md's
-   ruled box — 1.2 pt ink rule at radius 6 on `surface`, a 26 pt mono gutter with `A B C D` at
-   11 pt tracking 1.6, New York 19 pt — and replace `.animation(.easeOut(duration: 0.18))`
-   (`QuestionCard.swift:58`) with the four beats: a gradient-mask ink sweep 0→1 on
-   `.spring(response: 0.26, dampingFraction: 0.85)` in `success` green or `miss` graphite,
-   `Haptics.rigid()` at 200 ms, `Tones.shared.play(.pop)` / `.miss` at 210 ms, then the stamp
-   dropping from scale 1.6/−14° to 1.0/−6° on `Motion.bouncy` with `Haptics.thud()`. Delete
-   `Color.green.opacity(0.16)` and `Color.red.opacity(0.14)` and both `checkmark.circle.fill` /
-   `xmark.circle.fill` — a miss is the pencil ellipse and strike, never a red border.
-   Use `.buttonStyle(.pressable)`. *Next capture:* `02-question` shows four ruled boxes with
-   letter gutters and a red stamp hanging past the right margin; the `moment-answer` filmstrip
-   shows the sweep crossing the box frame to frame.
+2. **Stop the stamp swallowing the line it lands on.** `dark-02-question` and `ax-02-question`
+   show "CLOSE. THE DESK HAS IT HERE." and "HALF A LEAD, NO STORY." lying across the whole
+   answered box, so the answer she pressed is unreadable — the short lines ("Pencil it out.")
+   look right, the long ones do not. In `QuestionSheet.swift:180–190`, cap the stamp:
+   `.fixedSize()` → a `.frame(maxWidth: 190, alignment: .trailing)` with `.lineLimit(1)` and
+   `.minimumScaleFactor(0.7)`, and on a miss anchor it `.bottomTrailing` with `offset(x: 16,
+   y: 14)` the way the correct case already does, so it straddles the bottom rule instead of
+   the type. *Next capture:* in `dark-02-question` the word "Superman" is legible with the
+   stamp clear of it.
 
-3. **Make finishing print an edition.** Replace `TodayView.done` (`:110–168`) with DESIGN.md's
-   choreography: masthead `QUIZDAY` `.popIn(delay: 0.18)`, the mono dateline at 0.26,
-   `CountUp(to: score, duration: 0.7, onTick:)` at `.brandDisplay(size: 112)` with
-   `Tones.shared.play(.step(n))` and `Haptics.impact(0.4 + 0.05 * n)` per tick, the ten squares
-   printing 34 ms apart, the tier headline stamping at −3° with `Haptics.celebrate()` and
-   `.fanfare`, then `.confetti(trigger:power:count:colors:)` in `#F5EFE2 #FBF7EC #1B2027 #C1362C`.
-   Four tiers with DESIGN.md's headlines and sublines — `EXTRA! EXTRA!`, `STOP THE PRESS`,
-   `THE EDITION IS FILED`, `TOMORROW'S IS ALREADY SET`, `A BLANK SHEET` — plus the brass
-   `PERSONAL BEST` stamp on a new best. Delete the `verdict(score:total:)` switch entirely.
-   *Next capture:* `03-result` has a number at 112 pt and no sentence containing "out of";
-   `tells.mjs` loses `no-reward` and `no-display-type`.
+3. **Make the largest text hold.** `ax-01-today`: `SectionLine` (`Paper.swift:416`) lays
+   `GENERAL KNOWLEDGE` past the right column rule to the screen edge and the rest of the line
+   disappears under the tab bar — give each name `.lineLimit(1).minimumScaleFactor(0.6)` and
+   clamp the line to `...DynamicTypeSize.accessibility3`, as the question headline already is.
+   `ax-02-question`: answer D sits behind the bottom strip; add `.padding(.bottom, 24)` inside
+   the sheet's scroll content so the last box clears the inset. *Next capture:* both AX shots
+   show every answer and every section name inside the column rules.
 
-4. **Take the pitch out of the product.** Four lines to change. `TodayView.swift:49` →
-   the italic *"Ten questions, set this morning."* over the printers' section line.
-   `TodayView.swift:144` → drop it; the countdown box carries only
-   `TOMORROW'S EDITION GOES TO PRESS IN`. `RootView.swift:93` → the Settings footer becomes
-   OpenTDB attribution only. `Reminders.swift:27` → `Ten questions, two minutes. Round {n}.`
-   under the title `Today's edition is on the step.` And rewrite onboarding page 2
-   (`AppInfo.swift:21–25`) to DESIGN.md's *Stamp your answer / Press one and the ink lands —
-   with the reason it's right underneath.* The paywall keeps the single promise sentence and it
-   is the only place it appears. *Next capture:* `tells.mjs` reports zero `pitch-in-product`.
+4. **Give the paywall the paper.** `05-paywall` is the one screen a stranger meets that is not
+   this app: the kit's "Unlock everything in Quizday." subtitle
+   (`FactoryKit/Sources/FactoryKit/PaywallView.swift:61`), red `checkmark.circle.fill` bullets
+   in a filled card (`:72`) and a `hand.raised.fill` glyph on the promise (`:82`). Add
+   `subtitle:` and a bullet-mark option to `PaywallView` (it belongs in the kit, not copied
+   into the app), pass the editor's line — *Where the paper is set before it goes to press.* —
+   and the printers' fist on ruled lines that `PracticeView` already draws, and drop the
+   raised hand entirely. *Next capture:* `05-paywall` and `06-practice` read as the same room.
 
-5. **Render the art and the real icon.** Six SVGs sit unused in `design/art/`. Run
-   `node tools/design/art.mjs` and use them: `press-body` + `press-wheel` as Today's hero,
-   `stamp` and `desk` on onboarding 2 and 3, `desk` as the paywall hero via `PaywallView(…,
-   hero:)`, `case` for Practice locked (replacing `Image(systemName: "infinity")`,
-   `PracticeView.swift:62`), `spike` for the empty Scorecard. Then render `design/icon.svg` over
-   `Assets.xcassets/AppIcon.appiconset/icon-1024.png` — the shipped file is still "10" on purple.
-   *Next capture:* `05-paywall` has the drawn desk above the headline; the icon is cream with a
-   red stamp; `tells.mjs` loses `paywall-no-hero`.
+5. **Take the white cards out of Settings.** `08-settings` is white system rows on newsprint and
+   `dark-08-settings` is near-black ones; the canvas is right and the cells are not. Apply the
+   brand's `surface` and a 1.2 pt ink rule at radius 6 to the kit's `SettingsView` rows the way
+   `.ruledBox()` does elsewhere, and pad the bottom so the version footer stops sitting behind
+   the tab bar (visible ghosted in `dark-08-settings`). *Next capture:* the rows are `#FBF7EC`
+   in light and `#1E2230` in dark, with the footer clear of the bar.
 
-6. **Rebuild the Scorecard around one number.** Delete the three tiles at
-   `ScorecardView.swift:97–99` and put the streak at `.brandDisplay(size: 96)` with a brass
-   ribbon behind the mono label `DAYS RUNNING`, and one ledger line under it:
-   `BEST 13 · 19 EDITIONS FILED · 147 OF 190 ANSWERED`. Recolour the calendar to `ink` at
-   0.92 / 0.62 / 0.34 with the score knocked out in paper at 8+, an empty ruled square for
-   unplayed, and today circled in the hand-drawn accent ellipse. *Next capture:* `04-scorecard`
-   has exactly one thing over 44 pt and no purple squares; `tells.mjs` loses `stats-tiles`.
+6. **Fix the ribbon on the result.** `03-result` stretches the brass to 260 pt
+   (`EditionView.swift:75–76`) with `1` and `DAY RUNNING` crowded into its left third and a
+   third of the slab empty — the mock's ribbon is snug to its type. Size it to its content
+   (`.fixedSize()` with 20 pt of internal padding), and on day one print the editor's own line,
+   `Day one on the desk.` (`Voice.streak`), rather than a pluralised `1 DAY RUNNING`.
+   *Next capture:* the ribbon ends just past the caption, and day one reads like the editor.
 
-7. **Give it sound, a share image, and film the moments.** Wire `Tones` per DESIGN.md §Sound and
-   add `SoundsToggle()` to `QuizdaySettings`. Replace `ShareCard.text` at `TodayView.swift:151`
-   and `ScorecardView.swift:77` with `ShareImage.render` at 1080 × 1350 — masthead, dateline,
-   the score at 320 pt, the ten squares, the tier stamp, the brass ribbon — keeping the text line
-   as the fallback with `🟥`/`⬜`. Then add a `-demo <name>` flag to `LaunchOptions` and
-   `moments: ["answer", "win"]` to `qa.json` so `design-captures.sh` films them. *Next capture:*
-   `qa/design/moment-answer-*.png` and `moment-win-*.png` exist and consecutive frames differ;
-   `tells.mjs` loses `silent-game`, `text-share` and `ease-only`.
+7. **Let the result's tally be heard.** DESIGN.md's 1040–1400 ms beat is one square at a time
+   with `Haptics.selection()` per square and `Tones.play(.tap)` on every third; the squares
+   stagger correctly (`EditionView.swift:56`, `Tally(stagger: 0)`) but land in silence, so the
+   page's middle beat is the only one the hand and ear miss. Fire them from `Tally`'s per-index
+   `popIn` delay when a `stagger` is set. *Next capture:* not visible — verify in the code and
+   on the Thursday phone pass.
 
 ## Against the mocks
 
-- **Question sheet — `mock-1-play.png` vs `qa/02-question.png`.** The mock is a sheet: grain,
-  column rules, a mono section mark with a blue tick, `Q4 OF 10 · EASY`, the tally as solid ink
-  blocks, the question in New York bold over a 2.5 pt rule, four ruled boxes with `A B C D`
-  gutters, the correct answer in proof green circled by hand, the wrong one struck through in
-  graphite, a red `CORRECTION ON PAGE TWO` stamp hanging past the margin, the source as a mono
-  dateline, `¶ SOMETHING WRONG HERE?`, and a printer's ornament closing the column. The build is
-  gray, has no tally at all, no section colour, no letters, a green-bordered pill and a
-  red-bordered pill, `Not this time` in system orange next to `info.circle.fill`, "Report a
-  problem" as a purple SF Symbol link, and a purple pill button on a `.bar` strip. Every element
-  of the mock is missing.
-- **Result — `mock-2-win.png` vs `qa/03-result.png`.** The mock has the masthead, the dateline,
-  `9` at 112 pt with `/10` beside it, ten ink blocks, `STOP THE PRESS` in a double-ruled red
-  stamp at −3°, the subline *"One got past you. One."*, a brass ribbon reading `12 DAYS RUNNING`,
-  shredded newsprint mid-air, the countdown and share as two ruled boxes below a fold, and a mono
-  footer. The build has "8 out of 10" at 44 pt, "A solid round. Come back tomorrow for ten more.",
-  purple squares, an orange flame that says "Streak started", and two white cards. Flatter on
-  every axis — no tier, no stamp, no ribbon, no burst, no masthead, no fold, no footer.
-- **First run — `mock-3-first.png` vs the build's onboarding.** The mock opens on the masthead
-  and strapline over a drawn iron hand-press with a brass lever and a red flywheel hub, New York
-  bold *"One edition a day"*, and a red `Continue`. The build opens on `10.circle.fill` and a
-  purple `Continue`, and its second page announces the business model. The promise the mock makes
-  in its first second — *this is a newspaper* — the build never makes.
-- **Today, unplayed — described in DESIGN.md §Screens 1 vs `qa/01-today.png`.** No masthead, no
-  strapline, no dateline, no press, no section line with coloured ticks, no ribbon. What shipped
-  is a system large title, a purple date, a `largeTitle` round number, the pitch paragraph, and
-  category names as gray capsule chips inside a white card — the "chips in a card" DESIGN.md
-  explicitly rules out.
-- **Paywall — DESIGN.md §Screens 9 vs `qa/05-paywall.png`.** No `desk.svg` hero, no ruled boxes,
-  no New York; three purple `checkmark.circle.fill` bullets in a white card, a `hand.raised`
-  glyph beside the promise, and two rounded offer rows. The kit's default paywall with a purple
-  tint. Only the auto-renew disclosure is where it should be.
+- **Question sheet — `mock-1-play.png` vs `02-question.png`.** Built, essentially line for
+  line: the section tick in ink blue, `Q4 OF 10 · MEDIUM`, the tally in three states, the
+  headline over its 2.5 pt rule, four ruled boxes with mono `A B C D` gutters, proof green with
+  knocked-out type, the graphite strike, the hand-drawn ellipse, the stamp past the right
+  margin, the mono source, `¶ something wrong here?` and the ornament. Flatter in one place:
+  the mock leaves the unpressed answers in soft grey so the pressed pair carries all the
+  contrast; the build inks C and D at full strength, which makes the sheet noisier than drawn.
+- **Result — `mock-2-win.png` vs `03-result.png`.** The masthead, dateline, `8` at 112 pt with
+  `/10`, the ten squares, `STOP THE PRESS` in its double-ruled stamp at −3°, the subline, the
+  ribbon, the fold, the two ruled boxes and the mono footer are all there, with the confetti
+  frozen mid-air exactly as `-stillFrames` should show it. Flatter: the mock's ribbon is sized
+  to its type where the build's is a wide brass slab, and the mock keeps scraps falling through
+  the lower third that the build leaves empty between the boxes and the footer.
+- **First run — `mock-3-first.png` vs `07-onboarding.png`.** The promise is made: masthead,
+  strapline, the drawn press, *One edition a day*, a red `Continue`. Flatter: the mock's page
+  is composed to its foot; the build leaves a third of it blank under the subtitle, and the
+  masthead's full-bleed rules cut a visible seam across the glow in `dark-07-onboarding`.
+- **Today, unplayed — DESIGN.md §Screens 1 vs `01-today.png`.** Masthead, strapline, dateline,
+  the press with its flywheel, the italic line, the section line with coloured ticks and the
+  prominent button: all present and in order. The page then stops a third of the way up the
+  screen with only the ornament below it — on a phone this tall, either the press wants to be
+  larger or the column wants the countdown or the run in that gap.
+- **Paywall — DESIGN.md §Screens 9 vs `05-paywall.png`.** `desk.svg` at 280 pt on paper and the
+  promise in the one place it belongs. Everything between them is still the kit's: see fix 4.
