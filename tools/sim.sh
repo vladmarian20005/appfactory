@@ -99,7 +99,12 @@ cmd_boot() {
 capture_stable() {
   local udid=$1 out=$2 tmp_a tmp_b deadline
   tmp_a=$(mktemp -t simshot); tmp_b=$(mktemp -t simshot)
-  deadline=$(( $(date +%s) + ${SHOT_TIMEOUT:-30} ))
+  # 60s, not 30: verify reinstalls the app before every screen, and a first launch onto a
+  # cold runner occasionally takes longer than half a minute to put up its first frame. At
+  # 30s that was photographed as a flat white launch screen and failed the blank check — a
+  # different screen each run, three runs of Tidepour in a row. The wait only costs anything
+  # on a screen that has not drawn; a screen that draws is captured as soon as it settles.
+  deadline=$(( $(date +%s) + ${SHOT_TIMEOUT:-60} ))
   sleep "${SHOT_DELAY:-1}"
 
   # Phase 1: wait until the app has actually drawn something.
