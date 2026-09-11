@@ -180,8 +180,7 @@ platform :ios do
     UI.message("    Bundle ID #{bundle}")
     UI.message("    SKU       #{bundle}")
     UI.message("")
-    UI.message("Then re-run this lane to confirm, and create the subscriptions with:")
-    UI.message("  node tools/asc/iap.mjs <slug> --apply")
+    UI.message("Then run app-submit: it creates the in-app purchases (tools/asc/iap.mjs) and uploads.")
     UI.user_error!("App record does not exist yet.")
   end
 
@@ -232,7 +231,7 @@ platform :ios do
     UI.success("Uploaded build #{number} to TestFlight")
   end
 
-  desc "Push metadata, screenshots and privacy answers, then submit the latest build for review"
+  desc "Push the listing: metadata, screenshots, review contact. tools/asc/release.mjs submits."
   lane :release do
     shots = File.join(store, "screenshots")
     locales = Dir.exist?(shots) ? Dir.children(shots).select { |d| File.directory?(File.join(shots, d)) && d.match?(/\A[a-z]{2}(-[A-Za-z]{2,4})?\z/) } : []
@@ -244,43 +243,31 @@ platform :ios do
     end
     UI.message("Screenshot locales: #{locales.join(', ')}")
 
-    # Per-app answers first: two apps rarely collect the same things. The shared file is only
-    # a fallback for an app that has not declared its own.
-    privacy = [
-      File.join(store, "app_privacy_details.json"),
-      File.expand_path("app_privacy_details.json", __dir__),
-    ].find { |p| File.exist?(p) }
-    if privacy
-      upload_app_privacy_details_to_app_store(
-        app_identifier: ENV.fetch("BUNDLE_ID"),
-        json_path: privacy,
-      )
-    else
-      UI.important("No app_privacy_details.json; the App Privacy answers must be set by hand or the version cannot be submitted.")
-    end
+    # No App Privacy upload here. upload_app_privacy_details_to_app_store logs in with an Apple
+    # ID password (Spaceship::ConnectAPI.login with use_tunes), which CI does not hold, and the
+    # public API has no data-usage endpoints to do it with the key. The owner answers it once,
+    # in the browser, when creating the app record; tools/asc/register.mjs prints the answers.
 
     review = {
       first_name: ENV["REVIEW_FIRST_NAME"],
       last_name: ENV["REVIEW_LAST_NAME"],
       phone_number: ENV["REVIEW_PHONE"],
       email_address: ENV["REVIEW_EMAIL"],
-      notes: ENV["REVIEW_NOTES"] || "The free tier needs no account. The Pro subscription can be tested with a sandbox account.",
+      notes: ENV["REVIEW_NOTES"] || "The free tier needs no account. The in-app purchase is on the paywall and can be bought with a sandbox account.",
     }.compact
 
+    # submit_for_review stays false. deliver's submission refuses a review submission holding
+    # items it did not add, and an app's first in-app purchases can only be reviewed inside the
+    # same submission as the version, so tools/asc/release.mjs builds and submits it instead.
     deliver(
       app_identifier: ENV.fetch("BUNDLE_ID"),
       metadata_path: File.join(store, "metadata"),
       screenshots_path: shots,
-      submit_for_review: true,
+      submit_for_review: false,
       automatic_release: true,
       force: true,
-      precheck_include_in_app_purchases: false,
       app_review_information: (review.size > 1 ? review : nil),
-      submission_information: {
-        add_id_info_uses_idfa: false,
-        export_compliance_uses_encryption: false,
-      },
     )
-    UI.success("Submitted for review")
+    UI.success("Listing pushed")
   end
 end

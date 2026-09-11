@@ -67,25 +67,27 @@ gh workflow run app-pages.yml -f slug=<slug> -R vladmarian20005/appfactory
 and polls the live URL until it answers 200. Do not move on until it does: `precheck` fails a
 submission on a privacy URL that 404s, and it fails *after* the upload.
 
-## 4. In-app purchases
+## 4. Bundle id and in-app purchases — cloud, automatic
+
+The bundle id registers itself: `app-register` runs when the compliance gate passes
+(`tools/asc/register.mjs`). The in-app purchases create themselves: `app-submit` runs
+`tools/asc/iap.mjs --apply` before it archives, from `ios/App/Products.storekit`
+(subscriptions and one-time unlocks: product, localization, availability, price, trial,
+review screenshot). To see the plan without changing anything:
 
 ```
-node tools/asc/iap.mjs <slug>              # dry run: prints the plan
-node tools/asc/iap.mjs <slug> --apply
+node tools/asc/products.mjs <slug>         # what will be created; limits checked, no credentials
+node tools/asc/iap.mjs <slug>              # dry run against App Store Connect
 ```
 
-Creates the subscription group, the products, their localizations, the price in all ~175
-territories, the introductory offers, and the review screenshots. Idempotent, so re-run it
-after fixing anything.
+**Two things need the owner, once per app, in one visit to App Store Connect:** creating the
+app record (Apple: "Don't use this API to create new apps"; `POST /v1/apps` answers *"The
+resource 'apps' does not allow 'CREATE'"*) and the App Privacy answers (the public API has no
+data-usage endpoints at all). `node tools/asc/owner-steps.mjs <slug>` prints both, field by
+field — hand that to the owner and wait.
 
-**This needs the app record to exist, and that is the one step nobody can automate.** Apple's
-documentation says "Don't use this API to create new apps; instead, create new apps on the
-App Store Connect website", and `POST /v1/apps` answers *"The resource 'apps' does not allow
-'CREATE'"*. If the record is missing the script prints the exact five fields — hand them to
-the owner and wait. The bundle id registers itself, via `fastlane create` in `tools/fastlane`.
-
-Mind the limits it enforces before calling the API: subscription `description` is 55
-characters, `displayName` 30.
+Limits the gate enforces: display name 30, description 45 for a one-time unlock and 55 for a
+subscription.
 
 ## 5. Compliance gate
 
@@ -125,7 +127,10 @@ confirms. The gate refuses to pass on your word.
 gh workflow run app-release.yml -f slug=<slug> -f confirm=SUBMIT -R vladmarian20005/appfactory
 ```
 
-Pushes metadata, screenshots and the App Privacy answers, then submits.
+Pushes the listing and screenshots, then `tools/asc/release.mjs` sets content rights, the
+categories and age rating from `store/release.json`, the price (free) and availability,
+attaches the processed build, and submits the version with every in-app purchase in one
+review submission. `node tools/asc/release.mjs <slug>` shows what it would do.
 
 ## Done means
 

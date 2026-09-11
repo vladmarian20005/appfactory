@@ -38,12 +38,17 @@ no Xcode window. Everything below works there. Nothing below needs a human.
 2. **Icon.** `node tools/icon.mjs apps/<slug>/ios/App/Assets.xcassets/AppIcon.appiconset/icon-1024.png "<glyph>" "<css gradient>"`.
    One or two characters that read at 60px. Pick a gradient that is not the template's green.
 
-3. **Identity.** Fill `App/AppInfo.swift` from the spec: name, product ids
-   (`<bundle>.pro.weekly` and `.pro.yearly`), three onboarding pages drawn from the Promise
+3. **Identity.** Fill `App/AppInfo.swift` from the spec: name, product ids as its
+   Monetization section says (`<bundle>.pro.weekly` and `.pro.yearly` for a subscription,
+   `<bundle>.unlock` for a one-time unlock), three onboarding pages drawn from the Promise
    and the Wedge, the paywall headline and bullets, and the support and privacy URLs
    (`https://starhiveconcept.com/<slug>-privacy-policy-terms/` and the same with `#support`).
    Update `App/Products.storekit` so its product ids match exactly — a mismatch means the
-   paywall shows nothing in the real build.
+   paywall shows nothing in the real build. It is also what App Store Connect's products are
+   created from (`tools/asc/iap.mjs` in app-submit), so its text must fit Apple's limits:
+   display name 2–30 characters; description at most **45** for a one-time unlock
+   (`NonConsumable`) and 55 for a subscription; reference name 64. A free-trial introductory
+   offer is the only kind automated. Check with `node tools/asc/products.mjs <slug>`.
 
 4. **Build early.** `tools/sim.sh build apps/<slug>/ios <Target>`. Fix every error before
    writing a feature. A build break found now costs a minute; found after three screens it
@@ -96,6 +101,16 @@ no Xcode window. Everything below works there. Nothing below needs a human.
     name or subtitle in `keywords.txt`, because Apple indexes all three together and a
     repeat spends the characters twice; and every claim in `description.txt` must be true
     of the binary you just built — if it says "no ads", grep for an ad SDK before writing it.
+
+    `apps/<slug>/store/release.json` — what `app-release` sets in App Store Connect, from
+    SPEC.md's Store section: `primaryCategory` and `secondaryCategory` as App Store Connect
+    ids (`UTILITIES`, `PRODUCTIVITY`, `HEALTH_AND_FITNESS`…); a game is `GAMES` with
+    `primarySubcategoryOne` (and optionally `Two`) such as `GAMES_PUZZLE`, `GAMES_WORD`,
+    `GAMES_BOARD`, `GAMES_TRIVIA`. `contentRights` is `DOES_NOT_USE_THIRD_PARTY_CONTENT`
+    unless the app shows content someone else owns (a trivia API, a font you did not draw).
+    `ageRating` lists only the answers that are not "none" — e.g. `"unrestrictedWebAccess":
+    true` for an app with a web view. `price` is `"0"`. `apps/tallies/store/release.json` is
+    the shape.
 
 11. **Update `apps/<slug>/STATUS.md`** — `stage: built`, what works, what is stubbed, what
     could not be checked without hardware. Commit.

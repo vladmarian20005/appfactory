@@ -174,6 +174,35 @@ if [ -f "$manifest" ] && [ -f "$app/store/app_privacy_details.json" ]; then
 fi
 echo "::endgroup::"
 
+# ── 9. What App Store Connect will be sent ────────────────────────────────────
+# app-submit creates the in-app purchases from Products.storekit, and app-release sets the
+# categories and content rights from store/release.json. A value Apple rejects fails there,
+# after the owner has already been told the app is ready; here it costs a fix instead.
+echo "::group::In-app purchases and release settings"
+if out=$(node tools/asc/products.mjs "$slug" 2>&1); then
+  pass "in-app purchases: $(echo "$out" | head -1 | sed "s/^$slug: //")"
+else
+  echo "$out" | grep '·' | sed 's/^ *· //' | while IFS= read -r l; do echo "::error::in-app purchase: $l"; done
+  fail "in-app purchases would be rejected by App Store Connect (above)"
+fi
+rel="$app/store/release.json"
+if [ ! -f "$rel" ]; then
+  fail "no store/release.json: app-release takes the categories and content rights from it"
+elif msg=$(node -e '
+  const r = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
+  const bad = [];
+  if (!/^[A-Z_]+$/.test(r.primaryCategory ?? "")) bad.push("primaryCategory is missing");
+  if (r.primaryCategory === "GAMES" && !/^GAMES_[A-Z_]+$/.test(r.primarySubcategoryOne ?? "")) bad.push("a game needs primarySubcategoryOne, e.g. GAMES_PUZZLE");
+  if (r.contentRights && !["DOES_NOT_USE_THIRD_PARTY_CONTENT", "USES_THIRD_PARTY_CONTENT"].includes(r.contentRights)) bad.push(`contentRights "${r.contentRights}"`);
+  if (bad.length) { console.log(bad.join("; ")); process.exit(1); }
+  console.log(`${r.primaryCategory}${r.primarySubcategoryOne ? ` / ${r.primarySubcategoryOne}` : ""}`);
+' "$rel" 2>&1); then
+  pass "release settings: $msg"
+else
+  fail "store/release.json: $msg"
+fi
+echo "::endgroup::"
+
 echo
 if [ "$fails" -gt 0 ]; then
   echo "::error::compliance: $fails failure(s), $warns warning(s) — this app is not ready for App Review"

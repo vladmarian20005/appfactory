@@ -1,0 +1,9 @@
+{
+  "_comment": "Read by tools/asc/release.mjs in app-release. Category ids are App Store Connect's; a game takes up to two Games subcategories. Every age rating question not listed under ageRating is answered 'none'.",
+  "primaryCategory": "GAMES",
+  "primarySubcategoryOne": "GAMES_PUZZLE",
+  "primarySubcategoryTwo": "GAMES_BOARD",
+  "contentRights": "DOES_NOT_USE_THIRD_PARTY_CONTENT",
+  "ageRating": {},
+  "price": "0"
+}

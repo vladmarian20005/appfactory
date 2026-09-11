@@ -1,0 +1,9 @@
+{
+  "_comment": "Read by tools/asc/release.mjs in app-release. Category ids are App Store Connect's. Every age rating question not listed under ageRating is answered 'none'. Quizday's Practice tab serves Open Trivia Database questions (CC BY-SA 4.0), so it declares third-party content.",
+  "primaryCategory": "GAMES",
+  "primarySubcategoryOne": "GAMES_TRIVIA",
+  "secondaryCategory": "EDUCATION",
+  "contentRights": "USES_THIRD_PARTY_CONTENT",
+  "ageRating": {},
+  "price": "0"
+}

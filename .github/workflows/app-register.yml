@@ -1,0 +1,60 @@
+name: app-register
+
+# The last link of the chain: register the app's bundle id in App Store Connect the moment
+# the compliance gate is green, so it is already in the New App form's dropdown when the
+# owner hears the app is ready. Also says whether the app record exists yet and, if not,
+# exactly what to type — the record and the App Privacy answers are the two things Apple's
+# API will not do (see tools/asc/register.mjs).
+#
+# No agent, no macOS, no build: a Linux runner and the App Store Connect API key.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/
+        required: true
+        type: string
+
+permissions:
+  # to record the stage in apps/<slug>/state.json
+  contents: write
+
+concurrency:
+  group: app-register-${{ inputs.slug }}
+  cancel-in-progress: false
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SLUG: ${{ inputs.slug }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # record-stage.sh re-derives state.json from the remote, which needs history
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Register the bundle id
+        id: register
+        continue-on-error: true
+        run: node tools/asc/register.mjs "$SLUG"
+
+      - name: Record the result
+        if: ${{ !cancelled() }}
+        run: |
+          .github/scripts/record-stage.sh "$SLUG" register \
+            "${{ steps.register.outcome == 'success' && 'ok' || 'fail' }}"
+
+      - name: Fail the job if registration failed
+        if: steps.register.outcome != 'success'
+        run: exit 1

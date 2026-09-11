@@ -1,7 +1,8 @@
 name: app-compliance
 
 # The gate between "built" and "submittable". Runs on Linux: it needs no Xcode, no
-# simulator and no credentials, so it is cheap enough to run on every push.
+# simulator and no credentials, so it is cheap enough to run on every push. When the chain
+# dispatches it and it passes, it starts app-register, which does hold credentials.
 
 on:
   workflow_dispatch:
@@ -15,14 +16,18 @@ on:
     paths:
       - "apps/*/store/**"
       - "apps/*/ios/App/PrivacyInfo.xcprivacy"
+      - "apps/*/ios/App/Products.storekit"
+      - "apps/*/iap.json"
       - "FactoryKit/Sources/FactoryKit/PaywallView.swift"
       - ".github/scripts/compliance.sh"
+      - "tools/asc/products.mjs"
       - ".github/workflows/app-compliance.yml"
 
 permissions:
   # write only to record the outcome in apps/<slug>/state.json.
   contents: write
-  actions: read
+  # read to see whether an agent is building; write to start app-register when the gate passes.
+  actions: write
 
 concurrency:
   group: compliance-${{ inputs.slug || github.ref }}
@@ -141,6 +146,16 @@ jobs:
       - name: Fail the job if the gate failed
         if: steps.gate.outcome != 'success'
         run: exit 1
+
+      # The chain's last link. Only on a dispatch: that is the chain (or a human) asking about
+      # one app, where a push-triggered run is a re-check of everything.
+      - name: Register the bundle id next
+        if: github.event_name == 'workflow_dispatch' && steps.gate.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run app-register.yml -f slug="${{ matrix.slug }}" --ref "${GITHUB_REF_NAME}"
+          echo "app-register dispatched: the bundle id goes into App Store Connect next." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Summary
         if: always()

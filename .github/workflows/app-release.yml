@@ -1,8 +1,14 @@
 name: app-release
 
-# Pushes metadata, screenshots and the App Privacy answers, then submits the build for
-# review. Runs on Linux: `deliver` needs no Xcode and no keychain, and waiting for Apple to
-# finish processing a build is not something to do on a macOS runner.
+# Launch: the listing, then everything else a first release needs, then App Review.
+# `deliver` pushes the listing text, screenshots and review contact. tools/asc/release.mjs
+# sets content rights, categories, the age rating, the price and availability, attaches the
+# processed build, and submits the version together with every in-app purchase — an app's
+# first purchases can only be reviewed with a version, and deliver cannot add them.
+# Runs on Linux: none of it needs Xcode or a keychain.
+#
+# App Privacy is the one requirement the API cannot set; the owner answers it once, in the
+# same visit as creating the app record, and tools/asc/register.mjs prints the answers.
 #
 # Split from app-submit on purpose. The beta lane passes
 # skip_waiting_for_build_processing: true, so the archive job ends as soon as the upload
@@ -125,10 +131,18 @@ jobs:
           chmod 600 ~/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8
           echo "ASC_KEY_PATH=$HOME/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8" >> "$GITHUB_ENV"
 
-      - name: Submit for review
+      # Read-only. A build Apple has not finished processing, a product missing from App Store
+      # Connect or a missing release.json stops the run here, before the listing is touched.
+      - name: What the release still lacks
+        run: node tools/asc/release.mjs "$SLUG"
+
+      - name: Push the listing
         run: |
           cd tools/fastlane
           APP_DIR="../../apps/$SLUG/ios" fastlane release
+
+      - name: Submit for review, with the in-app purchases
+        run: node tools/asc/release.mjs "$SLUG" --apply
 
       - name: Record the result
         if: always()

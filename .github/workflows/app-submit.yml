@@ -100,11 +100,9 @@ jobs:
           } >> "$GITHUB_ENV"
           echo "Submitting $name ($bundle), scheme $scheme"
 
-      # Archiving does not need a simulator, and booting one costs two minutes.
-      - uses: ./.github/actions/mac-setup
+      - uses: actions/setup-node@v4
         with:
-          slug: ${{ inputs.slug }}
-          boot-simulator: "false"
+          node-version: 22
 
       - name: App Store Connect API key
         env:
@@ -117,21 +115,32 @@ jobs:
           chmod 600 ~/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8
           echo "ASC_KEY_PATH=$HOME/.appstoreconnect/AuthKey_${ASC_KEY_ID}.p8" >> "$GITHUB_ENV"
 
+      # Before anything expensive. The bundle id registers itself (app-register did it when
+      # the chain finished; this is the same idempotent call). The app record is the one form
+      # Apple keeps for a browser, so without it this fails in seconds with the fields to
+      # type, rather than after the archive.
+      - name: App record
+        run: node tools/asc/register.mjs "$SLUG" --require-app
+
+      # The products the paywall asks for, from Products.storekit, all the way to Ready to
+      # Submit: price, availability, localization, review screenshot. They have to exist
+      # before the owner's TestFlight pass, or the sandbox purchase has nothing to buy.
+      # Idempotent, and it exits non-zero on anything left unfinished.
+      - name: In-app purchases
+        run: node tools/asc/iap.mjs "$SLUG" --apply
+
+      # Archiving does not need a simulator, and booting one costs two minutes.
+      - uses: ./.github/actions/mac-setup
+        with:
+          slug: ${{ inputs.slug }}
+          boot-simulator: "false"
+
       - name: Import the distribution identity
         env:
           DIST_CERT_P12_BASE64: ${{ secrets.DIST_CERT_P12_BASE64 }}
           DIST_CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: .github/scripts/keychain-up.sh
-
-      # Registers the bundle id if needed and fails with instructions if the app record is
-      # missing. Apple's API cannot create an app record — POST /v1/apps is rejected — so
-      # that one form is a browser task, once per app. Failing here costs seconds; failing
-      # at the upload costs the whole archive.
-      - name: Check the app record exists
-        run: |
-          cd tools/fastlane
-          APP_NAME="$APP_NAME" BUNDLE_ID="$BUNDLE_ID" fastlane create
 
       - name: Archive and upload to TestFlight
         run: |
@@ -166,7 +175,8 @@ jobs:
           ## Uploaded to TestFlight
 
           Build `${{ env.BUILD_NUMBER }}` of **${{ env.APP_NAME }}** is processing. Apple
-          usually takes 5–30 minutes.
+          usually takes 5–30 minutes. Its in-app purchases are in App Store Connect, ready to
+          submit, so the sandbox purchase below has something to buy.
 
           Next, on a phone — no laptop needed:
 
@@ -175,6 +185,7 @@ jobs:
              share sheet opens, and **a sandbox purchase completes**. That last one cannot be
              checked on CI: a scheme's StoreKit configuration is never honoured by a
              `simctl launch`, so no runner can buy anything.
-          3. If it passes, run `app-release` to push metadata and screenshots and submit for
-             review.
+          3. If it passes, run `app-release`. It pushes the listing and screenshots, sets the
+             age rating, categories, price and availability, attaches this build and every
+             in-app purchase, and submits the lot for review.
           MD
