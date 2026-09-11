@@ -187,6 +187,10 @@ struct TubeView: View {
                 .padding(5)
                 .background(brand.palette.accent, in: Circle())
                 .shadow(color: brand.palette.accent.opacity(0.6), radius: 8)
+                // Held at its drawn size: a marker that grows with the text setting sits over
+                // the mouth of the vial it is pointing at. The direction is in the label below
+                // as well, so VoiceOver loses nothing by this.
+                .dynamicTypeSize(DynamicTypeSize.large)
                 .offset(y: -min(30, unitHeight * 0.3))
         }
     }
@@ -206,6 +210,8 @@ struct TubeView: View {
         let described = runs.map { $0.1 == 1 ? $0.0 : "\($0.1) \($0.0)" }.joined(separator: ", then ")
         return "Vial: from the bottom, \(described)."
             + (isComplete ? " Finished." : "")
+            + (isHintSource ? " The charted line pours out of this one." : "")
+            + (isHintTarget ? " The charted line pours into this one." : "")
     }
 }
 

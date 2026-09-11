@@ -7,8 +7,8 @@ import SwiftUI
 enum AppBrand {
     static let brand = Brand(
         palette: BrandPalette(
-            canvas:    Color(light: 0x0F3340, dark: 0x04161F),
-            surface:   Color(light: 0x16414F, dark: 0x0A2632),
+            canvas:    Color(light: 0x0F3340, dark: 0x071F29),
+            surface:   Color(light: 0x16414F, dark: 0x0C2C38),
             ink:       Color(light: 0xE9F6F2, dark: 0xD6EEEA),
             inkSoft:   Color(light: 0x9DBAC0, dark: 0x7F9FA8),
             accent:    Color(light: 0x4FE3D2, dark: 0x5FEBDA),
@@ -35,15 +35,17 @@ enum AppBrand {
         // Dusk sky along the top, cold water through the middle, a lantern-warm pool glow at
         // the bottom. Nine points, drifting slowly, still for a capture and for Reduce Motion.
         canvas: .mesh([
-            Color(light: 0x14394A, dark: 0x061C27),
-            Color(light: 0x123745, dark: 0x051923),
-            Color(light: 0x16404E, dark: 0x071F2B),
-            Color(light: 0x0E3340, dark: 0x04161F),
-            Color(light: 0x114150, dark: 0x062330),
-            Color(light: 0x0D303D, dark: 0x03131C),
-            Color(light: 0x0B2C38, dark: 0x03121A),
-            Color(light: 0x1A4A4A, dark: 0x0A2A2E),
-            Color(light: 0x0A2A35, dark: 0x021017),
+            Color(light: 0x14394A, dark: 0x0A2733),
+            Color(light: 0x123745, dark: 0x08222D),
+            Color(light: 0x16404E, dark: 0x0B2A37),
+            Color(light: 0x0E3340, dark: 0x071F29),
+            Color(light: 0x114150, dark: 0x0A2B38),
+            Color(light: 0x0D303D, dark: 0x061A23),
+            Color(light: 0x0B2C38, dark: 0x051821),
+            // Bottom centre is the lantern on the water: the one warm point in the dark, so
+            // the pool is lit from somewhere rather than simply being dark.
+            Color(light: 0x1A4A4A, dark: 0x163731),
+            Color(light: 0x0A2A35, dark: 0x04151C),
         ])
     )
 

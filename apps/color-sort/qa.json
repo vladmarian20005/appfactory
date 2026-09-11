@@ -31,6 +31,11 @@
       "name": "06-paywall",
       "args": ["-onboarded", "-sampleData", "-fakeProducts", "-screen", "paywall"],
       "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch, so the real product is unavailable and the button would sit disabled."
+    },
+    {
+      "name": "07-first",
+      "args": ["-reset"],
+      "note": "The first screen anyone sees: no -onboarded, so onboarding runs. A drawn rack in the wet flat under 'Every light wants its own glass.' — the promise the app then keeps."
     }
   ],
   "moments": [
