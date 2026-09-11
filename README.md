@@ -3,8 +3,10 @@
 A pipeline that builds and ships one iOS app a week, on cloud runners, with one human
 decision per app.
 
-Give it a spec. It scaffolds a SwiftUI app from a shared kit, builds it on a macOS runner,
-fixes its own compile and runtime failures, captures and composes App Store screenshots,
+Give it a spec. It writes a design direction — the idea, the look, the signature
+interaction, the reward, the voice, an icon and mocks — builds a SwiftUI app to it from a shared
+kit on a macOS runner, fixes its own compile and runtime failures, has a separate critic judge
+it against a taste bar and polishes until it passes, captures and composes App Store screenshots,
 writes the store metadata, generates and publishes a privacy policy, checks the result
 against Apple's review guidelines, uploads to TestFlight and submits for review.
 
@@ -17,8 +19,9 @@ stage checks out the app's branch, asserts the previous stage passed, does one t
 commits, and comments on the app's issue. The chain advances itself with `workflow_run`.
 
 ```
-app-plan → app-build → app-verify ⇄ app-fix → app-shots → app-compliance
-         → app-pages → [ /approve submit ] → app-submit → app-release → app-content
+app-plan → app-build → app-verify ⇄ app-fix → app-polish ⇄ (critic, polish) → app-aso
+         → app-shots → app-pages → app-compliance → [ /approve submit ] → app-submit
+         → app-release → app-content
 ```
 
 Xcode work runs on `macos-26`; everything else runs on Linux.
@@ -27,10 +30,21 @@ Xcode work runs on `macos-26`; everything else runs on Linux.
 
 | | |
 | --- | --- |
-| `FactoryKit/` | The Swift package every app depends on — StoreKit 2 paywall, onboarding, settings, theme, accessibility helpers. No third-party dependencies. |
+| `TASTE.md` | The bar: what every app needs so people love it rather than tolerate it, the slop tells that fail it, and the rubric the critic scores. |
+| `FactoryKit/` | The Swift package every app depends on — brand theming, motion, confetti, synthesized tones, share images, StoreKit 2 paywall, onboarding, settings, accessibility helpers. No third-party dependencies. |
 | `template/` | The XcodeGen project a new app is scaffolded from. |
 | `apps/<slug>/` | One directory per app: the spec, the plan, the Xcode sources, store assets, launch content. |
-| `tools/` | The scaffolder, the simulator driver, the screenshot composer, the page generator, the fastlane lanes. |
+| `tools/` | The scaffolder, the simulator driver, the design tools (mocks, drawn icons and art, contrast, slop tells, filmstrips), the screenshot composer, the page generator, the fastlane lanes. |
+
+## The taste gate
+
+`app-polish.yml` refuses to let a working app through when it is joyless. A critic — a
+different agent from the one that built it — reads every screen in light and dark, at the
+largest text size, and filmstrips of the app's signature interaction and its win, then scores
+it against `TASTE.md`. Below the bar, a polish agent works through the critique and the
+critic looks again, twice at most before a human decides. `tools/design/tells.mjs` backs the
+verdict: a system-gray canvas, a win in a sheet, or the store pitch printed in the UI fails it
+whatever the critic thinks.
 
 ## The compliance gate
 

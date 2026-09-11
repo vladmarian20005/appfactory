@@ -5,7 +5,15 @@ description: Take a built app all the way to "Waiting for Review" — screenshot
 
 # /ship <slug>
 
-Requires `apps/<slug>/STATUS.md` to say `built` or later.
+Requires `apps/<slug>/STATUS.md` to say `built` or later, and should follow a passing
+`app-polish` (`state.json` stage `design: ok`): screenshots of an app that has not cleared
+`TASTE.md` are screenshots of the wrong app. If it has not, run the taste gate first:
+
+```
+gh workflow run app-polish.yml -f slug=<slug> -R vladmarian20005/appfactory
+```
+
+It chains into `app-aso` and the stages below on its own when the critic passes the app.
 
 **Almost none of this happens on the laptop.** The Xcode work runs on `macos-26` runners,
 because App Store Connect has rejected anything built with an older SDK since 28 April 2026

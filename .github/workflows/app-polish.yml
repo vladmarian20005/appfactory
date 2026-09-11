@@ -1,0 +1,343 @@
+name: app-polish
+
+# The taste gate. A critic judges the built app against TASTE.md — from every screen in light
+# and dark, at the largest text size, from filmstrips of its signature interaction and its win,
+# and from the code behind them — and writes CRITIQUE.md with a pass or a fail. On a fail a
+# polish agent works through the critique, verify runs again, and the next app-polish run
+# judges again. At most two polish passes, then a human, the same shape as app-fix.
+#
+# Why a gate and not a suggestion: the first two apps passed every check the factory had and
+# were still joyless — gray screens, a sheet for a win, the store pitch printed in the UI.
+# Nothing was asking whether anyone would love them.
+#
+# The critic is not the builder: a fresh agent that never saw the app being made and is told
+# it owes the builder nothing. Its verdict is also backed by tells.mjs --strict, which no
+# amount of optimism talks past. On a pass the chain continues to app-aso, so the screenshots,
+# listing and page are all of the polished app.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: App slug under apps/ (built and verified)
+        required: true
+        type: string
+      chain:
+        description: On a pass, continue to app-aso and the rest of the chain
+        required: false
+        type: boolean
+        default: true
+      max_polish:
+        description: Polish passes before a failing app goes to a human
+        required: false
+        type: string
+        default: "2"
+      model:
+        description: Model for the critic and the polish
+        required: false
+        type: choice
+        options: [claude-opus-5, claude-sonnet-5]
+        default: claude-opus-5
+
+permissions:
+  contents: write
+  # to dispatch the next run, app-fix, or app-aso
+  actions: write
+  id-token: write
+
+concurrency:
+  group: app-${{ inputs.slug }}
+  cancel-in-progress: false
+
+jobs:
+  polish:
+    runs-on: macos-26
+    # Critique ~20 minutes, polish up to two hours, two verifies and a capture pass.
+    timeout-minutes: 240
+    env:
+      SLUG: ${{ inputs.slug }}
+      CHAIN: ${{ inputs.chain }}
+      MAX_POLISH: ${{ inputs.max_polish || '2' }}
+      MODEL: ${{ inputs.model || 'claude-opus-5' }}
+      FACTORY_BRANCH: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # require-stage.sh reasons about ancestry, which a shallow clone cannot.
+          fetch-depth: 0
+
+      - name: Should this run at all
+        id: gate
+        env:
+          HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "::error::CLAUDE_CODE_OAUTH_TOKEN is not set; the critic cannot run. Generate one with 'claude setup-token'."
+            exit 1
+          fi
+          [ -f "apps/$SLUG/qa.json" ] || { echo "::error::apps/$SLUG/qa.json is missing; build the app first (app-build)."; exit 1; }
+          # Judge only an app that works: taste on top of a crash is not a thing.
+          .github/scripts/require-stage.sh "$SLUG" verify
+          attempts=$(.github/scripts/state.sh "$SLUG" get polish_attempts 0)
+          echo "attempts=$attempts" >> "$GITHUB_OUTPUT"
+          echo "Critique of $SLUG; $attempts of $MAX_POLISH polish passes used"
+
+      - uses: ./.github/actions/mac-setup
+        with:
+          slug: ${{ env.SLUG }}
+          browser: "true"
+
+      # Apps built before the direction stage existed have no DESIGN.md. Write one first, so
+      # the critic has a promise to hold the app to and the polish has a direction to build to.
+      - name: Is there a design direction
+        id: design
+        run: |
+          if [ -f "apps/$SLUG/DESIGN.md" ]; then echo "exists=true" >> "$GITHUB_OUTPUT"
+          else echo "exists=false" >> "$GITHUB_OUTPUT"; echo "No DESIGN.md; directing first."; fi
+
+      - name: Direct the app
+        id: direct
+        if: steps.design.outputs.exists == 'false'
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "github-actions"
+          prompt: |
+            Read TASTE.md, then .claude/skills/direct/SKILL.md, and follow the skill exactly to
+            write the design direction for `${{ env.SLUG }}` from apps/${{ env.SLUG }}/SPEC.md.
+            Read the repository's CLAUDE.md first.
+
+            This app is already built (apps/${{ env.SLUG }}/ios) and, by the factory's own
+            standard, looks like a template. Look at it before you direct it: its captures from
+            this run are not ready yet, so read its screens' code. Keep every screen and
+            feature the spec names; change what it is like.
+
+            You are on a GitHub macOS runner with no GUI and nobody to ask. Commit AND PUSH:
+              git pull --rebase origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
+            Do not change the app's Swift; the polish agent builds from what you write.
+          claude_args: >-
+            --max-turns 90
+            --model ${{ env.MODEL }}
+            --setting-sources project
+            --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
+            Bash(node:*),Bash(tools/*),Bash(sips:*),Bash(git:*),Bash(ls:*),Bash(cat:*),
+            Bash(mkdir:*),Bash(cp:*),Bash(mv:*),Bash(rm:*),Bash(find:*),Bash(wc:*)"
+
+      - name: Keep the direction
+        if: always() && steps.direct.outcome != 'skipped'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          .github/scripts/git-auth.sh
+          git config user.name "factory"
+          git config user.email "factory@users.noreply.github.com"
+          git add -A "apps/$SLUG"
+          git diff --cached --quiet || git commit -m "$SLUG: design direction leftovers from run ${{ github.run_id }}"
+          git pull --rebase origin "$FACTORY_BRANCH" || true
+          git push origin "HEAD:$FACTORY_BRANCH" || echo "::warning::push failed"
+
+      - name: Capture every screen
+        id: capture
+        continue-on-error: true
+        run: .github/scripts/verify-app.sh "$SLUG"
+
+      - name: A broken app goes to the fix loop, not the critic
+        if: steps.capture.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          .github/scripts/record-stage.sh "$SLUG" verify fail
+          gh workflow run app-fix.yml -f slug="$SLUG" \
+            -f reason="app-polish run ${{ github.run_id }} could not capture the app: verify-app.sh failed." \
+            --ref "$FACTORY_BRANCH"
+          echo "::error::$SLUG does not pass verify, so there is nothing to judge; app-fix dispatched."
+          exit 1
+
+      - name: Capture dark mode, large text and the moments
+        run: .github/scripts/design-captures.sh "$SLUG"
+
+      - name: Critique
+        id: critique
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "github-actions"
+          prompt: |
+            Read TASTE.md, then .claude/skills/critique/SKILL.md, and follow the skill exactly to
+            judge the app `${{ env.SLUG }}`.
+
+            The captures from this run are in apps/${{ env.SLUG }}/qa/ (every screen, light) and
+            apps/${{ env.SLUG }}/qa/design/ (dark, largest text, and the moments as filmstrips).
+            Read every one of them.
+
+            Write apps/${{ env.SLUG }}/CRITIQUE.md and apps/${{ env.SLUG }}/design-score.json
+            and nothing else. Do not commit.
+          claude_args: >-
+            --max-turns 45
+            --model ${{ env.MODEL }}
+            --setting-sources project
+            --allowedTools "Read,Write,Glob,Grep,Skill,TodoWrite,
+            Bash(node:*),Bash(ls:*),Bash(cat:*),Bash(find:*),Bash(wc:*),Bash(sips:*)"
+
+      - name: Verdict
+        id: verdict
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          .github/scripts/git-auth.sh
+          score="apps/$SLUG/design-score.json"
+          if [ ! -f "$score" ] || ! node -e 'JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"))' "$score" 2>/dev/null; then
+            echo "verdict=none" >> "$GITHUB_OUTPUT"
+            echo "::error::the critic wrote no readable design-score.json (step outcome: ${{ steps.critique.outcome }})"
+            exit 0
+          fi
+          said=$(node -p 'JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).pass === true ? "pass" : "fail"' "$score")
+          # The tripwire stands whatever the critic says.
+          if node tools/design/tells.mjs "$SLUG" --strict > "$RUNNER_TEMP/tells.txt"; then tells=clean; else tells=dirty; fi
+          cat "$RUNNER_TEMP/tells.txt"
+          verdict=$said
+          if [ "$said" = "pass" ] && [ "$tells" = "dirty" ]; then
+            verdict=fail
+            echo "::warning::the critic passed $SLUG but tells.mjs still finds hard tells; recorded as a fail"
+          fi
+          echo "verdict=$verdict" >> "$GITHUB_OUTPUT"
+          {
+            echo "## app-polish \`$SLUG\` — critique: $verdict"
+            echo
+            node -e '
+              const s = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
+              console.log(s.summary ?? "");
+              console.log("");
+              console.log("| " + Object.keys(s.scores ?? {}).join(" | ") + " |");
+              console.log("|" + Object.keys(s.scores ?? {}).map(() => " --- |").join(""));
+              console.log("| " + Object.values(s.scores ?? {}).join(" | ") + " |");
+              if ((s.fixes ?? []).length) { console.log("\nFixes:"); s.fixes.forEach((f, i) => console.log(`${i + 1}. ${f}`)); }
+            ' "$score"
+          } >> "$GITHUB_STEP_SUMMARY"
+          git config user.name "factory"
+          git config user.email "factory@users.noreply.github.com"
+          for f in "apps/$SLUG/CRITIQUE.md" "$score"; do [ -f "$f" ] && git add "$f"; done
+          git diff --cached --quiet || git commit -m "$SLUG: critique $verdict"
+          git pull --rebase origin "$FACTORY_BRANCH" || true
+          git push origin "HEAD:$FACTORY_BRANCH" || echo "::warning::could not push the critique"
+
+      - name: No verdict, no polish
+        if: steps.verdict.outputs.verdict == 'none'
+        run: |
+          echo "::error::the critic produced no verdict, so nothing was polished and no attempt was spent. Re-run app-polish for $SLUG."
+          exit 1
+
+      - name: Passed
+        if: steps.verdict.outputs.verdict == 'pass'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          .github/scripts/record-stage.sh "$SLUG" design ok
+          if [ "$CHAIN" = "true" ]; then
+            # app-aso writes the nine localizations Apple indexes on the US storefront, then
+            # chains into app-shots itself.
+            gh workflow run app-aso.yml -f slug="$SLUG" --ref "$FACTORY_BRANCH"
+            echo "✅ \`$SLUG\` clears the taste bar; app-aso dispatched." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "✅ \`$SLUG\` clears the taste bar." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Out of polish passes
+        if: steps.verdict.outputs.verdict == 'fail' && steps.gate.outputs.attempts >= fromJSON(env.MAX_POLISH)
+        run: |
+          .github/scripts/record-stage.sh "$SLUG" design fail
+          echo "::error::$SLUG still fails the taste bar after ${{ env.MAX_POLISH }} polish pass(es). Read apps/$SLUG/CRITIQUE.md; a human decides whether to push on (dispatch app-aso) or rework it."
+          echo "🛑 \`$SLUG\` still fails TASTE.md after ${{ env.MAX_POLISH }} polish pass(es). CRITIQUE.md says why." >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+
+      - name: Polish
+        id: polish
+        if: steps.verdict.outputs.verdict == 'fail' && steps.gate.outputs.attempts < fromJSON(env.MAX_POLISH)
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "github-actions"
+          prompt: |
+            Read TASTE.md, then .claude/skills/polish/SKILL.md, and follow the skill exactly to
+            polish the app `${{ env.SLUG }}` through apps/${{ env.SLUG }}/CRITIQUE.md.
+            Read the repository's CLAUDE.md first.
+
+            You are on a GitHub macOS runner: no Xcode GUI, no device, nobody to ask. A
+            simulator is booted and its UDID is in $SIM_UDID. This run's captures are in
+            apps/${{ env.SLUG }}/qa/ and apps/${{ env.SLUG }}/qa/design/.
+
+            Commit AND PUSH after every fix that works:
+              git pull --rebase origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
+            Finish with .github/scripts/verify-app.sh ${{ env.SLUG }} passing and
+            node tools/design/tells.mjs ${{ env.SLUG }} reporting no FAIL.
+          claude_args: >-
+            --max-turns 180
+            --model ${{ env.MODEL }}
+            --setting-sources project
+            --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
+            Bash(xcodebuild:*),Bash(xcrun:*),Bash(xcodegen:*),Bash(swift:*),
+            Bash(tools/*),Bash(.github/scripts/*),Bash(node:*),
+            Bash(plutil:*),Bash(sips:*),Bash(git:*),Bash(ls:*),Bash(cat:*),
+            Bash(mkdir:*),Bash(cp:*),Bash(mv:*),Bash(rm:*),Bash(find:*),Bash(wc:*)"
+
+      - name: Record the pass and push
+        if: always() && steps.polish.outcome != 'skipped'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          .github/scripts/git-auth.sh
+          .github/scripts/state.sh "$SLUG" set polish_attempts "$(( ${{ steps.gate.outputs.attempts }} + 1 ))"
+          git config user.name "factory"
+          git config user.email "factory@users.noreply.github.com"
+          git add -A "apps/$SLUG"
+          git diff --cached --quiet || git commit -m "$SLUG: polish pass $(( ${{ steps.gate.outputs.attempts }} + 1 ))"
+          git pull --rebase origin "$FACTORY_BRANCH" || true
+          git push origin "HEAD:$FACTORY_BRANCH"
+
+      - name: Re-verify
+        id: reverify
+        if: steps.polish.outcome != 'skipped'
+        continue-on-error: true
+        run: .github/scripts/verify-app.sh "$SLUG"
+
+      - name: Judge again, or hand the break to the fix loop
+        if: steps.polish.outcome != 'skipped'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ "${{ steps.reverify.outcome }}" = "success" ]; then
+            .github/scripts/record-stage.sh "$SLUG" verify ok
+            gh workflow run app-polish.yml -f slug="$SLUG" -f chain="$CHAIN" -f max_polish="$MAX_POLISH" \
+              -f model="$MODEL" --ref "$FACTORY_BRANCH"
+            echo "Polish pass done and verified; the next app-polish run judges it." >> "$GITHUB_STEP_SUMMARY"
+          else
+            .github/scripts/record-stage.sh "$SLUG" verify fail
+            # app-fix sends a repaired app back here, and the polish counter stands, so the loop
+            # cannot run forever.
+            gh workflow run app-fix.yml -f slug="$SLUG" \
+              -f reason="the polish pass in app-polish run ${{ github.run_id }} left verify failing." \
+              --ref "$FACTORY_BRANCH"
+            echo "::error::the polish pass broke verify; app-fix dispatched."
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: polish-${{ env.SLUG }}-${{ github.run_id }}
+          path: |
+            apps/${{ env.SLUG }}/qa/**
+            apps/${{ env.SLUG }}/CRITIQUE.md
+            apps/${{ env.SLUG }}/design-score.json
+            apps/${{ env.SLUG }}/design/**
+          retention-days: 14
+          if-no-files-found: ignore

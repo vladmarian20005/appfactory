@@ -10,12 +10,14 @@ turns it into an app in App Review.
 ## Layout
 
 ```
+TASTE.md             The bar every app clears: what makes one loved rather than a template.
 FactoryKit/          Swift package every app depends on: Store, paywall, onboarding,
-                     settings, theme, accessibility. Shared code goes here, never copied
-                     into an app.
+                     settings, brand, motion, celebration, tones, accessibility. Shared code
+                     goes here, never copied into an app.
 template/            XcodeGen project the scaffolder copies for a new app.
-apps/<slug>/         SPEC.md, PLAN.md, STATUS.md, state.json, ios/, store/, content/
-tools/               new-app.sh, sim.sh, icon.sh, screenshots/, pages/, fastlane/
+apps/<slug>/         SPEC.md, DESIGN.md, design/, CRITIQUE.md, STATUS.md, state.json, ios/,
+                     store/, content/
+tools/               new-app.sh, sim.sh, icon.mjs, design/, qa/, screenshots/, pages/, fastlane/
 .github/workflows/   app-*.yml — one workflow per factory stage
 .github/actions/     mac-setup, asc-key, factory-state, report
 ```
@@ -35,6 +37,11 @@ tools/               new-app.sh, sim.sh, icon.sh, screenshots/, pages/, fastlane
 - **Apple compliance is a gate, not a review step.** `app-compliance.yml` fails the build on
   a missing privacy manifest, an unreachable privacy URL, a paywall without auto-renew
   disclosure, or placeholder text. Fix the app, not the gate.
+- **Taste is a gate, not a pass at the end.** Read `TASTE.md` before touching an app. Every
+  app has an idea, a look of its own, a signature interaction, a reward, a voice, and a drawn
+  icon — decided in `DESIGN.md` before any Swift, built in the brand from the first screen,
+  and judged by `app-polish`'s critic. An app that works and looks like the template fails.
+  Never `Color(.systemGroupedBackground)`, never the store pitch inside the product.
 - **`state.json` is the handoff.** Each stage asserts the previous one passed and its commit
   is still an ancestor of HEAD. `STATUS.md` is prose for humans; `state.json` is for the
   pipeline.
@@ -43,8 +50,8 @@ tools/               new-app.sh, sim.sh, icon.sh, screenshots/, pages/, fastlane
 
 | Day | Workflow | Owner's part |
 | --- | -------- | ------------ |
-| Mon | `app-plan` → `app-build` | none (autonomy rule: no reply by noon = build candidate #1) |
-| Tue | `app-verify` ⇄ `app-fix` | none |
+| Mon | `app-plan` → `app-build` (direction, then the app) | none (autonomy rule: no reply by noon = build candidate #1) |
+| Tue | `app-verify` ⇄ `app-fix`, `app-polish` (critic ⇄ polish) | none, unless the critic fails it twice |
 | Wed | `app-shots` → `app-compliance` → `app-pages` | none |
 | Thu | `app-submit` | TestFlight pass on a phone, then `/approve submit` |
 | Fri | `app-release`, `app-content` | none |

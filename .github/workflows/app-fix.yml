@@ -175,11 +175,13 @@ jobs:
         run: |
           set -euo pipefail
           # This verdict is the only one: push-triggered verify stands down while app-fix
-          # runs, so nothing else records it. Same recording and same next hop as app-build.
+          # runs, so nothing else records it. Same recording and same next hop as app-build:
+          # the taste gate, which continues to app-aso on a pass. Its polish counter is not
+          # reset here, so a fix that app-polish asked for cannot restart the polish loop.
           if [ "${{ steps.reverify.outcome }}" = "success" ]; then
             .github/scripts/record-stage.sh "$SLUG" verify ok
-            gh workflow run app-aso.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
-            echo "✅ \`$SLUG\` fixed on attempt $ATTEMPT of 3; app-aso dispatched." >> "$GITHUB_STEP_SUMMARY"
+            gh workflow run app-polish.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
+            echo "✅ \`$SLUG\` fixed on attempt $ATTEMPT of 3; app-polish dispatched." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           .github/scripts/record-stage.sh "$SLUG" verify fail

@@ -1,13 +1,15 @@
 name: app-build
 
-# Claude Code writes the app, on a macOS runner, from apps/<slug>/SPEC.md.
+# Claude Code writes the app, on a macOS runner, from apps/<slug>/SPEC.md — first its design
+# direction (DESIGN.md, the icon, the mocks), then the app in that direction.
 #
 # Authentication is a subscription token from `claude setup-token`, not an API key, so runs
 # bill the owner's Claude plan rather than metered API usage.
 #
 # The agent is deliberately bounded: a turn cap, a job timeout, and an allowlist of tools.
-# What it produces is judged by app-verify, which runs no agent at all — the agent's own
-# opinion of its work is not what decides whether the build is good.
+# What it produces is judged by app-verify, which runs no agent at all, and then by app-polish,
+# whose critic is a different agent that never saw it being built — the builder's own opinion
+# of its work is not what decides whether the build is good, or good enough to love.
 
 on:
   # A push to build/<slug> starts a build of that slug from main. The branch is a signal,
@@ -31,7 +33,7 @@ on:
         description: Turn cap for the agent
         required: false
         type: string
-        default: "200"
+        default: "260"
       model:
         description: Model to build with
         required: false
@@ -86,12 +88,13 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     runs-on: macos-26
     # A stuck agent on a macOS runner is the most expensive failure mode available, so the
-    # job is capped even though the turn limit should stop it first.
-    timeout-minutes: 180
+    # job is capped even though the turn limits should stop it first. Direction takes about
+    # 25 minutes of it, the build the rest.
+    timeout-minutes: 270
     env:
       SLUG: ${{ inputs.slug }}
       DISPLAY_NAME: ${{ inputs.display_name }}
-      MAX_TURNS: ${{ inputs.max_turns || '200' }}
+      MAX_TURNS: ${{ inputs.max_turns || '260' }}
       MODEL: ${{ inputs.model || 'claude-opus-5' }}
       CHAIN: ${{ inputs.chain }}
       # Where the work lands: the branch this was dispatched on, main when the relay did it.
@@ -128,8 +131,66 @@ jobs:
           slug: ${{ env.SLUG }}
           browser: "true"
 
-      - name: Reset the fix counter
-        run: .github/scripts/state.sh "$SLUG" set fix_attempts 0
+      - name: Reset the fix and polish counters
+        run: |
+          .github/scripts/state.sh "$SLUG" set fix_attempts 0
+          .github/scripts/state.sh "$SLUG" set polish_attempts 0
+
+      # Before a line of Swift: what the app is like. The first two apps were built straight
+      # from a market spec and came out as the template in a new accent color. DESIGN.md is
+      # the idea, the palette, the signature interaction, the reward and the voice, with an
+      # icon and mocks, written by an agent whose only job is taste. A separate agent, so the
+      # builder starts from a finished brief with its whole turn budget.
+      - name: Is there a design direction
+        id: design
+        run: |
+          if [ -f "apps/$SLUG/DESIGN.md" ]; then echo "exists=true" >> "$GITHUB_OUTPUT"; echo "DESIGN.md exists; keeping it."
+          else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Direct the app
+        id: direct
+        if: steps.design.outputs.exists == 'false'
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "github-actions"
+          prompt: |
+            Read TASTE.md, then .claude/skills/direct/SKILL.md, and follow the skill exactly to
+            write the design direction for `${{ env.SLUG }}` ("${{ env.DISPLAY_NAME }}") from
+            apps/${{ env.SLUG }}/SPEC.md. Read the repository's CLAUDE.md first.
+
+            You are on a GitHub macOS runner with no GUI and nobody to ask. Playwright's WebKit
+            and Chromium are installed for tools/design/render.mjs and tools/icon.mjs.
+
+            Commit AND PUSH as you go:
+              git pull --rebase origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
+
+            Do not scaffold the app or write Swift; the next agent builds from what you write.
+          claude_args: >-
+            --max-turns 90
+            --model ${{ env.MODEL }}
+            --setting-sources project
+            --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
+            Bash(node:*),Bash(tools/*),Bash(sips:*),Bash(git:*),Bash(ls:*),Bash(cat:*),
+            Bash(mkdir:*),Bash(cp:*),Bash(mv:*),Bash(rm:*),Bash(find:*),Bash(wc:*)"
+
+      # The builder's first `git pull --rebase` refuses to run over uncommitted files, so
+      # whatever the direction agent wrote and did not commit is committed here, and pushed.
+      - name: Keep the direction
+        if: always() && steps.direct.outcome != 'skipped'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          .github/scripts/git-auth.sh
+          git config user.name "factory"
+          git config user.email "factory@users.noreply.github.com"
+          git add -A "apps/$SLUG"
+          git diff --cached --quiet || git commit -m "$SLUG: design direction leftovers from run ${{ github.run_id }}"
+          git pull --rebase origin "${FACTORY_BRANCH}" || true
+          git push origin "HEAD:${FACTORY_BRANCH}" || echo "::warning::push failed; the builder still has the files"
+          [ -f "apps/$SLUG/DESIGN.md" ] || echo "::warning::the direction agent wrote no DESIGN.md; the builder is told to write one first"
 
       - name: Write the app
         continue-on-error: true
@@ -144,10 +205,10 @@ jobs:
           # unless it is told to. An unresolved command ends the run in three seconds with
           # one turn and no model usage. Naming the file works whatever the SDK loads.
           prompt: |
-            Read .claude/skills/new-app/SKILL.md and follow it exactly to build the app
-            `${{ env.SLUG }}`, display name "${{ env.DISPLAY_NAME }}", from its
-            apps/${{ env.SLUG }}/SPEC.md. Read the repository's CLAUDE.md first if there
-            is one.
+            Read TASTE.md, then .claude/skills/new-app/SKILL.md, and follow the skill exactly
+            to build the app `${{ env.SLUG }}`, display name "${{ env.DISPLAY_NAME }}", from
+            apps/${{ env.SLUG }}/SPEC.md in the direction apps/${{ env.SLUG }}/DESIGN.md sets.
+            Read the repository's CLAUDE.md first.
 
             You are on a GitHub macOS runner. There is no Xcode GUI, no physical device and
             nobody to ask. A simulator is already booted and its UDID is in $SIM_UDID, so
@@ -158,13 +219,19 @@ jobs:
             the branch as you go, even when the app is half finished:
               git pull --rebase origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
 
-            Order of work, because the turn budget is finite and the first run hit it:
-            1. Scaffold, icon, AppInfo, build clean. Push.
-            2. Every screen in the spec, minimal but real. qa.json. Push.
-            3. Make .github/scripts/verify-app.sh ${{ env.SLUG }} pass. Push.
-            4. privacy.json + sync, the listing files, STATUS.md. Push.
-            5. Only then dark mode and large-text passes, and only if turns remain.
-            A verified app with no dark-mode check beats a beautiful one that never landed.
+            Order of work, because the turn budget is finite:
+            1. Scaffold; AppBrand.swift from DESIGN.md's tokens; the drawn icon and art;
+               AppInfo; build clean. Push.
+            2. The core screen with its signature interaction, then the reward, exactly as
+               DESIGN.md describes them, in the brand from the first line. Push.
+            3. Every other screen in the spec, in the brand. qa.json with screens and
+               moments. Push.
+            4. Make .github/scripts/verify-app.sh ${{ env.SLUG }} pass and
+               node tools/design/tells.mjs ${{ env.SLUG }} report no FAIL. Push.
+            5. privacy.json + sync, the listing files, STATUS.md. Push.
+            6. Dark mode and large text, against the mocks, with the turns that remain.
+            Styling is not a pass that comes after the app works: an app that works and looks
+            like the template fails the next stage, which is a critic with TASTE.md.
           claude_args: >-
             --max-turns ${{ env.MAX_TURNS }}
             --model ${{ env.MODEL }}
@@ -217,18 +284,17 @@ jobs:
 
       # The chain is explicit the whole way down, for the same reason app-fix is: a commit
       # pushed with GITHUB_TOKEN fires no `push` workflow, so nothing downstream wakes on
-      # its own. Order matters — app-pages before app-compliance, because the compliance
-      # gate asks whether the privacy URL answers 200, and app-pages is what publishes it.
-      - name: Start the listing in the other nine languages
+      # its own. A verified app goes to the taste gate first, because the screenshots, the
+      # listing and the page are all of the app as it will ship; app-polish continues to
+      # app-aso when the critic passes it.
+      - name: Hand the app to the critic
         if: always() && steps.verify.outcome == 'success' && env.CHAIN == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          # app-aso writes the nine localizations Apple indexes on the US storefront, then
-          # chains into app-shots itself.
-          gh workflow run app-aso.yml -f slug="$SLUG" --ref "${FACTORY_BRANCH}"
-          echo "Verify passed; app-aso dispatched." >> "$GITHUB_STEP_SUMMARY"
+          gh workflow run app-polish.yml -f slug="$SLUG" --ref "${FACTORY_BRANCH}"
+          echo "Verify passed; app-polish dispatched." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Hand a failure to the fix loop
         if: always() && steps.verify.outcome == 'failure'
@@ -255,6 +321,7 @@ jobs:
           name: build-${{ env.SLUG }}-${{ github.run_id }}
           path: |
             apps/${{ env.SLUG }}/qa/**
+            apps/${{ env.SLUG }}/design/**
             ${{ runner.temp }}/**/*.log
           retention-days: 14
           if-no-files-found: ignore
@@ -266,7 +333,7 @@ jobs:
             echo "## app-build \`$SLUG\` — ${{ steps.verify.outcome }}"
             echo
             if [ "${{ steps.verify.outcome }}" = "success" ]; then
-              echo "Verify passed. Next: \`app-aso\`, \`app-shots\`, \`app-pages\`, \`app-compliance\`, then SUBMIT."
+              echo "Verify passed. Next: \`app-polish\` (the taste gate), then \`app-aso\`, \`app-shots\`, \`app-pages\`, \`app-compliance\`, then SUBMIT."
             else
               echo "Verify did not pass. \`app-fix\` was dispatched, up to 3 attempts."
             fi

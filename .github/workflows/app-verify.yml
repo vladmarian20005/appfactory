@@ -48,11 +48,11 @@ jobs:
       slugs: ${{ steps.list.outputs.slugs }}
     steps:
       - uses: actions/checkout@v4
-      # The build and fix agents' pushes fire this (they are not made with GITHUB_TOKEN),
-      # and a run that starts on a half-written app can finish after the agent's own
-      # verdict and overwrite a green verify with a stale red one. So on a push, if any
-      # app-build or app-fix is in progress, stand down: both run this same script
-      # themselves when their agent is done, and record the verdict.
+      # The build, fix and polish agents' pushes fire this (they are not made with
+      # GITHUB_TOKEN), and a run that starts on a half-written app can finish after the
+      # agent's own verdict and overwrite a green verify with a stale red one. So on a push,
+      # if any app-build, app-fix or app-polish is in progress, stand down: all three run
+      # this same script themselves when their agent is done, and record the verdict.
       - name: Stand down while the factory is building
         id: building
         if: github.event_name == 'push'
@@ -60,7 +60,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           n=0
-          for wf in app-build.yml app-fix.yml; do
+          for wf in app-build.yml app-fix.yml app-polish.yml; do
             k=$(gh run list --workflow="$wf" --repo "$GITHUB_REPOSITORY" \
                   --json status -q '[.[] | select(.status=="in_progress" or .status=="queued")] | length' 2>/dev/null || echo 0)
             n=$((n + ${k:-0}))
