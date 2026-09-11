@@ -1,0 +1,33 @@
+{
+  "pass": false,
+  "scores": { "idea": 1, "look": 2, "signature": 1, "reward": 1, "voice": 2, "craft": 3, "firstMinute": 2 },
+  "tells": [
+    "no-direction",
+    "kit-default-brand",
+    "gray-canvas",
+    "pitch-in-product",
+    "no-reward",
+    "win-in-sheet",
+    "ui-explained",
+    "no-display-type",
+    "paywall-no-hero",
+    "text-share",
+    "silent-game",
+    "ease-only",
+    "symbol-as-hero",
+    "stat-tiles",
+    "accent-on-gray",
+    "dark-mode-inverted",
+    "icon-not-shipped"
+  ],
+  "summary": "Built with no DESIGN.md at all: a correct, unusually accessible color-sort app in the iOS settings uniform — gray canvas, white cards, system blue, a pour that does not animate and a win that is a medium sheet with a checkmark seal — while the tide-pool world it was meant to be sits unused in design/.",
+  "fixes": [
+    "Write DESIGN.md and put the brand on: AppBrand from the mock's dusk tide-pool palette, .brand() at the root, and brandBackground/brandSurface replacing all seven systemGroupedBackground calls.",
+    "Build the pour — tilt, a drawn liquid arc, an overshooting fill with Motion.bouncy, Haptics.soft/rigid and a climbing Tones.step — and add -demo pour/-demo win plus qa.json moments so it can be filmed.",
+    "Replace the .medium win sheet and its checkmark seal with a full-screen 1.5 s moment: the rack lighting up, CountUp in brandDisplay(size: 96), tiered confetti, Haptics.celebrate and a fanfare.",
+    "Delete the store pitch from StreakView:22, StreakView:80, PacksView:45, RootView:114 and onboarding page 3, and replace the three fixed verdict strings with pools of six clear and six near-miss lines.",
+    "Render design/art/*.svg into the asset catalog for onboarding, ship the drawn design/icon-1024.png as the app icon, and delete the 'Tap a tube, then tap the one to pour it into' line in favour of a pulsing first tube.",
+    "Rebuild Progress and Packs on the canvas: one hero streak number instead of three identical StatTiles, tide-pool dots instead of the blue calendar grid, vials instead of the accent-square ladder, and bottom padding so the last row clears the tab bar.",
+    "Design dark mode instead of inverting it, and replace the plain-text ShareLink with a ShareImage of the cleared rack, the day, pours against par and the streak."
+  ]
+}
