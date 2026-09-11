@@ -57,7 +57,10 @@ for i in $(seq 0 $((count - 1))); do
   echo "::group::$name  ${args[*]}"
   # Reinstall between screens so launch arguments that seed state start from a clean slate.
   tools/sim.sh reset "$app_dir" "$scheme" >/dev/null 2>&1 || true
-  if ! tools/sim.sh run "$app_dir" "$scheme" "${args[@]}"; then
+  # -stillFrames, always and last: FactoryKit pauses looping motion and freezes celebrations
+  # at their peak under it, so an app that is alive still settles for the capture. Last, so
+  # it can never be read as the value of the flag before it.
+  if ! tools/sim.sh run "$app_dir" "$scheme" "${args[@]}" -stillFrames; then
     echo "::error::$name failed to launch"
     failures=$((failures + 1))
     echo "::endgroup::"

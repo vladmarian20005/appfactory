@@ -7,6 +7,7 @@
 #   tools/sim.sh shot    <project-dir> <scheme> <out.png>
 #   tools/sim.sh reset   <project-dir> <scheme>
 #   tools/sim.sh ui      <light|dark> [content-size]        appearance + Dynamic Type, for the design matrix
+#   tools/sim.sh frames  <out-dir> [count] [interval]       screenshots in quick succession, to see motion
 #
 # Device selection, in order of precedence:
 #   SIM_UDID      an exact device, used as-is. What CI passes.
@@ -140,6 +141,23 @@ if [ "$cmd" = "ui" ]; then
   xcrun simctl ui "$udid" appearance "${2:?light|dark}"
   [ -n "${3:-}" ] && xcrun simctl ui "$udid" content_size "$3"
   echo "ui: appearance=$2 content_size=${3:-default}"
+  exit 0
+fi
+
+# A screenshot can only prove a screen rendered; it cannot show that something moves. A few
+# frames taken as fast as simctl allows (~0.3 s each on a runner, plus the interval) can:
+# tools/qa/filmstrip.mjs lays them out as one image the critic reads. No settling here — the
+# point is to catch the motion, not to wait it out.
+if [ "$cmd" = "frames" ]; then
+  udid=$(resolve_udid); [ -n "$udid" ] || die "no device; run 'sim.sh boot' first"
+  out=${2:?out dir}; count=${3:-8}; interval=${4:-0.2}
+  mkdir -p "$out"
+  for i in $(seq 1 "$count"); do
+    xcrun simctl io "$udid" screenshot --type=png "$(printf '%s/frame-%02d.png' "$out" "$i")" >/dev/null 2>&1 \
+      || die "screenshot failed"
+    sleep "$interval"
+  done
+  echo "frames: $count in $out"
   exit 0
 fi
 

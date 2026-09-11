@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Build tooling for the app factory: screenshot composition, icon rendering, page generation.",
+  "description": "Build tooling for the app factory: design mocks and icons, screenshot composition, page generation.",
   "engines": {
     "node": ">=20"
   },
@@ -11,7 +11,7 @@
     "compose": "node tools/screenshots/compose.mjs",
     "icon": "node tools/icon.mjs",
     "pages": "node tools/pages/build.mjs",
-    "browser": "playwright install chromium"
+    "browser": "playwright install chromium webkit"
   },
   "dependencies": {
     "playwright": "^1.49.0",

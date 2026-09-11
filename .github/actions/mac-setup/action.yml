@@ -17,8 +17,10 @@ inputs:
     default: "true"
   browser:
     description: >
-      Download Chromium for Playwright. Only the screenshot and page stages render HTML;
-      it is ~180 MB, so verify and submit skip it.
+      Download Chromium and WebKit for Playwright. Only the design, screenshot and page
+      stages render HTML; together they are ~260 MB, so verify and submit skip them. WebKit
+      is there for the design mocks: on macOS it resolves ui-rounded and ui-serif to SF
+      Rounded and New York, which Chromium does not.
     required: false
     default: "false"
 
@@ -86,7 +88,7 @@ runs:
         path: ~/Library/Caches/ms-playwright
         key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-    - name: Install Chromium
+    - name: Install Chromium and WebKit
       if: inputs.browser == 'true'
       shell: bash
       run: npm run browser
