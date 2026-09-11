@@ -52,7 +52,13 @@ The idea has to survive the medium: SwiftUI, iOS 17, no 3D engine, no licensed a
 (the SF families and New York are free to use), art drawn as SVG or SwiftUI shapes. A world
 that needs a hand-painted illustrator is the wrong world for this factory.
 
-## 4. Write DESIGN.md
+## 4. Write DESIGN.md — first, whole, and pushed
+
+**DESIGN.md comes before the mocks, and is committed and pushed the moment it has every
+section.** The builder can build from a DESIGN.md with no mocks; it cannot build from mocks
+with no DESIGN.md. The first run of this stage drew three mocks, an icon and five pieces of
+art for Tidepour and ran out of turns before writing a word of it. Write the whole document
+now, push it, then draw; revise it after the mocks if they change your mind.
 
 Exactly these sections, in this order. Be concrete: numbers, hex values, timings, the actual
 words. "Playful" is not a direction; "the owl raises an eyebrow and says 'Bold.' when you get

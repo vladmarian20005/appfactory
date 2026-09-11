@@ -120,7 +120,7 @@ jobs:
               git pull --rebase origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
             Do not change the app's Swift; the polish agent builds from what you write.
           claude_args: >-
-            --max-turns 90
+            --max-turns 120
             --model ${{ env.MODEL }}
             --setting-sources project
             --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,

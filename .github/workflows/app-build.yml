@@ -168,7 +168,7 @@ jobs:
 
             Do not scaffold the app or write Swift; the next agent builds from what you write.
           claude_args: >-
-            --max-turns 90
+            --max-turns 120
             --model ${{ env.MODEL }}
             --setting-sources project
             --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
