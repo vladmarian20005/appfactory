@@ -48,14 +48,22 @@ struct TubeView: View {
     /// edge of wet glass.
     private var rim: Color {
         if isSelected || hinted { return brand.palette.accent }
+        // The first vial the charted line wants, before this player has ever poured. It is lit
+        // and its ring breathes; that is the whole of the teaching, and there is no sentence.
+        if isTeaching { return brand.palette.accent.opacity(0.7) }
         if isComplete { return brand.palette.success.opacity(0.75) }
         return brand.palette.ink.opacity(0.16)
     }
 
-    private var rimWidth: CGFloat { isSelected || hinted ? 2.6 : 1.2 }
+    private var rimWidth: CGFloat {
+        if isSelected || hinted { return 2.6 }
+        return isTeaching ? 2 : 1.2
+    }
 
-    /// The colour of whatever is in the glass, for the ring it throws on the flat.
+    /// The colour of whatever is in the glass, for the ring it throws on the flat. The vial
+    /// being taught throws mint, so the eye goes to it.
     private var poolColor: Color {
+        if isTeaching { return brand.palette.accent }
         guard let top = contents.last else { return brand.palette.accent }
         return style.liquid(top).glow
     }
@@ -158,10 +166,10 @@ struct TubeView: View {
     private var flat: some View {
         ZStack {
             Ellipse()
-                .fill(RadialGradient(colors: [poolColor.opacity(isComplete ? 0.55 : 0.3),
+                .fill(RadialGradient(colors: [poolColor.opacity(ringStrength),
                                               poolColor.opacity(0)],
                                      center: .center, startRadius: 0, endRadius: width * 0.72))
-                .frame(width: width * 1.6, height: width * 0.5)
+                .frame(width: width * (isTeaching ? 1.9 : 1.6), height: width * 0.5)
                 .breathingIf(isTeaching)
             if isComplete {
                 Frond()
