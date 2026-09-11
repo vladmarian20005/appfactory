@@ -10,6 +10,35 @@ struct RootView: View {
     enum Tab: String { case today, scorecard, practice, settings }
 
     var body: some View {
+        Group {
+            if LaunchOptions.screen == "share" {
+                ShareCardPreview(flags: (0..<10).map { $0 != 3 },
+                                 roundNumber: DailyPack.roundNumber(for: .now),
+                                 streak: 12)
+            } else {
+                tabs
+            }
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(store: store,
+                        config: AppInfo.config,
+                        headline: AppInfo.paywallHeadline,
+                        bullets: AppInfo.paywallBullets,
+                        promise: AppInfo.paywallPromise,
+                        hero: {
+                            Image("Desk")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 280)
+                                .accessibilityLabel("A cup, a folded sheet and a pencil on a desk")
+                        }) {
+                showPaywall = false
+            }
+        }
+        .onAppear(perform: applyLaunchOptions)
+    }
+
+    private var tabs: some View {
         TabView(selection: $tab) {
             NavigationStack {
                 TodayView()
@@ -39,23 +68,6 @@ struct RootView: View {
             .tabItem { Label("Settings", systemImage: "gearshape.fill") }
             .tag(Tab.settings)
         }
-        .sheet(isPresented: $showPaywall) {
-            PaywallView(store: store,
-                        config: AppInfo.config,
-                        headline: AppInfo.paywallHeadline,
-                        bullets: AppInfo.paywallBullets,
-                        promise: AppInfo.paywallPromise,
-                        hero: {
-                            Image("Desk")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 280)
-                                .accessibilityLabel("A cup, a folded sheet and a pencil on a desk")
-                        }) {
-                showPaywall = false
-            }
-        }
-        .onAppear(perform: applyLaunchOptions)
     }
 
     private func applyLaunchOptions() {

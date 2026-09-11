@@ -41,6 +41,11 @@
       "name": "08-settings",
       "args": ["-onboarded", "-sampleData", "-screen", "settings"],
       "note": "The desk: sounds, what has been filed, and the attribution as the section footer."
+    },
+    {
+      "name": "09-share",
+      "args": ["-onboarded", "-screen", "share"],
+      "note": "Not a screen of the app: the 1080x1350 front page the result shares, at the size it arrives in a chat. Nothing in the UI leads here — it is the only way to see the share image, since nothing on a runner can photograph a share sheet."
     }
   ],
   "moments": [

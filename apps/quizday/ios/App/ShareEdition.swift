@@ -28,9 +28,36 @@ enum ShareEdition {
     }
 }
 
+/// The front page as it will arrive in a group chat, on screen at the size it will be seen,
+/// so the one thing in the app that nobody can screenshot from the share sheet can still be
+/// looked at. Reached with `-screen share`; there is no way into it from the UI.
+struct ShareCardPreview: View {
+    @Environment(\.brand) private var brand
+    let flags: [Bool]
+    let roundNumber: Int
+    let streak: Int
+
+    private var score: Int { flags.filter { $0 }.count }
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("The edition, as it travels")
+                .dateline(10, tracking: 2)
+            EditionCard(score: score, total: flags.count, flags: flags,
+                        roundNumber: roundNumber, playedAt: .now, streak: streak,
+                        tier: Tier.forScore(score, total: flags.count))
+                .scaleEffect(0.31, anchor: .center)
+                .frame(width: 1080 * 0.31, height: 1350 * 0.31)
+                .environment(\.colorScheme, .light)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .paper()
+    }
+}
+
 /// The card itself. Fixed point sizes on purpose: an `ImageRenderer` at 1080 × 1350 has no
 /// Dynamic Type to scale against, and the layout is the picture.
-private struct EditionCard: View {
+struct EditionCard: View {
     let score: Int
     let total: Int
     let flags: [Bool]

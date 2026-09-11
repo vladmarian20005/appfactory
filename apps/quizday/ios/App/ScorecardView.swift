@@ -49,6 +49,8 @@ struct ScorecardView: View {
 
     @State private var month: Date = Calendar.current.startOfDay(for: .now)
     @State private var permissionDenied = false
+    /// Today's front page, rendered once when the file opens rather than on every redraw.
+    @State private var todayCard: Image?
 
     private var todayKey: String { DayKey.key(for: .now) }
     private var todayResult: DayResult? { results.first { $0.dayKey == todayKey } }
@@ -75,6 +77,19 @@ struct ScorecardView: View {
         .paper()
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .task(id: todayResult?.dayKey) { renderTodayCard() }
+    }
+
+    @MainActor
+    private func renderTodayCard() {
+        guard let result = todayResult else {
+            todayCard = nil
+            return
+        }
+        todayCard = ShareEdition.card(score: result.score, total: result.total,
+                                      flags: result.flags, roundNumber: result.roundNumber,
+                                      playedAt: result.playedAt, streak: streak,
+                                      tier: Tier.forScore(result.score, total: result.total))
     }
 
     // MARK: - Nothing filed
@@ -295,13 +310,19 @@ struct ScorecardView: View {
                     Text("/\(result.total)")
                         .dateline(12, tracking: 1.2)
                     Spacer(minLength: 8)
-                    ShareLink(item: ShareEdition.line(roundNumber: result.roundNumber,
-                                                      flags: result.flags,
-                                                      streak: streak)) {
-                        Text("Share the edition")
-                            .dateline(10, tracking: 1.6, color: brand.palette.accent)
+                    let label = Text("Share the edition")
+                        .dateline(10, tracking: 1.6, color: brand.palette.accent)
+                    if let todayCard {
+                        ShareLink(item: todayCard,
+                                  preview: SharePreview("Quizday · Round \(result.roundNumber)",
+                                                        image: todayCard)) { label }
+                            .buttonStyle(.plain)
+                    } else {
+                        ShareLink(item: ShareEdition.line(roundNumber: result.roundNumber,
+                                                          flags: result.flags,
+                                                          streak: streak)) { label }
+                            .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             } else {
                 Text("Today is still blank.")
