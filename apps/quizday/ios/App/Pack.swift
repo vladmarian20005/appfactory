@@ -119,18 +119,5 @@ enum DayKey {
     static func date(from key: String) -> Date? { formatter.date(from: key) }
 }
 
-// MARK: - Share text
-
-enum ShareCard {
-    static let hit = "\u{1F7EA}"   // purple square
-    static let miss = "\u{2B1C}"   // white square
-
-    /// The plain text line a player shares. No link, no tracking, no score inflation.
-    static func text(roundNumber: Int, flags: [Bool], streak: Int) -> String {
-        let squares = flags.map { $0 ? hit : miss }.joined()
-        let score = flags.filter { $0 }.count
-        var lines = ["Quizday · Round \(roundNumber)", "\(squares)  \(score)/\(flags.count)"]
-        if streak > 1 { lines.append("Streak \(streak) days") }
-        return lines.joined(separator: "\n")
-    }
-}
+// The share card — the front page as an image, with the text line as its fallback — is in
+// ShareEdition.swift.

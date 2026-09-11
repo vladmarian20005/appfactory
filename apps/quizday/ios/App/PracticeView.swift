@@ -2,9 +2,11 @@ import FactoryKit
 import SwiftData
 import SwiftUI
 
-/// Screen 3, the Pro one. Unlimited rounds in whatever category and difficulty the player
-/// picks, plus the accuracy table that shows where the weak spots are.
+/// Screens 5 to 8, the Pro ones: the composing room. Set your own round of ten in any section
+/// at any difficulty, and see which sections keep catching you. A round here prints a proof,
+/// not an edition — same sheet, smaller type, no burst.
 struct PracticeView: View {
+    @Environment(\.brand) private var brand
     @EnvironmentObject private var store: Store
     @Environment(\.modelContext) private var context
     @Query private var stats: [CategoryStat]
@@ -17,9 +19,11 @@ struct PracticeView: View {
     @State private var items: [QuizItem] = []
     @State private var index = 0
     @State private var selected: Int?
-    @State private var correctCount = 0
+    @State private var flags: [Bool] = []
     @State private var loading = false
     @State private var errorMessage: String?
+    @State private var voice = RoundVoice()
+    @State private var stampLine = ""
 
     private var isPro: Bool { store.isPro || LaunchOptions.forcePro }
     private var category: OpenTDB.Category {
@@ -39,8 +43,8 @@ struct PracticeView: View {
                 setup
             }
         }
-        .navigationTitle("Practice")
-        .navigationBarTitleDisplayMode(items.isEmpty ? .large : .inline)
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             if LaunchOptions.practiceStart, isPro, items.isEmpty, !loading { await load() }
         }
@@ -56,54 +60,81 @@ struct PracticeView: View {
     // MARK: - Locked
 
     private var locked: some View {
+        GeometryReader { geo in
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Image(systemName: "infinity")
-                        .scaledFont(size: 44, weight: .medium)
-                        .foregroundStyle(Color.accentColor)
-                    Text("Practice is part of Pro")
-                        .font(.title2.bold())
-                    Text("Play as many rounds as you like in any category, at the difficulty you choose, and see your accuracy build up category by category.")
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+            VStack(spacing: 18) {
+                Image("TypeCase")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 240)
+                    .popIn()
+                    .accessibilityLabel("A composing stick and a type case")
 
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(AppInfo.paywallBullets, id: \.self) { bullet in
-                        Label(bullet, systemImage: "checkmark.circle.fill")
-                            .symbolRenderingMode(.hierarchical)
+                Text("The composing room")
+                    .brandDisplay(size: 28, relativeTo: .title)
+                    .foregroundStyle(brand.palette.ink)
+                    .multilineTextAlignment(.center)
+                    .popIn(delay: 0.05)
+
+                Text("Where the paper is set before it goes to press.")
+                    .brandFont(.body, weight: .regular)
+                    .italic()
+                    .foregroundStyle(brand.palette.inkSoft)
+                    .multilineTextAlignment(.center)
+                    .popIn(delay: 0.1)
+
+                VStack(spacing: 0) {
+                    ForEach(Array(AppInfo.paywallBullets.enumerated()), id: \.offset) { offset, bullet in
+                        HStack(alignment: .top, spacing: 10) {
+                            Text("\u{261E}")
+                                .brandFont(.callout)
+                                .foregroundStyle(brand.palette.extras[offset % brand.palette.extras.count])
+                            Text(bullet)
+                                .scaledFont(size: 17, design: .serif, relativeTo: .body)
+                                .foregroundStyle(brand.palette.ink)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.vertical, 12)
+                        if offset < AppInfo.paywallBullets.count - 1 {
+                            InkRule(weight: 0.5, opacity: 0.22)
+                        }
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .factoryCard()
+                .popIn(delay: 0.15)
 
-                Button("See Pro") {
+                Button {
                     Haptics.tap()
                     showPaywall = true
+                } label: {
+                    Text("See the composing room").frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.factoryPrimary)
+                .brandProminent()
+                .popIn(delay: 0.2)
 
-                Label(AppInfo.paywallPromise, systemImage: "hand.raised.fill")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 24)
+
+                PrintersOrnament()
             }
-            .padding(FactoryTheme.padding)
+            .padding(.horizontal, 30)
+            .padding(.vertical, 20)
+            .frame(minHeight: geo.size.height)
         }
-        .background(Color(.systemGroupedBackground))
+        .paper()
+        }
     }
 
     // MARK: - Setup
 
     private var setup: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading, spacing: 14) {
-                    Text("New round")
-                        .font(.headline)
+            VStack(spacing: 20) {
+                Masthead(title: "The case", strapline: "Set a round of your own")
 
-                    Picker("Category", selection: $categoryID) {
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("Set a round").dateline(10, tracking: 2)
+
+                    Picker("Section", selection: $categoryID) {
                         ForEach(OpenTDB.categories) { category in
                             Text(category.name).tag(category.id)
                         }
@@ -118,69 +149,104 @@ struct PracticeView: View {
                     .pickerStyle(.segmented)
 
                     Button {
+                        Haptics.tap()
                         Task { await load() }
                     } label: {
-                        if loading {
-                            ProgressView().tint(.white)
-                        } else {
-                            Text("Start ten questions")
+                        Group {
+                            if loading {
+                                ProgressView().tint(brand.palette.onAccent)
+                            } else {
+                                Text("Set a round of ten")
+                            }
                         }
+                        .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.factoryPrimary)
+                    .brandProminent()
                     .disabled(loading)
 
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
+                    if errorMessage != nil {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("The wire is down")
+                                .brandFont(.headline)
+                                .foregroundStyle(brand.palette.ink)
+                            Text("Nothing came through. Try again in a moment.")
+                                .scaledFont(size: 15, design: .serif, relativeTo: .footnote)
+                                .foregroundStyle(brand.palette.inkSoft)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .factoryCard()
+                .ruledBox(padding: 16)
 
-                accuracyCard
+                accuracyTable
 
                 Text(OpenTDB.attribution)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .dateline(9, tracking: 1.4)
+                    .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
+
+                PrintersOrnament()
             }
-            .padding(FactoryTheme.padding)
+            .padding(.horizontal, 30)
+            .padding(.vertical, 18)
         }
-        .background(Color(.systemGroupedBackground))
+        .paper()
+        .onChange(of: categoryID) { _, _ in Tones.shared.play(.tap); Haptics.selection() }
+        .onChange(of: difficultyRaw) { _, _ in Tones.shared.play(.tap); Haptics.selection() }
     }
 
-    private var accuracyCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Your accuracy")
-                .font(.headline)
-            let ranked = stats.filter { $0.asked > 0 }.sorted { $0.accuracy < $1.accuracy }
+    /// A printed league table, worst section first, because that is what she came to see.
+    private var accuracyTable: some View {
+        let ranked = stats.filter { $0.asked > 0 }.sorted { $0.accuracy < $1.accuracy }
+        return VStack(alignment: .leading, spacing: 0) {
+            Text("Where the copy stands").dateline(10, tracking: 2)
+                .padding(.bottom, 10)
+
             if ranked.isEmpty {
-                Text("Play a daily round or a practice round and your accuracy per category shows up here.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("No copy on record")
+                        .brandFont(.headline)
+                        .foregroundStyle(brand.palette.ink)
+                    Text("Answer a few and your sections show up here, worst first.")
+                        .scaledFont(size: 15, design: .serif, relativeTo: .footnote)
+                        .foregroundStyle(brand.palette.inkSoft)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             } else {
-                ForEach(ranked) { stat in
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(stat.category).font(.subheadline)
-                            Spacer()
-                            Text("\(stat.correct)/\(stat.asked)")
-                                .font(.subheadline.weight(.semibold))
-                                .monospacedDigit()
-                                .foregroundStyle(.secondary)
+                ForEach(Array(ranked.enumerated()), id: \.element.id) { offset, stat in
+                    HStack(spacing: 10) {
+                        Rectangle()
+                            .fill(AppBrand.ink(for: stat.category))
+                            .frame(width: 3)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(stat.category)
+                                .scaledFont(size: 17, design: .serif, relativeTo: .body)
+                                .foregroundStyle(brand.palette.ink)
+                            GeometryReader { geo in
+                                ZStack(alignment: .leading) {
+                                    Rectangle()
+                                        .stroke(brand.palette.ink.opacity(0.35), lineWidth: 1)
+                                    Rectangle()
+                                        .fill(brand.palette.ink.opacity(0.85))
+                                        .frame(width: max(1, geo.size.width * stat.accuracy))
+                                }
+                            }
+                            .frame(height: 8)
                         }
-                        ProgressView(value: stat.accuracy)
-                            .tint(Color.accentColor)
+                        Text("\(stat.correct)/\(stat.asked)")
+                            .dateline(11, tracking: 1.2, color: brand.palette.ink)
                     }
+                    .frame(height: 54)
                     .accessibilityElement(children: .combine)
+                    if offset < ranked.count - 1 {
+                        InkRule(weight: 0.5, opacity: 0.2)
+                    }
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .factoryCard()
+        .ruledBox(padding: 16)
     }
 
     // MARK: - Playing
@@ -189,37 +255,62 @@ struct PracticeView: View {
     private var playing: some View {
         if index < items.count {
             let item = items[index]
-            QuestionCard(
+            QuestionSheet(
                 item: item,
                 position: index + 1,
                 total: items.count,
+                flags: flags,
                 selected: selected,
+                stampLine: stampLine,
                 reported: reports.contains { $0.questionID == item.id },
+                header: "Composing room · \(category.name) · \(difficulty.label)",
                 onAnswer: { answer(item: item, choice: $0) },
                 onReport: { report(item: item) },
                 onNext: next
             )
         } else {
-            summary
+            proof
         }
     }
 
-    private var summary: some View {
-        VStack(spacing: 16) {
-            Text("\(correctCount) out of \(items.count)")
-                .scaledFont(size: 40, weight: .bold, design: .rounded)
-            Text("\(category.name) · \(difficulty.label)")
-                .foregroundStyle(.secondary)
-            Button("Another round") {
-                Task { await load() }
+    /// A proof, not an edition: the same page at a smaller size, and no confetti.
+    private var proof: some View {
+        GeometryReader { geo in
+        ScrollView {
+            VStack(spacing: 16) {
+                Masthead(title: "Proof", size: 26)
+                Text("\(category.name) · \(difficulty.label)")
+                    .dateline(10, tracking: 2)
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text("\(flags.filter { $0 }.count)")
+                        .brandDisplay(size: 88)
+                        .foregroundStyle(brand.palette.ink)
+                    Text("/\(flags.count)")
+                        .brandDisplay(size: 28, relativeTo: .title)
+                        .foregroundStyle(brand.palette.inkSoft)
+                }
+                Tally(flags: flags, total: max(flags.count, 10), height: 28)
+                Button {
+                    Haptics.tap()
+                    Task { await load() }
+                } label: {
+                    Text("Another round").frame(maxWidth: .infinity)
+                }
+                .brandProminent()
+                Button("Back to the case") { endRound() }
+                    .brandFont(.subheadline)
+                    .foregroundStyle(brand.palette.accent)
+
+                Spacer(minLength: 24)
+
+                PrintersOrnament()
             }
-            .buttonStyle(.factoryPrimary)
-            Button("Back to practice") { endRound() }
-                .font(.subheadline)
+            .padding(.horizontal, 30)
+            .padding(.vertical, 24)
+            .frame(minHeight: geo.size.height)
         }
-        .padding(FactoryTheme.padding)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemGroupedBackground))
+        .paper()
+        }
     }
 
     // MARK: - Flow
@@ -233,7 +324,8 @@ struct PracticeView: View {
             items = fetched
             index = 0
             selected = nil
-            correctCount = 0
+            flags = []
+            voice = RoundVoice()
         } catch {
             items = []
             errorMessage = error.localizedDescription
@@ -244,12 +336,8 @@ struct PracticeView: View {
         guard selected == nil else { return }
         selected = choice
         let correct = choice == item.correct
-        if correct {
-            correctCount += 1
-            Haptics.success()
-        } else {
-            Haptics.warning()
-        }
+        stampLine = voice.line(correct: correct)
+        flags.append(correct)
         record(category: item.category, correct: correct)
     }
 
@@ -262,7 +350,7 @@ struct PracticeView: View {
         items = []
         index = 0
         selected = nil
-        correctCount = 0
+        flags = []
     }
 
     private func record(category: String, correct: Bool) {

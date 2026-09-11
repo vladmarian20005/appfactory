@@ -28,6 +28,11 @@ enum LaunchOptions {
     /// `-answered 7` pre-fills today's round as already played with that score.
     static var answered: Int? { value(for: "-answered").flatMap(Int.init) }
 
+    /// `-demo answer|win` plays a moment by itself: the ink press on an answer, or the round
+    /// out to the edition printing. Nothing on a runner can touch the screen, so the app has
+    /// to perform its own signature interaction for the camera.
+    static var demo: String? { value(for: "-demo") }
+
     private static func value(for flag: String) -> String? {
         guard let i = args.firstIndex(of: flag), args.index(after: i) < args.endIndex else { return nil }
         let next = args[args.index(after: i)]

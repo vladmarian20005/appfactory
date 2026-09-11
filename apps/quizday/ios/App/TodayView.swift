@@ -2,8 +2,9 @@ import FactoryKit
 import SwiftData
 import SwiftUI
 
-/// Screen 1. The day's ten questions, the same ten for everyone, then the result.
+/// Screen 1. The day's ten questions, the same ten for everyone, then the edition it prints.
 struct TodayView: View {
+    @Environment(\.brand) private var brand
     @Environment(\.modelContext) private var context
     @Query private var results: [DayResult]
     @Query private var reports: [QuestionReport]
@@ -13,6 +14,8 @@ struct TodayView: View {
     @State private var selected: Int?
     @State private var flags: [Bool] = []
     @State private var items: [QuizItem] = []
+    @State private var voice = RoundVoice()
+    @State private var stampLine = ""
 
     private enum Phase { case intro, playing, done }
 
@@ -30,178 +33,145 @@ struct TodayView: View {
             case .done: done
             }
         }
-        .navigationTitle("Today")
-        .navigationBarTitleDisplayMode(phase == .playing ? .inline : .large)
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear(perform: syncPhase)
     }
 
-    // MARK: - Intro
+    // MARK: - The paper on the step
 
     private var intro: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(today, format: .dateTime.weekday(.wide).day().month(.wide))
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(Color.accentColor)
-                    Text("Round \(roundNumber)")
-                        .font(.largeTitle.bold())
-                    Text("Ten questions. The same ten everyone gets today. No timer, no ads, nothing to run out of.")
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+        // The page fills the screen so the ornament closes the column at its foot, the way a
+        // short page of type does, instead of floating half way up.
+        GeometryReader { geo in
+            ScrollView {
+                VStack(spacing: 18) {
+                    Masthead(title: "Quizday", strapline: "A new edition every morning")
+                        .popIn()
 
-                if streak > 0 {
-                    Label("\(streak) day streak. Play today to keep it.", systemImage: "flame.fill")
-                        .font(.subheadline)
-                        .foregroundStyle(.orange)
-                }
+                    Text(dateline)
+                        .dateline(11, tracking: 2)
+                        .popIn(delay: 0.05)
 
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Today's categories")
-                        .font(.headline)
-                    FlowRow(spacing: 8) {
-                        ForEach(DailyPack.categories(for: today), id: \.self) { category in
-                            Text(category)
-                                .font(.footnote)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 5)
-                                .background(Color(.tertiarySystemFill), in: Capsule())
+                    HandPress(width: 250)
+                        .padding(.vertical, 2)
+                        .popIn(delay: 0.1)
+                        .accessibilityLabel("A hand press, turning")
+
+                    Text("Ten questions, set this morning.")
+                        .brandFont(.title3, weight: .regular)
+                        .italic()
+                        .foregroundStyle(brand.palette.ink)
+                        .popIn(delay: 0.15)
+
+                    SectionLine(categories: DailyPack.categories(for: today))
+                        .popIn(delay: 0.2)
+
+                    if let line = Voice.streak(streak, todayPlayed: false) {
+                        HStack {
+                            Spacer(minLength: 0)
+                            StreakRibbon(days: streak, numberSize: 34)
+                                .frame(maxWidth: 220)
                         }
+                        .popIn(delay: 0.25)
+                        .accessibilityLabel(line)
                     }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .factoryCard()
 
-                Button("Start today's ten") {
-                    Haptics.tap()
-                    start()
+                    Button {
+                        Haptics.tap()
+                        Tones.shared.play(.tap)
+                        start()
+                    } label: {
+                        Text("Open today's edition").frame(maxWidth: .infinity)
+                    }
+                    .brandProminent()
+                    .padding(.top, 2)
+                    .popIn(delay: 0.3)
+
+                    Spacer(minLength: 24)
+
+                    PrintersOrnament()
                 }
-                .buttonStyle(.factoryPrimary)
+                .padding(.horizontal, 32)
+                .padding(.vertical, 18)
+                .frame(minHeight: geo.size.height)
             }
-            .padding(FactoryTheme.padding)
+            .paper()
         }
-        .background(Color(.systemGroupedBackground))
+        .onAppear { Tones.shared.warmUp() }
     }
 
-    // MARK: - Playing
+    private var dateline: String {
+        let day = today.formatted(.dateTime.weekday(.wide).day().month(.wide))
+        return "\(day) · Round \(roundNumber)"
+    }
+
+    // MARK: - The sheet
 
     @ViewBuilder
     private var playing: some View {
         if index < items.count {
             let item = items[index]
-            QuestionCard(
+            QuestionSheet(
                 item: item,
                 position: index + 1,
                 total: items.count,
+                flags: flags,
                 selected: selected,
+                stampLine: stampLine,
                 reported: reports.contains { $0.questionID == item.id },
+                teaching: results.isEmpty && index == 0,
                 onAnswer: { answer(item: item, choice: $0) },
                 onReport: { report(item: item) },
                 onNext: next
             )
         } else {
-            ProgressView()
+            ProgressView().paper()
         }
     }
 
-    // MARK: - Done
+    // MARK: - The edition
 
     private var done: some View {
         let result = todayResult
         let shownFlags = result?.flags ?? flags
-        let score = shownFlags.filter { $0 }.count
-        return ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Round \(result?.roundNumber ?? roundNumber) done")
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(Color.accentColor)
-                    Text("\(score) out of \(shownFlags.count)")
-                        .scaledFont(size: 44, weight: .bold, design: .rounded)
-                    Text(verdict(score: score, total: shownFlags.count))
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
-                SquareRow(flags: shownFlags)
-
-                if streak > 0 {
-                    Label(streak == 1 ? "Streak started" : "\(streak) day streak",
-                          systemImage: "flame.fill")
-                        .font(.headline)
-                        .foregroundStyle(.orange)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .factoryCard()
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("Next ten", systemImage: "clock")
-                        .font(.headline)
-                    Text(timerInterval: Date.now...nextMidnight, countsDown: true)
-                        .font(.system(.title2, design: .rounded).weight(.semibold))
-                        .monospacedDigit()
-                    Text("A new round every day. Nothing to buy in between.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .factoryCard()
-
-                ShareLink(item: ShareCard.text(roundNumber: result?.roundNumber ?? roundNumber,
-                                               flags: shownFlags,
-                                               streak: streak)) {
-                    Label("Share your squares", systemImage: "square.and.arrow.up")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Color(.secondarySystemGroupedBackground),
-                                    in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(FactoryTheme.padding)
-        }
-        .background(Color(.systemGroupedBackground))
-        // Asked here, not on the root: a rating request in the middle of a question is the
-        // kind of interruption this app exists to avoid.
-        .factoryReviewPrompt(afterSessions: 3)
-    }
-
-    private var nextMidnight: Date {
-        let calendar = Calendar.current
-        let tomorrow = calendar.date(byAdding: .day, value: 1, to: Date.now) ?? Date.now
-        return calendar.startOfDay(for: tomorrow)
-    }
-
-    private func verdict(score: Int, total: Int) -> String {
-        switch score {
-        case total: return "A clean sweep. Come back tomorrow for ten more."
-        case 0: return "A hard round. Every answer came with the reason, so tomorrow starts better."
-        case ..<(total / 2): return "Some tricky ones today. The explanations are the point as much as the score."
-        default: return "A solid round. Come back tomorrow for ten more."
-        }
+        return EditionView(flags: shownFlags,
+                           roundNumber: result?.roundNumber ?? roundNumber,
+                           playedAt: result?.playedAt ?? .now,
+                           streak: streak,
+                           bestStreak: Streaks.best(from: results))
+            // Asked here, once the page has settled, never mid-question.
+            .factoryReviewPrompt(afterSessions: 3)
     }
 
     // MARK: - Flow
 
     private func syncPhase() {
         if let answered = LaunchOptions.answered, todayResult == nil {
-            let sample = (0..<10).map { $0 < answered }
-            save(flags: sample.shuffled())
+            var sample = (0..<10).map { $0 < answered }
+            SeededShuffle.apply(&sample, seed: UInt64(answered) &+ 3)
+            save(flags: sample)
         }
-        if LaunchOptions.autoPlay, todayResult == nil {
-            start()
-            if let step = LaunchOptions.playStep {
-                for _ in 0..<max(0, step) {
-                    guard index < items.count else { break }
-                    answer(item: items[index], choice: items[index].correct)
-                    next()
+        if LaunchOptions.autoPlay || LaunchOptions.demo == "answer" {
+            if todayResult == nil {
+                start()
+                if let step = LaunchOptions.playStep {
+                    for _ in 0..<max(0, step) {
+                        guard index < items.count else { break }
+                        answer(item: items[index], choice: items[index].correct)
+                        next()
+                    }
                 }
+                if LaunchOptions.reveal, index < items.count {
+                    let item = items[index]
+                    answer(item: item, choice: (item.correct + 1) % item.answers.count)
+                }
+                if LaunchOptions.demo == "answer" { playDemoAnswer() }
+                return
             }
-            if LaunchOptions.reveal, index < items.count {
-                let item = items[index]
-                answer(item: item, choice: (item.correct + 1) % item.answers.count)
-            }
+        }
+        if LaunchOptions.demo == "win", todayResult == nil {
+            playDemoWin()
             return
         }
         if todayResult != nil {
@@ -213,12 +183,43 @@ struct TodayView: View {
         }
     }
 
+    /// `-demo answer`: nothing on a runner can touch the screen, so the app presses the ink
+    /// itself — three questions in, then the fourth answered right on camera.
+    private func playDemoAnswer() {
+        start()
+        for _ in 0..<3 {
+            guard index < items.count else { break }
+            answer(item: items[index], choice: items[index].correct)
+            next()
+        }
+        guard index < items.count else { return }
+        let item = items[index]
+        // Late enough that the filmstrip's first frame is the sheet before the press.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            answer(item: item, choice: item.correct)
+        }
+    }
+
+    /// `-demo win`: plays the round out and lets the edition print.
+    private func playDemoWin() {
+        start()
+        guard !items.isEmpty else { return }
+        for position in 0..<items.count {
+            guard index < items.count else { break }
+            let item = items[index]
+            // Nine right and one away, so the tier, the tally and the ribbon all have work to do.
+            answer(item: item, choice: position == 3 ? (item.correct + 1) % item.answers.count : item.correct)
+            next()
+        }
+    }
+
     private func start() {
         items = DailyPack.items(for: today)
         guard !items.isEmpty else { return }
         index = 0
         selected = nil
         flags = []
+        voice = RoundVoice()
         phase = .playing
     }
 
@@ -226,9 +227,9 @@ struct TodayView: View {
         guard selected == nil else { return }
         selected = choice
         let correct = choice == item.correct
+        stampLine = voice.line(correct: correct)
         flags.append(correct)
         record(category: item.category, correct: correct)
-        if correct { Haptics.success() } else { Haptics.warning() }
     }
 
     private func next() {
@@ -266,55 +267,35 @@ struct TodayView: View {
     }
 }
 
-/// The ten squares, shown on the result and in the share text.
-struct SquareRow: View {
-    let flags: [Bool]
+// MARK: - The press
+
+/// The iron hand-press, with its flywheel turning on its own hub once every twenty seconds.
+/// Still for the capture tooling and for Reduce Motion.
+struct HandPress: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    var width: CGFloat = 250
+
+    /// press-body.svg is a 400 × 320 box and the axle the wheel turns on is at (330, 176).
+    private var scale: CGFloat { width / 400 }
 
     var body: some View {
-        HStack(spacing: 6) {
-            ForEach(Array(flags.enumerated()), id: \.offset) { _, hit in
-                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                    .fill(hit ? Color.accentColor : Color(.tertiarySystemFill))
-                    .frame(height: 26)
+        let still = Motion.isStill || reduceMotion
+        ZStack {
+            Image("PressBody")
+                .resizable()
+                .scaledToFit()
+                .frame(width: width)
+            TimelineView(.animation(minimumInterval: 1.0 / 30, paused: still)) { context in
+                let turns = still ? 0 : context.date.timeIntervalSinceReferenceDate / 20
+                Image("PressWheel")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 120 * scale)
+                    .rotationEffect(.degrees(turns * 360))
+                    .offset(x: (330 - 200) * scale, y: (176 - 160) * scale)
             }
         }
+        .frame(width: width, height: 320 * scale)
         .accessibilityElement()
-        .accessibilityLabel("\(flags.filter { $0 }.count) of \(flags.count) correct")
-    }
-}
-
-/// Wrapping row of chips. Categories vary in length, so a fixed grid would leave holes.
-struct FlowRow: Layout {
-    var spacing: CGFloat = 8
-
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let maxWidth = proposal.width ?? .infinity
-        var x: CGFloat = 0, y: CGFloat = 0, rowHeight: CGFloat = 0
-        for view in subviews {
-            let size = view.sizeThatFits(.unspecified)
-            if x + size.width > maxWidth, x > 0 {
-                x = 0
-                y += rowHeight + spacing
-                rowHeight = 0
-            }
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
-        }
-        return CGSize(width: proposal.width ?? x, height: y + rowHeight)
-    }
-
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        var x = bounds.minX, y = bounds.minY, rowHeight: CGFloat = 0
-        for view in subviews {
-            let size = view.sizeThatFits(.unspecified)
-            if x + size.width > bounds.maxX, x > bounds.minX {
-                x = bounds.minX
-                y += rowHeight + spacing
-                rowHeight = 0
-            }
-            view.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
-        }
     }
 }

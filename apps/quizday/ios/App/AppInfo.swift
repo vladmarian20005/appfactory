@@ -1,5 +1,6 @@
 import FactoryKit
 import Foundation
+import SwiftUI
 
 /// One place for everything the scaffolder and the spec fill in.
 enum AppInfo {
@@ -12,29 +13,45 @@ enum AppInfo {
         appStoreID: nil
     )
 
+    /// Three pages, each one a piece of the same world — the press, the stamp, the desk. No
+    /// page states the promise; the paywall is the only place in the product that does.
     static let onboarding: [OnboardingPage] = [
         OnboardingPage(
-            symbol: "10.circle.fill",
-            title: "Ten questions a day",
-            subtitle: "The same ten for everyone, every day. Play them in a couple of minutes, then you're done."
-        ),
+            title: "One edition a day",
+            subtitle: "Ten questions, the same ten for everyone, set fresh each morning."
+        ) {
+            // The masthead rides with the art: the first second of the app says newspaper
+            // before it says anything else.
+            VStack(spacing: 14) {
+                Masthead(title: "Quizday", strapline: "A new edition every morning", size: 26)
+                HandPress(width: 230)
+            }
+        },
         OnboardingPage(
-            symbol: "hand.raised.fill",
-            title: "No ads. Nothing runs out.",
-            subtitle: "No ad between questions, no lives to wait for, no coins to buy. That is the whole point."
-        ),
+            title: "Stamp your answer",
+            subtitle: "Press one and the ink lands — with the reason it's right underneath."
+        ) {
+            Image("Stamp")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 220)
+        },
         OnboardingPage(
-            symbol: "text.book.closed.fill",
-            title: "Every answer explained",
-            subtitle: "Each question comes with the reason and a source, so you learn something even when you miss."
-        ),
+            title: "Then the day is yours",
+            subtitle: "Every edition you file is dated and kept. The run is the only score that carries."
+        ) {
+            Image("Desk")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 270)
+        },
     ]
 
-    static let paywallHeadline = "Quizday Pro"
+    static let paywallHeadline = "The composing room"
     static let paywallBullets = [
-        "Practice any category, as much as you like",
-        "See your accuracy category by category",
-        "Choose easy, medium or hard",
+        "Set your own rounds — any section, any night, as many as you like",
+        "See which sections you own and which keep catching you",
+        "Choose the difficulty: easy, medium or hard",
     ]
-    static let paywallPromise = "The daily ten stays free, with no ads and nothing to run out of. Pro adds practice, not access."
+    static let paywallPromise = "The daily edition stays free and always will — no ads, nothing to run out of. Pro buys you more type, not the paper."
 }

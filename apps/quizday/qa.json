@@ -5,27 +5,60 @@
     {
       "name": "01-today",
       "args": ["-onboarded", "-reset"],
-      "note": "The daily round, unplayed. The promise screen."
+      "note": "The paper on the step: masthead, dateline, the press turning, today's section line."
     },
     {
       "name": "02-question",
       "args": ["-onboarded", "-reset", "-play", "-playStep", "3", "-reveal"],
-      "note": "A revealed answer with its explanation and source — the wedge."
+      "note": "A pressed answer: the ink sweep landed, the stamp hanging past the margin, the correction pencilled in, the footnote set."
     },
     {
       "name": "03-result",
       "args": ["-onboarded", "-answered", "8"],
-      "note": "Result screen: squares, streak, countdown to tomorrow."
+      "note": "The edition printed: the score at 112pt, the tally, the tier stamp, the brass ribbon."
     },
     {
       "name": "04-scorecard",
       "args": ["-onboarded", "-sampleData", "-screen", "scorecard"],
-      "note": "Month calendar shaded by score, streaks."
+      "note": "The file: the run at 96pt over one ledger line, and the month printed in ink."
     },
     {
       "name": "05-paywall",
       "args": ["-onboarded", "-sampleData", "-fakeProducts", "-screen", "paywall"],
       "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch, so real products are unavailable and the CTA would sit disabled."
+    },
+    {
+      "name": "06-practice",
+      "args": ["-onboarded", "-sampleData", "-screen", "practice"],
+      "note": "The composing room, locked: the type case as its hero, the bullets as ruled lines."
+    },
+    {
+      "name": "07-onboarding",
+      "args": ["-reset"],
+      "note": "The first screen anyone sees: the masthead over the drawn hand press."
+    },
+    {
+      "name": "08-settings",
+      "args": ["-onboarded", "-sampleData", "-screen", "settings"],
+      "note": "The desk: sounds, what has been filed, and the attribution as the section footer."
+    }
+  ],
+  "moments": [
+    {
+      "name": "answer",
+      "args": ["-onboarded", "-reset", "-demo", "answer"],
+      "delay": 0.9,
+      "frames": 10,
+      "interval": 0.1,
+      "note": "The ink press: the app answers question four itself, so the sweep, the stamp and the tally square are on camera."
+    },
+    {
+      "name": "win",
+      "args": ["-onboarded", "-reset", "-demo", "win"],
+      "delay": 0.3,
+      "frames": 12,
+      "interval": 0.15,
+      "note": "The edition printing: press rule, masthead, the score counting to 112pt, the tally, the tier stamp, the paper flying, the ribbon."
     }
   ]
 }

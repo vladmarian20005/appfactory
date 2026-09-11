@@ -1,13 +1,13 @@
 {
-  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/quizday/store/screenshots.json apps/quizday/store/screenshots/en-US. Raw captures come from app-verify (apps/quizday/qa) and are copied into store/raw. Titles lead with the promise from SPEC.md, then the wedge: no ads, nothing runs out, every answer explained.",
-  "background": "linear-gradient(165deg,#2A1F6B 0%,#4C3DD6 62%,#6D5FF0 100%)",
-  "textColor": "#FFFFFF",
-  "accent": "rgba(255,255,255,.80)",
+  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/quizday/store/screenshots.json apps/quizday/store/screenshots/en-US. Raw captures come from app-verify (apps/quizday/qa) and are copied into store/raw. The frame is the app's own newsprint and ink, not a generic gradient. Titles lead with the promise from SPEC.md, then the wedge: no ads, nothing runs out, every answer explained.",
+  "background": "linear-gradient(168deg,#F7F2E6 0%,#F0E8D6 58%,#E6DBC4 100%)",
+  "textColor": "#1B2027",
+  "accent": "#C1362C",
   "shots": [
     {
-      "src": "raw/01-today.png",
-      "title": "Ten questions a day",
-      "subtitle": "The same ten for everyone."
+      "src": "raw/03-result.png",
+      "title": "Finish and it prints",
+      "subtitle": "A front page worth sending on."
     },
     {
       "src": "raw/02-question.png",
@@ -15,18 +15,18 @@
       "subtitle": "With a source you can check."
     },
     {
-      "src": "raw/03-result.png",
+      "src": "raw/01-today.png",
+      "title": "Ten questions a day",
+      "subtitle": "The same ten for everyone."
+    },
+    {
+      "src": "raw/04-scorecard.png",
       "title": "No ad. Not even here.",
       "subtitle": "No lives. No coins. Nothing to buy."
     },
     {
-      "src": "raw/04-scorecard.png",
-      "title": "Keep the streak going",
-      "subtitle": "Every day you played, at a glance."
-    },
-    {
       "src": "raw/05-paywall.png",
-      "title": "The daily ten stays free",
+      "title": "The daily edition stays free",
       "subtitle": "Pro adds practice, not access."
     }
   ]

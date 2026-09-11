@@ -38,6 +38,8 @@ struct Quizday: App {
                     OnboardingView(pages: AppInfo.onboarding) { onboarded = true }
                 }
             }
+            // On both, so the very first screen is already the paper.
+            .brand(AppBrand.brand)
         }
         .modelContainer(container)
     }
@@ -64,7 +66,9 @@ struct Quizday: App {
             guard offset != 13 else { continue }
             guard let date = calendar.date(byAdding: .day, value: -(offset + 1), to: .now) else { continue }
             var flags = Array(repeating: true, count: score) + Array(repeating: false, count: 10 - score)
-            flags.shuffle()
+            // Seeded, not `shuffle()`: two captures of the same launch flags used to show
+            // different squares, which makes a screenshot diff meaningless.
+            SeededShuffle.apply(&flags, seed: UInt64(offset) &+ 11)
             context.insert(DayResult(dayKey: DayKey.key(for: date),
                                      roundNumber: DailyPack.roundNumber(for: date),
                                      flags: flags,

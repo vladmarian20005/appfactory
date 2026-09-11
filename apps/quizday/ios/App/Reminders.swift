@@ -23,8 +23,8 @@ enum Reminders {
     static func schedule(hour: Int, minute: Int) async {
         cancel()
         let content = UNMutableNotificationContent()
-        content.title = "Today's ten are ready"
-        content.body = "A couple of minutes, no ads, and your streak stays alive."
+        content.title = "Today's edition is on the step."
+        content.body = "Ten questions, two minutes. Round \(DailyPack.roundNumber(for: .now))."
         content.sound = .default
 
         var components = DateComponents()
