@@ -37,9 +37,9 @@
     {
       "name": "pour",
       "args": ["-onboarded", "-reset", "-level", "12", "-demo", "pour"],
-      "delay": 1.4,
+      "delay": 2.5,
       "frames": 10,
-      "interval": 0.12,
+      "interval": 0.1,
       "note": "The signature interaction, played by the app: the vial leaves the rack and tips, an arc of light draws from its mouth, the receiving level overshoots and settles, the vial swings back."
     },
     {

@@ -385,6 +385,33 @@ final class GameModel: ObservableObject {
         }
     }
 
+    /// Pours down the charted line, refills the rack when it runs out, and does it again —
+    /// only ever reached through `-demo pour`.
+    private func pourForever() async {
+        guard animates else { return }
+        var cursor = 0
+        while !Task.isCancelled {
+            if flight != nil {
+                try? await Task.sleep(nanoseconds: 40_000_000)
+                continue
+            }
+            guard let level else { return }
+            // One short of the last pour: the demo is the pour, not the win, and finishing
+            // the rack would put the win over the top of it.
+            let last = max(0, level.solution.count - 1)
+            let next = cursor < last ? level.solution[cursor] : nil
+            guard let move = next, board.pourAmount(from: move.from, to: move.to) > 0 else {
+                restart()
+                cursor = 0
+                try? await Task.sleep(nanoseconds: nanos(0.5))
+                continue
+            }
+            pour(from: move.from, to: move.to)
+            cursor += 1
+            try? await Task.sleep(nanoseconds: nanos(flightLength + 0.1))
+        }
+    }
+
     /// Puts the board all but `remaining` moves along its verified solution, without animating
     /// any of it — so a demo of the *win* spends its frames on the win and not on the solve.
     private func fastForward(leaving remaining: Int) {
@@ -427,9 +454,11 @@ final class GameModel: ObservableObject {
                 guard let level else { return }
                 play(Array(level.solution.suffix(2)), gap: 0.1)
             default:
-                // Slowly, one at a time: the filmstrip has to catch the tilt, the arc and the
-                // level coming up.
-                autoPlay(4, gap: 0.5)
+                // Round and round: the rack refills and pours again, for as long as the demo
+                // runs. A fixed handful of pours means a filmstrip that starts a second late
+                // photographs a rack at rest, and an interaction nobody can see move is one
+                // nobody can judge.
+                await pourForever()
             }
         }
     }

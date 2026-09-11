@@ -139,7 +139,7 @@ struct BoardView: View {
     private func vial(_ index: Int, in rack: RackLayout) -> some View {
         let isSource = flight?.from == index
         let isChosen = selection == index && flight == nil
-        TubeView(contents: board.tubes[index],
+        TubeView(contents: contents(of: index),
                  style: style,
                  width: rack.width,
                  unitHeight: rack.unit,
@@ -148,6 +148,8 @@ struct BoardView: View {
                  isHintTarget: hint?.to == index,
                  rising: rising(in: index),
                  riseProgress: rise,
+                 draining: draining(in: index),
+                 drainProgress: stream,
                  isComplete: board.isComplete(index),
                  isTeaching: teaching?.from == index)
             .rotationEffect(.degrees(tilt(for: index, in: rack)), anchor: .bottom)
@@ -162,6 +164,19 @@ struct BoardView: View {
     private func rising(in index: Int) -> Int {
         guard let flight, flight.to == index, flight.stage != .lift else { return 0 }
         return flight.amount
+    }
+
+    /// How many are still leaving the tipped mouth. The board has already given them up, so
+    /// they are put back here and drained with the arc — otherwise the vial in the air is an
+    /// empty glass being waved about.
+    private func draining(in index: Int) -> Int {
+        guard let flight, flight.from == index, flight.stage == .stream else { return 0 }
+        return flight.amount
+    }
+
+    private func contents(of index: Int) -> [Int] {
+        guard draining(in: index) > 0, let flight else { return board.tubes[index] }
+        return board.tubes[index] + Array(repeating: flight.color, count: flight.amount)
     }
 
     /// Anticipation for the vial that has been picked up; the full tip for the one pouring.

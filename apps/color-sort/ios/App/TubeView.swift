@@ -19,6 +19,11 @@ struct TubeView: View {
     /// How many of the top units have just arrived, and how far they have risen.
     var rising = 0
     var riseProgress: Double = 1
+    /// How many of the top units are on their way out of the tipped mouth, and how far gone
+    /// they are. Without this the vial in the air goes empty the instant the arc starts, and
+    /// the pour reads as a glass being waved about.
+    var draining = 0
+    var drainProgress: Double = 0
     /// Full, one colour, done. It keeps a glow on the flat and grows a frond.
     var isComplete = false
     /// The first move of the verified solution, before this player has ever poured. The ring
@@ -99,7 +104,8 @@ struct TubeView: View {
             ForEach(Array(contents.enumerated()).reversed(), id: \.offset) { slot, color in
                 unit(color,
                      isSurface: slot == contents.count - 1,
-                     isRising: slot >= contents.count - rising)
+                     isRising: slot >= contents.count - rising,
+                     isDraining: slot >= contents.count - draining)
             }
         }
         .frame(width: width)
@@ -110,9 +116,13 @@ struct TubeView: View {
     }
 
     @ViewBuilder
-    private func unit(_ color: Int, isSurface: Bool, isRising: Bool) -> some View {
+    private func unit(_ color: Int, isSurface: Bool, isRising: Bool, isDraining: Bool = false) -> some View {
         let liquid = style.liquid(color)
-        let h = isRising ? unitHeight * max(0, riseProgress) : unitHeight
+        let h: CGFloat = {
+            if isDraining { return unitHeight * max(0, 1 - drainProgress) }
+            if isRising { return unitHeight * max(0, riseProgress) }
+            return unitHeight
+        }()
         Rectangle()
             .fill(LinearGradient(colors: [liquid.top, liquid.color, liquid.bottom],
                                  startPoint: .top, endPoint: .bottom))
