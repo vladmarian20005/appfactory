@@ -31,7 +31,9 @@ function token() {
   creds ??= credentials();
   const now = Math.floor(Date.now() / 1000);
   const header = b64({ alg: "ES256", kid: creds.keyId, typ: "JWT" });
-  const payload = b64({ iss: creds.issuerId, iat: now, exp: now + 900, aud: "appstoreconnect-v1" });
+  // Issued 30 s in the past: Apple rejects a token whose `iat` is ahead of its own clock, and a
+  // runner's clock can be. The lifetime stays inside Apple's 20-minute limit.
+  const payload = b64({ iss: creds.issuerId, iat: now - 30, exp: now + 900, aud: "appstoreconnect-v1" });
   const signer = crypto.createSign("SHA256");
   signer.update(`${header}.${payload}`);
   // ASC wants a JOSE (r||s) signature, not the DER encoding Node emits by default.
@@ -50,7 +52,9 @@ export async function asc(method, url, body, { retries = 4 } = {}) {
       headers: { Authorization: `Bearer ${token()}`, "Content-Type": "application/json" },
       body: body ? JSON.stringify(body) : undefined,
     });
-    if ((res.status === 429 || res.status >= 500) && attempt < retries) {
+    // 401 too: the first CI run of iap.mjs got one on page 3 of a price-point list that had
+    // just served pages 1 and 2 with the same key, and every page read fine on a retry.
+    if ((res.status === 401 || res.status === 429 || res.status >= 500) && attempt < retries) {
       await sleep(2000 * (attempt + 1));
       continue;
     }
