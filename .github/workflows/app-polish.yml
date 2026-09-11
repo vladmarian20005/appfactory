@@ -52,8 +52,10 @@ concurrency:
 jobs:
   polish:
     runs-on: macos-26
-    # Critique ~20 minutes, polish up to two hours, two verifies and a capture pass.
-    timeout-minutes: 240
+    # Direction ~35 minutes on an app that has none, critique ~15, a polish pass up to three
+    # hours at 180 turns, two verifies and a capture pass. Under GitHub's six-hour job limit,
+    # with room: a job killed mid-polish never records the pass or dispatches the next judge.
+    timeout-minutes: 330
     env:
       SLUG: ${{ inputs.slug }}
       CHAIN: ${{ inputs.chain }}
