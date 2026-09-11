@@ -68,6 +68,16 @@ struct TubeView: View {
         return style.liquid(top).glow
     }
 
+    /// How hard the vial burns on the wet flat. A vial that has come good throws the most
+    /// light; the one the charted line wants throws nearly as much, so the eye lands on it
+    /// before the breathing ring has finished a single cycle; a plain vial only wets the
+    /// stone under it.
+    private var ringStrength: Double {
+        if isComplete { return 0.55 }
+        if isTeaching { return 0.5 }
+        return 0.3
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             glass
