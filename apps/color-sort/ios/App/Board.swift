@@ -21,6 +21,12 @@ struct Board: Equatable, Hashable, Codable, Sendable {
 
     var count: Int { tubes.count }
 
+    /// A rack with every vial full and a single colour — the souvenir a finished board leaves
+    /// behind, for the share card of a day whose own board is no longer in memory.
+    static func cleared(colors: Int) -> Board {
+        Board(tubes: (0..<max(1, colors)).map { Array(repeating: $0, count: capacity) })
+    }
+
     /// Every tube is either empty or a full stack of one color.
     var isSolved: Bool {
         for t in tubes {

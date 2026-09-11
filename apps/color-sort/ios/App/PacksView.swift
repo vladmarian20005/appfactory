@@ -2,10 +2,13 @@ import FactoryKit
 import SwiftData
 import SwiftUI
 
-/// The level ladder and the three things the one-time unlock buys.
+/// The shore: the whole ladder as a shelf of vials, and the three things the one-time unlock
+/// opens.
 struct PacksView: View {
     @EnvironmentObject private var store: Store
     @Query private var results: [LevelResult]
+
+    @Environment(\.brand) private var brand
 
     @Binding var showPaywall: Bool
     let onOpenLevel: (Int) -> Void
@@ -15,8 +18,8 @@ struct PacksView: View {
     @AppStorage("tidepour.shapeMarkers") private var shapeMarkers = false
     @AppStorage("tidepour.currentLevel") private var currentLevel = 1
 
-    /// How far the ladder is drawn. Levels are generated on the way in, so this is only how
-    /// many squares to show, never how many boards exist.
+    /// How far the shelf is drawn. Racks are dealt on the way in, so this is only how many
+    /// vials to show, never how many boards exist.
     private var visibleLevels: Int {
         store.isUnlocked ? max(240, currentLevel + 60) : AppInfo.freeLevelCount
     }
@@ -25,108 +28,119 @@ struct PacksView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 26) {
                 if !store.isUnlocked { unlockCard }
                 options
                 ladder
             }
-            .padding(FactoryTheme.padding)
+            .padding(.horizontal, FactoryTheme.padding)
+            .padding(.top, 8)
+            // Clear of the tab bar: the last row was sitting half under it.
+            .padding(.bottom, 96)
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Packs")
+        .brandBackground(drift: true)
+        .navigationTitle("Shore")
+        .toolbarColorScheme(.dark, for: .navigationBar)
     }
 
     private var unlockCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Unlock Tidepour")
-                .font(.headline)
-            Text("The first \(AppInfo.freeLevelCount) levels and the daily puzzle are free forever. "
-                 + "One payment opens the rest of the ladder, calm mode and the color-blind palette. "
-                 + "There is no subscription, no currency and no advertising in this app.")
+        VStack(alignment: .leading, spacing: 12) {
+            Image("OpenWater")
+                .resizable()
+                .scaledToFit()
+                .frame(maxHeight: 130)
+                .frame(maxWidth: .infinity)
+                .ambientFloat(distance: 4, period: 5)
+            Text("The tide goes further out")
+                .brandFont(.title2)
+                .foregroundStyle(brand.palette.ink)
+            Text("The first \(AppInfo.freeLevelCount) racks and today's pool are yours for good. One payment opens the rest of the shelf, calm mode and the colour-blind palette.")
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(brand.palette.inkSoft)
                 .fixedSize(horizontal: false, vertical: true)
-            Button("See what it unlocks") { showPaywall = true }
-                .buttonStyle(.factoryPrimary)
+            Button("See what opens") { showPaywall = true }
+                .brandProminent()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .factoryCard()
+        .brandSurface()
     }
 
     private var ladder: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Levels")
-                    .font(.headline)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
+                ChartMark(text: "The shelf", color: brand.palette.highlight)
                 Spacer()
-                Text("\(cleared.count) cleared")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                ChartMark(text: "\(cleared.count) lit")
             }
-            Text("Every board on this ladder is dealt at random and then solved. The ones the solver cannot finish are thrown away, so none of them reaches you.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 5), spacing: 8) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 5), spacing: 14) {
                 ForEach(1...visibleLevels, id: \.self) { level in
                     Button { onOpenLevel(level) } label: {
-                        LevelChip(level: level,
+                        LevelVial(level: level,
                                   isCleared: cleared.contains(level),
                                   isCurrent: level == currentLevel)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.pressable)
                 }
             }
             if !store.isUnlocked {
                 Button {
                     showPaywall = true
                 } label: {
-                    Label("Levels past \(AppInfo.freeLevelCount) are in the unlock", systemImage: "lock.fill")
+                    Label("The shelf runs on past \(AppInfo.freeLevelCount)", systemImage: "lock.fill")
                         .font(.footnote)
                 }
+                .tint(brand.palette.accent)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .factoryCard()
     }
 
     private var options: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text("Playing style")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 16) {
+            ChartMark(text: "How you pour", color: brand.palette.highlight)
             GatedToggle(title: "Calm mode",
-                        detail: "No move counter, muted colors, a slower pour.",
+                        detail: "No counter, muted light, a slower pour.",
                         symbol: "leaf.fill",
                         isOn: $calmMode,
                         unlocked: store.isUnlocked) { showPaywall = true }
-            GatedToggle(title: "Color-blind palette",
-                        detail: "Okabe–Ito colors, chosen to stay apart for every common kind of color blindness.",
+            GatedToggle(title: "Colour-blind palette",
+                        detail: "Okabe–Ito colours, chosen to stay apart for every common kind of colour blindness.",
                         symbol: "eye.fill",
                         isOn: $accessiblePalette,
                         unlocked: store.isUnlocked) { showPaywall = true }
             GatedToggle(title: "Shape markers",
-                        detail: "A different shape stamped on every color, so the board reads without color at all.",
+                        detail: "A different shape stamped on every colour, so the rack reads without colour at all.",
                         symbol: "square.on.circle",
                         isOn: $shapeMarkers,
                         unlocked: store.isUnlocked) { showPaywall = true }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .factoryCard()
+        .brandSurface()
     }
 }
 
-/// One square on the ladder.
-struct LevelChip: View {
+/// One place on the shelf: a vial, full of light when the rack has been cleared and empty
+/// glass when it has not — so the ladder reads as a shelf at a glance, not as a grid of
+/// numbered squares.
+struct LevelVial: View {
     let level: Int
     let isCleared: Bool
     let isCurrent: Bool
 
-    /// Five columns of level numbers on a phone: the square grows with the text size, but
-    /// only so far, and a three-digit level shrinks to fit rather than clipping.
-    @ScaledMetric(relativeTo: .subheadline) private var height: CGFloat = 44
+    @Environment(\.brand) private var brand
 
-    private var background: Color {
-        isCleared ? .accentColor : Color(.tertiarySystemGroupedBackground)
+    /// The vial grows with the text size, but only so far, and a three-digit number shrinks
+    /// to fit rather than clipping.
+    @ScaledMetric(relativeTo: .subheadline) private var height: CGFloat = 54
+
+    private var liquid: LiquidColor { Palette.standard[level % Palette.standard.count] }
+
+    private var shape: UnevenRoundedRectangle {
+        UnevenRoundedRectangle(topLeadingRadius: 6,
+                               bottomLeadingRadius: 17,
+                               bottomTrailingRadius: 17,
+                               topTrailingRadius: 6,
+                               style: .continuous)
     }
 
     var body: some View {
@@ -136,17 +150,30 @@ struct LevelChip: View {
             .lineLimit(1)
             .minimumScaleFactor(0.5)
             .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-            .foregroundStyle(isCleared ? Color.white : Color.primary)
+            .foregroundStyle(isCleared ? liquid.markerColor : brand.palette.inkSoft)
             .frame(maxWidth: .infinity)
             .frame(height: height)
-            .background(background, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .overlay {
-                if isCurrent {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .strokeBorder(Color.accentColor, lineWidth: 2)
+            .background {
+                ZStack {
+                    shape.fill(brand.palette.surface.opacity(0.75))
+                    if isCleared {
+                        shape.fill(LinearGradient(colors: [liquid.top, liquid.color, liquid.bottom],
+                                                  startPoint: .top, endPoint: .bottom))
+                            .shadow(color: liquid.glow.opacity(0.55), radius: 7)
+                    }
+                    // The light of the sky on a wet curve, on every vial, full or not.
+                    Capsule()
+                        .fill(.white.opacity(0.3))
+                        .frame(width: 2.5, height: height * 0.4)
+                        .offset(x: -height * 0.17, y: -height * 0.12)
                 }
             }
-            .accessibilityLabel("Level \(level)\(isCleared ? ", cleared" : "")")
+            .clipShape(shape)
+            .overlay {
+                shape.strokeBorder(isCurrent ? brand.palette.accent : brand.palette.ink.opacity(0.14),
+                                   lineWidth: isCurrent ? 2.4 : 1)
+            }
+            .accessibilityLabel("Rack \(level)\(isCleared ? ", lit" : "")")
     }
 }
 
@@ -160,26 +187,30 @@ struct GatedToggle: View {
     let unlocked: Bool
     let onLocked: () -> Void
 
+    @Environment(\.brand) private var brand
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             if unlocked {
                 Toggle(isOn: $isOn) {
                     Label(title, systemImage: symbol)
+                        .foregroundStyle(brand.palette.ink)
                 }
             } else {
                 Button(action: onLocked) {
                     HStack {
                         Label(title, systemImage: symbol)
+                            .foregroundStyle(brand.palette.ink)
                         Spacer()
                         Image(systemName: "lock.fill")
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(brand.palette.inkSoft)
                     }
                 }
                 .buttonStyle(.plain)
             }
             Text(detail)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(brand.palette.inkSoft)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }

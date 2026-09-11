@@ -2,10 +2,12 @@ import FactoryKit
 import SwiftData
 import SwiftUI
 
-/// Progress: today's shared puzzle, the streak it feeds, and the month behind it.
+/// The chart: today's pool, the run of evenings it feeds, and the month behind it.
 struct StreakView: View {
     @Query private var results: [LevelResult]
     let onPlayDaily: () -> Void
+
+    @Environment(\.brand) private var brand
 
     private var todayKey: String { DayKey.key() }
     private var playedDays: Set<String> { Set(results.map(\.dayKey)) }
@@ -16,110 +18,155 @@ struct StreakView: View {
     private var streak: Int { Streaks.current(days: playedDays) }
     private var longest: Int { Streaks.longest(days: playedDays) }
 
-    private var shareLine: String {
-        let today = today.map { "cleared in \($0.moves) moves, par \($0.par)" } ?? "not played yet"
-        return "Tidepour daily · \(todayKey) · \(today) · \(streak)-day streak. "
-             + "Same puzzle for everyone, every day. No ads, no coins, nothing runs out."
-    }
-
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                dailyCard
-                streakCard
+            VStack(alignment: .leading, spacing: 26) {
+                hero
+                todaysPool
                 CalendarMonthView(playedDays: playedDays)
-                    .factoryCard()
                 totals
-                ShareLink(item: shareLine) {
-                    Label("Share today's result", systemImage: "square.and.arrow.up")
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
+                share
             }
-            .padding(FactoryTheme.padding)
+            .padding(.horizontal, FactoryTheme.padding)
+            .padding(.top, 8)
+            // Clear of the tab bar: the last row was sitting half under it.
+            .padding(.bottom, 96)
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Progress")
+        .brandBackground(drift: true)
+        .navigationTitle("Chart")
+        .toolbarColorScheme(.dark, for: .navigationBar)
     }
 
-    private var dailyCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Label("Daily puzzle", systemImage: "calendar.badge.clock")
-                .font(.headline)
-            Text("Everyone who opens Tidepour today gets this exact board — seeded from the date, solved before it is served.")
+    // MARK: - The one number on this screen
+
+    /// The streak, standing in the pool. One hero, not three identical tiles.
+    private var hero: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(alignment: .lastTextBaseline, spacing: 10) {
+                Text("\(streak)")
+                    .brandDisplay(size: 110)
+                    .monospacedDigit()
+                    .foregroundStyle(brand.palette.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                VStack(alignment: .leading, spacing: 2) {
+                    ChartMark(text: streak == 1 ? "Evening" : "Evenings", color: brand.palette.highlight)
+                    ChartMark(text: "in a row")
+                }
+                .padding(.bottom, 14)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(alignment: .bottom) {
+                // The light it stands in.
+                Ellipse()
+                    .fill(RadialGradient(colors: [brand.palette.accent.opacity(0.3),
+                                                  brand.palette.accent.opacity(0)],
+                                         center: .center, startRadius: 0, endRadius: 180))
+                    .frame(height: 150)
+                    .offset(y: 42)
+                    .breathing(amount: 0.05, period: 5)
+                    .allowsHitTesting(false)
+            }
+            Text("Longest run \(longest) · \(playedDays.count) evenings on the shore")
+                .font(.subheadline)
+                .foregroundStyle(brand.palette.inkSoft)
+        }
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(streak) evenings in a row. Longest run \(longest). \(playedDays.count) evenings played.")
+    }
+
+    private var todaysPool: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ChartMark(text: "Today's pool", color: brand.palette.accent)
+            Text("The same rack fills for everyone who walks down today — seeded from the date, walked before it is served.")
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(brand.palette.inkSoft)
                 .fixedSize(horizontal: false, vertical: true)
             if let today {
-                Label("Cleared in \(today.moves) moves, par \(today.par)", systemImage: "checkmark.circle.fill")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.accentColor)
-                Button("Play it again", action: onPlayDaily)
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundStyle(brand.palette.success)
+                    Text("\(today.moves) pours, the line was \(today.par)")
+                        .brandFont(.headline)
+                        .foregroundStyle(brand.palette.ink)
+                }
+                Button("Pour it again", action: onPlayDaily)
                     .buttonStyle(.bordered)
+                    .controlSize(.large)
+                    .tint(brand.palette.accent)
             } else {
-                Button("Play today's puzzle", action: onPlayDaily)
-                    .buttonStyle(.factoryPrimary)
+                Button("Pour today's", action: onPlayDaily)
+                    .brandProminent()
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .factoryCard()
-    }
-
-    private var streakCard: some View {
-        HStack(spacing: 12) {
-            StatTile(value: "\(streak)", caption: "day streak")
-            StatTile(value: "\(longest)", caption: "longest run")
-            StatTile(value: "\(playedDays.count)", caption: "days played")
-        }
+        .brandSurface()
     }
 
     private var totals: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            LabeledContent("Levels cleared", value: "\(levelsCleared)")
-            LabeledContent("Daily puzzles cleared", value: "\(results.filter(\.isDaily).count)")
-            Text("No timer, no lives, no coins. Nothing here expires and nothing here runs out.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+        HStack(alignment: .top, spacing: 20) {
+            total("\(levelsCleared)", "Racks cleared")
+            Rectangle()
+                .fill(brand.palette.ink.opacity(0.12))
+                .frame(width: 1, height: 40)
+            total("\(results.filter(\.isDaily).count)", "Pools cleared")
+            Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .factoryCard()
-    }
-}
-
-struct StatTile: View {
-    let value: String
-    let caption: String
-
-    var body: some View {
-        VStack(spacing: 4) {
-            Text(value)
-                .scaledFont(size: 30, weight: .bold, design: .rounded, relativeTo: .title)
-                .monospacedDigit()
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-            Text(caption)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
         .dynamicTypeSize(...DynamicTypeSize.accessibility2)
-        .background(Color(.secondarySystemGroupedBackground),
-                    in: RoundedRectangle(cornerRadius: FactoryTheme.cornerRadius, style: .continuous))
+    }
+
+    private func total(_ value: String, _ caption: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(value)
+                .brandDisplay(size: 38, relativeTo: .title)
+                .monospacedDigit()
+                .foregroundStyle(brand.palette.ink)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+            ChartMark(text: caption)
+        }
         .accessibilityElement(children: .combine)
     }
+
+    @ViewBuilder
+    private var share: some View {
+        if let image = card {
+            ShareLink(item: image, preview: SharePreview("Tidepour · \(todayKey)", image: image)) {
+                Label("Share the rack", systemImage: "square.and.arrow.up")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+            .tint(brand.palette.accent)
+        }
+    }
+
+    /// The day's result as a picture, not a line of text nobody taps.
+    @MainActor
+    private var card: Image? {
+        guard let today else { return nil }
+        let result = GameModel.FinishedLevel(levelID: .daily(today.dayKey),
+                                             moves: today.moves,
+                                             par: today.par,
+                                             dayKey: today.dayKey)
+        return rackCardImage(result: result,
+                             board: .cleared(colors: 6),
+                             style: BoardStyle(),
+                             streak: streak)
+    }
 }
 
-/// The month so far, one square per day, filled on the days a puzzle was cleared.
+/// The month so far, one pool per day, lit on the evenings a rack was cleared.
 struct CalendarMonthView: View {
     let playedDays: Set<String>
     var reference: Date = .now
 
-    /// Grows with the text size, so the day numbers still fit their squares — and capped
-    /// below, because seven columns of a month cannot grow without bound on a phone.
-    @ScaledMetric(relativeTo: .caption) private var cellHeight: CGFloat = 30
+    @Environment(\.brand) private var brand
+
+    /// Grows with the text size, so the day numbers still fit their pools — and capped below,
+    /// because seven columns of a month cannot grow without bound on a phone.
+    @ScaledMetric(relativeTo: .caption) private var cellHeight: CGFloat = 32
 
     private var calendar: Calendar { .current }
 
@@ -148,14 +195,13 @@ struct CalendarMonthView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(monthLabel)
-                .font(.headline)
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 7), spacing: 6) {
+        VStack(alignment: .leading, spacing: 12) {
+            ChartMark(text: monthLabel, color: brand.palette.highlight)
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 7), spacing: 8) {
                 ForEach(Array(weekdaySymbols.enumerated()), id: \.offset) { _, symbol in
                     Text(symbol)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(brand.palette.inkSoft.opacity(0.7))
                 }
                 ForEach(Array(cells.enumerated()), id: \.offset) { _, date in
                     if let date {
@@ -169,13 +215,15 @@ struct CalendarMonthView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(monthLabel). \(playedDaysThisMonth) days played this month.")
+        .accessibilityLabel("\(monthLabel). \(playedDaysThisMonth) evenings played this month.")
     }
 
     private var playedDaysThisMonth: Int {
         cells.compactMap { $0 }.filter { playedDays.contains(DayKey.key(for: $0)) }.count
     }
 
+    /// A pool, not a rounded square: filled and lit on an evening that was played, a dark
+    /// ring of wet sand on one that was not.
     private func day(_ date: Date) -> some View {
         let played = playedDays.contains(DayKey.key(for: date))
         let isToday = calendar.isDateInToday(date)
@@ -184,15 +232,22 @@ struct CalendarMonthView: View {
             .monospacedDigit()
             .lineLimit(1)
             .minimumScaleFactor(0.6)
-            .foregroundStyle(played ? Color.white : Color.primary)
+            .foregroundStyle(played ? brand.palette.onAccent : brand.palette.inkSoft)
             .frame(maxWidth: .infinity)
             .frame(height: cellHeight)
-            .background(played ? Color.accentColor : Color(.tertiarySystemGroupedBackground),
-                        in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .background {
+                Circle()
+                    .fill(played
+                          ? AnyShapeStyle(RadialGradient(colors: [brand.palette.accent,
+                                                                  brand.palette.accent.opacity(0.72)],
+                                                         center: UnitPoint(x: 0.4, y: 0.32),
+                                                         startRadius: 1, endRadius: cellHeight))
+                          : AnyShapeStyle(brand.palette.ink.opacity(0.07)))
+                    .shadow(color: played ? brand.palette.accent.opacity(0.5) : .clear, radius: 6)
+            }
             .overlay {
                 if isToday {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .strokeBorder(Color.accentColor, lineWidth: 2)
+                    Circle().strokeBorder(brand.palette.highlight, lineWidth: 2)
                 }
             }
     }

@@ -31,6 +31,15 @@ enum LaunchOptions {
     /// because it solved the board before serving it.
     static var hint: Bool { args.contains("-hint") }
 
+    /// `-demo pour` and `-demo win` make the app perform the pour, and reach the win, by
+    /// itself: nothing on a runner can touch a screen, and an interaction nobody can film is
+    /// an interaction nobody can judge.
+    static var demo: String? { value(for: "-demo") }
+
+    /// `-won` lands straight on the finished rack, so the win is a screenshot as well as a
+    /// filmstrip. It is the best picture the app has.
+    static var won: Bool { args.contains("-won") }
+
     /// `-calm` and `-accessible` turn on the two unlock settings, so a capture can show what
     /// the unlock buys. Both still need `-pro` to take effect, exactly as a purchase would.
     static var calm: Bool { args.contains("-calm") }

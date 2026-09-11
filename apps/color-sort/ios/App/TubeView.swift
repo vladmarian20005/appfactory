@@ -1,9 +1,10 @@
+import FactoryKit
 import SwiftUI
 
-/// One tube: a glass column with the liquid stacked bottom-first.
+/// One vial: hand-blown glass standing in the wet flat, holding light rather than paint.
 ///
 /// Drawn rather than assembled out of controls, because it is content, not a control — the
-/// standard components are kept for everything the system owns (buttons, lists, sheets,
+/// standard components are kept for everything the system owns (buttons, navigation, sheets,
 /// toolbars) so the iOS 26 SDK can style them.
 struct TubeView: View {
     let contents: [Int]
@@ -11,10 +12,20 @@ struct TubeView: View {
     let width: CGFloat
     let unitHeight: CGFloat
     var isSelected = false
-    /// The tube the hint wants liquid to come out of.
+    /// The vial the hint wants liquid to come out of.
     var isHintSource = false
-    /// The tube the hint wants it to go into.
+    /// The vial the hint wants it to go into.
     var isHintTarget = false
+    /// How many of the top units have just arrived, and how far they have risen.
+    var rising = 0
+    var riseProgress: Double = 1
+    /// Full, one colour, done. It keeps a glow on the flat and grows a frond.
+    var isComplete = false
+    /// The first move of the verified solution, before this player has ever poured. The ring
+    /// under the glass breathes; nothing is written anywhere.
+    var isTeaching = false
+
+    @Environment(\.brand) private var brand
 
     private var hinted: Bool { isHintSource || isHintTarget }
 
@@ -26,71 +37,152 @@ struct TubeView: View {
                                style: .continuous)
     }
 
-    private var outline: Color {
-        if isSelected || hinted { return .accentColor }
-        return Color.primary.opacity(0.12)
+    private var height: CGFloat { unitHeight * CGFloat(Board.capacity) }
+
+    /// The rim: mint when it is chosen or charted, kelp when it is done, otherwise the faint
+    /// edge of wet glass.
+    private var rim: Color {
+        if isSelected || hinted { return brand.palette.accent }
+        if isComplete { return brand.palette.success.opacity(0.75) }
+        return brand.palette.ink.opacity(0.16)
+    }
+
+    private var rimWidth: CGFloat { isSelected || hinted ? 2.6 : 1.2 }
+
+    /// The colour of whatever is in the glass, for the ring it throws on the flat.
+    private var poolColor: Color {
+        guard let top = contents.last else { return brand.palette.accent }
+        return style.liquid(top).glow
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            shape.fill(Color(.secondarySystemGroupedBackground))
-            VStack(spacing: 0) {
-                ForEach(Array(contents.enumerated()).reversed(), id: \.offset) { slot, color in
-                    unit(color, isFloor: slot == 0)
-                }
-            }
-            .frame(width: width)
-            .clipShape(shape)
+            glass
+            liquid
+            specular
         }
-        .frame(width: width, height: unitHeight * CGFloat(Board.capacity))
-        .overlay {
-            shape.strokeBorder(outline, lineWidth: isSelected || hinted ? 3 : 1.5)
-        }
-        .overlay(alignment: .top) {
-            // An arrow out of one tube and into the other says which way the hint pours;
-            // two accent borders on their own do not.
-            if hinted {
-                Image(systemName: isHintSource ? "arrow.up" : "arrow.down")
-                    .font(.footnote.weight(.bold))
-                    .foregroundStyle(.white)
-                    .padding(5)
-                    .background(Color.accentColor, in: Circle())
-                    .offset(y: -unitHeight * 0.42)
-            }
-        }
-        // A lift rather than a bounce: the capture tooling waits for the screen to stop
-        // moving, and a tube that never stops moving is a blank screenshot.
-        .offset(y: isSelected ? -unitHeight * 0.34 : 0)
-        .animation(.easeOut(duration: 0.16), value: isSelected)
+        .frame(width: width, height: height)
+        .overlay { shape.strokeBorder(rim, lineWidth: rimWidth) }
+        .background(alignment: .bottom) { flat }
+        .overlay(alignment: .top) { hintArrow }
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
         .accessibilityAddTraits(.isButton)
-        .accessibilityHint(isSelected ? "Selected. Tap a tube to pour into it."
-                                      : "Tap to pour from this tube.")
+        .accessibilityHint(isSelected ? "Selected. Tap a vial to pour into it."
+                                      : "Tap to pour from this vial.")
+    }
+
+    // MARK: - The glass
+
+    private var glass: some View {
+        shape
+            .fill(LinearGradient(colors: [brand.palette.surface.opacity(0.92),
+                                          brand.palette.surface.opacity(0.55)],
+                                 startPoint: .top, endPoint: .bottom))
+    }
+
+    /// A specular stripe down the left sixth of the glass — the light of the sky on a wet
+    /// curve. It sits over the liquid, which is what makes it read as glass and not as a gap.
+    private var specular: some View {
+        Capsule(style: .continuous)
+            .fill(LinearGradient(colors: [.white.opacity(0.42), .white.opacity(0.04)],
+                                 startPoint: .top, endPoint: .bottom))
+            .frame(width: max(2, width * 0.075), height: height * 0.52)
+            .offset(x: -width * 0.30, y: -height * 0.2)
+            .frame(width: width, height: height)
+            .allowsHitTesting(false)
+    }
+
+    private var liquid: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(contents.enumerated()).reversed(), id: \.offset) { slot, color in
+                unit(color,
+                     isSurface: slot == contents.count - 1,
+                     isRising: slot >= contents.count - rising)
+            }
+        }
+        .frame(width: width)
+        // Inset from the rim, so the glass shows as a wall around the light rather than the
+        // liquid reading as a solid pill.
+        .clipShape(shape.inset(by: width * 0.055))
+        .shadow(color: poolColor.opacity(0.55), radius: 10)
     }
 
     @ViewBuilder
-    private func unit(_ color: Int, isFloor: Bool) -> some View {
+    private func unit(_ color: Int, isSurface: Bool, isRising: Bool) -> some View {
+        let liquid = style.liquid(color)
+        let h = isRising ? unitHeight * max(0, riseProgress) : unitHeight
         Rectangle()
-            .fill(style.color(color))
-            .frame(height: unitHeight)
+            .fill(LinearGradient(colors: [liquid.top, liquid.color, liquid.bottom],
+                                 startPoint: .top, endPoint: .bottom))
+            .frame(height: h)
+            .overlay(alignment: .top) {
+                // The meniscus: the lit curve of the surface where the air meets the light.
+                if isSurface {
+                    Ellipse()
+                        .fill(LinearGradient(colors: [liquid.top.opacity(0.95),
+                                                      liquid.top.opacity(0.25)],
+                                             startPoint: .top, endPoint: .bottom))
+                        .frame(height: min(9, unitHeight * 0.26))
+                        .padding(.horizontal, width * 0.08)
+                        .offset(y: -min(4, unitHeight * 0.1))
+                } else {
+                    Rectangle().fill(.white.opacity(0.08)).frame(height: 1)
+                }
+            }
             .overlay {
-                if let symbol = style.symbol(color) {
+                if let symbol = style.symbol(color), h > unitHeight * 0.6 {
                     Image(systemName: symbol)
                         .font(.caption.weight(.bold))
                         .foregroundStyle(style.markerColor(color))
                 }
             }
-            .overlay(alignment: .top) {
-                if !isFloor {
-                    Rectangle().fill(.black.opacity(0.10)).frame(height: 1)
-                }
+    }
+
+    // MARK: - The flat underneath
+
+    /// The ring of light the vial throws on the wet flat, and the frond that grows under one
+    /// that has come good.
+    @ViewBuilder
+    private var flat: some View {
+        ZStack {
+            Ellipse()
+                .fill(RadialGradient(colors: [poolColor.opacity(isComplete ? 0.55 : 0.3),
+                                              poolColor.opacity(0)],
+                                     center: .center, startRadius: 0, endRadius: width * 0.72))
+                .frame(width: width * 1.6, height: width * 0.5)
+                .breathingIf(isTeaching)
+            if isComplete {
+                Frond()
+                    .stroke(poolColor.opacity(0.9), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                    .frame(width: width * 0.62, height: width * 0.34)
+                    .offset(y: width * 0.1)
+                    .transition(.scale(scale: 0.3, anchor: .top).combined(with: .opacity))
             }
+        }
+        .offset(y: width * 0.24)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    @ViewBuilder
+    private var hintArrow: some View {
+        // An arrow out of one vial and into the other says which way the charted line pours;
+        // two lit rims on their own do not.
+        if hinted {
+            Image(systemName: isHintSource ? "arrow.up" : "arrow.down")
+                .font(.footnote.weight(.bold))
+                .foregroundStyle(brand.palette.onAccent)
+                .padding(5)
+                .background(brand.palette.accent, in: Circle())
+                .shadow(color: brand.palette.accent.opacity(0.6), radius: 8)
+                .offset(y: -min(30, unitHeight * 0.3))
+        }
     }
 
     private var label: String {
-        guard !contents.isEmpty else { return "Empty tube" }
+        guard !contents.isEmpty else { return "Empty vial" }
         let names = contents.map { style.name($0) }
         var runs: [(String, Int)] = []
         for name in names {
@@ -102,57 +194,33 @@ struct TubeView: View {
             }
         }
         let described = runs.map { $0.1 == 1 ? $0.0 : "\($0.1) \($0.0)" }.joined(separator: ", then ")
-        return "Tube: from the bottom, \(described)."
+        return "Vial: from the bottom, \(described)."
+            + (isComplete ? " Finished." : "")
     }
 }
 
-/// Lays the tubes out in at most two rows, so even the widest board fits a phone in portrait
-/// without scrolling.
-struct BoardView: View {
-    let board: Board
-    let style: BoardStyle
-    let selection: Int?
-    let hint: Move?
-    let onTap: (Int) -> Void
-
-    private var columns: Int {
-        min(5, max(3, Int((Double(board.tubes.count) / 2).rounded(.up))))
-    }
-
-    private var rows: [[Int]] {
-        var out: [[Int]] = []
-        var row: [Int] = []
-        for index in board.tubes.indices {
-            row.append(index)
-            if row.count == columns { out.append(row); row = [] }
+/// Five arcs out of one point: the frond that grows under a vial that has come good.
+struct Frond: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let root = CGPoint(x: rect.midX, y: rect.maxY)
+        for i in -2...2 {
+            let spread = CGFloat(i) / 2
+            let tip = CGPoint(x: rect.midX + spread * rect.width * 0.48,
+                              y: rect.minY + abs(spread) * rect.height * 0.42)
+            let control = CGPoint(x: rect.midX + spread * rect.width * 0.16, y: rect.midY)
+            path.move(to: root)
+            path.addQuadCurve(to: tip, control: control)
         }
-        if !row.isEmpty { out.append(row) }
-        return out
+        return path
     }
+}
 
-    var body: some View {
-        GeometryReader { geo in
-            let spacing = max(10.0, geo.size.width * 0.035)
-            let available = geo.size.width - spacing * CGFloat(columns - 1)
-            let width = min(82, available / CGFloat(columns))
-            let unit = min(width * 0.95, (geo.size.height / CGFloat(rows.count) - spacing * 2) / CGFloat(Board.capacity))
-            VStack(spacing: spacing * 1.6) {
-                ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-                    HStack(spacing: spacing) {
-                        ForEach(row, id: \.self) { index in
-                            TubeView(contents: board.tubes[index],
-                                     style: style,
-                                     width: width,
-                                     unitHeight: max(18, unit),
-                                     isSelected: selection == index,
-                                     isHintSource: hint?.from == index,
-                                     isHintTarget: hint?.to == index)
-                                .onTapGesture { onTap(index) }
-                        }
-                    }
-                }
-            }
-            .frame(width: geo.size.width, height: geo.size.height)
-        }
+private extension View {
+    /// Breathing only when it should be — the teaching ring under the first vial the charted
+    /// line wants, and nothing else.
+    @ViewBuilder
+    func breathingIf(_ condition: Bool) -> some View {
+        if condition { self.breathing(amount: 0.13, period: 2.4) } else { self }
     }
 }

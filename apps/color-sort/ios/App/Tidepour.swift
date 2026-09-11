@@ -39,6 +39,8 @@ struct Tidepour: App {
                     OnboardingView(pages: AppInfo.onboarding) { onboarded = true }
                 }
             }
+            // The shore, from the very first screen: onboarding is already on it.
+            .brand(AppBrand.brand)
         }
         .modelContainer(container)
     }

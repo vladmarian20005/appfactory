@@ -3,29 +3,52 @@
   "bundleId": "com.starhiveconcept.colorsort",
   "screens": [
     {
-      "name": "01-play",
+      "name": "01-win",
+      "args": ["-onboarded", "-reset", "-level", "12", "-won"],
+      "note": "The tide out and the rack standing lit: the hero count of pours in the lantern ring, the keeper's line, the rail from start to the line, and every vial holding one colour. The best picture the app has."
+    },
+    {
+      "name": "02-play",
       "args": ["-onboarded", "-reset", "-level", "12", "-moves", "4", "-hint"],
-      "note": "The board, part-way through, with the hint armed. The promise made visible: the level was solved before it was served, and the arrows are the next move of that solution."
+      "note": "The rack on the flat, part-way through, with the charted line armed. The promise made visible: the board was walked before it was served, and the arrows are the next pour of that line."
     },
     {
-      "name": "02-progress",
+      "name": "03-chart",
       "args": ["-onboarded", "-sampleData", "-screen", "progress"],
-      "note": "The daily puzzle everyone gets, the streak it feeds and the month behind it."
+      "note": "The run of evenings as one hero number standing in the pool, today's shared rack, and the month as lit pools."
     },
     {
-      "name": "03-packs",
+      "name": "04-shore",
       "args": ["-onboarded", "-sampleData", "-screen", "packs"],
-      "note": "The unlock, the three playing-style settings it opens, and the level ladder."
+      "note": "The ladder as a shelf of vials — full of light where a rack was cleared, empty glass where it was not — and what the one payment opens."
     },
     {
-      "name": "04-accessible",
+      "name": "05-accessible",
       "args": ["-onboarded", "-reset", "-pro", "-accessible", "-level", "34", "-moves", "5"],
-      "note": "The color-blind palette with a shape on every unit. Needs -pro, because it is part of the unlock."
+      "note": "The Okabe–Ito palette with a shape on every unit. Needs -pro, because it is part of the unlock."
     },
     {
-      "name": "05-paywall",
+      "name": "06-paywall",
       "args": ["-onboarded", "-sampleData", "-fakeProducts", "-screen", "paywall"],
       "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch, so the real product is unavailable and the button would sit disabled."
+    }
+  ],
+  "moments": [
+    {
+      "name": "pour",
+      "args": ["-onboarded", "-reset", "-level", "12", "-demo", "pour"],
+      "delay": 1.4,
+      "frames": 10,
+      "interval": 0.12,
+      "note": "The signature interaction, played by the app: the vial leaves the rack and tips, an arc of light draws from its mouth, the receiving level overshoots and settles, the vial swings back."
+    },
+    {
+      "name": "win",
+      "args": ["-onboarded", "-reset", "-level", "12", "-demo", "win"],
+      "delay": 2.2,
+      "frames": 10,
+      "interval": 0.16,
+      "note": "The last two pours and then the win: the sun comes up, the count runs, the rack rises and lights one vial at a time, and the burst scales with how it went."
     }
   ]
 }

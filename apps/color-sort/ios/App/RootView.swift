@@ -17,19 +17,19 @@ struct RootView: View {
             NavigationStack {
                 PlayView(showPaywall: $showPaywall)
             }
-            .tabItem { Label("Play", systemImage: "drop.fill") }
+            .tabItem { Label("Pour", systemImage: "drop.fill") }
             .tag(Tab.play)
 
             NavigationStack {
                 StreakView(onPlayDaily: playDaily)
             }
-            .tabItem { Label("Progress", systemImage: "calendar") }
+            .tabItem { Label("Chart", systemImage: "chart.bar.fill") }
             .tag(Tab.progress)
 
             NavigationStack {
                 PacksView(showPaywall: $showPaywall, onOpenLevel: open(level:))
             }
-            .tabItem { Label("Packs", systemImage: "square.grid.2x2.fill") }
+            .tabItem { Label("Shore", systemImage: "water.waves") }
             .tag(Tab.packs)
 
             NavigationStack {
@@ -40,6 +40,8 @@ struct RootView: View {
                              activeTitle: "Tidepour is unlocked") {
                     TidepourSettings()
                 }
+                .brandBackground()
+                .toolbarColorScheme(.dark, for: .navigationBar)
             }
             .tabItem { Label("Settings", systemImage: "gearshape.fill") }
             .tag(Tab.settings)
@@ -50,9 +52,16 @@ struct RootView: View {
                         config: AppInfo.config,
                         headline: AppInfo.paywallHeadline,
                         bullets: AppInfo.paywallBullets,
-                        promise: AppInfo.paywallPromise) {
+                        promise: AppInfo.paywallPromise,
+                        hero: {
+                            Image("HighTide")
+                                .resizable()
+                                .scaledToFit()
+                                .ambientFloat(distance: 5, period: 4.6)
+                        }) {
                 showPaywall = false
             }
+            .brand(AppBrand.brand)
         }
         .onAppear(perform: applyLaunchOptions)
     }
@@ -105,13 +114,19 @@ struct TidepourSettings: View {
 
     var body: some View {
         Section {
-            LabeledContent("Levels cleared", value: "\(results.filter { !$0.isDaily }.count)")
-            LabeledContent("Daily puzzles cleared", value: "\(results.filter(\.isDaily).count)")
-            LabeledContent("Free levels", value: "\(AppInfo.freeLevelCount)")
+            SoundsToggle()
+        } header: {
+            Text("The shore")
+        }
+
+        Section {
+            LabeledContent("Racks cleared", value: "\(results.filter { !$0.isDaily }.count)")
+            LabeledContent("Pools cleared", value: "\(results.filter(\.isDaily).count)")
+            LabeledContent("Free racks", value: "\(AppInfo.freeLevelCount)")
         } header: {
             Text("Your play")
         } footer: {
-            Text("Tidepour has no advertising, no in-app currency and no lives. Every board is solved before it is served, and everything you play stays on this device.")
+            Text("Every rack is walked before it is handed to you, and everything you play stays on this device.")
         }
 
         Section {

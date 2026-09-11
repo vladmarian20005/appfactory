@@ -20,6 +20,10 @@ settings:
     # build sits at "Missing Compliance" until someone clicks through it in a browser.
     INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
     INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+    # The canvas is deep water in both appearances, so the clock and the carrier are light in
+    # both. Without this the status bar draws near-black over the pool in light mode.
+    INFOPLIST_KEY_UIStatusBarStyle: UIStatusBarStyleLightContent
+    INFOPLIST_KEY_UIViewControllerBasedStatusBarAppearance: NO
     INFOPLIST_KEY_CFBundleDisplayName: "Tidepour"
     INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.puzzle-games
     ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
