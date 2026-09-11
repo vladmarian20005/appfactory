@@ -1,193 +1,140 @@
 # Tidepour · critique
 
-**Verdict: fail.** This is a correct, careful, well-accessible color-sort app wearing the
-iOS settings-screen uniform — system gray canvas, white cards, system blue, SF Symbols, and a
-win that is a medium sheet with a checkmark seal. The one thing that decides it: the app was
-built with no design direction at all (`tells.mjs` FAILs `no-direction`; there is no
-`apps/color-sort/DESIGN.md`, and `design/` was committed hours *after* the build), so the
-tide-pool world in `design/mock-1-play.png` exists only as a mock — none of it reached a
-single screen.
+**Verdict: pass.** This is a tide pool at dusk that happens to contain a sorting puzzle: ink-blue
+water in both appearances, light standing inside hand-blown glass, kelp fronds growing under a
+vial that came good, and a win that is a sun coming up over a lit rack with the number of pours
+set 96 points high in New York. The one thing that decides it is `qa/01-win.png` — the app the
+last critique reviewed ended in a half-height sheet with `checkmark.seal.fill` on it, and this one
+ends in a picture someone would actually send to a friend.
 
 | | Score | Evidence |
 | --- | --- | --- |
-| Idea | 1 | Nothing on any screen says "tide pool at dusk": `qa/01-play.png` is crayon primaries on `systemGroupedBackground`, and the tabs read Play / Progress / Packs — a category, not a world. |
-| Look | 2 | `tells.mjs` FAILs `kit-default-brand` and `gray-canvas` ×7; no `.brand()`, `.brandBackground()`, `brandFont` or `brandDisplay` appears anywhere in `ios/App/`, and dark mode (`qa/design/dark-01-play.png`) is pure black with the same blue — an inversion, not a design. |
-| Signature interaction | 1 | The pour does not animate: `GameModel.pour` mutates `board` and returns (`ios/App/GameModel.swift:134`), `BoardStyle.pourDuration` (`Palette.swift:94`) is never read by anything, and the only motion in the app is `.easeOut(duration: 0.16)` on a tube lift (`TubeView.swift:64`) — the slop tell verbatim. |
-| Reward | 1 | `PlayView.swift:46` presents `LevelClearedView` as a `.sheet` at `.presentationDetents([.medium])` whose hero is `checkmark.seal.fill` over "Level cleared" and "18 moves"; `tells.mjs` FAILs `no-reward` — no confetti, no `CountUp`, no `Tones`, no `Haptics.celebrate`. |
-| Voice | 2 | Three fixed verdict strings (`PlayView.swift:276–278`) are the only writing with a pulse; against them the product recites the store pitch four times, including TASTE.md's own quoted failure line word for word at `StreakView.swift:80`: "No timer, no lives, no coins. Nothing here expires and nothing here runs out." |
-| Craft | 3 | Genuinely tidy and the accessibility work is real — `ViewThatFits` header, symbol-only controls, a 240 pt board floor and a scaling calendar all hold at AX5 (`qa/design/ax-01-play.png`) — but nothing on any screen is bigger than `.largeTitle`, dark mode is undesigned, and the hint arrows collide with the tube mouths at AX sizes. |
-| First minute | 2 | Onboarding is three SF Symbols (`AppInfo.swift:19–35`) whose third page is the business model, and the board then explains itself in text: "Tap a tube, then tap the one to pour it into." (`PlayView.swift:123`) — TASTE.md names that exact sentence as the affordance having failed. |
+| Idea | 5 | Every screen is the world, not the category: `qa/02-play.png` is glass on deep water with a lantern tick at par, `qa/03-chart.png` counts "9 EVENINGS IN A ROW", `qa/04-shore.png` heads "THE SHELF · 27 LIT", and the tabs read Pour / Chart / Shore — there is no "Play / Progress / Packs" left anywhere. |
+| Look | 4 | Eight liquids as top-lit gradients with a specular stripe and a meniscus, on a drifting nine-point mesh (`AppBrand.swift:36`), with the vial silhouette repeating from the board to the shelf chips (`PacksView.swift:144`) to the share card; dark is designed, not inverted — the canvas measures `#14394A` light against `#0A2732` dark and the accent lifts `#35CEBC` → `#5EEBDA`. Held off 5 by three screens where the canvas does all the work: the paywall's ticked bullet card (`qa/06-paywall.png`), the Shore's undifferentiated 5-wide grid, and the Chart's dot calendar. |
+| Signature interaction | 4 | `moment-pour.png` has ten frames and no two alike: the vial leaves the rack, tips 42° toward its target, the receiving level rises, and a completed vial throws particles and grows a frond (frames 6–7). The arc itself — glow at 14 pt under a 6 pt core, plus a splash bloom (`BoardView.swift:219–237`) — is real in code and visible in `moment-win.png` frame 2, but appears in *none* of the ten pour frames, which is the one thing that would make it a 5. |
+| Reward | 5 | Full screen on the canvas (`PlayView.swift:58`, a `fullScreenCover`, no seal anywhere): sun over a horizon, `CountUp(to:duration: 0.7)` at `brandDisplay(size: 96)` inside a lantern ring ticking `Haptics.impact(0.3)` and a climbing `.step(n)`, a pooled praise line, the start-to-the-line rail, the rack rising one vial at a time on `.popIn(delay: 0.4 + i*0.06)`, and three tiers that actually differ — 1.4 / 1.0 / no confetti at all but a breathing lantern swell (`WinView.swift:34–43`, `Voice.swift:94`). It shares as a rendered `RackCard`, not a line of text. |
+| Voice | 4 | Four pools of six (`Voice.swift`) with a no-repeat guard, and the keeper is consistent: "Clean as the flat at low tide.", "The tide goes further out", "See what opens", "Back to the shore", "Low tide. The glass is waiting." Docked a point because the two screens that ask for something say nothing in that voice: `qa/06-paywall.png` and `qa/07-first.png` both end in **Continue**, which DESIGN.md line 157 forbids by name. |
+| Craft | 4 | One unmistakable hero per screen (110 pt streak, 96 pt pours, 64 pt counter), a single 18 pt radius, rhythm that holds, and the accessibility work survived the rebuild — at AX5 `ax-02-play.png` drops the controls to symbols, keeps the board and reads a vial bottom-up. Two flaws: on `ax-01-win.png` the "POURS" mark overflows the fixed 210 pt ring and sits across its stroke (`WinView.swift:105–115`), and the rack and all three buttons fall below the fold, so the first thing a win looks like at that size is a screen with no action on it. |
+| First minute | 4 | `qa/07-first.png` is a drawn rack decanting at the shoreline under "Every light wants its own glass." in the display serif, on the brand canvas — two pages, no third page of pricing, no symbols. The board then teaches without a sentence: the vial the verified solution wants first breathes and stops for good after the first pour (`TubeView.swift:183`, `GameModel.swift:70`). The shipped icon is the drawn one. |
 
-An App Store editor's answers: the screenshot I would put first is `qa/04-accessible.png`,
-because the shape markers are the only thing on any screen that is not in every one of the 49
-competitors — and I would not feature it. The weakest screen is `qa/02-progress.png`: a
-white-card daily blurb, three identical number tiles with gray captions, a blue calendar grid
-and the pitch in small gray type — five slop tells stacked on one screen. A stranger shown a
-crop would say: "a water-sort game; there are forty of those."
+An App Store editor's answers: the screenshot I would lead with is `qa/01-win.png`, and yes, I would
+put it in a puzzle story — a lit rack under a rising sun with a serif "12" is not a thing any of the
+49 competitors has. The weakest screen is `qa/04-shore.png`: a screen named Shore with no shore in
+it, forty-odd vials five across and nothing else above the fold. A stranger shown a crop would say:
+"a water-sort game that someone actually designed."
 
 ## Captures missing
 
-- **`qa/design/moment-*.png` — none exist.** `qa.json` has no `moments` key and
-  `ios/App/LaunchOptions.swift` has no `-demo` flag, so the signature interaction and the win
-  were never filmed. I scored both from the code instead, which is why they score 1 rather
-  than "unknown": the code shows there is nothing to film.
-- No dark or AX capture of the win (`05` is the paywall, not the cleared sheet).
-- `apps/color-sort/DESIGN.md` does not exist.
+- **No Settings capture.** `qa.json` has no settings screen, and DESIGN.md lists it as one of the
+  four. `SoundsToggle()`, the erase and the restore are unjudged.
+- **AX only covers the win and the board** (`ax-01-win`, `ax-02-play`). The calendar grid, the
+  shelf and the paywall bullets at AX5 are unverified.
+- **No dark AX captures**, and **no capture of the rendered share card** — `RackCard`
+  (`WinView.swift:221`) is confirmed in code only, never as an image.
+- **No calm-mode capture**, so the muted palette and the 0.45 s pour are unseen.
 
 ## Slop tells present
 
-- **Gray canvas with white cards** — `PlayView.swift:43`, `PlayView.swift:306`,
-  `StreakView.swift:41`, `StreakView.swift:109`, `PacksView.swift:35`, `TubeView.swift:36`;
-  visible on all five of `qa/*.png`.
-- **One accent color on gray** — system blue is the tube outline, the hint badge, the verified
-  seal, the calendar fill, the level squares, every button and the tab bar
-  (`qa/03-packs.png`).
-- **A win as a `.sheet` at `.medium` with a checkmark seal** — `PlayView.swift:46–55, 283`.
-- **Stats as a row of identical number tiles with gray captions** — `StreakView.swift:68–72`,
-  `StatTile` at `StreakView.swift:89`; see `qa/02-progress.png`, "9 / 9 / 16".
-- **Copy that explains the business model inside the product** — `StreakView.swift:22`,
-  `StreakView.swift:80`, `PacksView.swift:45`, `RootView.swift:114`, `AppInfo.swift:32`.
-- **Copy that explains the controls** — `PlayView.swift:123`, `AppInfo.swift:23`.
-- **An SF Symbol as the hero** — `checkmark.seal.fill` at 48 pt is the win
-  (`PlayView.swift:283`); `drop.fill` at 40 pt is the empty/dealing state
-  (`PlayView.swift:138`); all three onboarding pages use `OnboardingPage(symbol:)` rather than
-  `art:`, though `design/art/` holds five drawn SVGs that were never rendered —
-  `Assets.xcassets/` contains only `AccentColor` and `AppIcon`.
-- **`.easeOut(duration: 0.16)` is the only motion there is** — `TubeView.swift:64`, the single
-  `.animation` call in the app.
-- **Nothing bigger than `.largeTitle`** — the largest type is the 30 pt `StatTile` number;
-  `tells.mjs` WARNs `no-display-type`.
-- **The paywall has no hero art** — `qa/05-paywall.png` is a bold title, a white bullet card
-  and a blue Continue.
-- **A silent game** — no `Tones` call anywhere, and no DESIGN.md to say why.
-- **The result shares as text** — `StreakView.swift:33`, `ShareLink(item: shareLine)`, no
-  `ShareImage`.
-- **The shipped icon is not the drawn one.** `design/icon.svg` renders a lit vial standing in
-  a dark tide pool (`design/icon-1024.png`), but
-  `ios/App/Assets.xcassets/AppIcon.appiconset/icon-1024.png` is three flat rectangles on a
-  navy gradient.
+None. `node tools/design/tells.mjs color-sort --strict` reports 0 hard tells and 0 smells, and none
+of TASTE.md's screenshot tells survive: no gray canvas or white cards, no accent-on-gray, no symbol
+as a hero, no `.medium` sheet, no stat tiles (`StreakView.swift:46` is one hero and two lines of
+prose), no fixed praise, no icon-on-a-gradient, and nothing in the product states the deal outside
+the paywall.
+
+One thing sits just inside the line and should be watched: `StreakView.swift:87`, "The same rack
+fills for everyone who walks down today — seeded from the date, walked before it is served," is the
+store's first screenshot caption in the keeper's accent. It is flavour, not a footer, so it passes —
+but it is the product explaining its wedge to someone already inside it.
 
 ## Keep
 
-- **The wedge is real and it is on screen.** "Solution verified" next to the move counter, and
-  a hint that marks the source ↑ and the destination ↓ on the tubes themselves
-  (`TubeView.swift:49–60`), is the guideline-4.3 answer stated better than a calendar states
-  it. Keep the badge, keep the arrows, keep par next to moves.
-- **The accessibility work, all of it.** The `ViewThatFits` header, the controls dropping to
-  symbols past AX1 with VoiceOver labels intact, the 240 pt board floor, the calendar that
-  scales its squares, and `label` in `TubeView.swift:92` reading a tube bottom-up as runs
-  ("from the bottom, 2 blue, then red"). `qa/design/ax-01-play.png` and `ax-02-progress.png`
-  hold where most apps break. None of this should be touched by the polish.
-- **The Okabe–Ito palette plus a shape on every unit** (`Palette.swift:51`,
-  `qa/04-accessible.png`). The shapes are the one thing in the app a competitor does not have.
-  Redraw them into the new brand; do not drop them.
-- **The tube silhouette** — `UnevenRoundedRectangle` with a tight top and a round bottom
-  (`TubeView.swift:21`) is already the right shape language. It just needs to be made of
-  glass.
+- **The win, whole.** The tier logic, the no-confetti-over-par rule, the count-up ticks, the rack
+  lighting one at a time, the `ShareImage` card. Nothing here gets touched.
+- **The glass.** The top-lit gradient, specular stripe and meniscus, the ring on the flat and the
+  kelp frond under a completed vial. It is what makes the crop recognisable.
+- **The accessibility work, again.** `ViewThatFits` header, symbol-only controls past AX1, the
+  240 pt board floor, the Okabe–Ito palette with a shape stamped on every unit
+  (`qa/05-accessible.png`), and the VoiceOver labels on everything drawn.
+- **The voice pools and the no-repeat guard** (`Voice.swift:61`).
+- **The teaching breath.** A vial that pulses and then stops forever, instead of a sentence.
 
 ## Fix, in this order
 
-1. **Write DESIGN.md, then put the brand on — nothing else matters until this is done.**
-   `tells.mjs` FAILs `no-direction` and `kit-default-brand`, which is a fail on its own. Take
-   the direction that already exists in `design/mock-1-play.png`: an ink-blue tide pool at
-   dusk (`#0C2430` → `#123340`), a mint that lights things (`#5FE3C0`), a lantern amber
-   (`#E8A33D`), a coral (`#F4734A`) and a pale sand for type. Name them in `AppBrand.brand`,
-   apply `.brand(AppBrand.brand)` at the root of `Tidepour.swift`, then delete every one of
-   the seven `Color(.systemGroupedBackground)` / `secondarySystemGroupedBackground` /
-   `tertiarySystemGroupedBackground` calls listed above and replace them with
-   `.brandBackground(drift: true)` on the three screens and `.brandSurface()` on the cards.
-   Dark mode gets its own values — deeper water, not black. *Next capture:* `qa/01-play.png`
-   and `dark-01-play.png` are two different underwater blues, and neither has a white card on
-   it.
+1. **Make the arc visible — it is the pour, and the film does not have it.** Ten frames at 0.1 s
+   in `qa/design/moment-pour.png` and not one shows a stream between two mouths; the tipped vial
+   hovers in the gap between rows with nothing leaving it. `lift(for:)` (`BoardView.swift:193`)
+   carries the source only 34 % of the way and up `unit * 0.62`, so the mouth never arrives over
+   the receiving rim and the whole span has to be crossed in `pourDuration` = 0.24 s
+   (`Palette.swift:124`). Take the travel to 0.62, the rise to `unit * 1.1`, and the arc to 0.34 s
+   (0.5 s in calm mode). *Next capture:* at least three of the ten `moment-pour` frames carry the
+   quadratic with its glow, and the tipped mouth is above the destination, not between the rows.
 
-2. **Build the pour. There is currently no pour.** `GameModel.pour` swaps the board in one
-   frame and `BoardStyle.pourDuration` is dead code. In `TubeView`/`BoardView`: anticipation —
-   the selected tube lifts and tilts with `Motion.snappy` (replace the `.easeOut(0.16)` at
-   `TubeView.swift:64`); action — the source tips toward the destination and a liquid arc
-   draws from its mouth over `style.pourDuration`; follow-through — the receiving level rises
-   and overshoots with `Motion.bouncy`, the surface wobbles, `Haptics.soft()` on the tip and
-   `Haptics.rigid()` on the land, `Tones.shared.play(.step(n))` climbing the scale as a tube
-   fills. A tube that completes gets `Haptics.impact(.medium)`, a small burst and a held glow.
-   Everything looping checks `Motion.isStill`. Add `-demo pour` and `-demo win` to
-   `LaunchOptions.swift` and a `moments` block to `qa.json` so this is filmable. *Next
-   capture:* `qa/design/moment-pour.png` exists and its frames differ — tilt, arc, splash,
-   settle.
+2. **Give the paywall and onboarding the keeper's mouth — the strings are the kit's, so fix them
+   in the kit.** `FactoryKit/Sources/FactoryKit/PaywallView.swift:61` hardcodes "Unlock everything
+   in \(config.name)." and `:161` returns "Continue"; `OnboardingView.swift:61` is "Continue" /
+   "Get started". Add `subhead: String? = nil` and `cta: String? = nil` to both `PaywallView`
+   inits and `nextTitle:` / `finishTitle:` to `OnboardingView`, defaulting to today's strings so
+   Quizday is untouched, then pass Tidepour's: subhead "The shelf runs further out than you can
+   see.", CTA **Open the shore**, onboarding **Keep going** / **Walk down**. *Next capture:* the
+   word "Continue" appears in neither `06-paywall.png` nor `07-first.png`.
 
-3. **Replace the win sheet with a moment.** Delete the `.sheet` +
-   `.presentationDetents([.medium])` at `PlayView.swift:46–55` and the `checkmark.seal.fill`
-   at `PlayView.swift:283`. Full-screen, on the brand canvas, over about 1.5 s: the finished
-   rack of tubes rises into frame and lights one by one (`.popIn(delay:)` staggered 0.06 s),
-   the move count runs up with `CountUp(to: result.moves, onTick:)` in `.brandDisplay(size:
-   96)` above a small "POURS", `.confetti(trigger:power:)` at a power that scales with the
-   tier — under par loudest, par next, over par a warm glow only — `Haptics.celebrate()` and
-   `Tones.shared.play(.fanfare)`. Buttons say "Take the next one" and "Pour it again", as
-   `design/mock-2-win.png` already has them. *Next capture:*
-   `qa/design/moment-win.png` shows a full-bleed win with a hero number, not a half-height
-   sheet.
+3. **Put a shore on the Shore.** `qa/04-shore.png` is forty vials five across under one chart mark,
+   with the unlock card and the three gated toggles far below the fold (`PacksView.swift:29–42`);
+   it reads as a swatch wall, and it is the one screen with no hierarchy in it. Head it with
+   `Image("OpenWater")` on a waterline, then band the shelf in tens with a chart mark per band —
+   `RACKS 1–10 · ALL LIT`, `RACKS 11–20 · 7 LIT` — so the eye reads progress the way the fronds
+   read it on the board. *Next capture:* `04-shore.png` has a horizon and at least two band marks
+   above the fold, and no run of more than ten vials unbroken.
 
-4. **Cut the pitch out of the product and write a voice for what is left.** Delete the copy at
-   `StreakView.swift:80` and `StreakView.swift:22`, the second sentence at `PacksView.swift:45`
-   ("There is no subscription…"), the footer at `RootView.swift:114`, and onboarding page
-   three (`AppInfo.swift:32`) — the paywall at `AppInfo.swift:44` is the one place allowed to
-   say it, and it already does. Then give the app a keeper-of-the-pool voice: at least six
-   pooled clear lines ("The rack is clean.", "Every light found its glass.", "Shortest line
-   there was — 13 pours.") and six near-miss lines, so the tenth win does not read like the
-   first. Buttons say what happens: "Pour it", "Take the next one", not "Continue". *Next
-   capture:* no screenshot contains the words "no coins" or "nothing runs out" outside the
-   paywall.
+4. **Fix the win at accessibility sizes.** On `ax-01-win.png` "POURS" sits across the ring's stroke
+   because the `VStack` of mark plus 96 pt number outgrows the fixed `frame(height: 210)`
+   (`WinView.swift:105–115`), and the rack and all three buttons are below the fold. Let the ring
+   size from the content (`overlay` a `Circle().strokeBorder` on the `VStack` with padding instead
+   of a fixed frame), and past AX2 drop the ring and the rail entirely so the praise line, the rack
+   and **Take the next one** are on screen. *Next capture:* a new `ax-01-win.png` where no type
+   touches the ring and the primary button is visible without scrolling.
 
-5. **Make the first minute a promise.** Render `design/art/*.svg` through
-   `node tools/design/art.mjs` into the asset catalog — `Assets.xcassets` currently holds
-   nothing but `AccentColor` and `AppIcon` — and switch `AppInfo.onboarding` to
-   `OnboardingPage(title:subtitle:art:)` with `rack-at-dusk` and `charted-line`, as the two
-   pages that are left after fix 4. Ship the icon that was actually drawn: copy
-   `design/icon-1024.png` (the lit vial in the pool) over
-   `ios/App/Assets.xcassets/AppIcon.appiconset/icon-1024.png`. Then delete
-   `PlayView.swift:123` — instead, pulse the tube the verified solution wants first and let
-   the pulse stop after the first successful pour. *Next capture:* onboarding shows a drawing,
-   the board carries no instruction sentence, and the icon is a vial.
+5. **Answer the finger, not just the tap.** Vials are tapped through `.onTapGesture`
+   (`BoardView.swift:160`), so there is no press state under the thumb — DESIGN.md line 114 asks
+   for `.buttonStyle(.pressable)` and `Haptics.soft()` on finger-down, and the shelf chips already
+   have it (`PacksView.swift:85`). Wrap the vial in a `Button` with `.buttonStyle(.pressable)`.
+   *Next capture:* not visible in a still — verify on the simulator that a held vial dips and
+   answers before it is selected.
 
-6. **Give Progress and Packs the world.** `qa/02-progress.png` is the weakest screen: replace
-   `StatTile` (`StreakView.swift:89`) and its three identical tiles with one hero — the streak
-   number at `.brandDisplay(size: 110)` standing in the pool with the longest run and days
-   played as small type beneath it — and redraw the calendar as filled tide-pool dots on the
-   canvas rather than blue rounded squares on white. In `PacksView`, the 1–240 grid of solid
-   accent squares (`PacksView.swift:129`) becomes vials that are full when cleared and empty
-   when not, so the ladder reads as a shelf. Both screens end with enough bottom padding that
-   the last row is not sitting half-hidden under the tab bar the way "Share today's result"
-   and level 6–10 are today. *Next capture:* neither screen has a white rounded card or a blue
-   square on it.
+6. **Retire the seal glyph.** `checkmark.seal.fill` is still the "Charted" badge
+   (`PlayView.swift:129`) and still marks the day's result (`StreakView.swift:93`). It is a system
+   verification mark in a world of glass and water, and it is the last thing on screen that could
+   belong to any app. Draw the mark instead: a small charted-line glyph — the hairline arc from
+   `design/art/charted-line.svg` at 14 pt — in mint. *Next capture:* no `seal` symbol in
+   `02-play.png` or `03-chart.png`.
 
-7. **Design dark mode, and share an image.** `dark-01` through `dark-05` are the light
-   screens with black substituted — same blue, same layout, no second voice. Give the dark
-   palette its own canvas (deep water with a lantern glow, not `#000`), a lighter mint for
-   type, and dimmer liquid so the tubes glow rather than blare. Then replace
-   `ShareLink(item: shareLine)` at `StreakView.swift:33` with `ShareImage.render { … }` over
-   `ShareLink(item:preview:)`: the rack of cleared vials, the day, the pours against par, the
-   streak, on the brand canvas. *Next capture:* `dark-02-progress.png` is blue-black with a
-   glow, and a rendered share card exists.
+7. **Let light mode be lighter.** Measured across all seven screens the two appearances differ by
+   about one step of depth (`#14394A` against `#0A2732`), so the app effectively has one look and
+   a user who chose Light gets a slightly shallower dark. DESIGN.md promised "two different
+   underwater blues"; deliver that by taking the light canvas up toward dusk-in-the-shallows
+   (`#1B4A5C` → `#22596B` at the top of the mesh) and warming the light lantern, keeping dark
+   exactly as it is. *Next capture:* `01-win.png` and `dark-01-win.png` are two visibly different
+   times of day rather than two exposures of one.
 
 ## Against the mocks
 
-- **`design/mock-1-play.png` → `qa/01-play.png`.** The mock is a dusk tide pool: a dark
-  gradient canvas, glass vials with specular highlights and colored light inside them, kelp
-  fronds under the finished tubes, a serif "7" over a progress rail labelled POURED / THE LINE
-  · 13, a hand-lettered "the charted line" arc, and buttons reading Back / Show me / Refill.
-  The build is a gray sheet of paper with flat crayon rectangles, `4 moves  par 12` at
-  headline size, a blue hint sentence, and Undo / Hint / Restart. Every single element of the
-  mock is flatter in the build; the canvas, the glass, the kelp, the display numeral and the
-  rail are absent entirely.
-- **`design/mock-2-win.png` → the `.medium` sheet.** The mock is full screen: a sun on the
-  horizon, "13" set huge in New York inside a thin ring over POURS, "You found the shortest
-  line.", a start-to-the-line rail, the six cleared vials standing in the pool with fronds
-  under each, then "Take the next one" / "Pour it again" / "Share the rack". The build is a
-  half-height sheet with a 48 pt checkmark seal, "Level cleared", "18 moves" and "Next level".
-  This is the largest gap in the app.
-- **`design/mock-3-first.png` → onboarding.** The mock is a warm sand-to-sea wash with a drawn
-  illustration of three vials being decanted at the shoreline, under "Every light wants its
-  own glass." in a serif display face. The build is `drop.fill` over "Pour until the colors
-  separate" on the kit's default background, and adds a third page that recites the pricing
-  model.
-- **`design/icon.svg` → the shipped icon.** The drawn icon — a lit vial standing in a ringed
-  pool, being poured into from off-frame — is in `design/icon-1024.png` and was not shipped;
-  the binary carries three flat rectangles on a navy gradient.
+- **`design/mock-1-play.png` → `qa/02-play.png`.** Close. The canvas, the glass, the serif count,
+  the `POURED / THE LINE · 12` rail with a lantern tick, the ring on the flat, the fronds and the
+  Back / Show me / Refill buttons all arrived. Two things did not: the mock's hand-lettered
+  "the charted line" arcs *over the board* from the source vial to the destination, where the build
+  demotes it to a small italic label under the left end of the rail — the hint's actual arrows are
+  good, but the drawn line is the more charming of the two; and the mock's vial in flight is
+  tipped over the receiving mouth with a visible stream, which is fix 1.
+- **`design/mock-2-win.png` → `qa/01-win.png`.** The build is at least as good as the mock. The sun,
+  the ring, the 96 pt serif, the praise, the START / THE LINE rail, the lit rack with fronds and
+  the three buttons are all there, and the build adds tiered confetti the mock did not draw. The
+  only loss is the mock's water line across the screen separating the score from the rack — the
+  build has no horizon between them, so the rack floats a little.
+- **`design/mock-3-first.png` → `qa/07-first.png`.** The art, the serif headline and the subtitle
+  landed, and the build is better for dropping the mock's warm sand wash in favour of the pool. The
+  gap is the button: the mock's "Continue" was copied straight through when it should have been the
+  first thing rewritten (fix 2).
+- **`design/icon.svg` → the shipped icon.** Shipped, and it is the drawing: a lit vial standing in
+  a ringed pool. One note for the next pass — the incoming pour is a detached orange ribbon in the
+  top corner that never reaches the glass, so at 60 pt it reads as a swoosh rather than as
+  something being poured. Extend the stream to the rim.
