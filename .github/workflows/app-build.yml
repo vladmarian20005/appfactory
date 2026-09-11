@@ -11,8 +11,9 @@ name: app-build
 
 on:
   # A push to build/<slug> starts a build of that slug from main. The branch is a signal,
-  # not a source: the routine that plans the week has git but no gh, and a branch push is
-  # the one dispatch mechanism it is proven to have (the scout has used scout-run daily).
+  # not a source: the routines have git but no gh, and a branch push is the one dispatch
+  # mechanism they are proven to have (the scout has used scout-run daily). The push only
+  # runs the relay job below, which re-dispatches this workflow; see there for why.
   push:
     branches: ["build/**"]
   workflow_dispatch:
@@ -55,24 +56,49 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # claude-code-action refuses a `push` event outright ("Unsupported event type: push"), so a
+  # trigger branch cannot run the agent itself — the first content/<slug> push died that way
+  # at the agent step. It becomes a dispatch of this same workflow on main instead, which the
+  # action accepts, and workflow_dispatch is one of the two events GITHUB_TOKEN may still
+  # fire. The dispatched run's actor is github-actions[bot], hence allowed_bots below.
+  relay:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch the build on main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          slug="${GITHUB_REF_NAME#build/}"
+          # Consume the signal so the next push to the same name fires again.
+          gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$GITHUB_REF_NAME" --silent || true
+          # Fail here, in seconds on Linux, rather than after a macOS runner has booted.
+          if ! gh api "repos/$GITHUB_REPOSITORY/contents/apps/$slug/SPEC.md?ref=main" --silent; then
+            echo "::error::apps/$slug/SPEC.md is not on main. Push the spec first, then the build/$slug trigger."
+            exit 1
+          fi
+          gh workflow run app-build.yml --repo "$GITHUB_REPOSITORY" --ref main -f slug="$slug" -f chain=true
+          echo "\`$GITHUB_REF_NAME\` → app-build dispatched for \`$slug\` on main." >> "$GITHUB_STEP_SUMMARY"
+
   build:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-26
     # A stuck agent on a macOS runner is the most expensive failure mode available, so the
     # job is capped even though the turn limit should stop it first.
     timeout-minutes: 180
     env:
-      # Resolved in Preflight when started from a trigger branch.
       SLUG: ${{ inputs.slug }}
       DISPLAY_NAME: ${{ inputs.display_name }}
       MAX_TURNS: ${{ inputs.max_turns || '200' }}
       MODEL: ${{ inputs.model || 'claude-opus-5' }}
-      CHAIN: ${{ github.event_name == 'push' || inputs.chain }}
-      # Where the work lands. From a trigger branch that is main, never the trigger itself.
-      FACTORY_BRANCH: ${{ github.event_name == 'push' && 'main' || github.ref_name }}
+      CHAIN: ${{ inputs.chain }}
+      # Where the work lands: the branch this was dispatched on, main when the relay did it.
+      FACTORY_BRANCH: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'push' && 'main' || github.ref_name }}
           fetch-depth: 0
 
       - name: Preflight
@@ -80,13 +106,6 @@ jobs:
           HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
         run: |
           set -euo pipefail
-          if [ "${{ github.event_name }}" = "push" ]; then
-            SLUG="${GITHUB_REF_NAME#build/}"
-            echo "SLUG=$SLUG" >> "$GITHUB_ENV"
-            # Consume the signal so the next push to the same name fires again.
-            git push origin --delete "$GITHUB_REF_NAME" 2>/dev/null || true
-            echo "Started from trigger branch $GITHUB_REF_NAME → slug $SLUG, working on main"
-          fi
           if [ -z "${DISPLAY_NAME:-}" ] && [ -f "apps/$SLUG/SPEC.md" ]; then
             # The spec's title is the display name; the routine does not pass one.
             DISPLAY_NAME=$(sed -n 's/^# //p' "apps/$SLUG/SPEC.md" | head -1)
@@ -117,8 +136,8 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # The dispatcher routine runs this as the owner, but app-fix and re-runs arrive
-          # as github-actions[bot], which the action refuses by default.
+          # A build from a trigger branch is dispatched by the relay job, so it arrives as
+          # github-actions[bot], which the action refuses by default.
           allowed_bots: "github-actions"
           # Deliberately not "/new-app ...". A leading slash command is resolved before any
           # model call, and the action runs the SDK, which does not load .claude/skills

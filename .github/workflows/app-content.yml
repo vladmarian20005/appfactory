@@ -7,7 +7,9 @@ name: app-content
 # job to save nothing is not worth the handoff — macOS runners are free on a public repo.
 
 on:
-  # A push to content/<slug> runs this for that slug from main; see app-build.yml for why.
+  # A push to content/<slug> runs this for that slug from main, and publishes the landing
+  # page. The push only runs the relay job, which re-dispatches this workflow; see
+  # app-build.yml for both whys.
   push:
     branches: ["content/**"]
   workflow_dispatch:
@@ -25,22 +27,40 @@ on:
 permissions:
   contents: write
   id-token: write
+  # for the relay job to dispatch the real run
+  actions: write
 
 concurrency:
   group: app-content-${{ inputs.slug || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
+  # claude-code-action refuses a `push` event ("Unsupported event type: push"); see app-build.yml.
+  relay:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch the launch kit on main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          slug="${GITHUB_REF_NAME#content/}"
+          gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$GITHUB_REF_NAME" --silent || true
+          gh workflow run app-content.yml --repo "$GITHUB_REPOSITORY" --ref main -f slug="$slug" -f publish=true
+          echo "\`$GITHUB_REF_NAME\` → app-content dispatched for \`$slug\` on main." >> "$GITHUB_STEP_SUMMARY"
+
   content:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-26
     timeout-minutes: 120
     env:
       SLUG: ${{ inputs.slug }}
-      FACTORY_BRANCH: ${{ github.event_name == 'push' && 'main' || github.ref_name }}
+      FACTORY_BRANCH: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'push' && 'main' || github.ref_name }}
           fetch-depth: 0
 
       - name: Preflight
@@ -48,11 +68,6 @@ jobs:
           HAS_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
         run: |
           set -euo pipefail
-          if [ "${{ github.event_name }}" = "push" ]; then
-            SLUG="${GITHUB_REF_NAME#content/}"
-            echo "SLUG=$SLUG" >> "$GITHUB_ENV"
-            git push origin --delete "$GITHUB_REF_NAME" 2>/dev/null || true
-          fi
           if [ "$HAS_TOKEN" != "true" ]; then
             echo "::error::CLAUDE_CODE_OAUTH_TOKEN is not set. Generate one with 'claude setup-token' and add it: gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo ${{ github.repository }}"
             exit 1
@@ -116,7 +131,7 @@ jobs:
           git push origin "HEAD:${FACTORY_BRANCH}" || echo "::warning::push failed; the artifact has the work"
 
       - name: Publish the landing page
-        if: (github.event_name == 'push' || inputs.publish) && success()
+        if: inputs.publish && success()
         env:
           SITE_REPO_TOKEN: ${{ secrets.SITE_REPO_TOKEN }}
         run: |
