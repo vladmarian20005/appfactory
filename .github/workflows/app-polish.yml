@@ -52,8 +52,8 @@ concurrency:
 jobs:
   polish:
     runs-on: macos-26
-    # Direction ~35 minutes on an app that has none, critique ~15, a polish pass up to three
-    # hours at 180 turns, two verifies and a capture pass. Under GitHub's six-hour job limit,
+    # Direction ~30 minutes on an app that has none, critique ~5, a polish pass about two hours
+    # at 400 turns (the first ran 181 turns in 55 minutes), two verifies and a capture pass. Under GitHub's six-hour job limit,
     # with room: a job killed mid-polish never records the pass or dispatches the next judge.
     timeout-minutes: 330
     env:
@@ -179,7 +179,7 @@ jobs:
             Write apps/${{ env.SLUG }}/CRITIQUE.md and apps/${{ env.SLUG }}/design-score.json
             and nothing else. Do not commit.
           claude_args: >-
-            --max-turns 45
+            --max-turns 80
             --model ${{ env.MODEL }}
             --setting-sources project
             --allowedTools "Read,Write,Glob,Grep,Skill,TodoWrite,
@@ -280,7 +280,7 @@ jobs:
             Finish with .github/scripts/verify-app.sh ${{ env.SLUG }} passing and
             node tools/design/tells.mjs ${{ env.SLUG }} reporting no FAIL.
           claude_args: >-
-            --max-turns 180
+            --max-turns 400
             --model ${{ env.MODEL }}
             --setting-sources project
             --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,

@@ -33,7 +33,7 @@ on:
         description: Turn cap for the agent
         required: false
         type: string
-        default: "260"
+        default: "400"
       model:
         description: Model to build with
         required: false
@@ -94,7 +94,7 @@ jobs:
     env:
       SLUG: ${{ inputs.slug }}
       DISPLAY_NAME: ${{ inputs.display_name }}
-      MAX_TURNS: ${{ inputs.max_turns || '260' }}
+      MAX_TURNS: ${{ inputs.max_turns || '400' }}
       MODEL: ${{ inputs.model || 'claude-opus-5' }}
       CHAIN: ${{ inputs.chain }}
       # Where the work lands: the branch this was dispatched on, main when the relay did it.
