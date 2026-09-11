@@ -27,8 +27,8 @@ struct PacksView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 if !store.isUnlocked { unlockCard }
-                ladder
                 options
+                ladder
             }
             .padding(FactoryTheme.padding)
         }
@@ -41,7 +41,7 @@ struct PacksView: View {
             Text("Unlock Tidepour")
                 .font(.headline)
             Text("The first \(AppInfo.freeLevelCount) levels and the daily puzzle are free forever. "
-                 + "One payment opens the rest of the ladder, calm mode and the color-blind palettes. "
+                 + "One payment opens the rest of the ladder, calm mode and the color-blind palette. "
                  + "There is no subscription, no currency and no advertising in this app.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)

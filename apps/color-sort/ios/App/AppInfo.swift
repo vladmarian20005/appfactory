@@ -38,7 +38,7 @@ enum AppInfo {
     static let paywallBullets = [
         "The full generated ladder, past level 60",
         "Calm mode: no move counter, muted colors, slower pours",
-        "Color-blind palettes with a shape on every unit",
+        "A color-blind palette, with a shape on every unit",
         "One payment. No subscription, no coins, no ads.",
     ]
     static let paywallPromise = "The daily puzzle, the first 60 levels, your streak, undo, restart and hints stay free forever. This buys more puzzle, never access."

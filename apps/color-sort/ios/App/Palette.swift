@@ -11,6 +11,13 @@ struct LiquidColor: Sendable {
 
     var color: Color { Color(.sRGB, red: red, green: green, blue: blue, opacity: 1) }
 
+    /// White on a dark liquid, near-black on a pale one. A white shape on the color-blind
+    /// palette's yellow is invisible, which defeats the point of stamping shapes at all.
+    var markerColor: Color {
+        let luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+        return luminance > 0.62 ? Color.black.opacity(0.6) : Color.white.opacity(0.92)
+    }
+
     /// Calm mode pulls every color a third of the way to a soft grey. The board stays
     /// readable, the screen stops shouting.
     var muted: Color {
@@ -77,6 +84,10 @@ struct BoardStyle: Equatable {
 
     func symbol(_ index: Int) -> String? {
         markers ? set[index % set.count].symbol : nil
+    }
+
+    func markerColor(_ index: Int) -> Color {
+        set[index % set.count].markerColor
     }
 
     /// Calm mode slows the pour and drops the move counter; both are settings, not levels.

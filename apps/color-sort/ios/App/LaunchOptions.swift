@@ -31,6 +31,11 @@ enum LaunchOptions {
     /// because it solved the board before serving it.
     static var hint: Bool { args.contains("-hint") }
 
+    /// `-calm` and `-accessible` turn on the two unlock settings, so a capture can show what
+    /// the unlock buys. Both still need `-pro` to take effect, exactly as a purchase would.
+    static var calm: Bool { args.contains("-calm") }
+    static var accessiblePalette: Bool { args.contains("-accessible") }
+
     private static func value(for flag: String) -> String? {
         guard let i = args.firstIndex(of: flag), args.index(after: i) < args.endIndex else { return nil }
         let next = args[args.index(after: i)]

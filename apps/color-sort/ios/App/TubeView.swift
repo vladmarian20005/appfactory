@@ -79,7 +79,7 @@ struct TubeView: View {
                 if let symbol = style.symbol(color) {
                     Image(systemName: symbol)
                         .font(.caption.weight(.bold))
-                        .foregroundStyle(.white.opacity(0.9))
+                        .foregroundStyle(style.markerColor(color))
                 }
             }
             .overlay(alignment: .top) {

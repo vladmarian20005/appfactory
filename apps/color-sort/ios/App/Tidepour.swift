@@ -60,13 +60,19 @@ struct Tidepour: App {
             defaults.removeObject(forKey: "tidepour.highestCleared")
         }
 
+        if LaunchOptions.calm { defaults.set(true, forKey: "tidepour.calmMode") }
+        if LaunchOptions.accessiblePalette {
+            defaults.set(true, forKey: "tidepour.accessiblePalette")
+            defaults.set(true, forKey: "tidepour.shapeMarkers")
+        }
+
         guard LaunchOptions.sampleData else { return }
         guard ((try? context.fetch(FetchDescriptor<LevelResult>())) ?? []).isEmpty else { return }
 
         let calendar = Calendar.current
-        // Eighteen days back, with day 11 missing: streaks break, and a calendar that never
-        // shows one is a calendar nobody believes.
-        for offset in 0..<18 where offset != 11 {
+        // Eighteen days back with two missing. Streaks break, and a seeded calendar with no
+        // break in it is a calendar nobody believes.
+        for offset in 0..<18 where offset != 9 && offset != 10 {
             guard let date = calendar.date(byAdding: .day, value: -offset, to: .now) else { continue }
             let key = DayKey.key(for: date)
             let par = 18 + offset % 5
@@ -78,7 +84,8 @@ struct Tidepour: App {
                                        clearedAt: date))
         }
         for level in 1...27 {
-            guard let date = calendar.date(byAdding: .day, value: -(level / 2), to: .now) else { continue }
+            // Kept inside the last week so the levels do not paper over the gap above.
+            guard let date = calendar.date(byAdding: .day, value: -(level % 6), to: .now) else { continue }
             let par = LevelGenerator.parBar(forLevel: level,
                                             colors: LevelGenerator.colorCount(forLevel: level))
             context.insert(LevelResult(key: "level.\(level)",

@@ -1,0 +1,31 @@
+{
+  "scheme": "Tidepour",
+  "bundleId": "com.starhiveconcept.colorsort",
+  "screens": [
+    {
+      "name": "01-play",
+      "args": ["-onboarded", "-reset", "-level", "12", "-moves", "4", "-hint"],
+      "note": "The board, part-way through, with the hint armed. The promise made visible: the level was solved before it was served, and the arrows are the next move of that solution."
+    },
+    {
+      "name": "02-progress",
+      "args": ["-onboarded", "-sampleData", "-screen", "progress"],
+      "note": "The daily puzzle everyone gets, the streak it feeds and the month behind it."
+    },
+    {
+      "name": "03-packs",
+      "args": ["-onboarded", "-sampleData", "-screen", "packs"],
+      "note": "The unlock, the three playing-style settings it opens, and the level ladder."
+    },
+    {
+      "name": "04-accessible",
+      "args": ["-onboarded", "-reset", "-pro", "-accessible", "-level", "34", "-moves", "5"],
+      "note": "The color-blind palette with a shape on every unit. Needs -pro, because it is part of the unlock."
+    },
+    {
+      "name": "05-paywall",
+      "args": ["-onboarded", "-sampleData", "-fakeProducts", "-screen", "paywall"],
+      "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch, so the real product is unavailable and the button would sit disabled."
+    }
+  ]
+}
