@@ -96,6 +96,8 @@ struct StatTile: View {
             Text(value)
                 .scaledFont(size: 30, weight: .bold, design: .rounded, relativeTo: .title)
                 .monospacedDigit()
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
             Text(caption)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -103,6 +105,7 @@ struct StatTile: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .background(Color(.secondarySystemGroupedBackground),
                     in: RoundedRectangle(cornerRadius: FactoryTheme.cornerRadius, style: .continuous))
         .accessibilityElement(children: .combine)
@@ -113,6 +116,10 @@ struct StatTile: View {
 struct CalendarMonthView: View {
     let playedDays: Set<String>
     var reference: Date = .now
+
+    /// Grows with the text size, so the day numbers still fit their squares — and capped
+    /// below, because seven columns of a month cannot grow without bound on a phone.
+    @ScaledMetric(relativeTo: .caption) private var cellHeight: CGFloat = 30
 
     private var calendar: Calendar { .current }
 
@@ -154,10 +161,11 @@ struct CalendarMonthView: View {
                     if let date {
                         day(date)
                     } else {
-                        Color.clear.frame(height: 30)
+                        Color.clear.frame(height: cellHeight)
                     }
                 }
             }
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
@@ -174,9 +182,11 @@ struct CalendarMonthView: View {
         return Text("\(calendar.component(.day, from: date))")
             .font(.caption)
             .monospacedDigit()
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
             .foregroundStyle(played ? Color.white : Color.primary)
             .frame(maxWidth: .infinity)
-            .frame(height: 30)
+            .frame(height: cellHeight)
             .background(played ? Color.accentColor : Color(.tertiarySystemGroupedBackground),
                         in: RoundedRectangle(cornerRadius: 8, style: .continuous))
             .overlay {

@@ -33,7 +33,11 @@ struct RootView: View {
             .tag(Tab.packs)
 
             NavigationStack {
-                SettingsView(store: store, config: AppInfo.config, onUpgrade: { showPaywall = true }) {
+                SettingsView(store: store,
+                             config: AppInfo.config,
+                             onUpgrade: { showPaywall = true },
+                             upgradeTitle: "Unlock Tidepour",
+                             activeTitle: "Tidepour is unlocked") {
                     TidepourSettings()
                 }
             }

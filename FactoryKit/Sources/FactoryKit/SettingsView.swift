@@ -6,14 +6,25 @@ public struct SettingsView<Extra: View>: View {
     @ObservedObject var store: Store
     let config: AppConfig
     let onUpgrade: () -> Void
+    /// What the paid tier is called in this app. An app whose purchase is a one-time unlock
+    /// must not offer to "Upgrade to Pro" — the row would name something it does not sell.
+    let upgradeTitle: String
+    let activeTitle: String
     let extra: Extra
 
     @Environment(\.requestReview) private var requestReview
 
-    public init(store: Store, config: AppConfig, onUpgrade: @escaping () -> Void, @ViewBuilder extra: () -> Extra) {
+    public init(store: Store,
+                config: AppConfig,
+                onUpgrade: @escaping () -> Void,
+                upgradeTitle: String = "Upgrade to Pro",
+                activeTitle: String = "Pro is active",
+                @ViewBuilder extra: () -> Extra) {
         self.store = store
         self.config = config
         self.onUpgrade = onUpgrade
+        self.upgradeTitle = upgradeTitle
+        self.activeTitle = activeTitle
         self.extra = extra()
     }
 
@@ -21,9 +32,9 @@ public struct SettingsView<Extra: View>: View {
         List {
             Section {
                 if store.isPro {
-                    Label("Pro is active", systemImage: "checkmark.seal.fill").foregroundStyle(Color.accentColor)
+                    Label(activeTitle, systemImage: "checkmark.seal.fill").foregroundStyle(Color.accentColor)
                 } else {
-                    Button { onUpgrade() } label: { Label("Upgrade to Pro", systemImage: "sparkles") }
+                    Button { onUpgrade() } label: { Label(upgradeTitle, systemImage: "sparkles") }
                 }
                 Button("Restore purchases") { Task { await store.restore() } }
             }
@@ -47,7 +58,15 @@ public struct SettingsView<Extra: View>: View {
 }
 
 public extension SettingsView where Extra == EmptyView {
-    init(store: Store, config: AppConfig, onUpgrade: @escaping () -> Void) {
-        self.init(store: store, config: config, onUpgrade: onUpgrade) { EmptyView() }
+    init(store: Store,
+         config: AppConfig,
+         onUpgrade: @escaping () -> Void,
+         upgradeTitle: String = "Upgrade to Pro",
+         activeTitle: String = "Pro is active") {
+        self.init(store: store,
+                  config: config,
+                  onUpgrade: onUpgrade,
+                  upgradeTitle: upgradeTitle,
+                  activeTitle: activeTitle) { EmptyView() }
     }
 }

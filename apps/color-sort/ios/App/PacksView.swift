@@ -121,6 +121,10 @@ struct LevelChip: View {
     let isCleared: Bool
     let isCurrent: Bool
 
+    /// Five columns of level numbers on a phone: the square grows with the text size, but
+    /// only so far, and a three-digit level shrinks to fit rather than clipping.
+    @ScaledMetric(relativeTo: .subheadline) private var height: CGFloat = 44
+
     private var background: Color {
         isCleared ? .accentColor : Color(.tertiarySystemGroupedBackground)
     }
@@ -129,9 +133,12 @@ struct LevelChip: View {
         Text("\(level)")
             .font(.subheadline)
             .monospacedDigit()
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .foregroundStyle(isCleared ? Color.white : Color.primary)
             .frame(maxWidth: .infinity)
-            .frame(height: 44)
+            .frame(height: height)
             .background(background, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay {
                 if isCurrent {

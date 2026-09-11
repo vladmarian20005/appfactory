@@ -35,6 +35,8 @@ struct PlayView: View {
                           hint: model.hint) { model.tap($0) }
                     .padding(.horizontal, FactoryTheme.padding)
                     .padding(.vertical, 8)
+                    .frame(minHeight: 240)
+                    .layoutPriority(1)
             }
             controls
         }
@@ -56,13 +58,34 @@ struct PlayView: View {
 
     // MARK: - Pieces
 
+    /// Side by side while they fit, stacked when the text size says they do not. At the
+    /// accessibility sizes the old single row truncated to "4 m… par… So-luti…", which is
+    /// worse than no counter at all.
     private var header: some View {
-        HStack(alignment: .firstTextBaseline) {
-            if style.calm {
-                Label("Calm mode", systemImage: "leaf.fill")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            } else {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                counters
+                verifiedBadge
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                counters
+                verifiedBadge
+            }
+        }
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, FactoryTheme.padding)
+        .padding(.top, 4)
+    }
+
+    @ViewBuilder
+    private var counters: some View {
+        if style.calm {
+            Label("Calm mode", systemImage: "leaf.fill")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        } else {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text("\(model.moves) moves")
                     .font(.headline)
                     .monospacedDigit()
@@ -71,32 +94,37 @@ struct PlayView: View {
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
             }
-            Spacer()
-            Label("Solution verified", systemImage: "checkmark.seal.fill")
-                .font(.caption)
-                .foregroundStyle(Color.accentColor)
-                .accessibilityLabel("This level was solved before it was handed to you.")
         }
-        .padding(.horizontal, FactoryTheme.padding)
-        .padding(.top, 4)
+    }
+
+    private var verifiedBadge: some View {
+        Label("Solution verified", systemImage: "checkmark.seal.fill")
+            .font(.caption)
+            .foregroundStyle(Color.accentColor)
+            .accessibilityLabel("This level was solved before it was handed to you.")
     }
 
     /// One line under the header, only until the first pour.
     @ViewBuilder
     private var instruction: some View {
         if let hint = model.hint {
+            // Capped and clipped: the board is the screen, and a hint that pushes it off is
+            // not a hint. The arrows on the tubes carry the same instruction.
             Label("Pour the \(hintColorName(hint)) out of the tube marked up, into the one marked down — the next move of the solution Tidepour already checked.",
                   systemImage: "lightbulb.fill")
                 .font(.footnote)
                 .foregroundStyle(Color.accentColor)
+                .lineLimit(3)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                 .padding(.horizontal, FactoryTheme.padding)
                 .padding(.top, 2)
-                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
         } else if model.moves == 0 && !model.isDealing {
             Text("Tap a tube, then tap the one to pour it into.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
+                .lineLimit(2)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                 .padding(.horizontal, FactoryTheme.padding)
                 .padding(.top, 2)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -129,33 +157,18 @@ struct PlayView: View {
 
     private var controls: some View {
         HStack(spacing: 12) {
-            Button {
-                model.undo()
-            } label: {
-                Label("Undo", systemImage: "arrow.uturn.backward")
-                    .frame(maxWidth: .infinity)
-            }
-            .disabled(!model.canUndo)
-
-            Button {
-                model.requestHint()
-            } label: {
-                Label(model.isThinking ? "Solving" : "Hint", systemImage: "lightbulb.fill")
-                    .frame(maxWidth: .infinity)
-            }
-            .disabled(model.isSolved || model.isDealing)
-
-            Button {
-                model.restart()
-            } label: {
-                Label("Restart", systemImage: "arrow.counterclockwise")
-                    .frame(maxWidth: .infinity)
-            }
-            .disabled(model.moves == 0)
+            ControlButton(title: "Undo", symbol: "arrow.uturn.backward", action: model.undo)
+                .disabled(!model.canUndo)
+            ControlButton(title: model.isThinking ? "Solving" : "Hint",
+                          symbol: "lightbulb.fill",
+                          action: model.requestHint)
+                .disabled(model.isSolved || model.isDealing)
+            ControlButton(title: "Restart", symbol: "arrow.counterclockwise", action: model.restart)
+                .disabled(model.moves == 0)
         }
         .buttonStyle(.bordered)
         .controlSize(.large)
-        .labelStyle(.titleAndIcon)
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .padding(FactoryTheme.padding)
     }
 
@@ -226,6 +239,30 @@ struct PlayView: View {
         }
         currentLevel = next
         model.open(.numbered(next))
+    }
+}
+
+/// Undo, Hint and Restart. Three words do not fit across a phone at an accessibility text
+/// size, so past that size the button keeps the symbol and hands the word to VoiceOver.
+struct ControlButton: View {
+    let title: String
+    let symbol: String
+    let action: () -> Void
+
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    var body: some View {
+        Button(action: action) {
+            Group {
+                if typeSize.isAccessibilitySize {
+                    Image(systemName: symbol)
+                } else {
+                    Label(title, systemImage: symbol)
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .accessibilityLabel(title)
     }
 }
 
