@@ -13,6 +13,12 @@
       "sha": "6bc9a5b4cbaadc16339fe5fd35278055162df1b0",
       "at": "2026-09-11T15:21:41.070Z",
       "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34611309239"
+    },
+    "aso": {
+      "status": "ok",
+      "sha": "808040ff5ef2512289a119e810a7b1827ebc4b19",
+      "at": "2026-09-11T15:32:09.768Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34615664026"
     }
   }
 }
