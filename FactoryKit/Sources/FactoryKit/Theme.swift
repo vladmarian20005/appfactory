@@ -39,30 +39,44 @@ public extension View {
 }
 
 public struct FactoryCard: ViewModifier {
+    @Environment(\.brand) private var brand
+
     public func body(content: Content) -> some View {
         content
             .padding(FactoryTheme.padding)
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: FactoryTheme.cornerRadius, style: .continuous))
+            .background(brand.palette.surface, in: RoundedRectangle(cornerRadius: brand.corner, style: .continuous))
     }
 }
 
 public extension View {
-    /// Grouped-background card with the kit's radius and padding.
+    /// A card in the brand's surface color — the system's grouped white until the app sets a
+    /// brand. New code wants `brandSurface()`, which also carries depth.
     func factoryCard() -> some View { modifier(FactoryCard()) }
 }
 
+/// A full-width filled button in the brand's accent. New code wants `.brandProminent()`, the
+/// system's own prominent style, which the iOS 26 SDK renders as Liquid Glass.
 public struct PrimaryButtonStyle: ButtonStyle {
     public init() {}
     public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.headline)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .foregroundStyle(.white)
-            .opacity(configuration.isPressed ? 0.85 : 1)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
-            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+        PrimaryButton(configuration: configuration)
+    }
+
+    private struct PrimaryButton: View {
+        let configuration: ButtonStyleConfiguration
+        @Environment(\.brand) private var brand
+
+        var body: some View {
+            configuration.label
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(brand.palette.accent, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .foregroundStyle(brand.palette.onAccent)
+                .opacity(configuration.isPressed ? 0.88 : 1)
+                .scaleEffect(configuration.isPressed ? 0.97 : 1)
+                .animation(Motion.isStill ? nil : Motion.pop, value: configuration.isPressed)
+        }
     }
 }
 

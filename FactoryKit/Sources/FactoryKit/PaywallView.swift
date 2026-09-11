@@ -1,16 +1,21 @@
 import StoreKit
 import SwiftUI
 
-/// Subscription paywall driven by `Store`. Present as a sheet; call `onDone` when the user
-/// buys or closes.
+/// Subscription or one-time-unlock paywall driven by `Store`, on the brand's canvas. Present as
+/// a sheet; call `onDone` when the user buys or closes.
+///
+/// Give it a `hero` — the app's own art, not a symbol — so the moment someone considers paying
+/// looks like the app they are paying for.
 public struct PaywallView: View {
     @ObservedObject var store: Store
     let config: AppConfig
     let headline: String
     let bullets: [String]
     let promise: String?
+    let hero: AnyView?
     let onDone: () -> Void
 
+    @Environment(\.brand) private var brand
     @State private var selected: PaywallOffer?
     @State private var busy = false
     @State private var message: String?
@@ -21,6 +26,18 @@ public struct PaywallView: View {
         self.headline = headline
         self.bullets = bullets
         self.promise = promise
+        self.hero = nil
+        self.onDone = onDone
+    }
+
+    public init<Hero: View>(store: Store, config: AppConfig, headline: String, bullets: [String], promise: String? = nil,
+                            @ViewBuilder hero: () -> Hero, onDone: @escaping () -> Void) {
+        self.store = store
+        self.config = config
+        self.headline = headline
+        self.bullets = bullets
+        self.promise = promise
+        self.hero = AnyView(hero())
         self.onDone = onDone
     }
 
@@ -28,25 +45,43 @@ public struct PaywallView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    if let hero {
+                        hero
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 190)
+                            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+                            .popIn()
+                    }
+
                     VStack(alignment: .leading, spacing: 8) {
                         Text(headline)
-                            .font(.largeTitle.bold())
+                            .brandFont(.largeTitle)
+                            .foregroundStyle(brand.palette.ink)
+                            .fixedSize(horizontal: false, vertical: true)
                         Text("Unlock everything in \(config.name).")
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(brand.palette.inkSoft)
                     }
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(bullets, id: \.self) { b in
-                            Label(b, systemImage: "checkmark.circle.fill")
-                                .symbolRenderingMode(.hierarchical)
-                                .foregroundStyle(.primary)
+
+                    VStack(alignment: .leading, spacing: 14) {
+                        ForEach(Array(bullets.enumerated()), id: \.offset) { i, b in
+                            Label {
+                                Text(b)
+                                    .foregroundStyle(brand.palette.ink)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            } icon: {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(brand.palette.accent)
+                            }
+                            .popIn(delay: 0.06 * Double(i + 1))
                         }
                     }
-                    .factoryCard()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .brandSurface()
 
                     if let promise {
                         Label(promise, systemImage: "hand.raised.fill")
                             .font(.footnote)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(brand.palette.inkSoft)
                     }
 
                     if store.isLoading && store.offers.isEmpty {
@@ -54,7 +89,7 @@ public struct PaywallView: View {
                     } else if store.offers.isEmpty {
                         Text(store.lastError ?? "Products are not available right now.")
                             .font(.footnote)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(brand.palette.inkSoft)
                     } else {
                         VStack(spacing: 10) {
                             ForEach(store.offers) { o in
@@ -66,13 +101,18 @@ public struct PaywallView: View {
                     Button {
                         Task { await buy() }
                     } label: {
-                        if busy { ProgressView().tint(.white) } else { Text(ctaTitle) }
+                        Group {
+                            if busy { ProgressView() } else { Text(ctaTitle) }
+                        }
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 4)
                     }
-                    .buttonStyle(.factoryPrimary)
+                    .brandProminent()
                     .disabled(busy || selected == nil)
 
                     if let message {
-                        Text(message).font(.footnote).foregroundStyle(.secondary)
+                        Text(message).font(.footnote).foregroundStyle(brand.palette.inkSoft)
                     }
 
                     // App Review guideline 3.1.2 wants the renewal terms on the paywall
@@ -81,7 +121,7 @@ public struct PaywallView: View {
                     if let renewalDisclosure {
                         Text(renewalDisclosure)
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(brand.palette.inkSoft)
                             .fixedSize(horizontal: false, vertical: true)
                             .accessibilityLabel("Subscription terms. \(renewalDisclosure)")
                     }
@@ -100,11 +140,11 @@ public struct PaywallView: View {
                         }
                     }
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(brand.palette.inkSoft)
                 }
                 .padding(FactoryTheme.padding)
             }
-            .background(Color(.systemGroupedBackground))
+            .brandBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button { onDone() } label: { Image(systemName: "xmark") }
@@ -149,31 +189,35 @@ public struct PaywallView: View {
     @ViewBuilder
     private func offerRow(_ o: PaywallOffer) -> some View {
         let isSelected = selected?.id == o.id
+        let shape = RoundedRectangle(cornerRadius: brand.corner, style: .continuous)
         Button {
-            Haptics.tap()
-            selected = o
+            Haptics.selection()
+            withMotion(Motion.snappy) { selected = o }
         } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(o.title).font(.headline)
+                    Text(o.title).font(.headline).foregroundStyle(brand.palette.ink)
                     if let trial = o.trialText {
                         Text("\(trial), then \(o.priceText) \(o.periodText ?? "")")
-                            .font(.footnote).foregroundStyle(.secondary)
+                            .font(.footnote).foregroundStyle(brand.palette.inkSoft)
                     } else {
                         Text("\(o.priceText) \(o.periodText ?? "one time")")
-                            .font(.footnote).foregroundStyle(.secondary)
+                            .font(.footnote).foregroundStyle(brand.palette.inkSoft)
                     }
                 }
                 Spacer()
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
+                    .foregroundStyle(isSelected ? brand.palette.accent : brand.palette.inkSoft)
                     .font(.title3)
+                    .contentTransition(.symbolEffect(.replace))
             }
             .padding(16)
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(isSelected ? Color.accentColor : .clear, lineWidth: 2))
+            .background(brand.palette.surface, in: shape)
+            .overlay(shape.strokeBorder(isSelected ? brand.palette.accent : .clear, lineWidth: 2.5))
+            .scaleEffect(isSelected ? 1 : 0.985)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable(scale: 0.97, haptic: false))
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private func buy() async {
@@ -186,7 +230,8 @@ public struct PaywallView: View {
         defer { busy = false }
         do {
             if try await store.purchase(product) {
-                Haptics.success()
+                Haptics.celebrate()
+                Tones.shared.play(.fanfare)
                 onDone()
             }
         } catch {

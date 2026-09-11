@@ -8,13 +8,16 @@ struct TemplateApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if onboarded {
-                RootView()
-                    .environmentObject(store)
-                    .factoryReviewPrompt(afterSessions: 3)
-            } else {
-                OnboardingView(pages: AppInfo.onboarding) { onboarded = true }
+            Group {
+                if onboarded {
+                    RootView()
+                        .environmentObject(store)
+                        .factoryReviewPrompt(afterSessions: 3)
+                } else {
+                    OnboardingView(pages: AppInfo.onboarding) { onboarded = true }
+                }
             }
+            .brand(AppBrand.brand)
         }
     }
 }
