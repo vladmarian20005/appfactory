@@ -8,7 +8,7 @@ That is also where par comes from: the length of the solution the app found. And
 
 NOTHING RUNS OUT
 
-No advertising, anywhere. There is no ad SDK in this app, so there is nothing to skip between levels, nothing to watch for a reward and nothing to pay to switch off.
+No ads. Not between levels, not on the board, not anywhere — there is no advertising SDK in this app at all, so there is nothing to skip, nothing to watch for a reward and nothing to pay to switch off.
 
 No coins, no gems, no lives, no energy, no timer. There is no in-app currency to buy and no progress that can be bought. You cannot get stuck behind a wall that a payment removes, because there is no wall.
 
