@@ -55,6 +55,9 @@ struct QuestionSheet: View {
                     .brandDisplay(size: 27, relativeTo: .title2)
                     .foregroundStyle(brand.palette.ink)
                     .fixedSize(horizontal: false, vertical: true)
+                    // The headline stops growing where it would push the answers off the
+                    // sheet; the answers themselves, the explanation and the source do not.
+                    .dynamicTypeSize(...DynamicTypeSize.accessibility2)
                     .accessibilityAddTraits(.isHeader)
                 InkRule(weight: 2.5)
 
@@ -119,13 +122,15 @@ struct QuestionSheet: View {
     // MARK: - The head of the sheet
 
     private var sectionMark: some View {
-        HStack(spacing: 8) {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
             if let header {
                 Text(header).dateline(10, tracking: 2, color: brand.palette.ink.opacity(0.75))
             } else {
                 Rectangle()
                     .fill(AppBrand.ink(for: item.category))
                     .frame(width: 3, height: 12)
+                    // A rectangle has no baseline of its own; sit it on the type's.
+                    .alignmentGuide(.firstTextBaseline) { $0[.bottom] }
                 Text(item.category)
                     .dateline(10, tracking: 2, color: brand.palette.ink.opacity(0.75))
                 Spacer(minLength: 8)

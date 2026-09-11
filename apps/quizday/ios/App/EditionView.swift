@@ -145,6 +145,7 @@ struct EditionView: View {
                 .brandDisplay(size: 34, relativeTo: .title)
                 .foregroundStyle(brand.palette.inkSoft)
         }
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .accessibilityElement()
         .accessibilityLabel("\(score) out of \(total)")
     }

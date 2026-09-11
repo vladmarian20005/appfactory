@@ -233,6 +233,10 @@ struct Masthead: View {
                 Text(strapline).dateline(10, tracking: 2.4)
             }
         }
+        // Display type stops growing at accessibility2: past that a masthead set in 30 pt
+        // becomes four letters a line and the page stops being a page. Body copy, datelines
+        // and every label the reader actually reads scale the whole way.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(strapline.map { "\(title). \($0)" } ?? title)
     }
@@ -328,6 +332,10 @@ struct Stamp: View {
             .background(shape.fill(brand.palette.canvas.opacity(0.86)))
             .overlay(shape.stroke(tint, lineWidth: 2))
             .overlay(shape.inset(by: 3).stroke(tint, lineWidth: 0.8))
+            // A rubber stamp is a mark, not copy: at 310 % text it would cover the whole
+            // answer it is stamped over. It is read out in full either way — the line is on
+            // the stamp's accessibility label, and the verdict is also in each answer's hint.
+            .dynamicTypeSize(...DynamicTypeSize.xxLarge)
             .accessibilityLabel(empty ? "A blank sheet" : text)
     }
 }
@@ -395,6 +403,7 @@ struct StreakRibbon: View {
         .padding(.trailing, 18)
         .padding(.vertical, 10)
         .background(RibbonShape().fill(brand.palette.highlight))
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(days) days running")
     }

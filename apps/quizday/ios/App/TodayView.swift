@@ -184,7 +184,12 @@ struct TodayView: View {
     }
 
     /// `-demo answer`: nothing on a runner can touch the screen, so the app presses the ink
-    /// itself — three questions in, then the fourth answered right on camera.
+    /// itself. Two presses, spaced so a filmstrip catches them: question four answered right,
+    /// the page turning, then question five answered wrong — the sweep, the stamp, the tally,
+    /// and the pencil correction, in that order.
+    ///
+    /// The waits are long because `simctl io screenshot` costs about a third of a second, so a
+    /// beat that is over in 0.55 s has to be given room either side of it to be filmed at all.
     private func playDemoAnswer() {
         start()
         for _ in 0..<3 {
@@ -193,24 +198,40 @@ struct TodayView: View {
             next()
         }
         guard index < items.count else { return }
-        let item = items[index]
-        // Late enough that the filmstrip's first frame is the sheet before the press.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            answer(item: item, choice: item.correct)
+        let right = items[index]
+        at(1.8) { answer(item: right, choice: right.correct) }
+        at(3.4) { next() }
+        at(4.2) {
+            guard index < items.count else { return }
+            let item = items[index]
+            answer(item: item, choice: (item.correct + 1) % item.answers.count)
         }
     }
 
-    /// `-demo win`: plays the round out and lets the edition print.
+    /// `-demo win`: nine questions in, then the tenth pressed and the edition sent to press,
+    /// so the film shows the round ending and the front page printing itself.
     private func playDemoWin() {
         start()
         guard !items.isEmpty else { return }
-        for position in 0..<items.count {
+        // Eight right and one away with the tenth still to press: the tier, the tally and the
+        // ribbon all have work to do when it lands.
+        for position in 0..<(items.count - 1) {
             guard index < items.count else { break }
             let item = items[index]
-            // Nine right and one away, so the tier, the tally and the ribbon all have work to do.
             answer(item: item, choice: position == 3 ? (item.correct + 1) % item.answers.count : item.correct)
             next()
         }
+        guard index < items.count else { return }
+        let last = items[index]
+        at(2.0) { answer(item: last, choice: last.correct) }
+        // A long beat before the page goes to press: a screenshot of a screen that is
+        // animating hard takes the best part of two seconds on a runner, so the film needs
+        // the sheet, the press and the printing spread out or it catches only the ends.
+        at(3.6) { next() }
+    }
+
+    private func at(_ seconds: Double, _ work: @escaping () -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: work)
     }
 
     private func start() {

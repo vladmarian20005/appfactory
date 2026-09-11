@@ -289,6 +289,7 @@ struct PracticeView: View {
                         .brandDisplay(size: 28, relativeTo: .title)
                         .foregroundStyle(brand.palette.inkSoft)
                 }
+                .dynamicTypeSize(...DynamicTypeSize.accessibility2)
                 Tally(flags: flags, total: max(flags.count, 10), height: 28)
                 Button {
                     Haptics.tap()

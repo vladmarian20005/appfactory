@@ -119,6 +119,7 @@ struct ScorecardView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(streak) days running. \(ledger)")
     }

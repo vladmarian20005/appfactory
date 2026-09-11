@@ -47,17 +47,17 @@
     {
       "name": "answer",
       "args": ["-onboarded", "-reset", "-demo", "answer"],
-      "delay": 0.9,
-      "frames": 10,
-      "interval": 0.1,
+      "delay": 0.5,
+      "frames": 18,
+      "interval": 0,
       "note": "The ink press: the app answers question four itself, so the sweep, the stamp and the tally square are on camera."
     },
     {
       "name": "win",
       "args": ["-onboarded", "-reset", "-demo", "win"],
-      "delay": 0.3,
-      "frames": 12,
-      "interval": 0.15,
+      "delay": 0.5,
+      "frames": 18,
+      "interval": 0,
       "note": "The edition printing: press rule, masthead, the score counting to 112pt, the tally, the tier stamp, the paper flying, the ribbon."
     }
   ]
