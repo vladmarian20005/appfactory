@@ -100,9 +100,13 @@ terms, privacy and support URLs live, metadata inside limits, screenshots 1320×
 alpha, no placeholder text, no frozen font sizes, and the listing's claims checked against the
 binary. Fix the app, never the gate.
 
-## 6. Upload to TestFlight — the gate
+## 6. Upload to TestFlight — starts when the owner creates the record
 
-Stop and ask the owner before this. It puts a build on Apple's servers under their account.
+Creating the app record is the owner's go-ahead. `app-await-record` checks every fifteen
+minutes and starts `app-submit` for an app whose record now exists and which has never been
+uploaded. `app-submit` creates the in-app purchases, puts the owner (REVIEW_EMAIL) in an
+internal TestFlight group that gets every build, and uploads. Never start it yourself for a
+first upload; for a later version, or after a failed one, ask the owner and then:
 
 ```
 gh workflow run app-submit.yml -f slug=<slug> -f confirm=SUBMIT -R vladmarian20005/appfactory

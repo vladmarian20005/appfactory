@@ -1,0 +1,60 @@
+name: app-await-record
+
+# Creating the app record in App Store Connect is the owner's go-ahead for TestFlight. When the
+# chain ends, app-register has put the bundle id in App Store Connect and printed the record's
+# fields; the owner fills in that one form. This notices the record within fifteen minutes and
+# starts app-submit, which creates the in-app purchases, gives the owner TestFlight access and
+# uploads the build. The owner's next step is the TestFlight app on their phone.
+#
+# Only for an app that has never been uploaded (no `submit` stage). A later version, or a
+# submit that failed, is a person's call, not a retry every fifteen minutes. Submitting for
+# review stays a deliberate `app-release`.
+
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # to start app-submit
+  actions: write
+
+concurrency:
+  group: app-await-record
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Start app-submit for every app whose record now exists
+        run: |
+          set -euo pipefail
+          # An upload in flight has not recorded its `submit` stage yet, so the app would still
+          # look new. Wait for it rather than start a second upload of the same app.
+          busy=$(gh run list --workflow app-submit.yml --repo "$GITHUB_REPOSITORY" --limit 20 \
+                   --json status -q '[.[] | select(.status=="in_progress" or .status=="queued" or .status=="waiting")] | length')
+          if [ "$busy" -gt 0 ]; then
+            echo "an app-submit is already running; checking again next time"
+            exit 0
+          fi
+          started=0
+          for slug in $(node tools/asc/awaiting.mjs); do
+            gh workflow run app-submit.yml --repo "$GITHUB_REPOSITORY" --ref main -f slug="$slug" -f confirm=SUBMIT
+            echo "The app record for \`$slug\` exists: app-submit started." >> "$GITHUB_STEP_SUMMARY"
+            started=$((started + 1))
+          done
+          echo "$started app-submit run(s) started"

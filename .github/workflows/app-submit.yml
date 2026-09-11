@@ -129,6 +129,11 @@ jobs:
       - name: In-app purchases
         run: node tools/asc/iap.mjs "$SLUG" --apply
 
+      # A new app has no TestFlight group, so without this the upload reaches nobody. An
+      # internal group with access to every build, and the owner (REVIEW_EMAIL) in it.
+      - name: TestFlight access for the owner
+        run: node tools/asc/testflight.mjs "$SLUG" --apply
+
       # Archiving does not need a simulator, and booting one costs two minutes.
       - uses: ./.github/actions/mac-setup
         with:
