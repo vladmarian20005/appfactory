@@ -1,0 +1,52 @@
+Despeje os tubos até cada cor ficar sozinha. Toque em um tubo, toque em onde ele deve ir e siga assim até o tabuleiro estar separado. É esse o jogo inteiro, e ele basta para cinco minutos de calma.
+
+TODO NÍVEL TEM SOLUÇÃO
+
+Os tabuleiros são gerados, não feitos à mão — e cada um é resolvido antes de chegar até você. O Tidepour distribui um tabuleiro, procura um jeito de terminá-lo e joga fora se não houver. Nada do que você recebe pode ser um beco sem saída.
+
+É daí que vem o par: o tamanho da solução que o app encontrou. E é isso que a dica é. Peça uma dica e o Tidepour aponta a próxima jogada de uma solução que ele já conferiu. Siga o seu próprio caminho e ele resolve de novo a partir do tabuleiro à sua frente, então a dica continua certa mesmo depois que você saiu da linha original.
+
+NADA ACABA
+
+Sem anúncios. Nem entre níveis, nem no tabuleiro, nem em lugar nenhum — não existe nenhum SDK de publicidade neste app, então não há nada para pular, nada para assistir em troca de recompensa e nada para pagar para desligar.
+
+Sem moedas, sem gemas, sem vidas, sem energia, sem cronômetro. Não há moeda interna para comprar nem progresso que possa ser comprado. Você não fica preso atrás de um muro que um pagamento derruba, porque não existe muro.
+
+UM DESAFIO DIÁRIO QUE TODOS DIVIDEM
+
+Um tabuleiro por dia, gerado a partir da data, então o desafio que você está resolvendo é o mesmo de todo mundo que abriu o Tidepour hoje. Termine e sua sequência cresce. O calendário do mês mostra os dias em que você jogou, e uma linha de texto simples deixa você compartilhar o resultado do dia, se quiser.
+
+O desafio diário é gratuito para sempre, e vai continuar assim.
+
+GRATUITO, E DEPOIS OPCIONAL
+
+Gratuito, sem conta e sem cadastro:
+• O desafio diário, todo dia
+• Os primeiros 60 níveis
+• Desfazer, reiniciar e a dica
+• Sua sequência, seu calendário e seus níveis concluídos
+
+O desbloqueio único acrescenta:
+• O resto da escada gerada
+• Modo calmo — sem contador de jogadas, cores suaves, despejo mais lento
+• Uma paleta para daltonismo, com um formato diferente marcado em cada cor
+
+Um pagamento só. Não é assinatura, não renova e não há mais nada para comprar depois.
+
+FEITO PARA SER DEIXADO DE LADO
+
+Cada jogada é salva no instante em que você a faz, então fechar o app, ir para outra coisa ou ficar sem bateria nunca custa um nível. Você volta ao tabuleiro exatamente como o deixou.
+
+O Tidepour funciona totalmente sem internet. Ele não faz nenhuma requisição de rede — nem para níveis, nem para pontuações, nem para nada — então funciona no avião, no carro, no metrô, e funciona igual com ou sem sinal.
+
+PRIVADO POR PADRÃO
+
+Sem conta. Sem cadastro. Sem SDK de análise, sem SDK de relatório de falhas, sem SDK de publicidade, sem rastreamento e sem dados repassados a ninguém. Tudo o que o Tidepour sabe sobre você — que níveis concluiu, sua sequência, seus ajustes — está no seu aparelho e em nenhum outro lugar.
+
+PENSADO PARA TODOS OS OLHOS
+
+O texto acompanha o Dynamic Type, e cada tubo é lido pelo VoiceOver como as cores que ele guarda, de baixo para cima. O desbloqueio traz uma paleta Okabe–Ito escolhida para continuar distinguível em todos os tipos comuns de daltonismo, além de uma marca de formato em cada unidade, para dar para ler o tabuleiro sem depender da cor.
+
+SEM CRONÔMETRO
+
+De propósito. Não há relógio em tabuleiro nenhum e não há prazo diário além da própria data. Leve um minuto ou leve uma hora.

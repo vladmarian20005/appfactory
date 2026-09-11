@@ -1,0 +1,52 @@
+Đổ các ống cho đến khi mỗi màu đứng riêng một ống. Chạm vào ống nguồn, chạm vào nơi nó cần đến, và cứ thế cho đến khi cả bàn tách hết màu. Trò chơi chỉ có vậy, và bấy nhiêu là đủ cho năm phút yên tĩnh.
+
+MÀN NÀO CŨNG CÓ LỜI GIẢI
+
+Các bàn chơi được tạo ra chứ không xếp bằng tay, và mỗi bàn đều đã được giải xong trước khi đến tay bạn. Tidepour chia một bàn, tìm xem có cách nào kết thúc không, và bỏ bàn đó đi nếu không có. Không có bàn nào bạn nhận được lại là ngõ cụt.
+
+Số nước chuẩn cũng từ đó mà ra: độ dài của lời giải mà ứng dụng đã tìm thấy. Gợi ý cũng chính là nó. Bấm gợi ý, Tidepour chỉ cho bạn nước đi tiếp theo của một lời giải nó đã kiểm chứng. Bạn đi theo đường riêng của mình thì nó giải lại từ đúng bàn đang ở trước mặt, nên gợi ý vẫn đúng ngay cả khi bạn đã rời khỏi đường đi ban đầu.
+
+KHÔNG CÓ GÌ CẠN
+
+Không quảng cáo. Không giữa các màn, không trên bàn chơi, không ở bất cứ đâu — trong ứng dụng này hoàn toàn không có SDK quảng cáo nào, nên chẳng có gì để bỏ qua, chẳng có gì phải xem để đổi lấy thưởng và chẳng có gì phải trả tiền để tắt đi.
+
+Không xu, không đá quý, không mạng, không năng lượng, không đồng hồ đếm giờ. Không có tiền trong ứng dụng để mua và không có tiến trình nào mua được. Bạn không thể bị chặn sau một bức tường mà một khoản thanh toán dỡ bỏ, vì không có bức tường nào cả.
+
+MỘT CÂU ĐỐ MỖI NGÀY, CHUNG CHO TẤT CẢ
+
+Mỗi ngày một bàn, sinh ra từ ngày tháng, nên câu đố bạn đang gỡ cũng là câu đố của mọi người mở Tidepour hôm nay. Giải xong thì chuỗi ngày của bạn dài thêm. Lịch tháng cho thấy những ngày bạn đã chơi, và một dòng chữ thuần văn bản để bạn chia sẻ kết quả trong ngày nếu muốn.
+
+Câu đố hằng ngày miễn phí mãi mãi, và sẽ luôn như vậy.
+
+MIỄN PHÍ, RỒI MỚI TÙY CHỌN
+
+Miễn phí, không tài khoản, không đăng ký:
+• Câu đố hằng ngày, mỗi ngày
+• 60 màn đầu tiên
+• Hoàn tác, chơi lại và gợi ý
+• Chuỗi ngày, lịch tháng và những màn bạn đã qua
+
+Bản mở khóa một lần thêm vào:
+• Toàn bộ phần còn lại của thang màn được tạo ra
+• Chế độ tĩnh — không đếm nước đi, màu dịu hơn, dòng chảy chậm hơn
+• Bảng màu cho người mù màu, mỗi màu được đóng một hình khác nhau
+
+Một lần trả tiền. Đây không phải gói thuê bao, nó không tự gia hạn, và sau đó không còn gì để mua nữa.
+
+LÀM RA ĐỂ BỊ BỎ QUÊN
+
+Mỗi nước đi được lưu ngay lúc bạn thực hiện, nên đóng ứng dụng, chuyển sang việc khác hay hết pin cũng không bao giờ làm bạn mất một màn. Bạn quay lại và bàn chơi vẫn đúng như lúc bạn rời đi.
+
+Tidepour chạy hoàn toàn ngoại tuyến. Nó không gửi bất kỳ yêu cầu mạng nào — không cho màn chơi, không cho điểm số, không cho bất cứ thứ gì — nên nó chạy được trên máy bay, trong ô tô, dưới tàu điện ngầm, và chạy y như nhau dù bạn có sóng hay không.
+
+RIÊNG TƯ NGAY TỪ ĐẦU
+
+Không tài khoản. Không đăng ký. Không SDK phân tích, không SDK báo lỗi, không SDK quảng cáo, không theo dõi và không chia sẻ dữ liệu với bất kỳ ai. Mọi thứ Tidepour biết về bạn — bạn đã qua những màn nào, chuỗi ngày của bạn, thiết lập của bạn — đều nằm trên thiết bị của bạn và không ở đâu khác.
+
+THIẾT KẾ CHO MỌI ĐÔI MẮT
+
+Chữ co giãn theo Dynamic Type, và mỗi ống đều được VoiceOver đọc lên thành những màu nó đang chứa, từ dưới lên trên. Bản mở khóa thêm bảng màu Okabe–Ito được chọn để vẫn phân biệt được với mọi dạng mù màu thường gặp, cùng một dấu hình trên mỗi phần để đọc được bàn chơi mà không cần dựa vào màu sắc.
+
+KHÔNG ĐỒNG HỒ
+
+Cố ý như vậy. Không có đồng hồ trên bất kỳ bàn chơi nào và không có hạn chót nào trong ngày ngoài chính ngày hôm đó. Bạn dùng một phút hay dùng một giờ cũng được.

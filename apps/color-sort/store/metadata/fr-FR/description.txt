@@ -1,0 +1,52 @@
+Versez les tubes jusqu’à ce que chaque couleur reste seule. Touchez un tube, touchez l’endroit où il doit aller, et continuez jusqu’à ce que le plateau soit séparé. C’est tout le jeu, et cela suffit à cinq minutes de calme.
+
+CHAQUE NIVEAU A UNE SOLUTION
+
+Les plateaux sont générés, pas dessinés à la main — et chacun est résolu avant de vous être donné. Tidepour distribue un plateau, y cherche une façon d’aller au bout, et le jette s’il n’y en a pas. Rien de ce qu’on vous donne ne peut être une impasse.
+
+C’est aussi de là que vient le par : la longueur de la solution trouvée par l’app. Et c’est ce qu’est l’indice. Demandez un indice et Tidepour vous montre le coup suivant d’une solution qu’il a déjà vérifiée. Prenez votre propre chemin et il refait le calcul à partir du plateau devant vous, si bien que l’indice reste juste même quand vous avez quitté la ligne d’origine.
+
+RIEN NE S’ÉPUISE
+
+Aucune publicité. Ni entre les niveaux, ni sur le plateau, nulle part — il n’y a aucun SDK publicitaire dans cette app, donc rien à passer, rien à regarder contre une récompense et rien à payer pour l’enlever.
+
+Pas de pièces, pas de gemmes, pas de vies, pas d’énergie, pas de chrono. Il n’y a pas de monnaie interne à acheter et pas de progression qui s’achète. Vous ne pouvez pas rester bloqué derrière un mur qu’un paiement fait tomber, parce qu’il n’y a pas de mur.
+
+UNE GRILLE QUOTIDIENNE PARTAGÉE PAR TOUS
+
+Un plateau par jour, issu de la date, si bien que la grille sur laquelle vous êtes est celle de tous ceux qui ouvrent Tidepour aujourd’hui. Finissez-la et votre série grandit. Le calendrier du mois montre les jours joués, et une ligne de texte simple vous laisse partager le résultat du jour si vous le voulez.
+
+La grille quotidienne est gratuite pour toujours, et elle le restera.
+
+GRATUIT, PUIS FACULTATIF
+
+Gratuit, sans compte et sans inscription :
+• La grille quotidienne, tous les jours
+• Les 60 premiers niveaux
+• Annuler, recommencer et l’indice
+• Votre série, votre calendrier et vos niveaux terminés
+
+Le déblocage unique ajoute :
+• Le reste de l’échelle générée
+• Le mode calme — pas de compteur de coups, couleurs adoucies, versement plus lent
+• Une palette pour le daltonisme, avec une forme différente marquée sur chaque couleur
+
+Un seul paiement. Ce n’est pas un abonnement, il ne se renouvelle pas, et il n’y a rien d’autre à acheter ensuite.
+
+FAIT POUR ÊTRE LAISSÉ DE CÔTÉ
+
+Chaque coup est enregistré à l’instant où vous le jouez : fermer l’app, passer à autre chose ou tomber en panne de batterie ne vous coûte jamais un niveau. Vous revenez au plateau exactement comme vous l’aviez laissé.
+
+Tidepour fonctionne entièrement hors ligne. Il ne fait aucune requête réseau — pas pour les niveaux, pas pour les scores, pour rien — donc il marche en avion, en voiture, dans le métro, et il marche pareil que vous ayez du réseau ou non.
+
+PRIVÉ PAR DÉFAUT
+
+Pas de compte. Pas d’inscription. Aucun SDK d’analyse, aucun SDK de rapport de plantage, aucun SDK publicitaire, aucun pistage et aucune donnée partagée avec qui que ce soit. Tout ce que Tidepour sait de vous — les niveaux terminés, votre série, vos réglages — est sur votre appareil et nulle part ailleurs.
+
+PENSÉ POUR TOUS LES YEUX
+
+Le texte suit Dynamic Type, et chaque tube s’énonce sous VoiceOver comme les couleurs qu’il contient, du bas vers le haut. Le déblocage ajoute une palette Okabe–Ito choisie pour rester distinguable pour chaque forme courante de daltonisme, plus un repère de forme sur chaque unité afin de lire le plateau sans dépendre de la couleur.
+
+PAS DE CHRONO
+
+Délibérément. Il n’y a d’horloge sur aucun plateau et pas d’échéance quotidienne au-delà de la date elle-même. Prenez une minute ou prenez une heure.

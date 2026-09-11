@@ -1,0 +1,1 @@
+Tidepour resolve o tabuleiro antes de entregá-lo. Se não dá para terminar, você nunca vê. Sem anúncios, moedas, vidas ou cronômetro — e um desafio por dia para todos.

@@ -1,0 +1,3 @@
+La primera versión de Tidepour.
+
+Sesenta niveles gratis, un puzle diario que es el mismo tablero para todos, una racha y un calendario mensual, deshacer, reiniciar y una pista que repite una solución que la app ya comprobó. Sin anuncios, sin monedas, sin vidas y sin cronómetro.

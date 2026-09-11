@@ -1,0 +1,1 @@
+Tidepour resuelve el tablero antes de dártelo. Si no se puede terminar, nunca lo ves. Sin anuncios, monedas, vidas ni cronómetro, y un puzle compartido al día.

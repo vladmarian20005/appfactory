@@ -1,0 +1,3 @@
+A primeira versão do Tidepour.
+
+Sessenta níveis gratuitos, um desafio diário que é o mesmo tabuleiro para todo mundo, uma sequência e um calendário do mês, desfazer, reiniciar e uma dica que repete uma solução que o app já conferiu. Sem anúncios, sem moedas, sem vidas e sem cronômetro.
