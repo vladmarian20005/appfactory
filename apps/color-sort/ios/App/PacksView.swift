@@ -29,9 +29,11 @@ struct PacksView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 26) {
+                // The shelf leads: it is what this screen is, and it was sitting half under
+                // the tab bar behind two cards.
+                ladder
                 if !store.isUnlocked { unlockCard }
                 options
-                ladder
             }
             .padding(.horizontal, FactoryTheme.padding)
             .padding(.top, 8)
@@ -40,6 +42,7 @@ struct PacksView: View {
         }
         .brandBackground(drift: true)
         .navigationTitle("Shore")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
     }
 
@@ -48,7 +51,7 @@ struct PacksView: View {
             Image("OpenWater")
                 .resizable()
                 .scaledToFit()
-                .frame(maxHeight: 130)
+                .frame(maxHeight: 175)
                 .frame(maxWidth: .infinity)
                 .ambientFloat(distance: 4, period: 5)
             Text("The tide goes further out")
@@ -131,49 +134,56 @@ struct LevelVial: View {
 
     /// The vial grows with the text size, but only so far, and a three-digit number shrinks
     /// to fit rather than clipping.
-    @ScaledMetric(relativeTo: .subheadline) private var height: CGFloat = 54
+    /// Narrower than its column and half again as tall: at the column's full width the
+    /// silhouette reads as a shield, not as a vial.
+    @ScaledMetric(relativeTo: .subheadline) private var width: CGFloat = 44
+    @ScaledMetric(relativeTo: .subheadline) private var height: CGFloat = 84
 
     private var liquid: LiquidColor { Palette.standard[level % Palette.standard.count] }
 
-    private var shape: UnevenRoundedRectangle {
-        UnevenRoundedRectangle(topLeadingRadius: 6,
-                               bottomLeadingRadius: 17,
-                               bottomTrailingRadius: 17,
-                               topTrailingRadius: 6,
+    private func shape(_ width: CGFloat) -> UnevenRoundedRectangle {
+        UnevenRoundedRectangle(topLeadingRadius: width * 0.16,
+                               bottomLeadingRadius: width * 0.46,
+                               bottomTrailingRadius: width * 0.46,
+                               topTrailingRadius: width * 0.16,
                                style: .continuous)
     }
 
     var body: some View {
-        Text("\(level)")
-            .font(.subheadline)
-            .monospacedDigit()
-            .lineLimit(1)
-            .minimumScaleFactor(0.5)
-            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-            .foregroundStyle(isCleared ? liquid.markerColor : brand.palette.inkSoft)
-            .frame(maxWidth: .infinity)
-            .frame(height: height)
-            .background {
-                ZStack {
-                    shape.fill(brand.palette.surface.opacity(0.75))
-                    if isCleared {
-                        shape.fill(LinearGradient(colors: [liquid.top, liquid.color, liquid.bottom],
-                                                  startPoint: .top, endPoint: .bottom))
-                            .shadow(color: liquid.glow.opacity(0.55), radius: 7)
-                    }
-                    // The light of the sky on a wet curve, on every vial, full or not.
-                    Capsule()
-                        .fill(.white.opacity(0.3))
-                        .frame(width: 2.5, height: height * 0.4)
-                        .offset(x: -height * 0.17, y: -height * 0.12)
+        GeometryReader { geo in
+            let glass = shape(geo.size.width)
+            ZStack {
+                glass.fill(brand.palette.surface.opacity(0.7))
+                if isCleared {
+                    // Full of light, inset from the rim so the glass is a wall around it.
+                    glass.inset(by: geo.size.width * 0.07)
+                        .fill(LinearGradient(colors: [liquid.top, liquid.color, liquid.bottom],
+                                             startPoint: .top, endPoint: .bottom))
+                        .shadow(color: liquid.glow.opacity(0.5), radius: 6)
                 }
+                // The light of the sky on a wet curve, on every vial, full or empty.
+                Capsule()
+                    .fill(.white.opacity(0.28))
+                    .frame(width: 2.5, height: geo.size.height * 0.36)
+                    .offset(x: -geo.size.width * 0.28, y: -geo.size.height * 0.14)
+                Text("\(level)")
+                    .font(.caption)
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                    .foregroundStyle(isCleared ? liquid.markerColor : brand.palette.inkSoft)
+                    .padding(.horizontal, 2)
+                    .offset(y: geo.size.height * 0.22)
             }
-            .clipShape(shape)
             .overlay {
-                shape.strokeBorder(isCurrent ? brand.palette.accent : brand.palette.ink.opacity(0.14),
+                glass.strokeBorder(isCurrent ? brand.palette.accent : brand.palette.ink.opacity(0.16),
                                    lineWidth: isCurrent ? 2.4 : 1)
             }
-            .accessibilityLabel("Rack \(level)\(isCleared ? ", lit" : "")")
+        }
+        .frame(width: width, height: height)
+        .frame(maxWidth: .infinity)
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+        .accessibilityLabel("Rack \(level)\(isCleared ? ", lit" : "")")
     }
 }
 

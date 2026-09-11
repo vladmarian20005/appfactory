@@ -295,8 +295,17 @@ private struct BrandFont: ViewModifier {
     let weight: Font.Weight?
 
     func body(content: Content) -> some View {
-        content.font(.system(style, design: brand.type.display, weight: weight ?? brand.type.displayWeight)
-            .width(brand.type.displayWidth))
+        let base = Font.system(style,
+                               design: brand.type.display,
+                               weight: weight ?? brand.type.displayWeight)
+        content
+            .font(brand.type.displayWidth == .standard ? base : base.width(brand.type.displayWidth))
+            // A text-style font resolves against the environment, so the `.fontDesign(body)`
+            // that `brand(_:)` sets at the root was overriding the design asked for here: a
+            // brand whose display is New York silently got SF Pro everywhere `brandFont` was
+            // used, while `brandDisplay` — a fixed size, resolved eagerly — came out right.
+            // Restating the design closer to the text is what makes it win.
+            .fontDesign(brand.type.display)
     }
 }
 
@@ -309,8 +318,10 @@ private struct BrandDisplay: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        content.font(.system(size: size, weight: brand.type.displayWeight, design: brand.type.display)
-            .width(brand.type.displayWidth))
+        let base = Font.system(size: size, weight: brand.type.displayWeight, design: brand.type.display)
+        content
+            .font(brand.type.displayWidth == .standard ? base : base.width(brand.type.displayWidth))
+            .fontDesign(brand.type.display)
     }
 }
 

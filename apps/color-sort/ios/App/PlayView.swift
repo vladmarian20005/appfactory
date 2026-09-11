@@ -114,9 +114,10 @@ struct PlayView: View {
                 .brandFont(.title2)
                 .foregroundStyle(brand.palette.success)
         } else {
+            // No `.monospacedDigit()` after this: applied on top of a font it resolves back
+            // through SF and the display face is lost.
             Text("\(model.moves)")
                 .brandDisplay(size: 64, relativeTo: .largeTitle)
-                .monospacedDigit()
                 .foregroundStyle(brand.palette.ink)
                 .lineLimit(1)
                 .contentTransition(.numericText(value: Double(model.moves)))

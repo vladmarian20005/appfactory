@@ -24,7 +24,6 @@ struct StreakView: View {
                 hero
                 todaysPool
                 CalendarMonthView(playedDays: playedDays)
-                totals
                 share
             }
             .padding(.horizontal, FactoryTheme.padding)
@@ -34,6 +33,10 @@ struct StreakView: View {
         }
         .brandBackground(drift: true)
         .navigationTitle("Chart")
+        // Inline, because a large title is drawn in the content area where the toolbar's
+        // colour scheme does not reach it — and a near-black "Chart" over the pool is worse
+        // than no heading at all. The streak is the heading here anyway.
+        .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
     }
 
@@ -45,7 +48,6 @@ struct StreakView: View {
             HStack(alignment: .lastTextBaseline, spacing: 10) {
                 Text("\(streak)")
                     .brandDisplay(size: 110)
-                    .monospacedDigit()
                     .foregroundStyle(brand.palette.ink)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
@@ -56,24 +58,27 @@ struct StreakView: View {
                 .padding(.bottom, 14)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(alignment: .bottom) {
+            .background(alignment: .bottomLeading) {
                 // The light it stands in.
                 Ellipse()
-                    .fill(RadialGradient(colors: [brand.palette.accent.opacity(0.3),
+                    .fill(RadialGradient(colors: [brand.palette.accent.opacity(0.22),
                                                   brand.palette.accent.opacity(0)],
-                                         center: .center, startRadius: 0, endRadius: 180))
-                    .frame(height: 150)
-                    .offset(y: 42)
+                                         center: .center, startRadius: 0, endRadius: 110))
+                    .frame(width: 230, height: 96)
+                    .offset(x: -30, y: 28)
                     .breathing(amount: 0.05, period: 5)
                     .allowsHitTesting(false)
             }
             Text("Longest run \(longest) · \(playedDays.count) evenings on the shore")
                 .font(.subheadline)
                 .foregroundStyle(brand.palette.inkSoft)
+            Text("\(levelsCleared) racks and \(results.filter(\.isDaily).count) pools cleared")
+                .font(.subheadline)
+                .foregroundStyle(brand.palette.inkSoft)
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(streak) evenings in a row. Longest run \(longest). \(playedDays.count) evenings played.")
+        .accessibilityLabel("\(streak) evenings in a row. Longest run \(longest). \(playedDays.count) evenings played. \(levelsCleared) racks and \(results.filter(\.isDaily).count) pools cleared.")
     }
 
     private var todaysPool: some View {
@@ -102,31 +107,6 @@ struct StreakView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .brandSurface()
-    }
-
-    private var totals: some View {
-        HStack(alignment: .top, spacing: 20) {
-            total("\(levelsCleared)", "Racks cleared")
-            Rectangle()
-                .fill(brand.palette.ink.opacity(0.12))
-                .frame(width: 1, height: 40)
-            total("\(results.filter(\.isDaily).count)", "Pools cleared")
-            Spacer(minLength: 0)
-        }
-        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
-    }
-
-    private func total(_ value: String, _ caption: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(value)
-                .brandDisplay(size: 38, relativeTo: .title)
-                .monospacedDigit()
-                .foregroundStyle(brand.palette.ink)
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
-            ChartMark(text: caption)
-        }
-        .accessibilityElement(children: .combine)
     }
 
     @ViewBuilder

@@ -158,8 +158,13 @@ struct LevelClearedView: View {
 
     private var actions: some View {
         VStack(spacing: 12) {
-            Button(result.levelID.isDaily ? "Back to the shore" : "Take the next one", action: onNext)
-                .brandProminent()
+            Button(action: onNext) {
+                Text(result.levelID.isDaily ? "Back to the shore" : "Take the next one")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4)
+            }
+            .brandProminent()
             HStack(spacing: 12) {
                 Button("Pour it again", action: onReplay)
                     .buttonStyle(.bordered)
