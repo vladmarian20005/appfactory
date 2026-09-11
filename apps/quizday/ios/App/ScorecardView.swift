@@ -13,7 +13,9 @@ enum ScoreShade: String, CaseIterable, Identifiable {
     var opacity: Double {
         switch self {
         case .high: return 0.92
-        case .mid: return 0.62
+        // DESIGN.md's middle density was 0.62, which puts the knocked-out score at 4.04:1 —
+        // large text only. 0.70 takes it to AA and the three-step ramp still reads as three.
+        case .mid: return 0.70
         case .low: return 0.34
         }
     }
@@ -233,14 +235,12 @@ struct ScorecardView: View {
                     let shade = ScoreShade.forScore(result.score)
                     Rectangle()
                         .fill(brand.palette.ink.opacity(shade.opacity))
-                    if result.score >= 8 {
-                        // Knocked out in paper: a good day is legible at arm's length.
-                        Text("\(result.score)")
-                            .dateline(11, tracking: 0, color: brand.palette.canvas)
-                    } else {
-                        Text("\(result.score)")
-                            .dateline(11, tracking: 0, color: brand.palette.canvas.opacity(0.92))
-                    }
+                    // Knocked out in paper on a dark square, printed in ink on a pale one:
+                    // paper on the lightest density comes out at under 2:1 and the month has
+                    // to be readable at arm's length, not only look like a printed pattern.
+                    Text("\(result.score)")
+                        .dateline(11, tracking: 0,
+                                  color: shade == .low ? brand.palette.ink : brand.palette.canvas)
                 } else if !future {
                     Rectangle()
                         .stroke(brand.palette.ink.opacity(0.3), lineWidth: 1)
