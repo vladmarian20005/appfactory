@@ -110,14 +110,14 @@ private struct OnboardingPageView: View {
     @ViewBuilder
     private var hero: some View {
         if let art = page.art {
-            art().ambientFloat(amplitude: 5, period: 4)
+            art().ambientFloat(distance: 5, period: 4)
         } else {
             Image(systemName: page.symbol)
                 .scaledFont(size: 96, weight: .semibold)
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(brand.palette.accent)
                 .symbolEffect(.bounce, value: isCurrent)
-                .ambientFloat(amplitude: 5, period: 4)
+                .ambientFloat(distance: 5, period: 4)
         }
     }
 }

@@ -81,8 +81,8 @@ public extension View {
     }
 
     /// A slow bob, for art that should feel alive: a mascot, a hero object, a floating badge.
-    func ambientFloat(amplitude: CGFloat = 6, period: Double = 3.6) -> some View {
-        modifier(AmbientFloat(amplitude: amplitude, period: period))
+    func ambientFloat(distance: CGFloat = 6, period: Double = 3.6) -> some View {
+        modifier(AmbientFloat(distance: distance, period: period))
     }
 
     /// A slow swell in scale, for glows and things that should feel lit from inside.
@@ -114,7 +114,7 @@ private struct PopIn: ViewModifier {
 }
 
 private struct AmbientFloat: ViewModifier {
-    let amplitude: CGFloat
+    let distance: CGFloat
     let period: Double
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -122,7 +122,7 @@ private struct AmbientFloat: ViewModifier {
         let still = Motion.isStill || reduceMotion
         TimelineView(.animation(minimumInterval: 1.0 / 60, paused: still)) { context in
             let t = still ? 0 : context.date.timeIntervalSinceReferenceDate
-            content.offset(y: CGFloat(sin(t * 2 * .pi / period)) * amplitude)
+            content.offset(y: CGFloat(sin(t * 2 * .pi / period)) * distance)
         }
     }
 }
