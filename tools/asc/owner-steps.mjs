@@ -20,8 +20,9 @@ ${recordInstructions(facts).replace(/^/gm, "   ")}
 
    ${privacyInstructions(slug).replace(/\n/g, "\n   ")}
 
-   That is the go-ahead. Within about fifteen minutes the factory notices the record, creates
-   the in-app purchases, adds you as a TestFlight tester and uploads the build.
+   That is the go-ahead. Within a minute the factory notices the record, creates the in-app
+   purchases, adds you as a TestFlight tester and uploads; about half an hour later, with
+   Apple's processing, the build is in your TestFlight app.
 
 2. Test it from the TestFlight app on your phone, once Apple has processed the build: the
    reminder fires, haptics feel right, the share sheet opens, a sandbox purchase completes.

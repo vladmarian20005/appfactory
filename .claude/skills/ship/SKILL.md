@@ -102,9 +102,10 @@ binary. Fix the app, never the gate.
 
 ## 6. Upload to TestFlight — starts when the owner creates the record
 
-Creating the app record is the owner's go-ahead. `app-await-record` checks every fifteen
-minutes and starts `app-submit` for an app whose record now exists and which has never been
-uploaded. `app-submit` creates the in-app purchases, puts the owner (REVIEW_EMAIL) in an
+Creating the app record is the owner's go-ahead. `app-register` starts `app-await-record`
+for the app when the chain ends; it checks every minute (on a runner, not GitHub's scheduler,
+which fires hours late here) and starts `app-submit` once the record exists and the app has
+never been uploaded. `app-submit` creates the in-app purchases, puts the owner (REVIEW_EMAIL) in an
 internal TestFlight group that gets every build, and uploads. Never start it yourself for a
 first upload; for a later version, or after a failed one, ask the owner and then:
 
