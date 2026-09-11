@@ -1,34 +1,54 @@
 name: app-await-record
 
 # Creating the app record in App Store Connect is the owner's go-ahead for TestFlight. When the
-# chain ends, app-register has put the bundle id in App Store Connect and printed the record's
-# fields; the owner fills in that one form. This notices the record within fifteen minutes and
-# starts app-submit, which creates the in-app purchases, gives the owner TestFlight access and
-# uploads the build. The owner's next step is the TestFlight app on their phone.
+# chain ends, app-register has put the bundle id in App Store Connect, printed the record's
+# fields, and started this for the app. It checks every minute whether the record exists yet
+# and starts app-submit the moment it does: purchases, TestFlight access, upload.
+#
+# It waits on a runner rather than on a schedule because GitHub's scheduler cannot be trusted
+# here: appmonkey's 05:17 scout cron fires around 09:45, and this repository had never had a
+# scheduled run at all. A job may run six hours, so the waiter hands over to a fresh copy of
+# itself, for up to a week; after the first day it checks every five minutes.
+#
+# The cron and a push to `await-record` (from a routine, which has git but no gh) are backups:
+# one pass over every app, no waiting.
 #
 # Only for an app that has never been uploaded (no `submit` stage). A later version, or a
-# submit that failed, is a person's call, not a retry every fifteen minutes. Submitting for
-# review stays a deliberate `app-release`.
+# submit that failed, is a person's call. Submitting for review stays a deliberate app-release.
 
 on:
-  schedule:
-    - cron: "7,22,37,52 * * * *"
   workflow_dispatch:
+    inputs:
+      slug:
+        description: Wait for this app's record. Blank checks every app once.
+        required: false
+        type: string
+        default: ""
+      hops:
+        description: How many six-hour waits came before this one
+        required: false
+        type: string
+        default: "0"
+  schedule:
+    - cron: "7,37 * * * *"
+  push:
+    branches: ["await-record"]
 
 permissions:
-  contents: read
-  # to start app-submit
-  actions: write
+  contents: write # to delete the await-record trigger branch
+  actions: write  # to start app-submit, and the next wait
 
 concurrency:
-  group: app-await-record
+  group: app-await-record-${{ inputs.slug || github.event_name }}
   cancel-in-progress: false
 
 jobs:
-  check:
+  wait:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 355
     env:
+      SLUG: ${{ inputs.slug }}
+      HOPS: ${{ inputs.hops || '0' }}
       ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
       ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
@@ -40,21 +60,50 @@ jobs:
         with:
           node-version: 22
 
-      - name: Start app-submit for every app whose record now exists
+      - name: Wait for the record, then start app-submit
         run: |
           set -euo pipefail
-          # An upload in flight has not recorded its `submit` stage yet, so the app would still
-          # look new. Wait for it rather than start a second upload of the same app.
-          busy=$(gh run list --workflow app-submit.yml --repo "$GITHUB_REPOSITORY" --limit 20 \
-                   --json status -q '[.[] | select(.status=="in_progress" or .status=="queued" or .status=="waiting")] | length')
-          if [ "$busy" -gt 0 ]; then
-            echo "an app-submit is already running; checking again next time"
-            exit 0
+          if [ "${{ github.event_name }}" = "push" ]; then
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$GITHUB_REF_NAME" --silent || true
           fi
-          started=0
-          for slug in $(node tools/asc/awaiting.mjs); do
-            gh workflow run app-submit.yml --repo "$GITHUB_REPOSITORY" --ref main -f slug="$slug" -f confirm=SUBMIT
-            echo "The app record for \`$slug\` exists: app-submit started." >> "$GITHUB_STEP_SUMMARY"
-            started=$((started + 1))
+          # One pass for the cron, a push or a blank dispatch; a slug means wait for that app.
+          if [ -n "$SLUG" ]; then deadline=$((SECONDS + 340 * 60)); else deadline=0; fi
+          interval=60; [ "$HOPS" -ge 4 ] && interval=300
+
+          while :; do
+            # state.json moves while this waits (an app-submit started by hand records `submit`),
+            # so read it fresh every time rather than trust the checkout.
+            git pull -q --ff-only origin main || true
+            ready=$(node tools/asc/awaiting.mjs $SLUG || true)
+            if [ -n "$ready" ]; then
+              # An upload in flight has not recorded `submit` yet; do not start a second one.
+              busy=$(gh run list --workflow app-submit.yml --repo "$GITHUB_REPOSITORY" --limit 20 \
+                       --json status -q '[.[] | select(.status=="in_progress" or .status=="queued" or .status=="waiting")] | length')
+              if [ "$busy" -eq 0 ]; then
+                for s in $ready; do
+                  gh workflow run app-submit.yml --repo "$GITHUB_REPOSITORY" --ref main -f slug="$s" -f confirm=SUBMIT
+                  echo "The App Store Connect record for \`$s\` exists: app-submit started." | tee -a "$GITHUB_STEP_SUMMARY"
+                done
+                exit 0
+              fi
+              echo "an app-submit is running; checking again"
+            elif [ -n "$SLUG" ] && [ -z "$(node -e '
+                const s = require("./apps/" + process.argv[1] + "/state.json").stages ?? {};
+                if (s.submit) console.log("done")' "$SLUG")" ]; then
+              : # still waiting for the owner
+            else
+              echo "nothing waiting${SLUG:+ for $SLUG}"
+              exit 0
+            fi
+            [ $((SECONDS + interval)) -lt "$deadline" ] || break
+            sleep "$interval"
           done
-          echo "$started app-submit run(s) started"
+
+          if [ -n "$SLUG" ]; then
+            if [ "$HOPS" -lt 28 ]; then
+              gh workflow run app-await-record.yml --repo "$GITHUB_REPOSITORY" --ref main -f slug="$SLUG" -f hops=$((HOPS + 1))
+              echo "No record for \`$SLUG\` yet; handed over to wait $((HOPS + 2))." >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "::warning::No App Store Connect record for $SLUG after a week; stopped waiting. Create it, then run this workflow with the slug."
+            fi
+          fi

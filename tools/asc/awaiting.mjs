@@ -4,16 +4,17 @@
  * has not uploaded yet: the chain finished (compliance and register ok), app-submit has never
  * run for it, and the app record now exists.
  *
- *   node tools/asc/awaiting.mjs
+ *   node tools/asc/awaiting.mjs [slug]
  *
- * app-await-record runs this on a schedule and starts app-submit for each one, which is what
- * makes creating the record the owner's whole go-ahead for TestFlight. An app whose submit
- * ran and failed is not here: that needs a person, not a retry every fifteen minutes.
+ * app-await-record runs this and starts app-submit for each one, which is what makes creating
+ * the record the owner's whole go-ahead for TestFlight. An app whose submit ran and failed is
+ * not here: that needs a person, not a retry every minute.
  */
 import fs from "node:fs";
 import { appFacts, findApp } from "./asc.mjs";
 
-for (const slug of fs.readdirSync("apps")) {
+const only = process.argv[2];
+for (const slug of only ? [only] : fs.readdirSync("apps")) {
   const statePath = `apps/${slug}/state.json`;
   if (!fs.existsSync(statePath) || !fs.existsSync(`apps/${slug}/qa.json`)) continue;
   const stage = (fs.existsSync(`apps/${slug}/STATUS.md`) ? fs.readFileSync(`apps/${slug}/STATUS.md`, "utf8") : "")

@@ -19,6 +19,8 @@ on:
 permissions:
   # to record the stage in apps/<slug>/state.json
   contents: write
+  # to start app-await-record, which waits for the owner to create the record
+  actions: write
 
 concurrency:
   group: app-register-${{ inputs.slug }}
@@ -58,3 +60,12 @@ jobs:
       - name: Fail the job if registration failed
         if: steps.register.outcome != 'success'
         run: exit 1
+
+      # From here the owner's form is the only thing left. The waiter starts app-submit the
+      # minute the record exists, or at once if it already does.
+      - name: Wait for the owner's record
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run app-await-record.yml --ref "${GITHUB_REF_NAME}" -f slug="$SLUG"
+          echo "app-await-record is waiting for the \`$SLUG\` record; the TestFlight upload starts when it appears." >> "$GITHUB_STEP_SUMMARY"
