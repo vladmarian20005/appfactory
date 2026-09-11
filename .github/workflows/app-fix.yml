@@ -97,9 +97,22 @@ jobs:
           set -o pipefail
           .github/scripts/verify-app.sh "${{ steps.gate.outputs.slug }}" 2>&1 | tail -120 | tee "$RUNNER_TEMP/failure.log"
 
+      # A verify that fails once and passes on the next runner is a flake — a screen that took
+      # longer than the capture's 30 seconds to draw, usually. Nothing to fix, but the chain
+      # was waiting on this app and nobody else will wake it: record the green and hand it on,
+      # or an app sits still until someone notices.
       - name: Already fine
         if: steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'success'
-        run: echo "Verify passes now; nothing to fix." >> "$GITHUB_STEP_SUMMARY"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLUG: ${{ steps.gate.outputs.slug }}
+        run: |
+          set -euo pipefail
+          .github/scripts/git-auth.sh
+          .github/scripts/record-stage.sh "$SLUG" verify ok
+          gh workflow run app-polish.yml -f slug="$SLUG" --ref "${GITHUB_REF_NAME}"
+          echo "Verify passes now; the failure did not reproduce. Recorded verify ok and dispatched app-polish." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Fix it
         if: steps.gate.outputs.skip == 'false' && steps.repro.outcome == 'failure'
