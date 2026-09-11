@@ -1,0 +1,33 @@
+{
+  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/color-sort/store/screenshots.json apps/color-sort/store/screenshots/en-US. Raw captures come from app-verify (apps/color-sort/qa) and are copied into store/raw. Title 1 is the promise from SPEC.md; titles 2 and 4 are the wedge said plainly — a level that is always winnable, and an app with nothing in it that runs out.",
+  "background": "linear-gradient(168deg,#0E2A4A 0%,#17508C 58%,#2F86C9 100%)",
+  "textColor": "#FFFFFF",
+  "accent": "rgba(255,255,255,.80)",
+  "shots": [
+    {
+      "src": "raw/01-play.png",
+      "title": "Every level has a solution",
+      "subtitle": "We check before you see it."
+    },
+    {
+      "src": "raw/02-progress.png",
+      "title": "The same puzzle for everyone",
+      "subtitle": "A new one every day, offline."
+    },
+    {
+      "src": "raw/03-packs.png",
+      "title": "No ads. No coins. No lives.",
+      "subtitle": "Nothing here runs out."
+    },
+    {
+      "src": "raw/04-accessible.png",
+      "title": "A shape on every color",
+      "subtitle": "The board reads without color."
+    },
+    {
+      "src": "raw/05-paywall.png",
+      "title": "Pay once, or play free",
+      "subtitle": "No subscription. Ever."
+    }
+  ]
+}

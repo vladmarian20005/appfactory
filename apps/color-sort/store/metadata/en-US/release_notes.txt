@@ -1,0 +1,3 @@
+The first release of Tidepour.
+
+Sixty free levels, a daily puzzle that is the same board for everyone, a streak and a month calendar, undo, restart, and a hint that replays a solution the app has already checked. No ads, no coins, no lives and no timer.

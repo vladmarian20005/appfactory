@@ -1,0 +1,8 @@
+{
+  "_comment": "GENERATED from apps/color-sort/privacy.json by tools/privacy/sync.mjs. Do not edit by hand. Uploaded by the fastlane release lane so nobody fills the questionnaire in a browser.",
+  "data_protections": [
+    {
+      "data_protection": "DATA_NOT_COLLECTED"
+    }
+  ]
+}

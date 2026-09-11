@@ -1,0 +1,52 @@
+Pour the tubes until each color stands on its own. Tap a tube, tap where it should go, and keep going until the board is separated. That is the whole game, and it is enough for five quiet minutes.
+
+EVERY LEVEL HAS A SOLUTION
+
+Boards are generated, not hand-made — and every one of them is solved before it is handed to you. Tidepour deals a board, searches it for a way to finish, and throws the board away if there is no way. Nothing you are given can be a dead end.
+
+That is also where par comes from: the length of the solution the app found. And it is what the hint is. Ask for a hint and Tidepour points at the next move of a solution it has already checked. Take your own route and it re-solves from the board in front of you, so the hint is right even when you have left the original line behind.
+
+NOTHING RUNS OUT
+
+No advertising, anywhere. There is no ad SDK in this app, so there is nothing to skip between levels, nothing to watch for a reward and nothing to pay to switch off.
+
+No coins, no gems, no lives, no energy, no timer. There is no in-app currency to buy and no progress that can be bought. You cannot get stuck behind a wall that a payment removes, because there is no wall.
+
+A DAILY PUZZLE EVERYONE SHARES
+
+One board a day, seeded from the date, so the puzzle you are working on is the puzzle everyone else opening Tidepour today is working on. Clear it and your streak grows. The month calendar shows the days you played, and a plain-text line lets you share the day's result if you want to.
+
+The daily puzzle is free forever, and it always will be.
+
+FREE, AND THEN OPTIONAL
+
+Free, with no account and no sign-up:
+• The daily puzzle, every day
+• The first 60 levels
+• Undo, restart and the hint
+• Your streak, your calendar and your cleared levels
+
+The one-time unlock adds:
+• The rest of the generated ladder
+• Calm mode — no move counter, muted colors, a slower pour
+• A color-blind palette, with a different shape stamped on every color
+
+One payment. It is not a subscription, it does not renew, and there is nothing else to buy afterwards.
+
+BUILT TO BE LEFT ALONE
+
+Every move is saved the moment you make it, so closing the app, switching to something else or running out of battery never costs you a level. You come back to the board exactly as you left it.
+
+Tidepour works completely offline. It makes no network requests at all — not for levels, not for scores, not for anything — so it works on a plane, in the car, on the underground, and it works the same whether you have a signal or not.
+
+PRIVATE BY DEFAULT
+
+No account. No sign-up. No analytics SDK, no crash-reporting SDK, no advertising SDK, no tracking and no data shared with anyone. Everything Tidepour knows about you — which levels you cleared, your streak, your settings — is on your device and nowhere else.
+
+DESIGNED FOR EVERY PAIR OF EYES
+
+Text scales with Dynamic Type, and every tube reads out under VoiceOver as the colors it holds, from the bottom up. The unlock adds an Okabe–Ito palette chosen to stay separable for every common kind of color blindness, plus a shape marker on each unit so the board can be read without relying on color at all.
+
+NO TIMER
+
+Deliberately. There is no clock on any board and no daily deadline beyond the date itself. Take a minute or take an hour.

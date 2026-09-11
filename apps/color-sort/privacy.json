@@ -1,0 +1,49 @@
+{
+  "_comment": "The single source of truth for what this app does with data. Three things are generated from it and must never drift apart: ios/App/PrivacyInfo.xcprivacy, store/app_privacy_details.json, and the published privacy policy page. Change this file, re-run the generators, do not hand-edit the outputs.",
+
+  "appName": "Tidepour",
+  "company": "Starhive Concept Srl",
+  "companyURL": "https://starhiveconcept.com/",
+  "effectiveDate": "2026-09-11",
+  "supportEmail": "support@starhiveconcept.com",
+  "pageSlug": "color-sort-privacy-policy-terms",
+
+  "collects": [],
+
+  "storesOnDevice": [
+    "Which levels and daily puzzles you have cleared, in how many moves, and on which day — this is what the streak, the calendar and the level ladder are drawn from.",
+    "The board you are part-way through, rewritten after every pour, so closing or crashing the app never costs you a level.",
+    "Your settings: whether onboarding is done, which level you are on, and whether calm mode, the color-blind palette and the shape markers are switched on."
+  ],
+
+  "network": [],
+
+  "requiredReasonAPIs": [
+    {
+      "category": "NSPrivacyAccessedAPICategoryUserDefaults",
+      "reason": "CA92.1",
+      "why": "@AppStorage and UserDefaults, used only for this app's own settings and the board in progress."
+    }
+  ],
+
+  "purchases": {
+    "type": "nonconsumable",
+    "name": "Tidepour Unlock",
+    "products": ["a single one-time unlock"],
+    "processor": "Apple",
+    "freeTier": "The daily puzzle, the first 60 levels, your streak, the calendar, undo, restart and hints are free forever, with no advertising and nothing that runs out."
+  },
+
+  "notifications": {
+    "used": false,
+    "why": "Tidepour sends no notifications at all. There is no streak reminder, because a streak you are nagged about is a job."
+  },
+
+  "ads": false,
+  "analytics": false,
+  "tracking": false,
+  "account": false,
+  "childDirected": false,
+
+  "attribution": "Every board is generated and solved on your device. Tidepour contains no third-party content, no third-party SDK and no network code of any kind."
+}
