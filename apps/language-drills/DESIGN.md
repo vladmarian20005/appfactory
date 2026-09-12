@@ -492,6 +492,9 @@ Never a letter, never a number, never "1000" on a gradient.
 
 A line of text is the fallback: *"213 of a thousand Spanish words. la ventana went in today."*
 
+This is the one place a frozen point size is allowed — `ShareImage.render` draws into an
+`ImageRenderer` at a fixed pixel size, so `180` here is 180 pixels, not a Dynamic Type size.
+
 ## Tokens
 
 ```swift
@@ -562,8 +565,14 @@ enum AppBrand {
 ```
 
 Applied once at the root: `.brand(AppBrand.brand)` on `RootView` **and** on `OnboardingView`,
-so the very first frame is already the workshop. Text sizes come from `brandFont` and
-`brandDisplay` only — never a bare `.system(size:)`, which stops scaling with Dynamic Type.
+so the very first frame is already the workshop.
+
+**Every size in this document is a Dynamic Type size.** Text comes from `brandFont(_:)`,
+`brandDisplay(size:)` or `scaledFont(size:)` — never `.font(.system(size:))` and never a
+`-> Font` helper that returns one, which `tells.mjs` fails: the small tracked marks are
+`scaledFont(size: 11)`, the tile's word is `brandDisplay(size: 56)`. The one exception is the
+share card, which `ShareImage.render` draws at a fixed pixel size with no Dynamic Type to
+scale against.
 
 ## Slop we are avoiding
 
