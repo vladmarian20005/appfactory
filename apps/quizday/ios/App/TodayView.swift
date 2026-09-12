@@ -77,7 +77,7 @@ struct TodayView: View {
                         .foregroundStyle(brand.palette.ink)
                         .popIn(delay: 0.15)
 
-                    SectionLine(categories: DailyPack.categories(in: setForToday))
+                    SectionLine(categories: DailyPack.categories(in: setForToday), shape: shapeLine)
                         .popIn(delay: 0.2)
 
                     if let line = Voice.streak(streak, todayPlayed: false) {
@@ -116,6 +116,13 @@ struct TodayView: View {
 
     private var dateline: String {
         "\(Masthead.dateline(for: today)) · Round \(editionNumber)"
+    }
+
+    /// What this morning's paper is made of, from the ladder at the rung she has reached.
+    private var shapeLine: String {
+        Desk.difficulties(at: filed + 1, count: setForToday.isEmpty ? 10 : setForToday.count)
+            .map { "\($0.1) \($0.0)" }
+            .joined(separator: " · ")
     }
 
     // MARK: - The sheet

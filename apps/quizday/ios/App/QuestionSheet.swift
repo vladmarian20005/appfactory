@@ -198,7 +198,11 @@ struct QuestionSheet: View {
                         .frame(maxWidth: 190)
                         .fixedSize(horizontal: false, vertical: true)
                         .rotationEffect(.degrees(-6))
-                        .offset(x: 10, y: 17)
+                        // Its middle sits on the box's bottom rule whatever height it grows to.
+                        // A fixed offset put a three-line stamp back over the answer at the
+                        // largest text sizes, which is the one place it must never be.
+                        .alignmentGuide(.bottom) { $0[VerticalAlignment.center] }
+                        .offset(x: 10)
                         .transition(.scale(scale: 1.6).combined(with: .opacity))
                         .allowsHitTesting(false)
                 }

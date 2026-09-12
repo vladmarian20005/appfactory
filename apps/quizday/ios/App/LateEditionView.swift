@@ -61,10 +61,12 @@ struct LateEditionView: View {
                     Text(Masthead.dateline(for: .now))
                         .dateline(11, tracking: 2)
 
+                    Spacer(minLength: 0)
+
                     Image("Spike")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 190)
+                        .frame(width: 250)
                         .padding(.vertical, 4)
                         .accessibilityLabel("A spindle spike through a stack of back issues")
 
@@ -90,12 +92,13 @@ struct LateEditionView: View {
                     }
                     .brandProminent()
 
-                    Spacer(minLength: 24)
+                    Spacer(minLength: 18)
 
                     PrintersOrnament()
                 }
                 .padding(.horizontal, 32)
-                .padding(.vertical, 18)
+                .padding(.top, 18)
+                .padding(.bottom, 46)
                 .frame(minHeight: geo.size.height)
             }
             .paper()

@@ -520,6 +520,10 @@ struct StreakRibbon: View {
 struct SectionLine: View {
     @Environment(\.brand) private var brand
     let categories: [String]
+    /// The edition's make-up — `4 easy · 4 medium · 2 hard`. A paper prints its own contents,
+    /// and this is the one line on any screen that shows the ladder moving: at edition 1 it
+    /// reads four easy, at edition 200 one, and six hard where there were two.
+    var shape: String?
 
     var body: some View {
         VStack(spacing: 9) {
@@ -534,10 +538,17 @@ struct SectionLine: View {
                     }
                 }
             }
+            if let shape {
+                InkRule(weight: 0.5, opacity: 0.14)
+                Text(shape)
+                    .dateline(10, tracking: 1.6)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }
             InkRule(weight: 0.5, opacity: 0.22)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Today's sections: \(categories.joined(separator: ", "))")
+        .accessibilityLabel("Today's sections: \(categories.joined(separator: ", "))."
+                            + (shape.map { " The edition is \($0)." } ?? ""))
     }
 }
 

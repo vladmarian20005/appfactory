@@ -72,13 +72,16 @@ struct RootView: View {
                 SettingsView(store: store, config: AppInfo.config, onUpgrade: { showPaywall = true }) {
                     QuizdaySettings()
                 }
-                // The Form's grey would cover the paper otherwise.
+                // The List's grey would cover the paper otherwise.
                 .paper()
-                // The kit's version footer is the last thing in the Form, and the tab bar is
-                // Liquid Glass over it: without this the build number sat half-legible behind
-                // the bar. A paper strip under the scroll gives it somewhere to sit.
+                // The kit's version footer is the last thing in the List, and the tab bar is
+                // Liquid Glass floating over the scroll: it sat half-legible behind the bar.
+                // The gaps between sections were the slack — a paper sets its rules close —
+                // and closing them lifts the footer clear. The inset below keeps it clear at
+                // the larger text sizes, where the rows grow and the list starts to scroll.
+                .listSectionSpacing(.compact)
                 .safeAreaInset(edge: .bottom) {
-                    Color.clear.frame(height: 26)
+                    Color.clear.frame(height: 56)
                 }
             }
             .tabItem { Label("Settings", systemImage: "gearshape.fill") }

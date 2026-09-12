@@ -58,39 +58,39 @@
       "name": "answer",
       "args": ["-onboarded", "-reset", "-demo", "answer"],
       "delay": 4.0,
-      "frames": 30,
+      "frames": 18,
       "interval": 0,
       "note": "The ink press: the app answers question four right at 6s, turns the page at 9s and answers question five wrong at 11.5s, so the sweep, the stamp, the tally, the pencil correction and the run being struck out are all on camera."
     },
     {
       "name": "win",
       "args": ["-onboarded", "-reset", "-demo", "win"],
-      "delay": 4.0,
-      "frames": 30,
+      "delay": 9.0,
+      "frames": 20,
       "interval": 0,
-      "note": "The edition printing: the tenth answer lands at 8s and the page goes to press at 12s, which puts the score counting up, the tier stamp and the confetti burst at ~13.2s inside the strip."
+      "note": "The edition printing: the tenth answer lands at 8s and the page goes to press at 12s, so the sheet, the press, the score counting up, the tier stamp and the burst are all inside the strip. A screenshot of a page that is animating hard costs two to three seconds on a runner, so the film is long and loose rather than tight — the 2.8s burst has to be wider than the gap between two frames to be caught at all."
     }
   ],
   "ladder": [
     {
       "name": "edition-1",
-      "args": ["-onboarded", "-reset", "-play", "-playStep", "3"],
-      "note": "Rung 1: four easy, four medium, two hard, and nothing on record — so the desk deals the day's slate in the order the date sets."
+      "args": ["-onboarded", "-reset"],
+      "note": "Rung 1: the section line prints the edition's make-up — four easy, four medium, two hard — and nothing is on record, so the desk deals the day's slate in the order the date sets."
     },
     {
       "name": "edition-10",
-      "args": ["-onboarded", "-editions", "9", "-play", "-playStep", "3"],
-      "note": "Rung 10: the mix has not moved yet, but ninety questions are on record, so the fourth question is already one chosen from what she has missed."
+      "args": ["-onboarded", "-editions", "9"],
+      "note": "Rung 10: the mix has not moved yet — the first hard rung is at 39 — but ninety questions are on record and the sections are hers, not the calendar's."
     },
     {
       "name": "edition-60",
-      "args": ["-onboarded", "-editions", "59", "-play", "-playStep", "3"],
-      "note": "Rung 60: three easy, four medium, three hard. Past the bundled pack, so the sheet is drawn from her own weak sections."
+      "args": ["-onboarded", "-editions", "59"],
+      "note": "Rung 60: three easy, four medium, three hard, over a run of sixty in brass."
     },
     {
       "name": "edition-200",
-      "args": ["-onboarded", "-editions", "199", "-play", "-playStep", "3"],
-      "note": "Rung 200: one easy, three medium, six hard — the top of the ladder. Q4 is marked HARD where edition 1's was EASY, and the sheet is her errata."
+      "args": ["-onboarded", "-editions", "199"],
+      "note": "Rung 200: one easy, three medium, six hard — the top of the ladder, and six hundred questions on record, so the sections on the line are the ones that keep catching her."
     }
   ]
 }

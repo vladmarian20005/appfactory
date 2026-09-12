@@ -79,7 +79,7 @@ struct EditionView: View {
                     .foregroundStyle(brand.palette.inkSoft)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 14)
+                    .padding(.top, 30)
                     .popIn(delay: 1.3)
 
                 if streak > 0 {
@@ -188,11 +188,16 @@ struct EditionView: View {
                                 ? .scale(scale: 1.5).combined(with: .opacity)
                                 : .opacity)
             }
+        }
+        // The brass stamp is laid outside the headline's ZStack: once the tier stamp was cut to
+        // three quarters of the page it had nowhere inside it to land, and it came down across
+        // the subline.
+        .overlay(alignment: .bottomTrailing) {
             if isPersonalBest, personalBest || Motion.isStill {
                 Stamp(text: "Longest run yet", color: brand.palette.highlight, size: 12)
                     .fixedSize()
                     .rotationEffect(.degrees(5))
-                    .offset(x: 74, y: 46)
+                    .offset(x: 18, y: 30)
                     .transition(.scale(scale: 1.4).combined(with: .opacity))
             }
         }
