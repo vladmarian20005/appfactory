@@ -1,0 +1,15 @@
+{
+  "pass": true,
+  "scores": { "idea": 5, "look": 4, "signature": 4, "reward": 4, "voice": 5, "craft": 3, "firstMinute": 4 },
+  "tells": [],
+  "summary": "A Sevillian tile-setter's workshop that commits — plaster, twelve glazes, a bevelled tile from 318 pt down to 9 pt, and a voice about mortar rather than streaks — held back only by craft: the word on the tile sits at 1.92:1 in dark mode and the unfired thousand vanishes in light.",
+  "fixes": [
+    "DrillTile.swift:174 and :164 paint the answer face's Spanish and English in the dark-mode glaze on a light face — 1.92:1 FAIL; use the light glaze hex in both modes, per DESIGN.md's own contrast table",
+    "BenchView.swift:461 holds the answer face 3.6 s of a 4.2 s cycle, so moment-turn.png caught no mid-rotation frame at all — re-pace -demo turn with held beats at 0 degrees, edge-on and 180, three cards not eight",
+    "WallMosaic.swift:90 draws bare tiles at surface.opacity(0.5), a 3% step on plaster, so the thousand disappears in light mode — fill at full surface.shaded(0.05) with a recessed grout line, same at Tiles.swift:165",
+    "ax-01-win.png pushes both Back to the wall and Share the wall off the bottom — clamp the hero and copy to accessibility2 and pin the actions in a bottom safeAreaInset",
+    "ProgressWallView.swift:138 caps the kiln stack at 22 tiles so 48 and 13 draw at 1.6:1 — compress the overlap above the cap instead of dropping tiles, and narrow the rods to about 52 pt so they read as stacked squares",
+    "The Bench floats: about 330 pt of empty plaster above the tile and 400 pt below the chips — centre the tile-plus-chips block, and capture the store shot mid-session so the course carries colour",
+    "WallAtNoon and KeptWall are the light SVGs on the night canvas so their unfired tiles glare — render a dark pair and swap on colorScheme; also add a launch screen on canvas (moment-win.png frame 1 is white) and drop the hand.raised.fill from the paywall promise"
+  ]
+}
