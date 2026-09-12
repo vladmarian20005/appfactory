@@ -9,6 +9,11 @@
  *     "background": "#0F6A47",          // frame background, or a CSS gradient
  *     "textColor":  "#ffffff",
  *     "accent":     "#A7F3D0",          // subtitle colour
+ *     "font":       "serif",            // the brand's display face: serif (New York),
+ *                                       // rounded (SF Rounded), monospaced, default (SF Pro),
+ *                                       // or a CSS font-family stack. Match DESIGN.md.
+ *     "titleWeight":   700,             // optional; defaults to 700 for serif, 800 otherwise
+ *     "titleTracking": "-0.005em",      // optional; serif defaults looser than sans
  *     "shots": [
  *       { "src": "raw/01.png", "title": "Ten questions a day", "subtitle": "No ads, nothing runs out." }
  *     ]
@@ -26,7 +31,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { chromium } from "playwright";
+import { chromium, webkit } from "playwright";
 import { PNG } from "pngjs";
 
 const [specPath, outDir] = process.argv.slice(2);
@@ -74,6 +79,27 @@ function stripAlpha(file) {
   return { width: png.width, height: png.height };
 }
 
+/**
+ * The frame's display face.
+ *
+ * The store frame is where most people meet the app, and setting it in SF Pro while the app
+ * itself is a newspaper in New York breaks the identity at exactly the point of sale. `font`
+ * in the spec names the brand's display face the same way DESIGN.md does; the generic CSS
+ * families are what WebKit resolves to the real system faces on macOS.
+ */
+const FACES = {
+  serif: `ui-serif,"New York","Iowan Old Style",Georgia,serif`,
+  rounded: `ui-rounded,"SF Pro Rounded","Avenir Next Rounded",-apple-system,sans-serif`,
+  monospaced: `ui-monospace,"SF Mono",Menlo,monospace`,
+  default: `-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif`,
+};
+const face = FACES[spec.font] ?? spec.font ?? FACES.default;
+// A serif at 800 is a different typeface from a serif at 700, and New York has no 800. Let a
+// brand say what it means, and default to the weight the face actually carries.
+const titleWeight = spec.titleWeight ?? (spec.font === "serif" ? 700 : 800);
+// Tight tracking is a grotesque's habit; it makes a text serif look squeezed.
+const titleTracking = spec.titleTracking ?? (spec.font === "serif" ? "-0.005em" : "-0.025em");
+
 function frameHTML(shot) {
   // The device mock is proportional to the canvas so the layout survives a size change.
   const deviceW = Math.round(W * 0.818);
@@ -84,11 +110,11 @@ function frameHTML(shot) {
   #frame{
     width:${W}px;height:${H}px;position:relative;overflow:hidden;
     background:${spec.background ?? "#111"};color:${spec.textColor ?? "#fff"};
-    font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family:${face};
     -webkit-font-smoothing:antialiased;
   }
   .copy{position:absolute;top:${Math.round(H * 0.061)}px;left:${Math.round(W * 0.074)}px;right:${Math.round(W * 0.074)}px;text-align:center}
-  h1{font-size:${Math.round(W * 0.084)}px;line-height:1.04;margin:0 0 ${Math.round(H * 0.011)}px;font-weight:800;letter-spacing:-0.025em}
+  h1{font-size:${Math.round(W * 0.084)}px;line-height:1.04;margin:0 0 ${Math.round(H * 0.011)}px;font-weight:${titleWeight};letter-spacing:${titleTracking}}
   p{font-size:${Math.round(W * 0.042)}px;line-height:1.3;margin:0;color:${spec.accent ?? "rgba(255,255,255,.85)"};font-weight:500}
   .device{
     position:absolute;left:50%;transform:translateX(-50%);top:${top}px;
@@ -104,7 +130,23 @@ function frameHTML(shot) {
   </div></body></html>`;
 }
 
-const browser = await chromium.launch();
+// WebKit where it is installed, for the same reason tools/design/render.mjs prefers it: on
+// macOS it resolves `ui-serif` to New York and `ui-rounded` to SF Rounded, which is the whole
+// point of setting the frame in the brand's face. Chromium resolves neither and would quietly
+// fall back to Helvetica, so a brand face would be a no-op nobody noticed.
+async function launch() {
+  if (process.platform === "darwin" && spec.font && spec.font !== "default") {
+    try {
+      return { browser: await webkit.launch(), engine: "webkit" };
+    } catch {
+      console.warn("compose: WebKit is not installed; falling back to Chromium, which cannot resolve ui-serif or ui-rounded");
+    }
+  }
+  return { browser: await chromium.launch(), engine: "chromium" };
+}
+
+const { browser, engine } = await launch();
+console.log(`compose: ${engine}, face ${spec.font ?? "default"}`);
 try {
   const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
 

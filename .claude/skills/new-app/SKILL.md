@@ -130,7 +130,10 @@ no Xcode window. Everything below works there. Nothing below needs a human.
     compliance and page stages run afterwards without another agent.
 
     `apps/<slug>/store/screenshots.json` — `background` (a CSS gradient from the brand's
-    palette, not a generic navy), `textColor`, `accent`, and one entry per screen in qa.json
+    palette, not a generic navy), `textColor`, `accent`, `font` (the brand's display face:
+    `serif`, `rounded`, `monospaced` or `default` — the same face `AppBrand`'s `BrandType`
+    sets, so the frame is in the app's own type rather than SF Pro over a screenshot that
+    is not), and one entry per screen in qa.json
     with a `title` under 40 characters and an optional `subtitle`. Order them by beauty: the
     first screenshot is the one that makes someone want the app — usually the win or the
     core screen mid-interaction. Titles state a benefit, not a feature; at least one is the

@@ -3,6 +3,7 @@
   "background": "linear-gradient(168deg,#F7F2E6 0%,#F0E8D6 58%,#E6DBC4 100%)",
   "textColor": "#1B2027",
   "accent": "#C1362C",
+  "font": "serif",
   "shots": [
     {
       "src": "raw/03-result.png",

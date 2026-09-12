@@ -34,8 +34,9 @@ rendered, composes the marketing frames from `store/screenshots.json`, and commi
 `store/screenshots/en-US/`.
 
 If `store/screenshots.json` does not exist yet, write it first: `background` (a CSS gradient
-is fine), `textColor`, `accent`, and five shots each with a `title` under 40 characters and an
-optional `subtitle`. Titles state a benefit, not a feature; the first is the promise from
+is fine), `textColor`, `accent`, `font` (the brand's display face — `serif`, `rounded`,
+`monospaced` or `default` — matching the app's `BrandType`), and five shots each with a
+`title` under 40 characters and an optional `subtitle`. Titles state a benefit, not a feature; the first is the promise from
 `SPEC.md`, and at least one should be the wedge stated plainly.
 
 Then `git pull` and **Read every composed PNG.** A screenshot that is technically valid and

@@ -8,6 +8,15 @@ description: Write the launch kit for an app: landing page, five short-video scr
 Requires screenshots and metadata from `/ship`. Output goes to `apps/<slug>/content/` and `the starhiveconcept-site repo's site/<slug>/`.
 
 1. **Landing page.** Rewrite `the starhiveconcept-site repo's site/<slug>/index.html` as a real page: promise, three benefits mirroring the screenshot titles, the composed screenshots, App Store badge (link to the app once it has an id, otherwise "coming soon"), FAQ from the wedge, privacy link. Static HTML and inline CSS only. Render it once with the browse tool and Read the screenshot.
+
+   **Wear the app's brand, not a house style.** Read `apps/<slug>/DESIGN.md` and
+   `apps/<slug>/store/screenshots.json` first and take the page's canvas, ink, accent and
+   display face from them — the same values the app and the store frames use. A page in a
+   generic gradient under SF Pro, in front of screenshots of a newspaper set in New York,
+   tells a visitor the app is a template. Map the face the way `compose.mjs` does:
+   `serif` → `ui-serif, "New York", Georgia, serif`; `rounded` → `ui-rounded, "SF Pro
+   Rounded", sans-serif`; `monospaced` → `ui-monospace, "SF Mono", monospace`. Use the art
+   in `apps/<slug>/design/art/` rather than stock shapes.
 2. **Footage.** For each of five scripts, record 15–25 seconds on the simulator: `xcrun simctl io <udid> recordVideo content/raw/0N.mov` while driving the app, stop with Ctrl-C. Convert to vertical MP4 with ffmpeg (1080x1920, 30 fps). Captions can be burned in later; write the caption timings in the script.
 3. **Scripts.** `content/videos.md`: five scripts, each with a hook line under 8 words, a 20–30 second beat list, the shot to show for each beat, and the on-screen text. Hooks come from the leader's complaints, e.g. "MyFitnessPal put macros behind a paywall. This doesn't."
 4. **Posts.** `content/posts.md`: ten X posts (mix of one-liners, a thread opener, a before/after), one Reddit post per relevant subreddit written to that subreddit's rules with no link-dropping where forbidden, one Product Hunt listing (tagline ≤60, description, first comment), one launch email, one press blurb.
