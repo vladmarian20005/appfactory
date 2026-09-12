@@ -42,21 +42,33 @@ for three days.
 sees whether he was right, and says how it went. He does it forty times a session and
 thousands of times over the app's life, so it is the product.
 
-The card is not a white rounded rectangle. It is a **glazed tile**: a 300 × 300 pt square at
-corner radius 12, filled with its theme's glaze as a vertical gradient (the glaze colour at
-the top to 14 % deeper at the bottom), a 1.5 pt inner light on the top and left edges and a
-1.5 pt inner shadow on the bottom and right — the bevel of a pressed tile — with a specular
-band at 22° across the upper third at 12 % white. The word sits in it in the cream of painted
-glaze, 56 pt, wide, centred. Around it, the bench: two tiles waiting behind it, offset 6 pt
-and 12 pt down, in bisque.
+The card is not a white rounded rectangle. It is a **glazed tile**, 318 × 318 pt at corner
+radius 12, and it is painted on both faces the two ways a tile shelf paints them:
+
+- **The prompt face** (the Spanish) is *glaze ground, cream letters*: the theme's glaze as a
+  vertical gradient, the glaze colour at the top to 14 % deeper at the bottom, with the word
+  painted across it in cal at 56 pt.
+- **The answer face** (the English) is the other way round — *cream ground, glaze painting*: a
+  15 pt band of the theme's glaze all round, four amber corner motifs on the band, and inside
+  it a cream field (`#F7F0E3` → `#F0E6D4`, and `#DCD2C0` in dark mode so it does not glare)
+  carrying a 1.5 pt glaze fillet, the English at 46 pt **in the glaze colour**, a hairline, the
+  example in body italic and its translation in Sombra.
+
+Both faces have the pressed bevel — a 3 pt inner light on the top and left edges, a 3 pt inner
+shadow on the bottom and right — and a specular band at about 102° across the face. Text on the
+answer face is always Carbón and Sombra whatever the mode, because the face is light in both
+(`#2B211A` on `#DCD2C0` is 10.50, `#63564A` on it 4.74). The word's rank sits top right in a
+small tracked mark; the Spanish stays top left in the glaze colour, so the answer is never
+divorced from the word that asked for it. Around it, the bench: two bisque tiles waiting
+behind, offset 8 pt and 16 pt down. `mock-1-play` shows the face a beat after the turn.
 
 | ms | what happens |
 | --- | --- |
 | finger down | The tile presses: `.buttonStyle(.pressable)` at scale 0.985, the specular band slides 6 pt down its face, `Haptics.soft()`. |
 | 0–170 | **The turn begins.** `rotation3DEffect` about the vertical axis, perspective 0.62, 0° → 90°, `Motion.snappy` (response 0.34, damping 0.86). The specular band tracks the angle and sweeps the full face as it goes edge-on — the glaze catching the light is the whole point of the motion. |
 | 170 | **The edge.** At 90° the faces swap. `Haptics.rigid()` and `Tones.shared.play(.pop)` — the ceramic tick of a tile set down on stone. The tile is 3 pt thick here: a hairline of unglazed clay `#C7B49B` shows on the edge. |
-| 170–340 | **The landing.** 90° → 180° on `Motion.bouncy`, overshooting 4° and settling. The back is the same tile in bisque with the English painted on it at 44 pt, the example sentence beneath in body italic at 17 pt with its translation in `inkSoft` at 15 pt, and the **chime** — a drawn glyph of three arcs — in the lower-left corner. |
-| 340–460 | **The grades rise.** Three glaze chips come up from the bottom edge, `.popIn(delay:)` staggered 0.05 s: **Not yet** in almagre, **Got it** in cobalt, **Easy** in verdigris. Capsules, not squares — they are the only round things on the screen, so the eye finds them. |
+| 170–340 | **The landing.** 90° → 180° on `Motion.bouncy`, overshooting 4° and settling. The answer face arrives as described above, with the **chime** — a drawn glyph of three arcs in a glaze-tinted well — in the lower-left corner. |
+| 340–460 | **The grades rise.** Three glaze chips come up from the bottom edge, `.popIn(delay:)` staggered 0.05 s: **Not yet** and **Easy** as *outlined* chips in almagre and verdigris on the plaster, **Got it** filled in cobalt and 30 % wider — the common answer is the one with weight, so three coloured pills never read as a row of sweets. Capsules, not squares: they are the only round things on the screen, so the eye finds them. |
 | on **Not yet** | The tile's glaze drains to bisque over 0.22 s (a mask wiping top to bottom) and it slides back into the stack behind the bench on `Motion.gentle`, with `Haptics.thud()` and `Tones.shared.play(.miss)` — a low, soft note, never a buzzer. Nothing turns red; the tile is simply not fired yet. |
 | on **Got it** | The tile shrinks to 26 pt on a 0.32 s arc up into the **course** — the single row of the session's tiles along the top of the screen — and presses into its gap with `Haptics.rigid()` and `Tones.shared.play(.step(n))`, where n is how many have set this session, so a good run climbs the scale. |
 | on **Easy** | The same flight at 0.24 s, and on landing the tile flashes a lustre (a white sweep at 40 % across it in 0.18 s), an 8-particle glaze-chip burst in its own colour, `Haptics.impact(0.6)`, `Tones.shared.play(.step(n + 2))`. Easy is audibly two notes brighter. |
@@ -85,11 +97,11 @@ never a sheet, never a checkmark seal, about 1500 ms.
 | 0 | The last tile flies up to the course. The bench empties: the stack slides out of frame down, the grades fall away. |
 | 0–260 | **The pull-back.** The course expands into the wall — the session's tiles keep their positions and the rest of the wall grows around them from scale 1.06 to 1.0 on `Motion.gentle`, so the eye sees the day's work land inside the whole. |
 | 120–520 | **The setting.** Each tile of the session presses into the wall in order, `.popIn(delay:)` staggered 0.05 s, each with `Haptics.impact(0.3)` and `Tones.shared.play(.step(n))` climbing. Mortar (a 2 pt line of canvas colour) draws around each as it lands. |
-| 300–800 | **The count.** The hero number counts with `CountUp(to: known, onTick:)` at `.brandDisplay(size: 104)` in ink — `213` — over a small tracked `OF A THOUSAND` in `inkSoft`. Every tick is `Haptics.impact(0.35)`. |
-| 700–1000 | The **wall line** draws itself: a hairline across the full width with a filled portion in cobalt at `known / 1000`, and a small amber notch at the next hundred. |
-| 800 | The praise line sets under it in `.brandFont(.title3)`, from the setter's pool, warm and concrete. |
+| 300–800 | **The count.** The hero number counts with `CountUp(to: known, onTick:)` at `.brandDisplay(size: 100)` in ink — `213` — over a small tracked `OF A THOUSAND` in `inkSoft` and, under that, `+24 SET TODAY` in amber. Every tick is `Haptics.impact(0.35)`. The tiles set today keep a 1.5 pt amber mortar ring in the wall for the rest of the day, so the eye can find the day's work inside the thousand. |
+| 700–1000 | The **wall line** draws itself: a 3 pt rule 292 pt wide with a filled portion in cobalt at `known / 1000` and a small amber notch at the next hundred, marked `THE WALL` and `300 NEXT`. |
+| 800 | The praise line sets under it at `.brandFont(.title2)` in the display face, from the setter's pool, with one quiet line of fact under it in `inkSoft` — *"Twelve panels standing, three still bare plaster."* |
 | 900 | **Tiers.** *Set* (the session finished, some tiles came back): the lamp glow swells behind the wall over 0.5 s, `Haptics.success()`, `Tones.shared.play(.success)`, **no confetti** — a normal day is not a parade. *Clean* (nothing went back to the bench): `confetti(trigger:power: 1.1)` in glaze chips, `Haptics.celebrate()`, `Tones.shared.play(.fanfare)`. *A new hundred* (the session crossed 100, 200 … 1000 known): the loudest — `confetti(power: 1.5)`, `Haptics.celebrate()`, `.fanfare`, and a **lustre sweep** travels the whole wall left to right over 0.7 s, lighting each course of tiles as it passes, with the hero number held in amber. |
-| after | **Back to the wall** (prominent), **Share the wall**. |
+| after | **Back to the wall** (prominent), **Share the wall**. `mock-2-win` shows the peak. |
 
 **Small rewards inside the loop.** Every tenth tile set in a session, the course's tenth gap
 takes a thin amber mortar line and `Tones.shared.play(.step(10))` rings a note above the
@@ -136,6 +148,11 @@ light   #2B211A on #EDE3D6  12.40  AAA   ink on canvas
         #F4ECDD on #9E4630   5.30  AA    onAccent on miss chip
         #1C5AA6 on #EDE3D6   5.41  AA    accent as text on canvas
         #A8701B on #EDE3D6   3.31  large only — amber is a glow and a large number, never body
+tile    #2B211A on #F4ECDD  13.40  AAA   ink on the answer face, light
+        #1C5AA6 on #F4ECDD   5.84  AA    the glaze as painted letters on it
+        #63564A on #F4ECDD   6.04  AA    the translation on it
+        #2B211A on #DCD2C0  10.50  AAA   ink on the answer face, dark mode
+        #63564A on #DCD2C0   4.74  AA    the translation on it, dark mode
 dark    #F1E7D8 on #131826  14.47  AAA   ink on canvas
         #F1E7D8 on #1F2536  12.47  AAA   ink on surface
         #9AA3B5 on #131826   6.98  AA    inkSoft on canvas
@@ -186,9 +203,10 @@ and it is the one width no other app in this category uses — Duolingo, Babbel 
 all heavy rounded or condensed grotesques. Body is SF at default width, and example sentences
 are body italic, because that is how a translation is set.
 
-Hero numbers through `brandDisplay(size:)`: **104 pt** for words known on Progress and on the
-win, **72 pt** for the due count when a session is waiting, **56 pt** for the Spanish word on
-the tile (it steps down to 40 and then 30 for long words and large Dynamic Type settings).
+Hero numbers through `brandDisplay(size:)`: **104 pt** for words known on Progress and
+**100 pt** on the win, **72 pt** for the due count when a session is waiting, **56 pt** for the
+Spanish word on the prompt face and **46 pt** for the English on the answer face (both step
+down to 40 and then 30 for long words and large Dynamic Type settings).
 Small tracked uppercase in SF at 11 pt, tracking 1.6 — `OF A THOUSAND`, `DUE TODAY`,
 `THE HOUSE · 34 OF 80` — are the marks written on the bench, and they are the only uppercase
 in the app.
@@ -208,7 +226,7 @@ Four SVGs in `design/art/`, rendered into the asset catalog with `tools/design/a
 
 | File | Where | What it depicts |
 | --- | --- | --- |
-| `wall-at-noon.svg` | onboarding 1 | A lime wall with a mosaic panel half laid, one cobalt tile hovering over its gap, mortar combed beneath it |
+| `wall-at-noon.svg` | onboarding 1 (`mock-3-first`) | A lime wall with a mosaic panel half laid, one starred cobalt tile hovering over its gap, the mortar combed in the gap beneath it |
 | `the-bench.svg` | onboarding 2 | The workbench: three tiles drying in a row, a brush laid across an open jar of cobalt glaze, a rag |
 | `kept-wall.svg` | onboarding 3 and the paywall hero | The finished wall under a hanging lamp, courses receding, twelve panels of glaze reading as one thing |
 | `swept-bench.svg` | the empty state when nothing is due | The same bench, empty and swept, tools laid down, late light across it |
@@ -373,13 +391,14 @@ SDK. Everything below the chrome — tiles, the wall, the course, the kiln stack
 
 **Its one job:** turn the tile in front of you and say how it went. Nothing else is on screen.
 
-Top to bottom: the **course** — the session's row of 9 pt tile slots across the full width
-under the nav bar, filled ones in their glaze, the rest as empty grout gaps, with `24 DUE`
-tracked small at its right end, shrinking as tiles set. Then the **tile**, 300 × 300, centred
-with the two bisque tiles of the stack behind it. Under it, before the turn, nothing at all —
-the affordance is the tile. After the turn: the English at 44 pt on bisque, the example
-sentence in body italic, its translation in `inkSoft`, the chime glyph at the lower left, then
-the three grade chips.
+Top to bottom: the **course** — the session's row of 12 pt tile slots across the full width
+under the nav bar, filled ones in their glaze, the rest as empty grout gaps recessed with an
+inner shadow, the current theme tracked small at its left end and `15 DUE` at its right,
+shrinking as tiles set. Then the **tile**, 318 × 318, centred with the two bisque tiles of the
+stack behind it; the tile and its three chips are centred **together as one block**, 38 pt
+apart, so neither floats. Before the turn the tile shows the glaze face and there is nothing
+under it at all — the affordance is the tile. After the turn it shows the cream-field face and
+the chips rise.
 
 **What moves:** the turn and its specular sweep; the grade chips rising; the tile flying to
 the course or draining to bisque; the next tile rising from the stack; the plaster drifting.
@@ -525,6 +544,15 @@ enum AppBrand {
     /// The clay edge a tile shows when it turns — the one colour that is neither
     /// plaster nor glaze.
     static let clayEdge = Color(light: 0xC7B49B, dark: 0x3A3730)
+
+    /// The cream ground of a tile's answer face. Light in both modes — dimmed at night so it
+    /// does not glare — so its text is always `faceInk` and `faceInkSoft`, never the palette's.
+    static let tileFace = Color(light: 0xF4ECDD, dark: 0xDCD2C0)
+    static let faceInk = Color(hex: 0x2B211A)
+    static let faceInkSoft = Color(hex: 0x63564A)
+
+    /// The amber the corner motifs and the fresh mortar ring are painted in.
+    static let motif = Color(hex: 0xE0A03C)
 
     /// The glaze of a theme, by its index in the deck's twelve.
     static func glaze(_ theme: Int) -> Color {

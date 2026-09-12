@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thousand · the day's tiles set into the wall</title>
+<style>
+  :root {
+    --cal: #EDE3D6; --bisque: #E0D2C0; --clay: #C7B49B; --grout: #C9B79F;
+    --ink: #2B211A; --sombra: #63564A; --cobalt: #1C5AA6; --cobalt-deep: #174B8B;
+    --cream: #F4ECDD; --amber: #A8701B; --amber-lit: #E0A03C;
+    --verde: #2F6B57; --almagre: #9E4630; --ocre: #A8701B; --turquesa: #2A7E8E;
+    --indigo: #35468C; --rosa: #A55A6A; --manganeso: #6B4E7D; --oliva: #5E6B2C;
+    --berenjena: #5B3550; --pizarra: #41505C;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { width: 440px; height: 956px; }
+  body {
+    font-family: -apple-system, "SF Pro Text", system-ui, sans-serif; color: var(--ink);
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(80% 46% at 50% 54%, rgba(224,160,60,.30) 0%, rgba(224,160,60,0) 70%),
+      radial-gradient(110% 70% at 14% 2%, #F4EADC 0%, rgba(244,234,220,0) 58%),
+      radial-gradient(120% 76% at 50% 108%, #D6C6AF 0%, rgba(214,198,175,0) 64%),
+      linear-gradient(158deg, #E9DECE 0%, #E2D5C3 56%, #DACBB6 100%);
+  }
+  body::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .8;
+    background:
+      repeating-linear-gradient(112deg, rgba(43,33,26,.035) 0 1px, rgba(43,33,26,0) 1px 13px),
+      repeating-linear-gradient(31deg, rgba(255,255,255,.07) 0 2px, rgba(255,255,255,0) 2px 21px);
+  }
+  .display { font-family: -apple-system, "SF Pro Display", system-ui, sans-serif; font-stretch: expanded; font-weight: 600; }
+  .mark { font-size: 11px; font-weight: 600; letter-spacing: 1.6px; color: var(--sombra); text-transform: uppercase; }
+
+  .screen { position: relative; height: 100%; display: flex; flex-direction: column; align-items: center; z-index: 2; }
+  .status { width: 100%; height: var(--safe-top, 62px); display: flex; align-items: flex-end; justify-content: space-between; padding: 0 30px 8px; }
+  .status .time { font-size: 17px; font-weight: 600; }
+  .status .right { display: flex; align-items: center; gap: 6px; }
+
+  .hero { margin-top: 6px; text-align: center; }
+  .count { font-size: 100px; line-height: .96; letter-spacing: -1px; }
+  .of { margin-top: 2px; }
+  .today { margin-top: 10px; font-size: 12px; font-weight: 700; letter-spacing: 1.8px; color: var(--amber); text-transform: uppercase; }
+
+  /* the wall: twelve panels, a thousand tiles */
+  .wall { margin-top: 18px; display: grid; grid-template-columns: repeat(4, 61px); gap: 16px; }
+  .panel { display: grid; grid-template-columns: repeat(7, 7px); gap: 2px; }
+  .t { width: 7px; height: 7px; border-radius: 1.8px; }
+  .t.clay { background: rgba(199,180,155,.55); box-shadow: inset 0 .5px 1px rgba(43,33,26,.16); }
+  .t.half { box-shadow: inset 0 .5px 0 rgba(255,255,255,.4); opacity: .5; }
+  .t.set { box-shadow: inset 0 .6px 0 rgba(255,255,255,.45), inset 0 -.6px 0 rgba(0,0,0,.22); }
+  .t.today { box-shadow: inset 0 .6px 0 rgba(255,255,255,.5), 0 0 0 1.5px rgba(224,160,60,.9); }
+
+  /* the wall line, and the notch at the next hundred */
+  .lineWrap { width: 292px; margin-top: 24px; }
+  .line { position: relative; height: 3px; border-radius: 2px; background: rgba(43,33,26,.16); }
+  .line .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 21.3%; border-radius: 2px; background: var(--cobalt); }
+  .line .notch { position: absolute; left: 30%; top: -4px; width: 3px; height: 11px; border-radius: 1.5px; background: var(--amber-lit); }
+  .lineRow { display: flex; justify-content: space-between; margin-top: 8px; }
+
+  .headline { margin-top: 28px; font-size: 26px; text-align: center; letter-spacing: .2px; }
+  .sub { margin-top: 8px; font-size: 15px; color: var(--sombra); text-align: center; }
+
+  .actions { margin-top: auto; width: 100%; padding: 0 30px calc(var(--safe-bottom, 34px) + 18px); display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .prominent { width: 100%; height: 54px; border-radius: 27px; display: grid; place-items: center;
+               color: var(--cream); font-size: 17px; font-weight: 600;
+               background: linear-gradient(180deg, #2468B4 0%, var(--cobalt) 100%);
+               box-shadow: inset 0 1.5px 0 rgba(255,255,255,.34), inset 0 -1.5px 0 rgba(0,0,0,.22), 0 6px 16px rgba(28,90,166,.30); }
+  .plain { font-size: 17px; font-weight: 500; color: var(--cobalt); display: flex; align-items: center; gap: 7px; }
+
+  /* glaze chips, frozen at the peak of the burst */
+  .chips { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
+  .chips i { position: absolute; display: block; border-radius: 2px; box-shadow: inset 0 .8px 0 rgba(255,255,255,.5), inset 0 -.8px 0 rgba(0,0,0,.2); }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="status">
+    <div class="time">9:41</div>
+    <div class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12"><g fill="#2B211A">
+        <rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/>
+        <rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></g></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12"><g fill="#2B211A">
+        <path d="M8.5 11.6 5.9 8.7a4 4 0 0 1 5.2 0z"/><path d="M8.5 6.2a6.6 6.6 0 0 0-4.6 1.8L2.2 6.2a9 9 0 0 1 12.6 0l-1.7 1.8a6.6 6.6 0 0 0-4.6-1.8z" opacity=".9"/>
+        <path d="M8.5 1.4a11.4 11.4 0 0 0-7.9 3.1L0 3.4A14 14 0 0 1 17 3.4l-.6 1.1a11.4 11.4 0 0 0-7.9-3.1z" opacity=".8"/></g></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13"><rect x=".5" y=".5" width="22" height="12" rx="3.6" fill="none" stroke="#2B211A" stroke-opacity=".4"/>
+        <rect x="2" y="2" width="16" height="9" rx="2.2" fill="#2B211A"/><path d="M24 4.3v4.4a2.4 2.4 0 0 0 0-4.4z" fill="#2B211A" opacity=".45"/></svg>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="count display">213</div>
+    <div class="mark of">of a thousand</div>
+    <div class="today">+24 set today</div>
+  </div>
+
+  <div class="wall" id="wall"></div>
+
+  <div class="lineWrap">
+    <div class="line"><div class="fill"></div><div class="notch"></div></div>
+    <div class="lineRow">
+      <div class="mark">The wall</div>
+      <div class="mark">300 next</div>
+    </div>
+  </div>
+
+  <div class="headline display">Not one back to the bench.</div>
+  <div class="sub">Twelve panels standing, three still bare plaster.</div>
+
+  <div class="actions">
+    <div class="prominent">Back to the wall</div>
+    <div class="plain">
+      <svg width="17" height="20" viewBox="0 0 17 20" fill="none" stroke="#1C5AA6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8.5 13V2.4M5.2 5.4 8.5 2l3.3 3.4"/><path d="M3 9.6h-.8v8.2h12.6V9.6H14"/>
+      </svg>
+      Share the wall
+    </div>
+  </div>
+</div>
+
+<div class="chips" id="chips"></div>
+
+<script>
+  // Deterministic, so the mock renders the same every time.
+  let seed = 20260912;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+
+  const glazes = ["--cobalt","--almagre","--verde","--ocre","--turquesa","--indigo",
+                  "--rosa","--manganeso","--oliva","--berenjena","--amber-lit","--pizarra"];
+  // how much of each panel is standing: the early themes are nearly done, the last untouched
+  const done = [0.92, 0.80, 0.66, 0.52, 0.40, 0.30, 0.22, 0.14, 0.08, 0.03, 0, 0];
+  const wall = document.getElementById("wall");
+  let todayLeft = 24;
+  glazes.forEach((g, i) => {
+    const panel = document.createElement("div");
+    panel.className = "panel";
+    const colour = getComputedStyle(document.documentElement).getPropertyValue(g).trim();
+    for (let n = 0; n < 84; n++) {
+      const t = document.createElement("div");
+      const p = n / 84;
+      if (p < done[i]) {
+        // one in six of today's tiles carries its fresh amber mortar
+        const fresh = todayLeft > 0 && rnd() < 0.09;
+        if (fresh) todayLeft--;
+        t.className = "t " + (fresh ? "today" : "set");
+        t.style.background = colour;
+      } else if (p < done[i] + 0.12) {
+        t.className = "t half";
+        t.style.background = colour;
+      } else {
+        t.className = "t clay";
+      }
+      panel.appendChild(t);
+    }
+    wall.appendChild(panel);
+  });
+
+  // the burst, frozen at its peak: chips of glaze, not confetti dots
+  const chips = document.getElementById("chips");
+  const pal = ["#1C5AA6","#9E4630","#2F6B57","#A8701B","#2A7E8E","#E0A03C","#6B4E7D","#A55A6A"];
+  for (let i = 0; i < 34; i++) {
+    const c = document.createElement("i");
+    const s = 5 + rnd() * 8;
+    c.style.width = s + "px";
+    c.style.height = s * (0.7 + rnd() * 0.5) + "px";
+    // keep the burst off the two lines of type under the count
+    let x, y;
+    do { x = 12 + rnd() * 416; y = 96 + rnd() * 430; }
+    while (y > 152 && y < 208 && x > 96 && x < 350);
+    c.style.left = x + "px";
+    c.style.top = y + "px";
+    c.style.background = pal[Math.floor(rnd() * pal.length)];
+    c.style.transform = "rotate(" + Math.floor(rnd() * 90) + "deg)";
+    c.style.opacity = (0.55 + rnd() * 0.45).toFixed(2);
+    chips.appendChild(c);
+  }
+</script>
+</body>
+</html>

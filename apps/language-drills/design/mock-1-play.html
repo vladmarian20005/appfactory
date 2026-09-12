@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thousand · Bench, one tile just turned</title>
+<style>
+  :root {
+    --cal: #EDE3D6;
+    --bisque: #E0D2C0;
+    --clay: #C7B49B;
+    --grout: #C9B79F;
+    --ink: #2B211A;
+    --sombra: #63564A;
+    --cobalt: #1C5AA6;
+    --cobalt-deep: #174B8B;
+    --cream: #F4ECDD;
+    --amber: #A8701B;
+    --verde: #2F6B57;
+    --almagre: #9E4630;
+    --ocre: #A8701B;
+    --turquesa: #2A7E8E;
+    --indigo: #35468C;
+    --rosa: #A55A6A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { width: 440px; height: 956px; }
+  body {
+    font-family: -apple-system, "SF Pro Text", system-ui, sans-serif;
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+    /* troweled lime plaster: never one flat colour */
+    background:
+      radial-gradient(110% 70% at 14% 2%, #F4EADC 0%, rgba(244,234,220,0) 58%),
+      radial-gradient(90% 60% at 96% 24%, #EFE3D1 0%, rgba(239,227,209,0) 54%),
+      radial-gradient(120% 76% at 50% 108%, #D6C6AF 0%, rgba(214,198,175,0) 64%),
+      linear-gradient(158deg, #E9DECE 0%, #E2D5C3 56%, #DACBB6 100%);
+  }
+  /* the trowel grain, 3% ink, drawn once and never moving */
+  body::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .8;
+    background:
+      repeating-linear-gradient(112deg, rgba(43,33,26,.035) 0 1px, rgba(43,33,26,0) 1px 13px),
+      repeating-linear-gradient(31deg, rgba(255,255,255,.07) 0 2px, rgba(255,255,255,0) 2px 21px);
+  }
+  .display { font-family: -apple-system, "SF Pro Display", system-ui, sans-serif; font-stretch: expanded; font-weight: 600; }
+  .mark { font-size: 11px; font-weight: 600; letter-spacing: 1.6px; color: var(--sombra); text-transform: uppercase; }
+
+  .screen { position: relative; height: 100%; display: flex; flex-direction: column; }
+
+  /* ── iOS chrome ─────────────────────────────────────────────── */
+  .status { height: var(--safe-top, 62px); display: flex; align-items: flex-end; justify-content: space-between; padding: 0 30px 8px; }
+  .status .time { font-size: 17px; font-weight: 600; letter-spacing: .2px; }
+  .status .right { display: flex; align-items: center; gap: 6px; }
+  .nav { height: 52px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .nav .title { font-size: 17px; font-weight: 600; }
+  .nav .gear {
+    position: absolute; right: 18px; top: 8px; width: 36px; height: 36px; border-radius: 18px;
+    background: rgba(255,255,255,.42); backdrop-filter: blur(14px);
+    box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 1px 3px rgba(43,33,26,.10);
+    display: grid; place-items: center;
+  }
+
+  /* ── the course: the session's row of slots, shrinking ───────── */
+  .course { padding: 4px 20px 0; }
+  .slots { display: flex; gap: 4px; }
+  .slot { flex: 1; height: 12px; border-radius: 3px; background: rgba(201,183,159,.55);
+          box-shadow: inset 0 1px 2px rgba(43,33,26,.18); }
+  .slot.set { box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -1px 0 rgba(0,0,0,.18), 0 1px 1px rgba(43,33,26,.10); }
+  .courseRow { display: flex; justify-content: space-between; align-items: baseline; margin-top: 9px; }
+
+  /* ── the bench and the tile ──────────────────────────────────── */
+  .bench { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 4px; }
+  .tileWrap { position: relative; width: 318px; height: 318px; }
+  .behind { position: absolute; border-radius: 12px; background: var(--bisque);
+            box-shadow: inset 0 2px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.12), 0 6px 14px rgba(43,33,26,.12); }
+  .behind.b1 { inset: 16px -16px -16px 16px; }
+  .behind.b2 { inset: 8px -8px -8px 8px; background: #DCCDB8; }
+
+  /* the answer face: the theme's glaze painted as a band around a cream ground —
+     the other way round from the prompt face, which is glaze ground, cream letters */
+  .tile {
+    position: absolute; inset: 0; border-radius: 12px;
+    background: linear-gradient(176deg, #2468B4 0%, var(--cobalt) 55%, var(--cobalt-deep) 100%);
+    box-shadow:
+      inset 0 3px 0 rgba(255,255,255,.34),
+      inset 3px 0 0 rgba(255,255,255,.20),
+      inset 0 -3px 0 rgba(0,0,0,.26),
+      inset -3px 0 0 rgba(0,0,0,.18),
+      0 16px 30px rgba(43,33,26,.24);
+    overflow: hidden; padding: 15px;
+  }
+  /* the cream field the words are painted on, inside the glaze band */
+  .field {
+    position: absolute; inset: 15px; border-radius: 4px; padding: 16px 18px;
+    background: linear-gradient(178deg, #F7F0E3 0%, #F0E6D4 100%);
+    box-shadow: inset 0 0 0 1.5px rgba(28,90,166,.55), 0 1px 0 rgba(255,255,255,.5);
+    display: flex; flex-direction: column;
+  }
+  /* amber corner motifs, painted on the band */
+  .corner { position: absolute; width: 13px; height: 13px; background: #E0A03C; transform: rotate(45deg); border-radius: 2px; }
+  .corner.tl { left: 8.5px; top: 8.5px; } .corner.tr { right: 8.5px; top: 8.5px; }
+  .corner.bl { left: 8.5px; bottom: 8.5px; } .corner.br { right: 8.5px; bottom: 8.5px; }
+  /* the window the glaze is still catching, half a beat after the turn */
+  .specular { position: absolute; left: -30%; top: -40%; width: 110%; height: 130%;
+              background: linear-gradient(102deg, rgba(255,255,255,0) 36%, rgba(255,255,255,.28) 47%, rgba(255,255,255,.06) 54%, rgba(255,255,255,0) 62%);
+              pointer-events: none; z-index: 4; }
+
+  .tileTop { display: flex; justify-content: space-between; align-items: baseline; position: relative; z-index: 2; }
+  .es { font-size: 15px; font-weight: 600; color: var(--cobalt); letter-spacing: .2px; }
+  .answer { font-size: 46px; color: var(--cobalt-deep); text-align: center; margin: 14px 0 12px; position: relative; z-index: 2; letter-spacing: .4px; }
+  .rule { height: 1px; background: rgba(28,90,166,.28); margin: 0 4px 12px; position: relative; z-index: 2; }
+  .example { font-size: 17px; font-style: italic; line-height: 1.32; text-align: center; position: relative; z-index: 2; }
+  .translation { font-size: 14.5px; color: var(--sombra); text-align: center; margin-top: 6px; position: relative; z-index: 2; }
+  .chime { position: absolute; left: 14px; bottom: 12px; width: 34px; height: 34px; border-radius: 17px;
+           background: rgba(28,90,166,.12); display: grid; place-items: center; z-index: 3; }
+
+  /* ── the three glaze chips ───────────────────────────────────── */
+  .grades { display: flex; gap: 10px; padding: 0 20px; width: 100%; margin-top: 38px; }
+  .chip { flex: 1; height: 52px; border-radius: 26px; display: grid; place-items: center;
+          font-size: 17px; font-weight: 600; letter-spacing: .1px; }
+  .chip.again { color: var(--almagre); box-shadow: inset 0 0 0 1.5px rgba(158,70,48,.55), inset 0 1.5px 0 rgba(255,255,255,.5); background: rgba(158,70,48,.07); }
+  .chip.easy  { color: var(--verde);   box-shadow: inset 0 0 0 1.5px rgba(47,107,87,.55), inset 0 1.5px 0 rgba(255,255,255,.5); background: rgba(47,107,87,.07); }
+  .chip.good  { flex: 1.3; color: var(--cream); background: linear-gradient(180deg, #2468B4 0%, var(--cobalt) 100%);
+                box-shadow: inset 0 1.5px 0 rgba(255,255,255,.34), inset 0 -1.5px 0 rgba(0,0,0,.22), 0 5px 12px rgba(28,90,166,.28); }
+
+  /* ── the tab bar ─────────────────────────────────────────────── */
+  .tabs { height: calc(49px + var(--safe-bottom, 34px)); padding-bottom: var(--safe-bottom, 34px);
+          display: flex; align-items: flex-start; padding-top: 7px;
+          background: rgba(240,231,219,.72); backdrop-filter: blur(24px) saturate(140%);
+          border-top: .5px solid rgba(43,33,26,.14); }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--sombra); }
+  .tab.on { color: var(--cobalt); }
+  .tab span { font-size: 10px; font-weight: 500; letter-spacing: .1px; }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="status">
+    <div class="time">9:41</div>
+    <div class="right">
+      <svg width="18" height="12" viewBox="0 0 18 12"><g fill="#2B211A">
+        <rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/>
+        <rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></g></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12"><g fill="#2B211A">
+        <path d="M8.5 11.6 5.9 8.7a4 4 0 0 1 5.2 0z"/><path d="M8.5 6.2a6.6 6.6 0 0 0-4.6 1.8L2.2 6.2a9 9 0 0 1 12.6 0l-1.7 1.8a6.6 6.6 0 0 0-4.6-1.8z" opacity=".9"/>
+        <path d="M8.5 1.4a11.4 11.4 0 0 0-7.9 3.1L0 3.4A14 14 0 0 1 17 3.4l-.6 1.1a11.4 11.4 0 0 0-7.9-3.1z" opacity=".8"/></g></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13"><rect x=".5" y=".5" width="22" height="12" rx="3.6" fill="none" stroke="#2B211A" stroke-opacity=".4"/>
+        <rect x="2" y="2" width="16" height="9" rx="2.2" fill="#2B211A"/><path d="M24 4.3v4.4a2.4 2.4 0 0 0 0-4.4z" fill="#2B211A" opacity=".45"/></svg>
+    </div>
+  </div>
+
+  <div class="nav">
+    <div class="title">Bench</div>
+    <div class="gear">
+      <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="#2B211A" stroke-width="1.6">
+        <circle cx="10" cy="10" r="3"/>
+        <path d="M10 1.6v2.2M10 16.2v2.2M18.4 10h-2.2M3.8 10H1.6M15.9 4.1l-1.6 1.6M5.7 14.3l-1.6 1.6M15.9 15.9l-1.6-1.6M5.7 5.7 4.1 4.1" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="course">
+    <div class="slots">
+      <div class="slot set" style="background:var(--cobalt)"></div>
+      <div class="slot set" style="background:var(--ocre)"></div>
+      <div class="slot set" style="background:var(--verde)"></div>
+      <div class="slot set" style="background:var(--cobalt)"></div>
+      <div class="slot set" style="background:var(--almagre)"></div>
+      <div class="slot set" style="background:var(--turquesa)"></div>
+      <div class="slot set" style="background:var(--indigo)"></div>
+      <div class="slot set" style="background:var(--ocre)"></div>
+      <div class="slot set" style="background:var(--rosa)"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+      <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+    </div>
+    <div class="courseRow">
+      <div class="mark">The house</div>
+      <div class="mark">15 due</div>
+    </div>
+  </div>
+
+  <div class="bench">
+    <div class="tileWrap">
+      <div class="behind b1"></div>
+      <div class="behind b2"></div>
+      <div class="tile">
+        <div class="field">
+          <div class="tileTop">
+            <div class="es">la ventana</div>
+            <div class="mark" style="font-size:10px">Rank 412</div>
+          </div>
+          <div class="answer display">window</div>
+          <div class="rule"></div>
+          <div class="example">Abre la ventana, por favor.</div>
+          <div class="translation">Open the window, please.</div>
+          <div class="chime">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#1C5AA6" stroke-width="1.7" stroke-linecap="round">
+              <path d="M4 7.6h2.6L10.4 4v12L6.6 12.4H4z" fill="#1C5AA6" stroke-linejoin="round"/>
+              <path d="M13.3 7.4a3.7 3.7 0 0 1 0 5.2M15.8 5a7.2 7.2 0 0 1 0 10"/>
+            </svg>
+          </div>
+        </div>
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="specular"></div>
+      </div>
+    </div>
+    <div class="grades">
+      <div class="chip again">Not yet</div>
+      <div class="chip good">Got it</div>
+      <div class="chip easy">Easy</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on">
+      <svg width="25" height="25" viewBox="0 0 26 26" fill="none" stroke="#1C5AA6" stroke-width="1.7">
+        <rect x="4.5" y="7.5" width="17" height="13" rx="2.4" fill="#1C5AA6" fill-opacity=".18"/>
+        <path d="M7.5 4.5h11" stroke-linecap="round"/>
+      </svg>
+      <span>Bench</span>
+    </div>
+    <div class="tab">
+      <svg width="25" height="25" viewBox="0 0 26 26" fill="none" stroke="#63564A" stroke-width="1.7">
+        <rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="15" y="4" width="7" height="7" rx="1.6"/>
+        <rect x="4" y="15" width="7" height="7" rx="1.6"/><rect x="15" y="15" width="7" height="7" rx="1.6"/>
+      </svg>
+      <span>Wall</span>
+    </div>
+    <div class="tab">
+      <svg width="25" height="25" viewBox="0 0 26 26" fill="none" stroke="#63564A" stroke-width="1.7" stroke-linecap="round">
+        <path d="M5 18.5h16M5 13h11M5 7.5h6"/>
+      </svg>
+      <span>Progress</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
