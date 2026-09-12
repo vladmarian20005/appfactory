@@ -1,23 +1,34 @@
 {
-  "pass": true,
+  "pass": false,
   "scores": {
     "idea": 5,
     "look": 4,
-    "signature": 4,
+    "signature": 3,
     "reward": 4,
     "voice": 5,
-    "craft": 4,
-    "firstMinute": 4
+    "craft": 3,
+    "firstMinute": 4,
+    "escalation": 1,
+    "pull": 1
   },
-  "tells": [],
-  "summary": "DESIGN.md's newspaper is built: grained newsprint under a lamp with column rules, New York throughout, a drawn hand press, answers as ruled boxes that take ink under a red stamp that judges nobody, and an edition that prints itself at 112pt with tiers, newsprint confetti, a brass ribbon and a front page to share — held off a higher score by two unfilmed moments, the stamp burying long lines, and the kit's paywall and Settings where the paper stops.",
+  "tells": [
+    "content-modulo",
+    "no-second-session",
+    "metadata-difficulty",
+    "ladder-stops-in-week-one",
+    "every-unlock-is-a-purchase",
+    "stats-nothing-consults",
+    "nothing-at-risk",
+    "streak-that-only-counts"
+  ],
+  "summary": "The best-looking app the factory has made — grained newsprint under a lamp, New York throughout, answers that take ink under a red stamp that judges nobody, a front page that prints itself at 112pt, and a night editor who never breaks character — and it is over on day 31, because Pack.swift:80 deals round 1's ten questions back in the same order forever, nothing reads the difficulty it prints on every sheet, and there is no Ladder, Mastery, Run or Earned in it.",
   "fixes": [
-    "Film the moments for real: the demo presses at 1.8-4.2s and the win at 2.0-3.6s land before the camera starts, so both filmstrips are identical frames - move them to 6/10/14s and 8/11s and raise qa.json's moments to 24 frames",
-    "Cap the verdict stamp (QuestionSheet.swift:180-190) to maxWidth 190 with minimumScaleFactor and anchor it bottom-trailing on a miss, so long pool lines stop covering the answer they land on in dark and at AX5",
-    "Hold the largest text: scale the SectionLine names inside the column rules and clamp the line's Dynamic Type (ax-01-today), and pad the question sheet's scroll content so answer D clears the bottom strip (ax-02-question)",
-    "Give PaywallView a subtitle and bullet-mark option in FactoryKit and pass the editor's line plus the printers' fist, dropping 'Unlock everything in Quizday.', the checkmark circles and the hand.raised.fill glyph",
-    "Put the brand's surface and a 1.2pt ink rule at radius 6 on the kit's Settings rows, and clear the version footer from behind the tab bar",
-    "Size the result's streak ribbon to its type instead of a 260pt brass slab, and print 'Day one on the desk.' on day one rather than '1 DAY RUNNING'",
-    "Fire Haptics.selection() per square and a .tap tone on every third as the result's tally prints, the one beat of the edition that currently lands in silence"
+    "Replace DailyPack.roundIndex's modulo (Pack.swift:80) with Mastery over all question ids so day 31 is ten questions chosen from what got past you, and grow the pack past 300",
+    "Add a Ladder keyed on editions filed that climbs the hard/medium mix to session ~150, and make QuizItem.difficulty the field the selector filters on instead of a caption",
+    "Adopt Run in TodayView so a clean sheet is at stake during the round, printed as a mono chain beside the tally that pencils out on a miss, costing the run and nothing else",
+    "Open one door with play instead of money: an Earned milestone at seven editions for a free adaptive 'late edition' built from what you missed, so CategoryStat finally chooses something",
+    "End the edition on earned.next(after:) in the editor's voice — 'Nineteen filed. The morgue opens at twenty-one.' — above the countdown, and print 'Day one on the desk.' on a ribbon sized to its type",
+    "Cap the verdict stamp to maxWidth 190 anchored bottom-trailing (QuestionSheet.swift:181-189) so long pool lines stop covering the answer in dark and at AX5, clamp the Today section line, and clear the version footer from behind the tab bar",
+    "Fix the moments: moment-answer.png is 18 blank frames and moment-win.png is 17 identical ones — move the demo presses to 6/10/14s and the win to 8/12s, delay 4.0s, 24 frames"
   ]
 }
