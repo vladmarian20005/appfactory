@@ -1,0 +1,49 @@
+{
+  "_comment": "The single source of truth for what this app does with data. Three things are generated from it and must never drift apart: ios/App/PrivacyInfo.xcprivacy, store/app_privacy_details.json, and the published privacy policy page. Change this file, re-run the generators, do not hand-edit the outputs.",
+
+  "appName": "Thousand",
+  "company": "Starhive Concept Srl",
+  "companyURL": "https://starhiveconcept.com/",
+  "effectiveDate": "2026-09-12",
+  "supportEmail": "support@starhiveconcept.com",
+  "pageSlug": "language-drills-privacy-policy-terms",
+
+  "collects": [],
+
+  "storesOnDevice": [
+    "One row per word you have met: when it is next due, how many times it has come back clean, how many times it went back to the bench, and when it last went into the wall. This is what the schedule, the wall and the count of words known are drawn from.",
+    "Your settings: whether onboarding is done, whether the word is spoken when a tile turns, whether sounds are on, and whether the daily reminder is on and at what hour.",
+    "How many words new to you were introduced today, so the app can stop at its daily allowance instead of handing you the whole thousand at once."
+  ],
+
+  "network": [],
+
+  "requiredReasonAPIs": [
+    {
+      "category": "NSPrivacyAccessedAPICategoryUserDefaults",
+      "reason": "CA92.1",
+      "why": "@AppStorage and UserDefaults, used only for this app's own settings, the day's new-word allowance and the line it last showed, all of it read and written inside the app."
+    }
+  ],
+
+  "purchases": {
+    "type": "nonconsumable",
+    "name": "The Whole Wall",
+    "products": ["a single one-time unlock"],
+    "processor": "Apple",
+    "freeTier": "The drill, the schedule, the pronunciation, the wall and the progress count are free forever, with the first hundred words by frequency and the Everyday and People & family panels open from the start."
+  },
+
+  "notifications": {
+    "used": true,
+    "why": "One optional local reminder a day, off until you turn it on in Settings, scheduled on the device by UNUserNotificationCenter. It names the tiles waiting at the bench and never counts the days you were away. Nothing is sent from a server; there is no push token and no server to send one to."
+  },
+
+  "ads": false,
+  "analytics": false,
+  "tracking": false,
+  "account": false,
+  "childDirected": false,
+
+  "attribution": "The thousand words, their example sentences and their translations were written for this app and ship inside the binary. Pronunciation is spoken by the device with AVSpeechSynthesizer. Thousand contains no third-party content, no third-party SDK and no network code of any kind."
+}

@@ -255,6 +255,7 @@ final class Library: ObservableObject {
         let now = Date()
         let target = min(213, max(12, Deck.total - Deck.total / 4))
         var glazed = 0
+        var drying = 0
         for word in Deck.words {
             // Set tiles cluster at the front of each panel, the way a wall is laid course by
             // course, with a few gaps where a word did not take.
@@ -273,7 +274,7 @@ final class Library: ObservableObject {
                 // Two dozen of them went in today, which is what the amber mortar shows.
                 card.lastSet = word.rank % 9 == 1 ? now : now.addingTimeInterval(-Double(2 + word.rank % 20) * 86_400)
                 glazed += 1
-            } else if glazed < target + 46 {
+            } else if drying < 54 {
                 let card = make(word.rank)
                 card.streak = word.rank % 3
                 card.reps = 1 + word.rank % 4
@@ -285,7 +286,7 @@ final class Library: ObservableObject {
                     ? now.addingTimeInterval(-Double(word.rank % 400))
                     : now.addingTimeInterval(Double(1 + word.rank % 3) * 86_400)
                 card.lastSet = now.addingTimeInterval(-Double(1 + word.rank % 6) * 86_400)
-                glazed += 1
+                drying += 1
             } else {
                 break
             }

@@ -52,6 +52,8 @@ const SUPPLETIVE = {
 
 function prefixes(s) {
   const out = new Set([s.slice(0, Math.max(3, s.length - 2))]);
+  // A noun in -z pluralises in -ces: pez → peces, luz → luces.
+  if (s.endsWith("z")) out.add(s.slice(0, -1) + "c");
   // A reflexive infinitive is the verb with "se" stuck on: llamarse → llamar → llamo.
   const verb = /(ar|er|ir)se$/.test(s) ? s.slice(0, -2) : s;
   if (/(ar|er|ir)$/.test(verb) && verb.length > 3) {
@@ -106,7 +108,11 @@ for (const w of words) {
     .split(" / ")
     .flatMap((s) => {
       const bare = s.replace(/^(el|la|los|las|un|una)\s+/i, "").trim();
-      return bare.includes(" ") ? [bare, bare.split(" ")[0]] : [bare];
+      // For a phrase, any of its content words standing in the example is evidence enough —
+      // "darse cuenta" is taught by "no me di cuenta".
+      return bare.includes(" ")
+        ? [bare, ...bare.split(" ").filter((t) => t.length >= 3)]
+        : [bare];
     })
     .filter(Boolean);
   const haystack = ` ${fold(w.example).replace(/[.,¿?¡!;:"]/g, " ")} `;

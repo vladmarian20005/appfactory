@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  Privacy manifest. Required since 1 May 2024: App Store Connect rejects an upload that
-  touches a required-reason API without declaring it here.
+  GENERATED from apps/language-drills/privacy.json by tools/privacy/sync.mjs. Do not edit by hand:
+  edit privacy.json and re-run, or the manifest, the App Store answers and the published
+  policy will describe three different apps.
 
-  This is the baseline for a factory app: no tracking, no data collection, and the one
-  required-reason API the template genuinely uses.
+  Required since 1 May 2024. App Store Connect rejects the upload itself, not the review, if
+  the app touches a required-reason API without declaring it here.
 
-    NSPrivacyAccessedAPICategoryUserDefaults / CA92.1
-      @AppStorage is UserDefaults. CA92.1 is the reason for an app reading and writing only
-      its own defaults, which is all any of these apps do.
-
-  If an app adds a feature, re-derive this file rather than copying it. Declaring an API you
-  do not use is as wrong as omitting one you do. The categories to watch for are file
-  timestamps (C617.1), disk space (E174.1), system boot time (35F9.1) and active keyboards.
+  NSPrivacyAccessedAPICategoryUserDefaults / CA92.1
+    @AppStorage and UserDefaults, used only for this app's own settings, the day's new-word allowance and the line it last showed, all of it read and written inside the app.
 -->
 <plist version="1.0">
 <dict>

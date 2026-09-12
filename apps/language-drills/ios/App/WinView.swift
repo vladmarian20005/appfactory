@@ -125,9 +125,9 @@ struct WinView: View {
             .background {
                 // The lamp swells behind the wall when the session simply finished: a normal
                 // day is not a parade.
-                RadialGradient(colors: [brand.palette.highlight.opacity(0.3 * glow), .clear],
-                               center: .center, startRadius: 0, endRadius: 260)
-                    .blur(radius: 30)
+                RadialGradient(colors: [brand.palette.highlight.opacity(0.16 * glow), .clear],
+                               center: .center, startRadius: 40, endRadius: 320)
+                    .blur(radius: 44)
             }
             .scaleEffect(landed == 0 && !Motion.isStill ? 1.06 : 1)
     }

@@ -1,0 +1,34 @@
+A thousand Spanish words, in the order you actually meet them, drilled by a schedule that remembers what you forget.
+
+Thousand is a tile-setter's workshop. Every word is a glazed azulejo on the bench: you read the Spanish, turn the tile over, and say how it went. Words you knew fly up and press into the wall. Words that slipped go quietly back for another firing — nothing turns red, nothing scolds you. The wall only ever grows, and it is the whole point: a thousand tiles in twelve panels, and you can see from across the room how much of it is standing.
+
+WHAT IS IN IT
+
+• 1,000 common Spanish words for English speakers, ordered by how often you will meet them and grouped into twelve themes — everyday, people and family, food and drink, the house, city and travel, work and school, body and health, time and number, nature and weather, going and coming, feeling and mind, describing.
+• An example sentence for every single word, with its English translation, so you meet the word doing its job rather than alone on a card.
+• Pronunciation on every word, spoken by your iPhone in Castilian Spanish, on the tile and automatically as it turns.
+• A spaced-repetition schedule that decides when each word comes back: sooner for the ones that slipped, much later for the ones you found easy.
+• A wall that shows all thousand at once — glazed where a word is known, half-glazed where it is still drying, bare clay where you have not met it yet — and a search that finds any word without losing your place in it.
+• One number on the Progress screen that cannot go down: words known, of a thousand. With the day's work drawn as two stacks of tiles on a kiln shelf.
+• A share card that is a picture of your own wall, so no two look the same.
+• An optional daily reminder, off until you switch it on, that names the tiles waiting at the bench.
+
+WHAT IS NOT IN IT
+
+No streak. No lives. No hearts, no gems, no cartoon pressure. Miss a week and the app says nothing about it; the words are simply there when you come back. There is no calendar of the days you were away, because a day you did not study is not information anybody needs.
+
+No account, no sign-up, no email. Nothing you drill leaves the phone.
+
+No subscription. One payment opens all 1,000 words and all twelve panels, for good. The drill, the schedule, the pronunciation, the wall and the count are free forever, with the first hundred words and two whole panels open from the start.
+
+No advertising of any kind.
+
+WORKS IN A TUNNEL
+
+Thousand makes no network requests at all. The whole deck ships inside the app and the pronunciation is spoken by the device, so it works on the underground, on a plane, and with the phone in a bag on a train where the signal drops. There is nothing to sync and nothing to wait for.
+
+FOR WHOM
+
+For anyone who has learned some Spanish on a free app and lost it again. Ten minutes before bed, twenty on the commute. If you want vocabulary you still have in March rather than a streak you have to defend, this is built for you.
+
+Accessibility: every size in the app scales with Dynamic Type, dark mode is designed rather than inverted, and everything drawn carries a VoiceOver label.

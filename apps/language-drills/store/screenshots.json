@@ -1,0 +1,44 @@
+{
+  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/language-drills/store/screenshots.json apps/language-drills/store/screenshots/en-US. Raw captures come from app-verify (apps/language-drills/qa) and are copied into store/raw. Shot 1 is the win, because a wall of a stranger's own tiles is the picture that makes someone want the app. Shots 3 and 4 are the wedge said plainly: a thousand words in the order you meet them, bought once. The background is the app's own cobalt glaze on night plaster, not a generic navy.",
+  "background": "linear-gradient(168deg,#12233D 0%,#1C5AA6 54%,#0E1A2C 100%)",
+  "textColor": "#F4ECDD",
+  "accent": "rgba(240,180,80,.92)",
+  "font": "default",
+  "shots": [
+    {
+      "src": "raw/01-win.png",
+      "title": "Build a wall you keep",
+      "subtitle": "Every word you learn is a tile in it."
+    },
+    {
+      "src": "raw/02-bench.png",
+      "title": "It remembers what you forget",
+      "subtitle": "Each word comes back as it starts to slip."
+    },
+    {
+      "src": "raw/03-wall.png",
+      "title": "1,000 words, in order of use",
+      "subtitle": "The ones you actually meet, first."
+    },
+    {
+      "src": "raw/06-paywall.png",
+      "title": "Buy it once. Keep it.",
+      "subtitle": "No subscription, ever."
+    },
+    {
+      "src": "raw/04-progress.png",
+      "title": "One number that only goes up",
+      "subtitle": "No streak. No calendar of missed days."
+    },
+    {
+      "src": "raw/05-swept.png",
+      "title": "It stops when you are done",
+      "subtitle": "A missed day costs you nothing."
+    },
+    {
+      "src": "raw/07-first.png",
+      "title": "Spanish that is still there in March",
+      "subtitle": "Ten minutes before bed. On a plane too."
+    }
+  ]
+}
