@@ -42,13 +42,9 @@ struct EditionView: View {
         Desk.earned.justUnlocked(from: max(0, filed - 1), to: filed)
     }
 
-    var body: some View {
-        GeometryReader { geo in
-            page(pageHeight: geo.size.height)
-        }
-    }
+    var body: some View { page }
 
-    private func page(pageHeight: CGFloat) -> some View {
+    private var page: some View {
         ScrollView {
             VStack(spacing: 0) {
                 pressSweep
@@ -112,21 +108,20 @@ struct EditionView: View {
                 }
                 .padding(.top, 14)
 
-                Spacer(minLength: 24)
-
-                // The page closes on a rule and the paper's own line, pinned to the foot of
-                // the column.
+                // The page closes on a rule and the paper's own line. It is no longer pinned to
+                // the foot of the screen: now that the edition ends on what is waiting, the
+                // column runs past one screenful, and a line pinned to the bottom of the frame
+                // landed exactly behind the glass tab bar and read as a ghost. The foot of a
+                // page is something you scroll to.
                 InkRule(weight: 0.5, opacity: 0.3)
+                    .padding(.top, 130)
 
                 Text("Quizday · a new edition every morning")
                     .dateline(9, tracking: 2)
                     .padding(.top, 10)
             }
             .padding(.horizontal, 30)
-            // The paper's own line is the last thing on the page, and the tab bar is glass
-            // floating over the scroll: without this it printed underneath it.
-            .padding(.bottom, 46)
-            .frame(minHeight: pageHeight)
+            .padding(.bottom, 120)
         }
         .paper(darken: 0.04)
         .confetti(trigger: burst,

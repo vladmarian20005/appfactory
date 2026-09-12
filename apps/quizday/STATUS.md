@@ -127,6 +127,12 @@ Everything the factory can do without a human has been done, in the cloud, on `m
 
 - Real purchases. `-fakeProducts` drives the paywall for screenshots; only a TestFlight build
   with a sandbox account proves the real path.
+- **The confetti in `moment-win.png` is a coin toss, and that is the tooling, not the app.**
+  A `simctl io screenshot` of a page that is animating hard costs two to three seconds on a
+  runner, and the burst lives 2.8 s, so it falls between two frames about as often as it lands
+  in one. The strip reliably shows the tenth answer's ink sweep and the page mid-print; the
+  burst itself is guaranteed only in `qa/03-result.png`, where `-stillFrames` freezes it at its
+  peak, which is what that flag is for. Do not slow the win down to make it photograph better.
 - Reminder delivery, haptics and the share sheet: all need hardware. The press's four beats —
   `Haptics.rigid` at the impression, `thud` under the stamp, `selection` on the tally square —
   and the tones that climb the round are wired as DESIGN.md specifies but have never been felt
