@@ -107,9 +107,13 @@ Any one of these fails the critique. They are what the first two apps shipped wi
 - Type frozen at a point size: `.font(.system(size: 44))` on screen, or a `-> Font` helper that
   returns one. It looks identical at the largest accessibility setting as at the default, so
   the design quietly stops working for the people who need it most. Say the same size with
-  `scaledFont(size:)` or `brandDisplay(size:)` and it scales. The one exception is a share card
-  drawn by `ShareImage.render`, which has no Dynamic Type to scale against — `tells.mjs` allows
-  a frozen font there and nowhere else.
+  `scaledFont(size:)` or `brandDisplay(size:)` and it scales. There is no exception, including
+  a share card: `ShareImage.render` pins Dynamic Type to `.large` for the render, so a card
+  asks for a size through `scaledFont` and gets exactly that size on its fixed canvas. A card
+  is the one place the pinning is right — it is a picture going into someone else's chat, and
+  it has to lay out the same for everybody — and the pinning lives in the kit, once, so no app
+  has to argue the case in a comment. Decided 12 Sep 2026, after `app-compliance` failed an app
+  for the frozen sizes this file used to bless and left the pipeline with no legal move.
 
 `node tools/design/tells.mjs <slug>` finds the mechanical ones in the code; its FAILs are the
 list above. The critic finds the rest in the screenshots.
