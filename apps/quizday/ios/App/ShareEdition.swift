@@ -170,7 +170,6 @@ struct EditionCard: View {
     }
 
     private var dateline: String {
-        let day = playedAt.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
-        return "ROUND \(roundNumber) · \(day)".uppercased()
+        "ROUND \(roundNumber) · \(Masthead.shortDateline(for: playedAt))".uppercased()
     }
 }

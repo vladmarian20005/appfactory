@@ -20,6 +20,11 @@ struct QuestionSheet: View {
     let selected: Int?
     let stampLine: String
     let reported: Bool
+    /// What is standing this round. The daily edition passes one; the composing room does not,
+    /// because a proof is not an edition and nothing is at stake in it.
+    var run: Run?
+    /// The chain this answer just broke, so it can be struck out rather than vanish.
+    var brokenChain = 0
     /// The very first question of a player's first round teaches itself, without a word.
     var teaching = false
     /// The composing room has no tally and its own header.
@@ -49,6 +54,12 @@ struct QuestionSheet: View {
 
                 if header == nil {
                     Tally(flags: tallyFlags, total: total, height: 26)
+                }
+
+                if let run {
+                    RunLine(chain: run.chain, isClean: run.isClean,
+                            broken: brokenChain, strike: Motion.isStill ? 1 : pencil)
+                        .padding(.top, -6)
                 }
 
                 Text(item.question)
@@ -176,14 +187,18 @@ struct QuestionSheet: View {
             .background(shape.fill(brand.palette.surface))
             .clipShape(shape)
             .overlay(shape.stroke(brand.palette.ink.opacity(0.85), lineWidth: 1.2))
-            // Over the box she pressed, hanging past the right margin. When she was right it
-            // straddles the bottom rule instead of the line — that line is what she came for.
-            .overlay(alignment: isCorrect ? .bottomTrailing : .trailing) {
+            // Over the box she pressed, straddling its bottom rule and hanging past the right
+            // margin — never across the line itself. It used to be set `.fixedSize()` on the
+            // trailing edge, so a long near-miss line lay over the answer she had just chosen
+            // and ran off the screen in dark and at the largest text sizes. Clamped and dropped
+            // to the rule, it reads as a stamp on the page instead of a label over the type.
+            .overlay(alignment: .bottomTrailing) {
                 if chosen, stamped || Motion.isStill {
                     Stamp(text: stampLine)
-                        .fixedSize()
+                        .frame(maxWidth: 190)
+                        .fixedSize(horizontal: false, vertical: true)
                         .rotationEffect(.degrees(-6))
-                        .offset(x: 16, y: isCorrect ? 17 : 0)
+                        .offset(x: 10, y: 17)
                         .transition(.scale(scale: 1.6).combined(with: .opacity))
                         .allowsHitTesting(false)
                 }

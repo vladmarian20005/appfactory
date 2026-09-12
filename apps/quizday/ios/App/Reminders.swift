@@ -24,7 +24,7 @@ enum Reminders {
         cancel()
         let content = UNMutableNotificationContent()
         content.title = "Today's edition is on the step."
-        content.body = "Ten questions, two minutes. Round \(DailyPack.roundNumber(for: .now))."
+        content.body = "Ten questions, two minutes. Round \(DailyPack.editionNumber(for: .now))."
         content.sound = .default
 
         var components = DateComponents()

@@ -5,6 +5,8 @@ import SwiftUI
 @main
 struct Quizday: App {
     @StateObject private var store = Store(productIDs: AppInfo.config.productIDs)
+    /// What the paper has noticed. Everything the app serves is decided here.
+    @StateObject private var desk = Desk()
     @AppStorage("factory.onboarded") private var onboarded = false
 
     private let container: ModelContainer
@@ -34,6 +36,8 @@ struct Quizday: App {
                 if onboarded || LaunchOptions.onboarded {
                     RootView()
                         .environmentObject(store)
+                        .environmentObject(desk)
+                        .task { seedDesk() }
                 } else {
                     OnboardingView(pages: AppInfo.onboarding,
                                    nextTitle: "Turn the page",
@@ -44,6 +48,17 @@ struct Quizday: App {
             .brand(AppBrand.brand)
         }
         .modelContainer(container)
+    }
+
+    /// The desk's side of the same seeding: `-reset` clears what it remembers, `-editions N`
+    /// replays that many editions through it. Neither runs in a normal launch.
+    @MainActor
+    private func seedDesk() {
+        if let editions = LaunchOptions.editions {
+            desk.seed(editions: editions, endingOn: .now)
+        } else if LaunchOptions.resetData {
+            desk.forget()
+        }
     }
 
     /// Screenshot and QA support only: fills a month of plausible history so the calendar
@@ -57,6 +72,30 @@ struct Quizday: App {
             for report in (try? context.fetch(FetchDescriptor<QuestionReport>())) ?? [] { context.delete(report) }
             try? context.save()
         }
+        // `-editions 200` files that many past editions, so the ladder is read at rung 201 and
+        // the doors that open by playing are all open. The scores are seeded, not random: two
+        // captures of the same flags have to show the same squares.
+        if let editions = LaunchOptions.editions {
+            let calendar = Calendar.current
+            let existing = Set(((try? context.fetch(FetchDescriptor<DayResult>())) ?? []).map(\.dayKey))
+            var rng = PaperRandom(seed: 0xED17_10_45)
+            for step in stride(from: editions, through: 1, by: -1) {
+                guard let date = calendar.date(byAdding: .day, value: -step, to: .now) else { continue }
+                let key = DayKey.key(for: date)
+                guard !existing.contains(key) else { continue }
+                let score = 4 + Int(rng.unit() * 7)
+                var flags = Array(repeating: true, count: min(score, 10))
+                    + Array(repeating: false, count: max(0, 10 - score))
+                SeededShuffle.apply(&flags, seed: UInt64(step) &+ 29)
+                context.insert(DayResult(dayKey: key,
+                                         roundNumber: DailyPack.editionNumber(for: date),
+                                         flags: flags,
+                                         playedAt: date))
+            }
+            try? context.save()
+            return
+        }
+
         guard LaunchOptions.sampleData else { return }
         let existing = (try? context.fetch(FetchDescriptor<DayResult>())) ?? []
         guard existing.isEmpty else { return }
@@ -72,7 +111,7 @@ struct Quizday: App {
             // different squares, which makes a screenshot diff meaningless.
             SeededShuffle.apply(&flags, seed: UInt64(offset) &+ 11)
             context.insert(DayResult(dayKey: DayKey.key(for: date),
-                                     roundNumber: DailyPack.roundNumber(for: date),
+                                     roundNumber: DailyPack.editionNumber(for: date),
                                      flags: flags,
                                      playedAt: date))
         }

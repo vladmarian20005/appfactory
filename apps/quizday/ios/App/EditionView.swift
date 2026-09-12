@@ -8,12 +8,17 @@ import SwiftUI
 /// brass across the foot of the column.
 struct EditionView: View {
     @Environment(\.brand) private var brand
+    @EnvironmentObject private var desk: Desk
 
     let flags: [Bool]
-    let roundNumber: Int
+    let editionNumber: Int
     let playedAt: Date
     let streak: Int
     let bestStreak: Int
+    /// The longest chain she has managed in any edition before this one.
+    var bestChain: Int = 0
+    /// Editions filed, today's included. The rung the doors are read at.
+    var filed: Int = 0
 
     @State private var pressRule: CGFloat = 0
     @State private var counting = false
@@ -26,8 +31,16 @@ struct EditionView: View {
 
     private var score: Int { flags.filter { $0 }.count }
     private var total: Int { max(flags.count, 10) }
-    private var tier: Tier { Tier.forScore(score, total: total) }
-    private var isPersonalBest: Bool { streak > 1 && streak >= bestStreak }
+    private var run: Run { Run.replaying(flags) }
+    private var tier: Tier { Tier.forEdition(run, total: total, beatingChain: bestChain) }
+    /// A new longest run. The streak has its ribbon; this stamp is for the thing that was
+    /// actually at risk inside the ten.
+    private var isPersonalBest: Bool {
+        run.longestChain > 1 && run.tier(score: run.longestChain, beating: bestChain) == .best
+    }
+    private var justOpened: [Earned.Milestone] {
+        Desk.earned.justUnlocked(from: max(0, filed - 1), to: filed)
+    }
 
     var body: some View {
         GeometryReader { geo in
@@ -60,7 +73,7 @@ struct EditionView: View {
                 headlineStamp
                     .padding(.top, 22)
 
-                Text(tier.subline(score: score, total: total))
+                Text(tier.subline(score: score, total: total, chain: run.longestChain))
                     .brandFont(.title3, weight: .regular)
                     .italic()
                     .foregroundStyle(brand.palette.inkSoft)
@@ -73,7 +86,6 @@ struct EditionView: View {
                     HStack {
                         Spacer(minLength: 0)
                         StreakRibbon(days: streak)
-                            .frame(maxWidth: 260)
                             .scaleEffect(x: Motion.isStill ? 1 : ribbon, anchor: .trailing)
                     }
                     .padding(.top, 26)
@@ -84,11 +96,21 @@ struct EditionView: View {
                 InkRule(weight: 0.5, opacity: 0.3)
                     .padding(.top, 28)
 
+                // What is waiting, named. The clock stays, under it and smaller: a countdown is
+                // a fact about the paper, not a reason to come back.
+                horizonLine
+                    .padding(.top, 16)
+
+                if lateEditionIsOpen {
+                    lateEditionBox
+                        .padding(.top, 14)
+                }
+
                 HStack(alignment: .top, spacing: 12) {
                     countdownBox
                     shareBox
                 }
-                .padding(.top, 16)
+                .padding(.top, 14)
 
                 Spacer(minLength: 24)
 
@@ -101,7 +123,9 @@ struct EditionView: View {
                     .padding(.top, 10)
             }
             .padding(.horizontal, 30)
-            .padding(.bottom, 20)
+            // The paper's own line is the last thing on the page, and the tab bar is glass
+            // floating over the scroll: without this it printed underneath it.
+            .padding(.bottom, 46)
             .frame(minHeight: pageHeight)
         }
         .paper(darken: 0.04)
@@ -116,8 +140,7 @@ struct EditionView: View {
     }
 
     private var dateline: String {
-        let day = playedAt.formatted(.dateTime.weekday(.wide).day().month(.wide))
-        return "Round \(roundNumber) · \(day)"
+        "Round \(editionNumber) · \(Masthead.dateline(for: playedAt))"
     }
 
     // MARK: - The page, part by part
@@ -154,21 +177,19 @@ struct EditionView: View {
         ZStack {
             // A clean sweep stamps twice: a fainter second impression behind the first.
             if tier.doubleImpression, headline || Motion.isStill {
-                Stamp(text: tier.headline, size: 20)
-                    .fixedSize()
+                Stamp(text: tier.headline, size: 24, stretch: 296)
                     .rotationEffect(.degrees(-7))
                     .opacity(0.35)
             }
             if headline || Motion.isStill {
-                Stamp(text: tier.headline, size: 20, empty: tier == .blank)
-                    .fixedSize()
+                Stamp(text: tier.headline, size: 24, empty: tier == .blank, stretch: 296)
                     .rotationEffect(.degrees(tier.stamps ? -3 : 0))
                     .transition(tier.stamps
                                 ? .scale(scale: 1.5).combined(with: .opacity)
                                 : .opacity)
             }
             if isPersonalBest, personalBest || Motion.isStill {
-                Stamp(text: "Personal best", color: brand.palette.highlight, size: 12)
+                Stamp(text: "Longest run yet", color: brand.palette.highlight, size: 12)
                     .fixedSize()
                     .rotationEffect(.degrees(5))
                     .offset(x: 74, y: 46)
@@ -177,19 +198,75 @@ struct EditionView: View {
         }
     }
 
+    /// The editor's last word, and the only part of the foot of the page that is about her.
+    /// A door that opened tonight is named as opened; otherwise the next one is named as waiting.
+    private var horizonLine: some View {
+        let opened = justOpened.last
+        let line = opened.map { "\(Voice.opened($0)) \($0.blurb)" }
+            ?? Voice.horizon(filed: filed,
+                             weakest: desk.weakestSections(limit: 1).first,
+                             misses: desk.weakestSections(limit: 1).first.map(desk.misses(in:)) ?? 0)
+        return HStack(alignment: .top, spacing: 10) {
+            Rectangle()
+                .fill(opened == nil ? brand.palette.inkSoft.opacity(0.5) : brand.palette.highlight)
+                .frame(width: 3)
+                .frame(maxHeight: .infinity)
+            Text(line)
+                .scaledFont(size: 16, design: .serif, relativeTo: .callout)
+                .italic()
+                .foregroundStyle(brand.palette.ink)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .popIn(delay: 1.42)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var lateEditionIsOpen: Bool {
+        Desk.earned.isUnlocked("late", at: filed)
+    }
+
+    /// The one door in this app that money cannot open. Practice stays behind the paywall; this
+    /// arrives because she filed seven editions, and it is set from what got past her.
+    private var lateEditionBox: some View {
+        NavigationLink {
+            LateEditionView(filed: filed)
+        } label: {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("The late edition").dateline(10, tracking: 2, color: brand.palette.highlight)
+                    Text("\(Spelled.leading(Desk.lateEditionCount(filed: filed))) more, set from what got past you.")
+                        .scaledFont(size: 16, design: .serif, relativeTo: .callout)
+                        .foregroundStyle(brand.palette.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.leading)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .brandFont(.footnote)
+                    .foregroundStyle(brand.palette.accent)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .ruledBox(padding: 14, ruleColor: brand.palette.highlight)
+        }
+        .buttonStyle(.plain)
+        .popIn(delay: 1.46)
+    }
+
     private var countdownBox: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Tomorrow's edition goes to press in")
                 .dateline(10, tracking: 1.6)
                 .fixedSize(horizontal: false, vertical: true)
             Text(timerInterval: Date.now...nextMidnight, countsDown: true)
-                .scaledFont(size: 26, weight: .medium, design: .monospaced, relativeTo: .title3)
-                .foregroundStyle(brand.palette.ink)
+                .scaledFont(size: 20, weight: .medium, design: .monospaced, relativeTo: .subheadline)
+                .foregroundStyle(brand.palette.inkSoft)
                 .monospacedDigit()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .ruledBox(padding: 14)
-        .popIn(delay: 1.45)
+        .popIn(delay: 1.5)
     }
 
     /// A ruled box with the share glyph in accent above the label, not a filled tile. The
@@ -199,11 +276,11 @@ struct EditionView: View {
         Group {
             if let shareImage {
                 ShareLink(item: shareImage,
-                          preview: SharePreview("Quizday · Round \(roundNumber)", image: shareImage)) {
+                          preview: SharePreview("Quizday · Round \(editionNumber)", image: shareImage)) {
                     shareLabel
                 }
             } else {
-                ShareLink(item: ShareEdition.line(roundNumber: roundNumber, flags: flags, streak: streak)) {
+                ShareLink(item: ShareEdition.line(roundNumber: editionNumber, flags: flags, streak: streak)) {
                     shareLabel
                 }
             }
@@ -239,7 +316,7 @@ struct EditionView: View {
     @MainActor
     private func prepare() async {
         shareImage = ShareEdition.card(score: score, total: total, flags: flags,
-                                       roundNumber: roundNumber, playedAt: playedAt,
+                                       roundNumber: editionNumber, playedAt: playedAt,
                                        streak: streak, tier: tier)
         await printEdition()
     }

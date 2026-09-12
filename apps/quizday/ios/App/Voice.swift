@@ -1,3 +1,4 @@
+import FactoryKit
 import SwiftUI
 
 /// The night editor who set tomorrow's paper: dry, brisk, quietly proud of the edition. He
@@ -43,6 +44,27 @@ enum Voice {
     }
 
     static func runEnded(at days: Int) -> String { "The run ended at \(days). Start another." }
+
+    /// What the edition ends on: the thing that is waiting, named.
+    ///
+    /// It used to end on a clock counting down to midnight — the best-set version of "come back
+    /// tomorrow" anyone had shipped, and still that. The editor names what playing has nearly
+    /// opened, or, once everything is open, the section that keeps catching her — which is true,
+    /// because that section leads the next edition.
+    static func horizon(filed: Int, weakest: String?, misses: Int) -> String {
+        if let next = Desk.earned.next(after: filed) {
+            return "\(Spelled.leading(filed)) filed. \(next.blurb)"
+        }
+        if let weakest, misses > 0 {
+            return "\(weakest) has caught you \(Spelled.out(misses)) times. It leads tomorrow."
+        }
+        return "\(Spelled.leading(filed)) filed, and the desk has tomorrow's already set."
+    }
+
+    /// What a just-opened door is announced as, on the page that opened it.
+    static func opened(_ milestone: Earned.Milestone) -> String {
+        "\(milestone.title) is open."
+    }
 }
 
 /// A pool drawn without replacement, so no line repeats inside the same ten and the tenth win
@@ -89,6 +111,17 @@ enum Tier {
         }
     }
 
+    /// The edition's tier, read from the run rather than from the score alone: a near-perfect
+    /// sheet that also set her longest chain gets the front page a clean sweep gets. That is
+    /// what the chain at the head of the sheet is for — it can lift the edition, and breaking
+    /// it costs this edition's headline and nothing outside it.
+    static func forEdition(_ run: Run, total: Int = 10, beatingChain best: Int) -> Tier {
+        let grade = run.tier(score: run.longestChain, beating: best)
+        let plain = forScore(run.hits, total: total)
+        if plain == .stopThePress, grade == .best { return .extra }
+        return plain
+    }
+
     var headline: String {
         switch self {
         case .extra: return "Extra! Extra!"
@@ -99,9 +132,13 @@ enum Tier {
         }
     }
 
-    func subline(score: Int, total: Int = 10) -> String {
+    func subline(score: Int, total: Int = 10, chain: Int = 0) -> String {
         switch self {
-        case .extra: return "Ten for ten. The desk is speechless."
+        case .extra:
+            guard score == total else {
+                return "Your longest run yet, \(Spelled.out(chain)) straight. That leads the page."
+            }
+            return "Ten for ten. The desk is speechless."
         case .stopThePress:
             return score == total - 1
                 ? "One got past you. One."

@@ -132,6 +132,36 @@ struct PrintersOrnament: View {
     }
 }
 
+extension Masthead {
+    /// `THURSDAY 11 SEPTEMBER`. The system's own long form comes out as
+    /// "Saturday, September 12" — a comma and the month first, which is a settings screen, not
+    /// a masthead. A paper sets the day, the number and the month, in that order.
+    static func dateline(for date: Date, calendar: Calendar = .current) -> String {
+        let parts = calendar.dateComponents([.weekday, .day, .month], from: date)
+        let symbols = DateFormatter()
+        symbols.calendar = calendar
+        symbols.locale = .autoupdatingCurrent
+        guard let weekday = parts.weekday, let day = parts.day, let month = parts.month,
+              weekday >= 1, weekday <= symbols.standaloneWeekdaySymbols.count,
+              month >= 1, month <= symbols.standaloneMonthSymbols.count
+        else { return date.formatted(.dateTime.weekday(.wide).day().month(.wide)) }
+        return "\(symbols.standaloneWeekdaySymbols[weekday - 1]) \(day) \(symbols.standaloneMonthSymbols[month - 1])"
+    }
+
+    /// The short form the share card and the calendar use: `THU 11 SEP`.
+    static func shortDateline(for date: Date, calendar: Calendar = .current) -> String {
+        let parts = calendar.dateComponents([.weekday, .day, .month], from: date)
+        let symbols = DateFormatter()
+        symbols.calendar = calendar
+        symbols.locale = .autoupdatingCurrent
+        guard let weekday = parts.weekday, let day = parts.day, let month = parts.month,
+              weekday >= 1, weekday <= symbols.shortStandaloneWeekdaySymbols.count,
+              month >= 1, month <= symbols.shortStandaloneMonthSymbols.count
+        else { return date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)) }
+        return "\(symbols.shortStandaloneWeekdaySymbols[weekday - 1]) \(day) \(symbols.shortStandaloneMonthSymbols[month - 1])"
+    }
+}
+
 private struct RuledBoxModifier: ViewModifier {
     @Environment(\.brand) private var brand
     let rule: CGFloat
@@ -290,6 +320,74 @@ struct Tally: View {
     }
 }
 
+/// The run, set as a line of ink lozenges under the tally: one for every answer still standing.
+/// It is the only thing in the app that can be lost, and losing it costs this edition's headline
+/// and nothing else — no life, no streak, no tomorrow. A miss strikes it out in the same pencil
+/// the wrong answer gets, and the next right answer starts another.
+struct RunLine: View {
+    @Environment(\.brand) private var brand
+    let chain: Int
+    let isClean: Bool
+    /// The chain this answer just broke, drawn struck through before it goes.
+    var broken: Int = 0
+    /// 0…1, so the strike draws itself with the correction rather than appearing.
+    var strike: CGFloat = 0
+
+    private var shown: Int { broken > 0 ? broken : chain }
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Text(broken > 0 ? "Run broken" : "Run")
+                .dateline(10, tracking: 2,
+                          color: brand.palette.ink.opacity(broken > 0 ? 0.5 : 0.75))
+            lozenges
+            Spacer(minLength: 8)
+            if isClean, broken == 0, chain > 0 {
+                Text("Clean copy")
+                    .dateline(10, tracking: 2, color: brand.palette.highlight)
+            }
+        }
+        .frame(minHeight: 14)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+    }
+
+    @ViewBuilder
+    private var lozenges: some View {
+        if shown == 0 {
+            // An empty run still takes its line, so the sheet does not jump when one starts.
+            Rectangle()
+                .fill(brand.palette.ink.opacity(0.18))
+                .frame(width: 22, height: 0.5)
+        } else {
+            HStack(spacing: 5) {
+                ForEach(0..<min(shown, 10), id: \.self) { _ in
+                    Rectangle()
+                        .fill(broken > 0 ? brand.palette.miss : brand.palette.ink)
+                        .frame(width: 7, height: 7)
+                        .rotationEffect(.degrees(45))
+                }
+            }
+            .frame(height: 12)
+            .overlay {
+                if broken > 0 {
+                    PencilStrike()
+                        .trim(to: strike)
+                        .stroke(brand.palette.miss,
+                                style: StrokeStyle(lineWidth: 1.6, lineCap: .round))
+                        .padding(.horizontal, -5)
+                }
+            }
+        }
+    }
+
+    private var label: String {
+        if broken > 0 { return "The run of \(broken) is broken" }
+        if chain == 0 { return "No run yet" }
+        return isClean ? "A clean run of \(chain)" : "A run of \(chain)"
+    }
+}
+
 /// `popIn` only where a delay was given, so the same view serves a still sheet and a printing one.
 struct OptionalPopIn: ViewModifier {
     let delay: Double?
@@ -315,6 +413,10 @@ struct Stamp: View {
     var size: CGFloat = 13
     /// A blank sheet gets a blank stamp: ruled, unprinted.
     var empty = false
+    /// The width a stamp is cut to when it is a headline rather than a mark. The tier stamp on
+    /// the front page came out about half the page wide and read as a caption; the mock slams it
+    /// across three quarters of the sheet, which is what makes it a headline.
+    var stretch: CGFloat?
 
     var body: some View {
         let tint = color ?? brand.palette.accent
@@ -327,7 +429,8 @@ struct Stamp: View {
             .foregroundStyle(tint)
             .multilineTextAlignment(.center)
             .padding(.horizontal, 14)
-            .padding(.vertical, 8)
+            .padding(.vertical, stretch == nil ? 8 : 12)
+            .frame(minWidth: stretch)
             .frame(minHeight: empty ? 34 : 0)
             .background(shape.fill(brand.palette.canvas.opacity(0.86)))
             .overlay(shape.stroke(tint, lineWidth: 2))
@@ -390,6 +493,8 @@ struct StreakRibbon: View {
     var numberSize: CGFloat = 44
 
     var body: some View {
+        // The ribbon fits its number. Drawn at a fixed width it came out as a wide brass slab
+        // around a small "1"; a banner is cut to the length of what is printed on it.
         HStack(alignment: .firstTextBaseline, spacing: 9) {
             Text("\(days)")
                 .brandDisplay(size: numberSize, relativeTo: .title)
@@ -397,7 +502,6 @@ struct StreakRibbon: View {
             Text(days == 1 ? "day\nrunning" : "days\nrunning")
                 .dateline(11, tracking: 1.6, color: brand.palette.onAccent.opacity(0.9))
                 .fixedSize()
-            Spacer(minLength: 0)
         }
         .padding(.leading, 34)
         .padding(.trailing, 18)

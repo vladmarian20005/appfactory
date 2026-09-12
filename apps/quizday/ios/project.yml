@@ -16,6 +16,10 @@ settings:
     CODE_SIGN_STYLE: Automatic
     GENERATE_INFOPLIST_FILE: YES
     INFOPLIST_KEY_UILaunchScreen_Generation: YES
+    # The launch screen is newsprint, not white. Without this both filmstrips opened on six
+    # frames of flat white before the paper arrived, which is the first thing anyone sees of
+    # the app and the only screen in it that was not the brand.
+    INFOPLIST_KEY_UILaunchScreen_UIColorName: LaunchPaper
     # No custom or non-exempt crypto. Without this answer in the bundle every TestFlight
     # build sits at "Missing Compliance" until someone clicks through it in a browser.
     INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO

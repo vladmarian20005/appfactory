@@ -13,7 +13,7 @@ enum LaunchOptions {
     /// Opens the Today round already in progress, for screenshots and QA.
     static var autoPlay: Bool { args.contains("-play") }
 
-    /// `-screen today|scorecard|practice|paywall|settings`
+    /// `-screen today|scorecard|practice|paywall|settings|share|late`
     static var screen: String? { value(for: "-screen") }
 
     /// `-playStep 2` advances the auto-played round that many questions in.
@@ -27,6 +27,14 @@ enum LaunchOptions {
 
     /// `-answered 7` pre-fills today's round as already played with that score.
     static var answered: Int? { value(for: "-answered").flatMap(Int.init) }
+
+    /// `-editions 200` seeds a reader who has filed that many editions, with the mastery to
+    /// match, so a capture can reach the deep end of the ladder. Without it nothing downstream
+    /// can tell a curve from a flat line: edition 1 and edition 200 would be the same screenshot.
+    static var editions: Int? { value(for: "-editions").flatMap(Int.init) }
+
+    /// `-lateStart` deals the late edition straight away instead of opening on its spike.
+    static var lateStart: Bool { args.contains("-lateStart") }
 
     /// `-demo answer|win` plays a moment by itself: the ink press on an answer, or the round
     /// out to the edition printing. Nothing on a runner can touch the screen, so the app has

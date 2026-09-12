@@ -5,17 +5,17 @@
     {
       "name": "01-today",
       "args": ["-onboarded", "-reset"],
-      "note": "The paper on the step: masthead, dateline, the press turning, today's section line."
+      "note": "The paper on the step: masthead, dateline, the press turning, and the section line of the ten the desk has actually set for today."
     },
     {
       "name": "02-question",
       "args": ["-onboarded", "-reset", "-play", "-playStep", "3", "-reveal"],
-      "note": "A pressed answer: the ink sweep landed, the stamp hanging past the margin, the correction pencilled in, the footnote set."
+      "note": "A pressed answer: the ink sweep landed, the stamp straddling the rule of the box she chose, the run struck out in pencil beside the tally, the correction circled, the footnote set."
     },
     {
       "name": "03-result",
-      "args": ["-onboarded", "-answered", "8"],
-      "note": "The edition printed: the score at 112pt, the tally, the tier stamp, the brass ribbon."
+      "args": ["-onboarded", "-editions", "19", "-answered", "8"],
+      "note": "The edition printed: the score at 112pt, the tally, the tier stamp across three quarters of the page, the brass ribbon, and the line naming what is waiting above the clock."
     },
     {
       "name": "04-scorecard",
@@ -46,24 +46,51 @@
       "name": "09-share",
       "args": ["-onboarded", "-screen", "share"],
       "note": "Not a screen of the app: the 1080x1350 front page the result shares, at the size it arrives in a chat. Nothing in the UI leads here — it is the only way to see the share image, since nothing on a runner can photograph a share sheet."
+    },
+    {
+      "name": "10-late-edition",
+      "args": ["-onboarded", "-editions", "12", "-screen", "late"],
+      "note": "The one door money does not open: at seven editions filed the late edition arrives, set from the questions that got past her. -editions 12 is a reader who earned it five editions ago; nothing was purchased to reach this screen."
     }
   ],
   "moments": [
     {
       "name": "answer",
       "args": ["-onboarded", "-reset", "-demo", "answer"],
-      "delay": 0.5,
-      "frames": 18,
+      "delay": 4.0,
+      "frames": 30,
       "interval": 0,
-      "note": "The ink press: the app answers question four itself, so the sweep, the stamp and the tally square are on camera."
+      "note": "The ink press: the app answers question four right at 6s, turns the page at 9s and answers question five wrong at 11.5s, so the sweep, the stamp, the tally, the pencil correction and the run being struck out are all on camera."
     },
     {
       "name": "win",
       "args": ["-onboarded", "-reset", "-demo", "win"],
-      "delay": 0.5,
-      "frames": 18,
+      "delay": 4.0,
+      "frames": 30,
       "interval": 0,
-      "note": "The edition printing: press rule, masthead, the score counting to 112pt, the tally, the tier stamp, the paper flying, the ribbon."
+      "note": "The edition printing: the tenth answer lands at 8s and the page goes to press at 12s, which puts the score counting up, the tier stamp and the confetti burst at ~13.2s inside the strip."
+    }
+  ],
+  "ladder": [
+    {
+      "name": "edition-1",
+      "args": ["-onboarded", "-reset", "-play", "-playStep", "3"],
+      "note": "Rung 1: four easy, four medium, two hard, and nothing on record — so the desk deals the day's slate in the order the date sets."
+    },
+    {
+      "name": "edition-10",
+      "args": ["-onboarded", "-editions", "9", "-play", "-playStep", "3"],
+      "note": "Rung 10: the mix has not moved yet, but ninety questions are on record, so the fourth question is already one chosen from what she has missed."
+    },
+    {
+      "name": "edition-60",
+      "args": ["-onboarded", "-editions", "59", "-play", "-playStep", "3"],
+      "note": "Rung 60: three easy, four medium, three hard. Past the bundled pack, so the sheet is drawn from her own weak sections."
+    },
+    {
+      "name": "edition-200",
+      "args": ["-onboarded", "-editions", "199", "-play", "-playStep", "3"],
+      "note": "Rung 200: one easy, three medium, six hard — the top of the ladder. Q4 is marked HARD where edition 1's was EASY, and the sheet is her errata."
     }
   ]
 }

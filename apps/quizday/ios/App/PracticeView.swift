@@ -63,10 +63,12 @@ struct PracticeView: View {
         GeometryReader { geo in
         ScrollView {
             VStack(spacing: 18) {
+                Spacer(minLength: 0)
+
                 Image("TypeCase")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 240)
+                    .frame(width: 290)
                     .popIn()
                     .accessibilityLabel("A composing stick and a type case")
 
@@ -112,12 +114,13 @@ struct PracticeView: View {
                 .brandProminent()
                 .popIn(delay: 0.2)
 
-                Spacer(minLength: 24)
+                Spacer(minLength: 18)
 
                 PrintersOrnament()
             }
             .padding(.horizontal, 30)
-            .padding(.vertical, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 46)
             .frame(minHeight: geo.size.height)
         }
         .paper()

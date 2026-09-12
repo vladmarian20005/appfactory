@@ -6,6 +6,7 @@ import SwiftUI
 struct TodayView: View {
     @Environment(\.brand) private var brand
     @Environment(\.modelContext) private var context
+    @EnvironmentObject private var desk: Desk
     @Query private var results: [DayResult]
     @Query private var reports: [QuestionReport]
 
@@ -16,6 +17,11 @@ struct TodayView: View {
     @State private var items: [QuizItem] = []
     @State private var voice = RoundVoice()
     @State private var stampLine = ""
+    /// What is standing. A miss costs the chain and the clean sheet, and takes nothing else.
+    @State private var run = Run()
+    @State private var brokenChain = 0
+    /// The ten the desk has set for today, held so the section line describes the real edition.
+    @State private var setForToday: [QuizItem] = []
 
     private enum Phase { case intro, playing, done }
 
@@ -23,7 +29,9 @@ struct TodayView: View {
     private var todayKey: String { DayKey.key(for: today) }
     private var todayResult: DayResult? { results.first { $0.dayKey == todayKey } }
     private var streak: Int { Streaks.current(from: results) }
-    private var roundNumber: Int { DailyPack.roundNumber(for: today) }
+    private var editionNumber: Int { DailyPack.editionNumber(for: today) }
+    /// Editions filed before today's: the rung the ladder is read at.
+    private var filed: Int { results.filter { $0.dayKey != todayKey }.count }
 
     var body: some View {
         Group {
@@ -53,7 +61,12 @@ struct TodayView: View {
                         .dateline(11, tracking: 2)
                         .popIn(delay: 0.05)
 
-                    HandPress(width: 250)
+                    Spacer(minLength: 0)
+
+                    // The mock fills the sheet with the press; the build drew it at 250 and
+                    // left a band of empty paper above the masthead rule and another under the
+                    // subtitle. It is the hero of the first screen, so it takes the room.
+                    HandPress(width: 310)
                         .padding(.vertical, 2)
                         .popIn(delay: 0.1)
                         .accessibilityLabel("A hand press, turning")
@@ -64,14 +77,13 @@ struct TodayView: View {
                         .foregroundStyle(brand.palette.ink)
                         .popIn(delay: 0.15)
 
-                    SectionLine(categories: DailyPack.categories(for: today))
+                    SectionLine(categories: DailyPack.categories(in: setForToday))
                         .popIn(delay: 0.2)
 
                     if let line = Voice.streak(streak, todayPlayed: false) {
                         HStack {
                             Spacer(minLength: 0)
                             StreakRibbon(days: streak, numberSize: 34)
-                                .frame(maxWidth: 220)
                         }
                         .popIn(delay: 0.25)
                         .accessibilityLabel(line)
@@ -88,12 +100,13 @@ struct TodayView: View {
                     .padding(.top, 2)
                     .popIn(delay: 0.3)
 
-                    Spacer(minLength: 24)
+                    Spacer(minLength: 18)
 
                     PrintersOrnament()
                 }
                 .padding(.horizontal, 32)
-                .padding(.vertical, 18)
+                .padding(.top, 18)
+                .padding(.bottom, 46)
                 .frame(minHeight: geo.size.height)
             }
             .paper()
@@ -102,8 +115,7 @@ struct TodayView: View {
     }
 
     private var dateline: String {
-        let day = today.formatted(.dateTime.weekday(.wide).day().month(.wide))
-        return "\(day) · Round \(roundNumber)"
+        "\(Masthead.dateline(for: today)) · Round \(editionNumber)"
     }
 
     // MARK: - The sheet
@@ -120,6 +132,8 @@ struct TodayView: View {
                 selected: selected,
                 stampLine: stampLine,
                 reported: reports.contains { $0.questionID == item.id },
+                run: run,
+                brokenChain: brokenChain,
                 teaching: results.isEmpty && index == 0,
                 onAnswer: { answer(item: item, choice: $0) },
                 onReport: { report(item: item) },
@@ -136,10 +150,12 @@ struct TodayView: View {
         let result = todayResult
         let shownFlags = result?.flags ?? flags
         return EditionView(flags: shownFlags,
-                           roundNumber: result?.roundNumber ?? roundNumber,
+                           editionNumber: result?.roundNumber ?? editionNumber,
                            playedAt: result?.playedAt ?? .now,
                            streak: streak,
-                           bestStreak: Streaks.best(from: results))
+                           bestStreak: Streaks.best(from: results),
+                           bestChain: Streaks.bestChain(from: results, excluding: todayKey),
+                           filed: results.count)
             // Asked here, once the page has settled, never mid-question.
             .factoryReviewPrompt(afterSessions: 3)
     }
@@ -147,6 +163,9 @@ struct TodayView: View {
     // MARK: - Flow
 
     private func syncPhase() {
+        // Set the day's ten before anything reads them: the section line on the unplayed sheet
+        // is the edition's own sections, not a fixed round's.
+        if setForToday.isEmpty { setForToday = desk.edition(for: today, filed: filed) }
         if let answered = LaunchOptions.answered, todayResult == nil {
             var sample = (0..<10).map { $0 < answered }
             SeededShuffle.apply(&sample, seed: UInt64(answered) &+ 3)
@@ -190,6 +209,9 @@ struct TodayView: View {
     ///
     /// The waits are long because `simctl io screenshot` costs about a third of a second, so a
     /// beat that is over in 0.55 s has to be given room either side of it to be filmed at all.
+    /// The presses land at 6, 9 and 11.5 s against qa.json's `delay: 4.0`, so the 0–220 ms ink
+    /// sweep falls in the middle of a frame rather than between two — before this the strip
+    /// opened on flat white and then cut straight to a settled sheet.
     private func playDemoAnswer() {
         start()
         for _ in 0..<3 {
@@ -199,9 +221,9 @@ struct TodayView: View {
         }
         guard index < items.count else { return }
         let right = items[index]
-        at(1.8) { answer(item: right, choice: right.correct) }
-        at(3.4) { next() }
-        at(4.2) {
+        at(6.0) { answer(item: right, choice: right.correct) }
+        at(9.0) { next() }
+        at(11.5) {
             guard index < items.count else { return }
             let item = items[index]
             answer(item: item, choice: (item.correct + 1) % item.answers.count)
@@ -223,11 +245,13 @@ struct TodayView: View {
         }
         guard index < items.count else { return }
         let last = items[index]
-        at(2.0) { answer(item: last, choice: last.correct) }
+        at(8.0) { answer(item: last, choice: last.correct) }
         // A long beat before the page goes to press: a screenshot of a screen that is
         // animating hard takes the best part of two seconds on a runner, so the film needs
-        // the sheet, the press and the printing spread out or it catches only the ends.
-        at(3.6) { next() }
+        // the sheet, the press and the printing spread out or it catches only the ends. The
+        // page prints at 12 s against `delay: 4.0`, which puts the burst at about 13.2 s —
+        // inside the strip rather than after it.
+        at(12.0) { next() }
     }
 
     private func at(_ seconds: Double, _ work: @escaping () -> Void) {
@@ -235,11 +259,14 @@ struct TodayView: View {
     }
 
     private func start() {
-        items = DailyPack.items(for: today)
+        items = setForToday.isEmpty ? desk.edition(for: today, filed: filed) : setForToday
         guard !items.isEmpty else { return }
+        setForToday = items
         index = 0
         selected = nil
         flags = []
+        run = Run()
+        brokenChain = 0
         voice = RoundVoice()
         phase = .playing
     }
@@ -250,14 +277,20 @@ struct TodayView: View {
         let correct = choice == item.correct
         stampLine = voice.line(correct: correct)
         flags.append(correct)
-        record(category: item.category, correct: correct)
+        // The chain is what she can lose. Hold what it was so the sheet can strike it out
+        // rather than have it disappear between two frames.
+        brokenChain = correct ? 0 : run.chain
+        if correct { run.hit() } else { run.miss() }
+        record(item: item, correct: correct)
     }
 
     private func next() {
         selected = nil
+        brokenChain = 0
         if index + 1 < items.count {
             index += 1
         } else {
+            desk.served(items)
             save(flags: flags)
             phase = .done
         }
@@ -265,8 +298,15 @@ struct TodayView: View {
 
     private func save(flags: [Bool]) {
         guard results.first(where: { $0.dayKey == todayKey }) == nil else { return }
-        context.insert(DayResult(dayKey: todayKey, roundNumber: roundNumber, flags: flags))
+        context.insert(DayResult(dayKey: todayKey, roundNumber: editionNumber, flags: flags))
         try? context.save()
+    }
+
+    private func record(item: QuizItem, correct: Bool) {
+        // The desk is the only thing that decides what she gets next, so every answer goes
+        // through it. `CategoryStat` still accumulates for the league table next door.
+        desk.record(item.id, correct: correct)
+        record(category: item.category, correct: correct)
     }
 
     private func record(category: String, correct: Bool) {

@@ -1,3 +1,4 @@
+import FactoryKit
 import Foundation
 import SwiftData
 
@@ -19,6 +20,20 @@ final class DayResult {
 
     var score: Int { flags.filter { $0 }.count }
     var total: Int { flags.count }
+    /// The run that edition was, replayed from the answers it saved. The flags are the whole
+    /// history a `Run` needs, so nothing extra is stored for it.
+    var run: Run { Run.replaying(flags) }
+}
+
+extension Run {
+    /// Rebuild a finished run from the answers in order.
+    static func replaying(_ flags: [Bool]) -> Run {
+        var run = Run()
+        for correct in flags {
+            if correct { run.hit() } else { run.miss() }
+        }
+        return run
+    }
 }
 
 /// Running accuracy for one category, counting both daily and practice answers.
@@ -73,6 +88,15 @@ enum Streaks {
             cursor = previous
         }
         return streak
+    }
+
+    /// The longest chain of right answers inside any single edition ever filed. This is what a
+    /// new best is measured against, and what the run in today's sheet is playing for.
+    static func bestChain(from results: [DayResult], excluding dayKey: String? = nil) -> Int {
+        results
+            .filter { $0.dayKey != dayKey }
+            .map { $0.run.longestChain }
+            .max() ?? 0
     }
 
     /// Longest run of consecutive days ever played.

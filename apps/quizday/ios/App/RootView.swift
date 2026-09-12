@@ -13,7 +13,7 @@ struct RootView: View {
         Group {
             if LaunchOptions.screen == "share" {
                 ShareCardPreview(flags: (0..<10).map { $0 != 3 },
-                                 roundNumber: DailyPack.roundNumber(for: .now),
+                                 roundNumber: DailyPack.editionNumber(for: .now),
                                  streak: 12)
             } else {
                 tabs
@@ -24,6 +24,10 @@ struct RootView: View {
                         config: AppInfo.config,
                         headline: AppInfo.paywallHeadline,
                         bullets: AppInfo.paywallBullets,
+                        // The same ruled rows led by a printer's fist that the composing room
+                        // next door sets. The kit's checkmark panel was the one place in the
+                        // app where the newspaper stopped.
+                        bulletStyle: .ruled(mark: "\u{261E}"),
                         promise: AppInfo.paywallPromise,
                         subhead: "Set your own rounds, any night of the week.",
                         cta: "Open the composing room",
@@ -43,7 +47,11 @@ struct RootView: View {
     private var tabs: some View {
         TabView(selection: $tab) {
             NavigationStack {
-                TodayView()
+                if LaunchOptions.screen == "late" {
+                    LateEditionView()
+                } else {
+                    TodayView()
+                }
             }
             .tabItem { Label("Today", systemImage: "newspaper.fill") }
             .tag(Tab.today)
@@ -66,6 +74,12 @@ struct RootView: View {
                 }
                 // The Form's grey would cover the paper otherwise.
                 .paper()
+                // The kit's version footer is the last thing in the Form, and the tab bar is
+                // Liquid Glass over it: without this the build number sat half-legible behind
+                // the bar. A paper strip under the scroll gives it somewhere to sit.
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear.frame(height: 26)
+                }
             }
             .tabItem { Label("Settings", systemImage: "gearshape.fill") }
             .tag(Tab.settings)
@@ -74,7 +88,7 @@ struct RootView: View {
 
     private func applyLaunchOptions() {
         switch LaunchOptions.screen {
-        case "today": tab = .today
+        case "today", "late": tab = .today
         case "scorecard": tab = .scorecard
         case "practice": tab = .practice
         case "settings": tab = .settings
@@ -95,6 +109,7 @@ struct RootView: View {
 /// The Quizday rows that sit inside the kit's Settings screen.
 struct QuizdaySettings: View {
     @Environment(\.modelContext) private var context
+    @EnvironmentObject private var desk: Desk
     @Query private var reports: [QuestionReport]
     @Query private var results: [DayResult]
     @State private var confirmingReset = false
@@ -135,6 +150,8 @@ struct QuizdaySettings: View {
         let stats = (try? context.fetch(FetchDescriptor<CategoryStat>())) ?? []
         for stat in stats { context.delete(stat) }
         try? context.save()
+        // The desk remembers outside SwiftData, and "erase my history" has to mean all of it.
+        desk.forget()
     }
 }
 

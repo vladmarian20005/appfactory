@@ -6,11 +6,27 @@ import SwiftUI
 ///
 /// Give it a `hero` — the app's own art, not a symbol — so the moment someone considers paying
 /// looks like the app they are paying for.
+/// How a paywall sets its bullets.
+///
+/// The default is a checkmark list on a surface panel, which is right for a brand whose content
+/// is carded. It is wrong for one that sets its content as type: on an app whose every other
+/// screen is ruled rows of serif over paper, `checkmark.circle.fill` in a rounded panel is the
+/// single place the design stops, and a critic spots it immediately. `.ruled` draws the same
+/// three lines the way that app draws everything else — a printed mark in one of the brand's
+/// extra inks, a hairline between rows, and no panel at all.
+public enum PaywallBullets: Sendable, Equatable {
+    case checklist
+    /// `mark` is a character set in the brand's own face — a printer's fist, a bullet, an
+    /// arrow — not an SF Symbol.
+    case ruled(mark: String)
+}
+
 public struct PaywallView: View {
     @ObservedObject var store: Store
     let config: AppConfig
     let headline: String
     let bullets: [String]
+    let bulletStyle: PaywallBullets
     let promise: String?
     let subhead: String?
     let cta: String?
@@ -22,12 +38,14 @@ public struct PaywallView: View {
     @State private var busy = false
     @State private var message: String?
 
-    public init(store: Store, config: AppConfig, headline: String, bullets: [String], promise: String? = nil,
+    public init(store: Store, config: AppConfig, headline: String, bullets: [String],
+                bulletStyle: PaywallBullets = .checklist, promise: String? = nil,
                 subhead: String? = nil, cta: String? = nil, onDone: @escaping () -> Void) {
         self.store = store
         self.config = config
         self.headline = headline
         self.bullets = bullets
+        self.bulletStyle = bulletStyle
         self.promise = promise
         self.subhead = subhead
         self.cta = cta
@@ -35,19 +53,69 @@ public struct PaywallView: View {
         self.onDone = onDone
     }
 
-    public init<Hero: View>(store: Store, config: AppConfig, headline: String, bullets: [String], promise: String? = nil,
+    public init<Hero: View>(store: Store, config: AppConfig, headline: String, bullets: [String],
+                            bulletStyle: PaywallBullets = .checklist, promise: String? = nil,
                             subhead: String? = nil, cta: String? = nil,
                             @ViewBuilder hero: () -> Hero, onDone: @escaping () -> Void) {
         self.store = store
         self.config = config
         self.headline = headline
         self.bullets = bullets
+        self.bulletStyle = bulletStyle
         self.promise = promise
         self.subhead = subhead
         self.cta = cta
         self.hero = AnyView(hero())
         self.onDone = onDone
     }
+
+    @ViewBuilder
+    private var bulletList: some View {
+        switch bulletStyle {
+        case .checklist:
+            VStack(alignment: .leading, spacing: 14) {
+                ForEach(Array(bullets.enumerated()), id: \.offset) { i, b in
+                    Label {
+                        Text(b)
+                            .foregroundStyle(brand.palette.ink)
+                            .fixedSize(horizontal: false, vertical: true)
+                    } icon: {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(brand.palette.accent)
+                    }
+                    .popIn(delay: 0.06 * Double(i + 1))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .brandSurface()
+
+        case .ruled(let mark):
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(Array(bullets.enumerated()), id: \.offset) { i, b in
+                    HStack(alignment: .top, spacing: 10) {
+                        Text(mark)
+                            .brandFont(.callout)
+                            .foregroundStyle(inks.isEmpty ? brand.palette.accent : inks[i % inks.count])
+                        Text(b)
+                            .brandFont(.body, weight: .regular)
+                            .foregroundStyle(brand.palette.ink)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: 0)
+                    }
+                    .padding(.vertical, 12)
+                    .popIn(delay: 0.06 * Double(i + 1))
+                    if i < bullets.count - 1 {
+                        Rectangle()
+                            .fill(brand.palette.ink.opacity(0.22))
+                            .frame(height: 0.5)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private var inks: [Color] { brand.palette.extras }
 
     public var body: some View {
         NavigationStack {
@@ -70,21 +138,7 @@ public struct PaywallView: View {
                             .foregroundStyle(brand.palette.inkSoft)
                     }
 
-                    VStack(alignment: .leading, spacing: 14) {
-                        ForEach(Array(bullets.enumerated()), id: \.offset) { i, b in
-                            Label {
-                                Text(b)
-                                    .foregroundStyle(brand.palette.ink)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            } icon: {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(brand.palette.accent)
-                            }
-                            .popIn(delay: 0.06 * Double(i + 1))
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .brandSurface()
+                    bulletList
 
                     if let promise {
                         Label(promise, systemImage: "hand.raised.fill")
