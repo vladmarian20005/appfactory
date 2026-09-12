@@ -13,11 +13,19 @@ gradients, glossy candy pills, a coin-and-hearts HUD along the top, a cartoon ma
 photograph above every question. All five leaders are that app. Quizday is paper and ink, and
 it is recognisable from one crop of any screen.
 
-Why print, and not a skin over print: the spec's mechanic *is* an edition. The same ten
-questions for everybody today, dated, never repeated, filed when you finish, a new one
-tomorrow morning — that is what a newspaper is, and no trivia app on the store is one. The
-idea chooses the serif, the hairline rules, the stamp, the calendar of back issues, and the
-voice of the night editor who set the thing.
+Why print, and not a skin over print: the spec's mechanic *is* an edition. One dated sheet a
+day, never repeated, filed when you finish, a new one tomorrow morning — that is what a
+newspaper is, and no trivia app on the store is one. The idea chooses the serif, the hairline
+rules, the stamp, the calendar of back issues, and the voice of the night editor who set the
+thing.
+
+**And a newspaper has a desk.** The spec asked for "the same ten for everyone", which was
+`dayNumber % 30` — so day 31 dealt round 1's ten questions back in the same order, forever,
+and the `difficulty` printed on every sheet was read by nothing. That is corrected in
+§"The play": the date still sets the slate, and a reader opening her first edition gets
+exactly the day's ten, but the desk substitutes what has been catching her, and the sheet
+hardens as she reads. A paper that prints the same page to a stranger and to a subscriber of
+five years is not a paper; it is a leaflet.
 
 ## Who and when
 
@@ -29,6 +37,85 @@ answer at the end"), and the ones who leave say why ("every time I get a questio
 have to sit through a long ad"). The feeling she comes for is **composure**: something that
 starts the day well, tells her something she did not know, costs her nothing and interrupts
 her never.
+
+## The play
+
+What the first build had, and what the critic scored 1 and 1 for: no ladder, no selection rule,
+nothing at risk in a round, and one door in the whole app with money as the only key. Four
+things fix that, and all four are in `ios/App/Desk.swift`.
+
+### The ladder — what the sheet is made of
+
+`Ladder`, keyed on **editions filed**. Two dials, and the section line prints the result on
+Today's screen the way a paper prints its own contents:
+
+| Dial | From | Every | Ceiling | What it is |
+| --- | --- | --- | --- | --- |
+| `settled` | 6 | 50 rungs | 9 | How many of the ten are medium or harder |
+| `hard` | 2 | 38 rungs | 6 | How many of those are hard |
+
+Easy is the remainder. Edition 1 is **4 easy · 4 medium · 2 hard**; edition 60 is 3 · 4 · 3;
+edition 153 and after is **1 easy · 3 medium · 6 hard**. The selector filters
+`QuizItem.difficulty` on those counts, so the word set at the head of every sheet is describing
+a decision rather than decorating one.
+
+**Where it stops, and what happens past it: `flattensAt` is 153.** That is about five months at
+an edition a day, and it is the honest end — the pack has a hardest question, and a dial with no
+ceiling would only mean demanding a difficulty the content does not contain. Past 153 the
+*shape* of the paper stops changing and the *choice* takes over completely: by then she has read
+the whole pack, so every edition is drawn from what she has missed and only half held, and the
+front page's closing line is naming her weakest section rather than a milestone. Session 500 is
+not a harder version of session 5; it is her own errata, printed daily.
+
+### What chooses the ten
+
+`Mastery<String>` over the 450 question ids, with the pool ordered twice over:
+
+1. **By the date.** `DailyPack.slate(for:)` is the whole pack in a seeded order the day fixes,
+   so an edition is still *set on a date*, the same slate for everyone, and no two mornings
+   start from the same end of the pack.
+2. **By what keeps catching her.** Inside that, questions from her weakest sections come first,
+   and `Mastery.next` breaks ties toward the front of the pool. This is what makes "Geography
+   has caught you four times — it leads tomorrow" a true sentence rather than a flourish.
+
+`unseenShare` is 0.7, so while the pack still has unread questions most of an edition is new and
+the rest is revision. The last fourteen editions are excluded, so nothing comes back inside a
+fortnight. A reader with no history gets the day's slate in the day's order — which is exactly
+the edition the spec promised, and what everyone sees on their first morning.
+
+### What is at risk
+
+`Run`, for the length of one edition and nothing beyond it. Every right answer adds an ink
+lozenge to the run line under the tally; a miss strikes the line out in the same pencil the
+wrong answer gets, and the run starts again. It costs **this edition's headline** — `Tier`
+reads `run.tier(beating:)`, so a nine that sets her longest chain prints `EXTRA! EXTRA!` where
+a nine without one prints `STOP THE PRESS` — and it costs nothing else. No life, no streak, no
+tomorrow, nothing to buy back. A missed day still costs nothing, and nothing runs out.
+
+### What playing opens
+
+`Earned`, on editions filed. The paywall is a fine door and Practice stays behind it; these are
+the doors it cannot open.
+
+| At | What opens |
+| --- | --- |
+| 7 | **The late edition** — five questions built from what got past her, any evening she has filed |
+| 25 | The late edition runs to eight |
+| 60 | She picks the section the late edition is set from, out of the ones catching her |
+
+`earned.next(after:)` is also what the front page ends on, above the countdown and in the
+editor's voice: *"Nineteen filed. At twenty-five the late edition runs to eight."* Once all
+three are open it ends on the section instead. No guilt in either, and it is always true.
+
+### Sessions 5, 50 and 500
+
+- **5.** Four easy questions, a run she is starting to protect, and a line at the foot of the
+  page telling her the late edition opens at seven.
+- **50.** Three easy, four medium, three hard. Five hundred questions on record; the sections
+  she is worst at lead the sheet, and the late edition is eight questions of her own misses.
+- **500.** One easy, three medium, six hard — the top of the ladder — and every question on it
+  chosen from what she has missed or only just held. The page ends on the section that has
+  caught her most, and that section leads tomorrow.
 
 ## The signature interaction
 
@@ -97,8 +184,10 @@ the screen becomes the day's front page coming off the press.
 | 1–4 | `TOMORROW'S IS ALREADY SET` | No burst, no fanfare. One `.pop`. The headline *sets* rather than stamps — fades up at 0°, no rotation. |
 | 0 | `A BLANK SHEET` | As above, and the stamp box is empty, ruled, unprinted. |
 
-**New best streak**, at any tier: a second stamp, `PERSONAL BEST`, in brass at +5°, 220 ms
-after the first, with its own `Haptics.thud()` and `Tones.shared.play(.step(7))`.
+**A new longest run**, at any tier: a second stamp, `LONGEST RUN YET`, in brass at +5°, 220 ms
+after the first, with its own `Haptics.thud()` and `Tones.shared.play(.step(7))`. It is the run
+and not the streak, because the run is the thing she could have lost inside the ten — the
+streak already has the ribbon.
 
 **Inside the loop**, the small reward is the tally square inking in after every answer, with
 its climbing tone — the round has a shape you can hear before you see the score.
@@ -262,9 +351,9 @@ Three rules:
 
 | Art | Title | Subtitle |
 | --- | --- | --- |
-| `press-body.svg` + `press-wheel.svg` | One edition a day | Ten questions, the same ten for everyone, set fresh each morning. |
+| `press-body.svg` + `press-wheel.svg` | One edition a day | Ten questions, dated and set fresh each morning. |
 | `stamp.svg` | Stamp your answer | Press one and the ink lands — with the reason it's right underneath. |
-| `desk.svg` | Then the day is yours | Every edition you file is dated and kept. The run is the only score that carries. |
+| `desk.svg` | Then the day is yours | Every edition is dated and kept. The desk reads them, and sets tomorrow's from what got past you. |
 
 No onboarding page states the promise. The paywall is the only place in the product that does.
 
@@ -375,7 +464,11 @@ One job: one question, and the reason underneath. Hero: the question itself, New
 27 pt, up to three lines, with a 2.5 pt rule under it.
 
 Top: the **tally** of ten squares, 4 pt radius, inked as far as she has got, with `Q4` and the
-section mark in mono beside it. Then the question and its rule. Then four ruled answer boxes,
+section mark in mono beside it — and under it **the run line**: `RUN` in mono followed by one
+5 pt ink lozenge for every answer still standing, with `CLEAN COPY` in brass at the right while
+the sheet is unspoiled. On a miss it reads `RUN BROKEN`, the lozenges go graphite, and the same
+`PencilStrike` that crosses out her answer draws itself through them. Then the question and its
+rule. Then four ruled answer boxes,
 10 pt apart. After the reveal: the hairline, the explanation in New York 17 pt, the mono
 source dateline, the ¶ report mark. The verdict stamp sits over the answered box.
 
@@ -390,12 +483,24 @@ interaction".
 One job: be worth screenshotting. Hero: the score at 112 pt.
 
 The front page, in the order it prints: masthead, dateline, score and `/10`, the tally, the
-tier headline stamped in its ruled box, the streak ribbon in brass, then — below a hairline
-fold, so they never compete — two ruled boxes side by side: the countdown
-(`TOMORROW'S EDITION GOES TO PRESS IN` in mono over `6:12:44` at mono 28 pt, a
-`Text(timerInterval:)`) and the `ShareLink` labelled **Share the edition**, a ruled box with
-the share glyph in accent above it, not a filled tile. The page closes on a hairline and the
-mono footer `QUIZDAY · A NEW EDITION EVERY MORNING`, pinned to the bottom of the column.
+tier headline stamped in its ruled box at three quarters of the page width, the streak ribbon
+in brass — cut to fit its number, not drawn at a fixed width — then, below a hairline fold so
+they never compete:
+
+- **The line that says what is waiting**, led by a 3 pt rule in `inkSoft` (or brass, if a door
+  opened tonight), set in New York italic: `earned.next(after:)` in the editor's voice, or the
+  section that keeps catching her. This is the last thing the page says, and it is never a
+  number over "come back tomorrow".
+- **The late edition**, once it is open: a ruled box with a brass rule, `THE LATE EDITION` in
+  mono over one line of serif, and a chevron.
+- Two ruled boxes side by side: the countdown (`TOMORROW'S EDITION GOES TO PRESS IN` in mono
+  over `6:12:44` at mono 20 pt in `inkSoft`, a `Text(timerInterval:)` — deliberately smaller and
+  quieter than it was, because it is a fact about the paper and not a reason to return) and the
+  `ShareLink` labelled **Share the edition**, a ruled box with the share glyph in accent above
+  it, not a filled tile.
+
+The page closes on a hairline and the mono footer `QUIZDAY · A NEW EDITION EVERY MORNING`,
+clear of the tab bar.
 
 The rating prompt stays here, after the page has settled, never mid-question.
 
@@ -456,8 +561,11 @@ not an edition.
 
 ### 9 · Paywall
 
-The kit's `PaywallView(…, hero:)` with `desk.svg` at 200 pt on paper. Headline, the three
-bullets, the offers as the kit draws them, the promise sentence, system buttons throughout.
+The kit's `PaywallView(…, hero:)` with `desk.svg` on paper. Headline, the offers as the kit
+draws them, the promise sentence, system buttons throughout — and the three bullets as
+`PaywallBullets.ruled(mark: "☞")`, the same ruled rows led by a printer's fist that the
+composing room next door sets. The kit's default is a `checkmark.circle.fill` list on a rounded
+surface panel, and on this app it was the one screen where the newspaper stopped.
 
 ### 10 · Settings
 
@@ -465,7 +573,21 @@ The kit's `SettingsView` with `.brandBackground()` so the `Form`'s grey is gone 
 shows through, plus `SoundsToggle()`, the play rows (days filed, questions in the pack,
 reported), *Erase my history*, and OpenTDB's attribution as the section footer.
 
-### 11 · Reported
+### 11 · The late edition — *earned, not bought*
+
+Reached from the front page once seven editions are filed. Masthead `LATE EDITION`, strapline
+`SET FROM YOUR OWN CORRECTIONS`, the dateline, `spike.svg` as the hero, and one line of New York
+italic: *"Five that got past you, pulled back off the spike."* Then today's sections as a
+section line — or, past sixty editions, a system menu `Picker` of the sections that keep
+catching her — and `Button("Pull the corrections")`.
+
+The round itself is the same sheet as Today's question, headed
+`LATE EDITION · GEOGRAPHY`, with no tally and no run: nothing is at stake in a correction. It
+ends on a smaller print of the result, masthead `CORRECTED`, the score at 88 pt, and a line
+that says what came off the spike — never a score over "come back tomorrow". `Pull another`
+draws a fresh set; nothing about it runs out, and skipping it costs nothing.
+
+### 12 · Reported
 
 The flagged questions as a **correction column**: each one a ruled block, the question in New
 York, its code and date in mono beneath, swipe to delete, and a link to support at the foot.

@@ -6,6 +6,10 @@ public struct OnboardingPage: Identifiable, @unchecked Sendable {
     public let title: String
     public let subtitle: String
     let art: (() -> AnyView)?
+    /// How much height the art may take. 280 suits a single object; a composition — a masthead
+    /// over a drawing, a scene with a horizon — needs more, and an app whose first screen is
+    /// mostly empty paper above and below its hero is the commonest note a critic writes.
+    let artHeight: CGFloat
 
     /// A page led by an SF Symbol. Thin for a first impression; prefer `init(title:subtitle:art:)`
     /// with something drawn for this app.
@@ -14,15 +18,18 @@ public struct OnboardingPage: Identifiable, @unchecked Sendable {
         self.title = title
         self.subtitle = subtitle
         self.art = nil
+        self.artHeight = 280
     }
 
     /// A page led by the app's own art — shapes, gradients, a Canvas, a piece of the idea.
-    /// It gets about 280 points of height and floats gently while the page is showing.
-    public init<Art: View>(title: String, subtitle: String, @ViewBuilder art: @escaping () -> Art) {
+    /// It gets `artHeight` points of height and floats gently while the page is showing.
+    public init<Art: View>(title: String, subtitle: String, artHeight: CGFloat = 280,
+                           @ViewBuilder art: @escaping () -> Art) {
         self.symbol = ""
         self.title = title
         self.subtitle = subtitle
         self.art = { AnyView(art()) }
+        self.artHeight = artHeight
     }
 }
 
@@ -94,7 +101,7 @@ private struct OnboardingPageView: View {
         VStack(spacing: 28) {
             Spacer(minLength: 12)
             hero
-                .frame(maxWidth: .infinity, maxHeight: 280)
+                .frame(maxWidth: .infinity, maxHeight: page.artHeight)
                 .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                 .scaleEffect(shown ? 1 : 0.9)
                 .layoutPriority(-1)

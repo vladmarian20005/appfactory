@@ -18,32 +18,35 @@ enum AppInfo {
     static let onboarding: [OnboardingPage] = [
         OnboardingPage(
             title: "One edition a day",
-            subtitle: "Ten questions, the same ten for everyone, set fresh each morning."
+            subtitle: "Ten questions, dated and set fresh each morning.",
+            artHeight: 400
         ) {
             // The masthead rides with the art: the first second of the app says newspaper
             // before it says anything else.
             VStack(spacing: 14) {
                 Masthead(title: "Quizday", strapline: "A new edition every morning", size: 26)
-                HandPress(width: 230)
+                HandPress(width: 300)
             }
         },
         OnboardingPage(
             title: "Stamp your answer",
-            subtitle: "Press one and the ink lands — with the reason it's right underneath."
+            subtitle: "Press one and the ink lands — with the reason it's right underneath.",
+            artHeight: 340
         ) {
             Image("Stamp")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 220)
+                .frame(width: 300)
         },
         OnboardingPage(
             title: "Then the day is yours",
-            subtitle: "Every edition you file is dated and kept. The run is the only score that carries."
+            subtitle: "Every edition is dated and kept. The desk reads them, and sets tomorrow's from what got past you.",
+            artHeight: 340
         ) {
             Image("Desk")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 270)
+                .frame(width: 330)
         },
     ]
 
