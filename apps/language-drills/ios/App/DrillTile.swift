@@ -147,7 +147,7 @@ struct TurningTile: View, Animatable {
                                          startPoint: .top, endPoint: .bottom))
                     .overlay {
                         RoundedRectangle(cornerRadius: 5, style: .continuous)
-                            .strokeBorder(glaze.opacity(0.75), lineWidth: 1.5)
+                            .strokeBorder(AppBrand.faceGlaze(word.theme).opacity(0.75), lineWidth: 1.5)
                     }
                     .overlay { answerContent }
                     .padding(15)
@@ -178,7 +178,7 @@ struct TurningTile: View, Animatable {
             HStack(alignment: .firstTextBaseline) {
                 Text(word.word)
                     .brandFont(.headline)
-                    .foregroundStyle(glaze)
+                    .foregroundStyle(AppBrand.faceInk)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
                 Spacer(minLength: 8)
@@ -191,7 +191,7 @@ struct TurningTile: View, Animatable {
 
             Text(word.translation)
                 .brandDisplay(size: answerSize)
-                .foregroundStyle(glaze)
+                .foregroundStyle(AppBrand.faceInk)
                 .multilineTextAlignment(.center)
                 .minimumScaleFactor(0.4)
                 .lineLimit(2)

@@ -61,4 +61,21 @@ enum AppBrand {
     static func glaze(_ theme: Int) -> Color {
         brand.palette.extras[theme % brand.palette.extras.count]
     }
+
+    /// The same twelve glazes, fixed to their daylight hex, for line work drawn **on**
+    /// `tileFace`.
+    ///
+    /// `glaze` turns light at night and the face does not — it stays cream in both modes so it
+    /// never glares — so the palette's own dark value lands light-on-light there. That is the
+    /// one pairing nothing else in the palette guards against. Only for strokes and fills:
+    /// text on the face is `faceInk` and `faceInkSoft`, because even the daylight glazes do not
+    /// reach 4.5:1 on cream (ocre 3.58, turquesa 4.00).
+    static func faceGlaze(_ theme: Int) -> Color {
+        Color(hex: faceGlazes[theme % faceGlazes.count])
+    }
+
+    private static let faceGlazes: [UInt32] = [
+        0x1C5AA6, 0x9E4630, 0x2F6B57, 0xA8701B, 0x2A7E8E, 0x35468C,
+        0xA55A6A, 0x6B4E7D, 0x5E6B2C, 0x5B3550, 0x8F5E12, 0x41505C,
+    ]
 }
