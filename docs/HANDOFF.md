@@ -181,43 +181,120 @@ SIM_UDID=<udid> .github/scripts/verify-app.sh <slug> && SIM_UDID=<udid> .github/
 
 State per app is `apps/<slug>/state.json` (`stages.design`, `polish_attempts`, `fix_attempts`).
 
+## Session 2 · 12 September · closing the gate and the loop
+
+The owner's question was "is it live, will all apps go through the taste workflow, and what
+else does the workflow need". The answers were: the pipeline is live and both apps are on
+TestFlight but **neither is live on the App Store** — both sit at `PREPARE_FOR_SUBMISSION`
+and `app-release` has never run; and **no, not all apps went through it**, because the taste
+bar was an edge in the chain rather than a gate.
+
+**The bar is now a gate.** `design` was recorded by `app-polish` and required by nothing:
+`app-submit` asked for verify, compliance and pages; `app-release` asked for submit. So the
+bar held only while the chain ran in order, and any direct dispatch walked around it. Worse,
+`tallies` — no `DESIGN.md`, nine hard tells — sat in exactly the shape `awaiting.mjs` selects,
+so the half-hourly cron would have uploaded it unattended the moment its App Store Connect
+record existed. Now: `app-submit` requires `design`; `awaiting.mjs` skips an app whose design
+is not ok; and `app-release` refuses a build nobody has run on a phone, which is what
+`device_tested` and `storekit_verified` were always for — the ship skill has said "the gate
+refuses to pass on your word" since it was written, and no gate read them.
+
+**The blank-capture mystery was two bugs, and neither was slowness.**
+`tools/qa/check-shot.mjs` failed any capture where under 4% of pixels differed from the
+background. That is not a property of an unrendered screen, it is a property of a calm one —
+and `TASTE.md` asks for calm. Tallies' fully-drawn empty state measures 2.8%. Measured over
+every capture in the repository, a rendered screen fills 68–123 of 128 cells and the sparsest
+real one still fills 30, against 0 for a window that never drew, so the check now asks *where*
+the content is rather than how much of it there is. This was not what bit Tidepour (its
+screens measure 39–48% and always passed), so it is a latent bug that would have hit the first
+genuinely minimal app. For the genuine blanks: captures now build **Release**, since Swift's
+Debug `-Onone` makes Tidepour's generator 23–31× slower and does the same to SwiftUI view
+construction, which is the part that must finish before a first frame exists; and when nothing
+draws inside the window, `sim.sh` now reports whether the app is running, stuck or gone plus
+its last log lines. Waiting longer had been the answer twice, and a threshold is not a
+diagnosis.
+
+**The brand reaches the store.** Both apps set their identity in New York — Quizday's
+`DESIGN.md` calls the serif "the one thing no competitor in this category has" — and both
+store frames were headed in SF Pro over a screenshot of a newspaper. `compose.mjs` takes
+`font` from `screenshots.json` and renders in WebKit, which is what resolves `ui-serif`.
+
+**The framework question is decided: no third-party UI packages.** The deciding evidence is
+the critics' own output — of the fourteen fixes they asked for across both apps, not one wants
+an effect a library supplies. Two structural reasons besides: a continuous emitter never
+settles and the capture tooling waits for a still screen, so every effect needs a
+`Motion.isStill` wrapper anyway; and `tells.mjs` fails a win that calls none of the kit's
+reward APIs, so a win built on Vortex would fail the taste bar. Reasoning in `CLAUDE.md`.
+
+**The kit stopped talking for the app.** `OnboardingView(nextTitle:finishTitle:)` and
+`PaywallView(subhead:cta:)`. Both critics asked for this independently; it was the
+most-requested fix in the repository, and FactoryKit was violating `TASTE.md` on every app's
+first and last screens.
+
+**The loop is closed at the far end.** `app-monitor` runs daily: version review state, build
+expiry, and reviews at three stars or under, red-ticking when something needs a person.
+Nothing ran after `release` before this.
+
+**appmonkey was taught the gate** (`c142043` there): its chain wait was 45 minutes, set before
+`app-polish` existed, so it timed out on every app; its stage line omitted `design`; and it
+had no verdict for "still fails TASTE.md after its polish passes", which is the one outcome
+that stops and asks for a person. Now `TASTE_FAILED`, and 180 minutes.
+
 ## Open questions for the next session, in order
 
-1. **Decide the UI framework and kits** (§Decisions 1). The owner asked for this explicitly.
-   A concrete way to decide it: take one app that is already through the gate, build the same
-   screen twice — once as it is now, once with Pow/Vortex/Inferno or SpriteKit — and compare
-   the filmstrips. Whatever wins, the rule change lands in `CLAUDE.md`,
-   `.claude/skills/new-app/SKILL.md` and `TASTE.md` together.
-2. **Why is the first frame sometimes 30+ seconds?** The capture window is 60 s now, which
-   hides it. If it is real on a phone it is a bad first impression and the fix belongs in the
-   app (or in the template's launch path); if it is only a cold CI simulator, say so here and
-   close it. Evidence: runs `34652193687`, `34654751754`, `34657757293`.
-3. **Watch the second critique on a fresh app.** Both apps passed on their first polish pass,
-   which is the best case; nothing has yet exercised the "out of polish passes → a human"
-   path, or a second critique that disagrees with the first.
-4. **`AppBrand.dateline(_:)`-style frozen sizes.** Quizday's tokens hand back
-   `.system(size:)`, which neither the compliance grep (`.font(.system(size:`) nor
-   `tells.mjs` catches, so a display face can quietly stop scaling with Dynamic Type. Either
-   teach `tells.mjs` about bare `.system(size:` in app code, or give the kit a
-   `brandFont(_:size:)` that scales.
-5. **appmonkey does not know about the new stages** (§Decisions 2, item 7).
-6. **The owner's device pass**, then `app-release` for whichever app deserves it.
+1. **The owner's device pass, then the first `app-release` the factory has ever run.** This is
+   now the only thing between the two apps and the store. Run the TestFlight build on a phone
+   — the reminder firing, haptics, the share sheet, a real sandbox purchase — then set
+   `device_tested` and `storekit_verified` in `state.json`. `app-release` refuses without
+   them. It has never run successfully for any app and it is the one workflow that touches
+   Apple irreversibly, so watch it rather than firing it and walking away.
+2. **Does the Release capture change hold in CI?** Verified locally (tallies and quizday build
+   and capture Release on Xcode 16.3); the first CI exercise is the `app-verify` dispatched at
+   the end of this session and whatever `language-drills` does next. If a Release build breaks
+   something, `SIM_CONFIG=Debug` restores the old behaviour in one place.
+3. **Watch the second critique on a fresh app.** Unchanged from last session and now the
+   biggest unknown in the gate: both apps passed on their first polish pass, so nothing has
+   exercised the "out of polish passes → a human" path, or a second critique that disagrees
+   with the first. `language-drills` is the candidate.
+4. **`tallies` is blocked, and someone has to choose.** It has nine hard tells, no `DESIGN.md`,
+   and is now correctly refused by both submit paths. Either run it through `app-polish`
+   before creating its record, or shelve it in `STATUS.md`. Leaving it is fine; it can no
+   longer ship by accident, which was the actual danger.
+5. **The three FactoryKit additions the framework analysis identified**, in priority order,
+   each replacing a third-party package with a first-party engine:
+   `burst(trigger:_:at:)` — the short impact particle, which is genuinely missing (`confetti`
+   is a 2.8 s win-tier celebration, wrong scale for a tile landing); `Haptics.sustain` /
+   `Haptics.play(_:)` on Core Haptics, since all ten current entry points are instantaneous
+   and `TASTE.md` asks for weight *during* an action; and `brandTexture` on SwiftUI shader
+   effects, so atmosphere is not 1400 hand-drawn `Canvas` strokes as in Quizday's `PaperGrain`.
+   **Unverified and must be proven by one CI run first:** that SwiftPM compiles `.metal`
+   sources in the FactoryKit target and `ShaderLibrary.bundle(.module)` resolves them on
+   Xcode 26, and that shader effects survive `ImageRenderer` inside `ShareImage.render`.
+   Never name a parameter `amplitude`.
+6. **`app-compliance` cannot see a third-party package's privacy manifest.** It checks only
+   `$ios/PrivacyInfo.xcprivacy`, and its SDK-name grep does not reach an SPM checkout, which
+   lands beside `App/` rather than inside it. Moot while the no-dependency rule holds; it is
+   the gate to fix first if that rule is ever relaxed.
 
 ## The prompt to start the next session with
 
 ```
 Read docs/HANDOFF.md in appfactory, then TASTE.md and CLAUDE.md.
 
-Two apps (quizday, color-sort) went through the new design pipeline tonight and are on
-TestFlight. Your job this session:
+The taste bar is a real gate now, the framework question is decided, and app-monitor
+watches what happens after release. Quizday and Tidepour are on TestFlight and neither
+has ever been submitted for review — app-release has never run for any app.
 
-1. Decide what UI framework and libraries the factory should build with, and make the
-   change. The owner asked "are there better UI kits we can use instead?" — the handoff has
-   the candidates and the criteria; test the promising ones against a real screen rather
-   than deciding on reputation, and land the decision in CLAUDE.md, TASTE.md and the
-   new-app skill.
-2. Make the cloud pipeline functional end to end: work the open questions in the handoff,
-   starting with the slow first frame, and fix what the first runs exposed.
+Your job this session, in order:
+
+1. Get the first app into App Review. The device pass is the owner's; app-release now
+   refuses a build with no device_tested on record. Watch the run — it is the one
+   workflow that touches Apple irreversibly and it has never succeeded.
+2. Watch language-drills through the gate. It is the first app to go through the whole
+   chain with the new code, and the first chance to see a second critique, or the
+   "out of polish passes → a human" path that nothing has exercised yet.
+3. Then the FactoryKit additions in open question 5, cheapest first — burst, then
+   Core Haptics. Prove Metal-in-SwiftPM on one CI run before committing to brandTexture.
 
 Great UX, great UI is the bar. Ask before anything that reaches Apple.
 ```
