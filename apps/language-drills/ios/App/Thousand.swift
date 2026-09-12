@@ -16,7 +16,9 @@ struct Thousand: App {
                         .environmentObject(library)
                         .factoryReviewPrompt(afterSessions: 3)
                 } else {
-                    OnboardingView(pages: AppInfo.onboarding) { onboarded = true }
+                    OnboardingView(pages: AppInfo.onboarding,
+                                   nextTitle: "Go on",
+                                   finishTitle: "Set the first tile") { onboarded = true }
                 }
             }
             // The very first frame is already plaster and cobalt.

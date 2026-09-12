@@ -59,6 +59,11 @@ struct RootView: View {
                         headline: AppInfo.paywallHeadline,
                         bullets: AppInfo.paywallBullets,
                         promise: AppInfo.paywallPromise,
+                        subhead: AppInfo.paywallSubhead,
+                        // No price on the button: the offer row above it carries the price the
+                        // customer's own storefront charges, and a hard-coded $9.99 would be a
+                        // lie anywhere else.
+                        cta: "Open the whole wall",
                         hero: {
                             Image("KeptWall")
                                 .resizable()

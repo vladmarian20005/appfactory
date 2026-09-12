@@ -300,14 +300,25 @@ struct BenchView: View {
 
     // MARK: - The turn
 
+    /// The turn takes 340 ms in the hand. On a `-demo` launch it is performed for the camera,
+    /// because `simctl` can only take a frame about every half second and a 340 ms turn falls
+    /// between two of them — a filmstrip of a motion nobody filmed.
+    private var turnSpring: Animation {
+        LaunchOptions.demo == nil ? Motion.bouncy : .spring(response: 0.95, dampingFraction: 0.72)
+    }
+
+    private var edgeDelay: UInt64 {
+        LaunchOptions.demo == nil ? 170_000_000 : 470_000_000
+    }
+
     private func turn(_ word: Word) {
         guard angle < 90 else { return }
         Haptics.soft()
-        withMotion(Motion.bouncy) { angle = 180 }
+        withMotion(turnSpring) { angle = 180 }
         UserDefaults.standard.set(true, forKey: "thousand.turnedOne")
         // The ceramic tick lands at the edge-on frame, which is where the eye expects it.
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 170_000_000)
+            try? await Task.sleep(nanoseconds: edgeDelay)
             Haptics.rigid()
             Tones.shared.play(.pop)
             if Speech.speaksOnTurn { Speech.shared.say(word) }
@@ -406,6 +417,18 @@ struct BenchView: View {
             plannedCount = setWords.count
             startedKnown = max(0, library.setCount - setWords.count)
         }
+
+        if LaunchOptions.demo == "win" {
+            // A session all but finished: the course nearly full, two tiles left on the bench.
+            var day: [Word] = []
+            for theme in 0..<Deck.themes.count {
+                day += Deck.panel(theme).filter { library.firing($0) == .set }.prefix(2)
+            }
+            setWords = Array(day.prefix(21))
+            queue = Array(planned.prefix(2))
+            plannedCount = setWords.count + queue.count
+            startedKnown = max(0, library.setCount - setWords.count)
+        }
         teachTheFirstTile()
     }
 
@@ -437,16 +460,24 @@ struct BenchView: View {
             try? await Task.sleep(nanoseconds: 900_000_000)
             switch demo {
             case "turn":
-                guard let word = current else { return }
-                turn(word)
-                try? await Task.sleep(nanoseconds: 1_300_000_000)
-                grade(word, .good)
+                // Over and over, and mostly on the turned face. `simctl` takes about one frame
+                // every two seconds on a runner, so a beat the app holds for half a second is
+                // a beat no filmstrip will ever contain.
+                for _ in 0..<8 {
+                    guard let word = current, !finished else { return }
+                    turn(word)
+                    try? await Task.sleep(nanoseconds: 3_600_000_000)
+                    grade(word, .good)
+                    try? await Task.sleep(nanoseconds: 600_000_000)
+                }
             case "win":
+                // `startSession` left two tiles on the bench, so the win arrives inside the
+                // few seconds the critic films rather than forty turns later.
                 while let word = current, !finished {
                     turn(word)
-                    try? await Task.sleep(nanoseconds: 460_000_000)
-                    grade(word, setWords.count % 4 == 3 ? .easy : .good)
-                    try? await Task.sleep(nanoseconds: 420_000_000)
+                    try? await Task.sleep(nanoseconds: 2_200_000_000)
+                    grade(word, .easy)
+                    try? await Task.sleep(nanoseconds: 800_000_000)
                 }
             default:
                 break

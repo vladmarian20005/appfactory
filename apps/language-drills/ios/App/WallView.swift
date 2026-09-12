@@ -142,7 +142,7 @@ struct PanelView: View {
             let cols = max(1, Int((geo.size.width + gap) / (tile + gap)))
             ZStack(alignment: .topTrailing) {
                 rows(cols: cols, freeOnly: false)
-                    .opacity(locked ? 0.3 : 1)
+                    .opacity(locked ? 0.45 : 1)
                 if locked {
                     DustSheet(lifted: lifted)
                         .onTapGesture(perform: onLocked)
@@ -229,19 +229,22 @@ struct DustSheet: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Rectangle()
-                .fill(LinearGradient(colors: [brand.palette.canvas.opacity(0.86),
-                                              brand.palette.canvas.opacity(0.7),
-                                              brand.palette.canvas.opacity(0.8)],
+                .fill(LinearGradient(colors: [brand.palette.canvas.opacity(0.78),
+                                              brand.palette.canvas.opacity(0.58),
+                                              brand.palette.canvas.opacity(0.72)],
                                      startPoint: .top, endPoint: .bottom))
                 .overlay {
-                    // Two soft folds where the cloth hangs.
+                    // Two soft folds where the cloth hangs, and the shadow it casts at the top.
                     GeometryReader { geo in
-                        ForEach([0.34, 0.68], id: \.self) { at in
-                            LinearGradient(colors: [.clear, brand.palette.ink.opacity(0.07), .clear],
+                        ForEach([0.32, 0.66], id: \.self) { at in
+                            LinearGradient(colors: [.clear, brand.palette.ink.opacity(0.11), .clear],
                                            startPoint: .leading, endPoint: .trailing)
-                                .frame(width: 34)
-                                .offset(x: geo.size.width * at - 17)
+                                .frame(width: 44)
+                                .offset(x: geo.size.width * at - 22)
                         }
+                        LinearGradient(colors: [brand.palette.ink.opacity(0.12), .clear],
+                                       startPoint: .top, endPoint: .bottom)
+                            .frame(height: 14)
                     }
                 }
 

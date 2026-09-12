@@ -41,6 +41,7 @@ enum AppInfo {
     ]
 
     static let paywallHeadline = "The whole wall."
+    static let paywallSubhead = "Ten of the twelve panels are still under the dust sheet."
     static let paywallBullets = [
         "All 1,000 words, every one of the twelve panels.",
         "Works in a tunnel, on a plane, with the phone in a bag.",

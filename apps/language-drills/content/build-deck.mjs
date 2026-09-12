@@ -35,19 +35,40 @@ const THEMES = [
  * loses its ending and may change its stem vowel the three ways Spanish changes it — poder →
  * puedo, querer → quiero, seguir → sigue — which is exactly where a naive prefix check fails.
  */
+/** "siéntate" and "sientate" are the same evidence; the accent is the conjugation's, not ours. */
+const fold = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+/**
+ * Verbs whose conjugations share no stem with their infinitive. There is no rule to derive
+ * "voy" from "ir"; there is only the list, and it is short.
+ */
+const SUPPLETIVE = {
+  ir: ["voy", "vas", "va", "vamos", "vais", "van", "fui", "fue", "iba", "ve"],
+  irse: ["voy", "vas", "va", "vamos", "van", "fue"],
+  ser: ["soy", "eres", "es", "somos", "son", "era", "fue", "fui"],
+  haber: ["he", "has", "ha", "hemos", "han", "hay"],
+  oir: ["oigo", "oyes", "oye", "oimos", "oyen", "oi"],
+};
+
 function prefixes(s) {
   const out = new Set([s.slice(0, Math.max(3, s.length - 2))]);
-  if (/(ar|er|ir)$/.test(s) && s.length > 3) {
-    const stem = s.slice(0, -2);
+  // A reflexive infinitive is the verb with "se" stuck on: llamarse → llamar → llamo.
+  const verb = /(ar|er|ir)se$/.test(s) ? s.slice(0, -2) : s;
+  if (/(ar|er|ir)$/.test(verb) && verb.length > 3) {
+    const stem = verb.slice(0, -2);
     out.add(stem);
-    const i = Math.max(stem.lastIndexOf("o"), stem.lastIndexOf("e"));
-    if (i >= 0) {
-      for (const swap of stem[i] === "o" ? ["ue"] : ["ie", "i"]) {
-        out.add(stem.slice(0, i) + swap + stem.slice(i + 1));
-      }
+    // conocer → conozco, traducir → traduzco: the c hardens before the ending.
+    if (stem.endsWith("c")) out.add(stem.slice(0, -1) + "zc");
+    // o → ue or u, u → ue, e → ie or i, at whichever vowel the verb changes: poder → puedo,
+    // morir → murió, jugar → juega, querer → quiere, seguir → sigue.
+    for (let i = 0; i < stem.length; i++) {
+      const swaps = { o: ["ue", "u"], u: ["ue"], e: ["ie", "i"] }[stem[i]] ?? [];
+      for (const swap of swaps) out.add(stem.slice(0, i) + swap + stem.slice(i + 1));
     }
   }
-  return [...out].filter((p) => p.length >= 3);
+  // A two-letter verb stem — usar → us → uso — is short but it is the whole word minus its
+  // ending, so it is still evidence the example teaches the word.
+  return [...out].filter((p) => p.length >= 2);
 }
 
 const bands = fs.readdirSync(here).filter((f) => /^band-\d+\.json$/.test(f)).sort();
@@ -79,15 +100,21 @@ for (const w of words) {
   // "el / la", "la ventana", "ser" — so compare on the stems rather than the whole entry, and
   // accept any inflected form that starts the same way, since "puedo" teaches "poder" and
   // "abre" teaches "abrir".
+  // A headword is stored the way it is read — "el / la", "la ventana", "querer a" — so drop
+  // the article, and for a phrase keep the word it is really teaching as well as the whole.
   const stems = w.word
     .split(" / ")
-    .map((s) => s.replace(/^(el|la|los|las|un|una)\s+/i, "").trim())
+    .flatMap((s) => {
+      const bare = s.replace(/^(el|la|los|las|un|una)\s+/i, "").trim();
+      return bare.includes(" ") ? [bare, bare.split(" ")[0]] : [bare];
+    })
     .filter(Boolean);
-  const haystack = ` ${w.example.toLowerCase().replace(/[.,¿?¡!;:"]/g, " ")} `;
+  const haystack = ` ${fold(w.example).replace(/[.,¿?¡!;:"]/g, " ")} `;
   const tokens = haystack.trim().split(/\s+/);
   const teaches = stems.some((stem) => {
-    const s = stem.toLowerCase();
+    const s = fold(stem);
     if (haystack.includes(` ${s} `)) return true;
+    if ((SUPPLETIVE[s] ?? []).some((form) => tokens.some((t) => t.startsWith(form)))) return true;
     return prefixes(s).some((p) => tokens.some((t) => t.startsWith(p)));
   });
   if (!teaches) problems.push(`${at}: the example does not contain the word`);

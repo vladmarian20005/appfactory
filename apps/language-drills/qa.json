@@ -1,0 +1,59 @@
+{
+  "scheme": "Thousand",
+  "bundleId": "com.starhiveconcept.thousand",
+  "screens": [
+    {
+      "name": "01-win",
+      "args": ["-onboarded", "-sampleData", "-reset", "-won"],
+      "note": "The day's tiles pressed into the wall: the hero count that only goes up, the twelve panels with today's work ringed in fresh amber mortar, the wall line and its notch at the next hundred, and the setter's line. Full screen, no tab bar — the best picture the app has."
+    },
+    {
+      "name": "02-bench",
+      "args": ["-onboarded", "-sampleData", "-reset", "-turned"],
+      "note": "The signature interaction a beat after the turn: the tile on the cream field with its glaze band and amber corner motifs, the Spanish still at the top left, the chime, and the three glaze chips risen — Got it carrying the weight. The course above has shortened by what is already set."
+    },
+    {
+      "name": "03-wall",
+      "args": ["-onboarded", "-sampleData", "-reset", "-screen", "wall"],
+      "note": "The thousand as a finite, visible object: twelve panels of 44 pt tiles, glazed where a word is known, half-glazed where it is drying, raw clay where it has not been met. Panels three onward are under the dust sheet, with the free hundred showing through it."
+    },
+    {
+      "name": "04-progress",
+      "args": ["-onboarded", "-sampleData", "-reset", "-pro", "-screen", "progress"],
+      "note": "One number that cannot go down, then the work drawn as work: due today and tomorrow as two stacks of tiles on the kiln shelf in their own glazes, and mastery as twelve mortar bars, longest first. No streak, no calendar, and no sentence about their absence."
+    },
+    {
+      "name": "05-swept",
+      "args": ["-onboarded", "-sampleData", "-reset", "-swept"],
+      "note": "Nothing is due. The drawn bench, swept, with the tools laid down — the app stops rather than inventing cards to fill a session, and says what is drying and what is ready tomorrow."
+    },
+    {
+      "name": "06-paywall",
+      "args": ["-onboarded", "-sampleData", "-reset", "-fakeProducts", "-screen", "paywall"],
+      "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch, so the real product is unavailable and the button would sit disabled. The kept wall under its lamp, the one payment, and the only screen in the app allowed to state the deal."
+    },
+    {
+      "name": "07-first",
+      "args": ["-reset"],
+      "note": "The first frame anyone sees: no -onboarded, so onboarding runs. Already plaster and cobalt, with a mosaic half laid and one starred tile over its gap — the promise the app then keeps."
+    }
+  ],
+  "moments": [
+    {
+      "name": "turn",
+      "args": ["-onboarded", "-sampleData", "-reset", "-demo", "turn"],
+      "delay": 3.5,
+      "frames": 8,
+      "interval": 0.1,
+      "note": "The turn, played by the app: the tile presses, rotates about its vertical axis with the specular band tracking the angle, ticks at the edge, lands on the cream face, the grades rise, and Got it flies the tile up into its gap in the course."
+    },
+    {
+      "name": "win",
+      "args": ["-onboarded", "-sampleData", "-reset", "-demo", "win"],
+      "delay": 3.5,
+      "frames": 8,
+      "interval": 0.1,
+      "note": "The last two tiles of a clean session and then the reward: the bench empties, the course expands into the whole wall, the day's tiles press in one at a time with the tone climbing, the count runs, and the glaze-chip burst fires."
+    }
+  ]
+}

@@ -279,9 +279,9 @@ final class Library: ObservableObject {
                 card.reps = 1 + word.rank % 4
                 card.lapses = word.rank % 2
                 card.intervalDays = Double(1 + word.rank % 3)
-                // Fifteen of them are ready right now; the rest come back over the next days.
-                let ready = word.rank % 3 == 0
-                card.due = ready
+                // A quarter of them are ready right now; the rest come back over three days,
+                // so tomorrow's shelf is never empty on a freshly seeded wall.
+                card.due = word.rank % 4 == 0
                     ? now.addingTimeInterval(-Double(word.rank % 400))
                     : now.addingTimeInterval(Double(1 + word.rank % 3) * 86_400)
                 card.lastSet = now.addingTimeInterval(-Double(1 + word.rank % 6) * 86_400)
