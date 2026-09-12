@@ -1,0 +1,36 @@
+Mil palavras em espanhol, na ordem em que você realmente as encontra, revisadas por um calendário que lembra o que você esquece.
+
+Thousand é a oficina de um azulejista. Cada palavra é um azulejo esmaltado sobre a bancada: você lê o espanhol, vira o azulejo e diz como foi. As palavras que você sabia sobem voando e se encaixam na parede. As que escaparam voltam caladas para o forno, para mais uma queima — nada fica vermelho, nada te repreende. A parede só cresce, e é disso que se trata: mil azulejos em doze painéis, e do outro lado da sala dá para ver quanto já está de pé.
+
+O QUE TEM DENTRO
+
+• 1.000 palavras comuns do espanhol para quem fala inglês, ordenadas pela frequência com que você vai encontrá-las e agrupadas em doze temas: o dia a dia, gente e família, comida e bebida, a casa, cidade e viagem, trabalho e escola, corpo e saúde, tempo e números, natureza e clima, ir e vir, sentir e pensar, descrever.
+• Uma frase de exemplo para cada palavra, com a tradução em inglês, para você conhecer a palavra trabalhando em vez de sozinha em um cartão.
+• Pronúncia de cada palavra, falada pelo seu iPhone em espanhol castelhano, no azulejo e automaticamente quando ele vira.
+• Um calendário de repetição espaçada que decide quando cada palavra volta: mais cedo para as que escaparam, muito mais tarde para as que você achou fáceis.
+• Uma parede que mostra as mil de uma vez — esmaltada onde a palavra já é sua, meio esmaltada onde ainda está secando, barro cru onde você ainda não a encontrou — e uma busca que acha qualquer palavra sem tirar você do lugar onde estava.
+• Um número na tela de Progresso que não pode cair: palavras sabidas, de mil. Com o trabalho do dia desenhado como duas pilhas de azulejos na prateleira do forno.
+• Um cartão de compartilhamento que é um retrato da sua própria parede: não existem dois iguais.
+• Um lembrete diário opcional, desligado até você ligar, que diz quantos azulejos esperam na bancada.
+
+As traduções, as frases de exemplo e a interface do app estão em inglês.
+
+O QUE NÃO TEM
+
+Sem ofensiva de dias. Sem vidas. Sem corações, sem gemas, sem pressão de desenho animado. Falte uma semana e o app não diz nada sobre isso; as palavras simplesmente estão lá quando você volta. Não há calendário dos dias em que você sumiu, porque um dia em que você não estudou não é informação que sirva a alguém.
+
+Sem conta, sem cadastro, sem e-mail. Nada do que você revisa sai do telefone.
+
+Sem assinatura. Um pagamento abre as 1.000 palavras e os doze painéis, para sempre. A revisão, o calendário, a pronúncia, a parede e a contagem são grátis para sempre, com as primeiras cem palavras e dois painéis inteiros abertos desde o começo.
+
+Sem publicidade de qualquer tipo.
+
+FUNCIONA NUM TÚNEL
+
+Thousand não faz nenhuma requisição de rede. O baralho inteiro vai dentro do app e a pronúncia é falada pelo aparelho, então funciona no metrô, no avião e com o telefone na bolsa num trem onde o sinal cai. Não há nada para sincronizar e nada para esperar.
+
+PARA QUEM
+
+Para quem aprendeu um pouco de espanhol num app grátis e perdeu de novo. Dez minutos antes de dormir, vinte no caminho. Se você quer vocabulário que ainda esteja com você em março, e não uma ofensiva para defender, foi feito para você.
+
+Acessibilidade: todos os tamanhos do app acompanham o Dynamic Type, o modo escuro é desenhado e não invertido, e tudo o que é desenhado tem rótulo de VoiceOver.

@@ -1,0 +1,36 @@
+Mille mots d'espagnol, dans l'ordre où vous les rencontrez vraiment, révisés par un calendrier qui retient ce que vous oubliez.
+
+Thousand est l'atelier d'un carreleur. Chaque mot est un azulejo émaillé posé sur l'établi : vous lisez l'espagnol, vous retournez le carreau, et vous dites comment ça s'est passé. Les mots que vous saviez s'envolent et viennent se poser sur le mur. Ceux qui ont glissé repartent sans bruit au four pour une autre cuisson — rien ne passe au rouge, rien ne vous gronde. Le mur ne fait que grandir, et c'est tout l'objet : mille carreaux en douze panneaux, et d'un bout à l'autre de la pièce on voit ce qui tient déjà debout.
+
+CE QU'IL Y A DEDANS
+
+• 1 000 mots d'espagnol courants pour anglophones, classés selon la fréquence à laquelle vous les croiserez et regroupés en douze thèmes : le quotidien, les gens et la famille, manger et boire, la maison, la ville et les voyages, le travail et l'école, le corps et la santé, le temps et les nombres, la nature et la météo, aller et venir, sentir et penser, décrire.
+• Une phrase d'exemple pour chaque mot, avec sa traduction anglaise, pour rencontrer le mot au travail plutôt que seul sur une fiche.
+• La prononciation de chaque mot, dite par votre iPhone en espagnol castillan, sur le carreau et automatiquement quand il se retourne.
+• Un calendrier de répétition espacée qui décide quand chaque mot revient : plus tôt pour ceux qui ont glissé, bien plus tard pour ceux que vous avez trouvés faciles.
+• Un mur qui montre les mille d'un seul coup d'œil — émaillé là où le mot est acquis, à demi émaillé là où il sèche encore, terre crue là où vous ne l'avez pas encore rencontré — et une recherche qui trouve n'importe quel mot sans vous faire perdre votre place.
+• Un chiffre sur l'écran Progression qui ne peut pas baisser : mots acquis, sur mille. Avec le travail du jour dessiné en deux piles de carreaux sur la plaque du four.
+• Une carte à partager qui est un portrait de votre propre mur : il n'y en a pas deux pareilles.
+• Un rappel quotidien facultatif, éteint tant que vous ne l'allumez pas, qui annonce les carreaux qui attendent sur l'établi.
+
+Les traductions, les phrases d'exemple et l'interface de l'app sont en anglais.
+
+CE QU'IL N'Y A PAS
+
+Pas de série de jours. Pas de vies. Ni cœurs, ni gemmes, ni pression de dessin animé. Sautez une semaine et l'app n'en dira rien ; les mots sont simplement là à votre retour. Il n'y a pas de calendrier des jours d'absence, parce qu'un jour où vous n'avez pas travaillé n'est une information pour personne.
+
+Pas de compte, pas d'inscription, pas d'e-mail. Rien de ce que vous révisez ne quitte le téléphone.
+
+Pas d'abonnement. Un seul paiement ouvre les 1 000 mots et les douze panneaux, pour de bon. La révision, le calendrier, la prononciation, le mur et le compteur sont gratuits pour toujours, avec les cent premiers mots et deux panneaux entiers ouverts dès le départ.
+
+Aucune publicité, d'aucune sorte.
+
+ÇA MARCHE DANS UN TUNNEL
+
+Thousand ne fait aucune requête réseau. Le jeu entier est embarqué dans l'app et la prononciation est dite par l'appareil : ça marche dans le métro, en avion, et avec le téléphone dans un sac dans un train où le signal tombe. Il n'y a rien à synchroniser et rien à attendre.
+
+POUR QUI
+
+Pour tous ceux qui ont appris un peu d'espagnol sur une app gratuite et l'ont reperdu. Dix minutes avant de dormir, vingt dans les transports. Si vous voulez du vocabulaire que vous aurez encore en mars plutôt qu'une série à défendre, c'est fait pour vous.
+
+Accessibilité : toutes les tailles de l'app suivent Dynamic Type, le mode sombre est dessiné et non inversé, et tout ce qui est dessiné porte une étiquette VoiceOver.

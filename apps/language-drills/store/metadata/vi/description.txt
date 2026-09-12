@@ -1,0 +1,36 @@
+Một nghìn từ tiếng Tây Ban Nha, theo đúng thứ tự bạn thật sự gặp chúng, được ôn lại bằng một lịch nhớ giúp bạn những gì bạn quên.
+
+Thousand là xưởng của một người thợ gạch men. Mỗi từ là một viên gạch tráng men đặt trên bàn thợ: bạn đọc từ tiếng Tây Ban Nha, lật viên gạch lại, rồi nói xem vừa rồi thế nào. Những từ bạn đã thuộc bay lên và ốp vào tường. Những từ tuột mất lặng lẽ quay lại lò để nung thêm một lần — không có gì đỏ lên, không có gì mắng bạn. Bức tường chỉ lớn thêm, và đó chính là tất cả: một nghìn viên gạch trên mười hai mảng, từ đầu kia căn phòng đã thấy bạn dựng được bao nhiêu.
+
+BÊN TRONG CÓ GÌ
+
+• 1.000 từ tiếng Tây Ban Nha thông dụng dành cho người nói tiếng Anh, xếp theo tần suất bạn sẽ gặp và gom thành mười hai chủ đề: đời thường, người và gia đình, ăn và uống, ngôi nhà, thành phố và đi lại, công việc và trường học, cơ thể và sức khỏe, thời gian và con số, thiên nhiên và thời tiết, đi và đến, cảm xúc và suy nghĩ, miêu tả.
+• Một câu ví dụ cho từng từ, kèm bản dịch tiếng Anh, để bạn gặp từ khi nó đang làm việc chứ không nằm trơ trọi trên một tấm thẻ.
+• Phát âm cho mọi từ, do iPhone của bạn đọc bằng tiếng Tây Ban Nha Castilla, ngay trên viên gạch và tự động khi gạch lật.
+• Lịch lặp lại ngắt quãng quyết định khi nào mỗi từ quay lại: sớm hơn với những từ vừa tuột mất, muộn hơn nhiều với những từ bạn thấy dễ.
+• Một bức tường cho thấy cả nghìn từ cùng lúc — tráng men ở chỗ từ đã thuộc, tráng nửa chừng ở chỗ còn đang khô, đất mộc ở chỗ bạn chưa gặp — và một ô tìm kiếm tìm được bất kỳ từ nào mà không làm bạn mất chỗ đang xem.
+• Một con số trên màn hình Tiến độ không bao giờ tụt xuống: số từ đã thuộc, trên một nghìn. Việc của ngày hôm đó được vẽ thành hai chồng gạch trên giá lò.
+• Một thẻ chia sẻ chính là bức tường của riêng bạn, nên không có hai tấm giống nhau.
+• Một lời nhắc hằng ngày tùy chọn, tắt cho đến khi bạn bật, cho biết còn bao nhiêu viên gạch đang chờ trên bàn thợ.
+
+Bản dịch, câu ví dụ và giao diện ứng dụng đều bằng tiếng Anh.
+
+BÊN TRONG KHÔNG CÓ GÌ
+
+Không chuỗi ngày. Không mạng sống. Không trái tim, không đá quý, không sức ép kiểu hoạt hình. Nghỉ một tuần thì ứng dụng cũng không nói gì về chuyện đó; các từ vẫn nằm đó khi bạn quay lại. Cũng không có cuốn lịch đánh dấu những ngày bạn vắng, vì một ngày bạn không học không phải là thông tin ai cần đến.
+
+Không tài khoản, không đăng ký, không email. Không có gì bạn học rời khỏi chiếc điện thoại.
+
+Không thuê bao. Một lần trả tiền mở toàn bộ 1.000 từ và cả mười hai mảng, vĩnh viễn. Phần ôn tập, lịch, phát âm, bức tường và con số luôn miễn phí, với một trăm từ đầu tiên và hai mảng trọn vẹn mở sẵn ngay từ đầu.
+
+Không quảng cáo dưới bất kỳ hình thức nào.
+
+DÙNG ĐƯỢC TRONG ĐƯỜNG HẦM
+
+Thousand không gửi bất kỳ yêu cầu mạng nào. Toàn bộ bộ thẻ nằm trong ứng dụng và phần phát âm do chính thiết bị đọc, nên nó chạy dưới tàu điện ngầm, trên máy bay, và khi điện thoại nằm trong túi trên một chuyến tàu mất sóng. Không có gì để đồng bộ và không có gì phải chờ.
+
+DÀNH CHO AI
+
+Dành cho người đã học được ít tiếng Tây Ban Nha trên một ứng dụng miễn phí rồi lại đánh rơi. Mười phút trước khi ngủ, hai mươi phút trên đường đi. Nếu bạn muốn vốn từ vẫn còn trong tay vào tháng Ba chứ không phải một chuỗi ngày phải giữ, ứng dụng này làm cho bạn.
+
+Trợ năng: mọi cỡ chữ trong ứng dụng co giãn theo Dynamic Type, chế độ tối được thiết kế chứ không phải đảo màu, và mọi thứ được vẽ ra đều có nhãn VoiceOver.
