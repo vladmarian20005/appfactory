@@ -49,10 +49,6 @@ enum AppBrand {
         ])
     )
 
-    /// The chart marks on the flat: small, tracked, uppercase. `POURED`, `THE LINE · 13`.
-    static func chartLabel(_ size: CGFloat = 11) -> Font {
-        .system(size: size, weight: .semibold)
-    }
 }
 
 /// A small tracked uppercase label — the chart marks drawn on the flat. Scales with Dynamic

@@ -72,10 +72,6 @@ struct EditionCard: View {
     private let accent = Color(hex: 0xC1362C)
     private let brass = Color(hex: 0x8E6214)
 
-    private static func press(_ size: CGFloat, weight: Font.Weight = .bold) -> Font {
-        .system(size: size, weight: weight, design: .serif)
-    }
-
     var body: some View {
         ZStack {
             paper
@@ -86,24 +82,24 @@ struct EditionCard: View {
             VStack(spacing: 0) {
                 Rectangle().fill(ink.opacity(0.35)).frame(height: 1)
                 Text("QUIZDAY")
-                    .font(Self.press(96))
+                    .scaledFont(size: 96, weight: .bold, design: .serif)
                     .tracking(22)
                     .foregroundStyle(ink)
                     .padding(.top, 18)
                 Rectangle().fill(ink).frame(height: 5).padding(.top, 14)
 
                 Text(dateline)
-                    .font(AppBrand.dateline(30))
+                    .scaledFont(size: 30, weight: .medium, design: .monospaced)
                     .tracking(5)
                     .foregroundStyle(inkSoft)
                     .padding(.top, 26)
 
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
                     Text("\(score)")
-                        .font(Self.press(320))
+                        .scaledFont(size: 320, weight: .bold, design: .serif)
                         .foregroundStyle(ink)
                     Text("/\(total)")
-                        .font(Self.press(96))
+                        .scaledFont(size: 96, weight: .bold, design: .serif)
                         .foregroundStyle(inkSoft)
                 }
                 .padding(.top, 6)
@@ -125,7 +121,8 @@ struct EditionCard: View {
                 .padding(.top, 22)
 
                 Text(tier.headline.uppercased())
-                    .font(Self.press(54).italic())
+                    .scaledFont(size: 54, weight: .bold, design: .serif)
+                    .italic()
                     .tracking(4)
                     .foregroundStyle(accent)
                     .padding(.horizontal, 34)
@@ -144,10 +141,10 @@ struct EditionCard: View {
                         Spacer(minLength: 0)
                         HStack(alignment: .firstTextBaseline, spacing: 14) {
                             Text("\(streak)")
-                                .font(Self.press(72))
+                                .scaledFont(size: 72, weight: .bold, design: .serif)
                                 .foregroundStyle(Color(hex: 0xFFF8EC))
                             Text("DAYS\nRUNNING")
-                                .font(AppBrand.dateline(26))
+                                .scaledFont(size: 26, weight: .medium, design: .monospaced)
                                 .tracking(3)
                                 .foregroundStyle(Color(hex: 0xFFF8EC).opacity(0.9))
                         }
@@ -161,7 +158,7 @@ struct EditionCard: View {
 
                 Rectangle().fill(ink.opacity(0.35)).frame(height: 1)
                 Text("QUIZDAY · A NEW EDITION EVERY MORNING")
-                    .font(AppBrand.dateline(24))
+                    .scaledFont(size: 24, weight: .medium, design: .monospaced)
                     .tracking(4)
                     .foregroundStyle(inkSoft)
                     .padding(.top, 16)

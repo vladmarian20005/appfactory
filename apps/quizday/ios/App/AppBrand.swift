@@ -44,12 +44,4 @@ enum AppBrand {
         }
     }
 
-    /// The dateline / section-mark / legend face: SF Mono, uppercase, tracked.
-    ///
-    /// Frozen on purpose, and only for `ShareImage`: the share card is rendered at a fixed
-    /// 1080 × 1350 outside the view hierarchy, where Dynamic Type has nothing to scale
-    /// against. On screen the same face comes from `.dateline(_:)`, which scales.
-    static func dateline(_ size: CGFloat = 11) -> Font {
-        .system(size: size, weight: .medium, design: .monospaced)
-    }
 }

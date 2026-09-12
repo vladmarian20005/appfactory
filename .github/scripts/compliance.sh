@@ -135,9 +135,16 @@ echo "::endgroup::"
 
 # ── 7. Accessibility ──────────────────────────────────────────────────────────
 # A frozen point size ignores Dynamic Type. FactoryKit's scaledFont keeps the design and
-# still scales; Theme.swift is where the primitive itself lives.
+# still scales; Theme.swift is where the primitive itself lives. A share card is not an
+# exception: ShareImage.render pins Dynamic Type for the render, so scaledFont on a fixed
+# canvas draws at the size it asks for.
+#
+# Matching `.system(size:` rather than `.font(.system(size:` is deliberate. The narrower
+# pattern only saw the call written inline, so an app that wrapped the same thing in a
+# `-> Font` helper passed a gate that failed the app which did not — the two spellings are
+# the same defect, and tools/design/tells.mjs greps for this one.
 echo "::group::Accessibility"
-frozen=$(grep -rn "\.font(\.system(size:" "$ios" 2>/dev/null | head -10)
+frozen=$(grep -rn "\.system(size:" "$ios" 2>/dev/null | head -10)
 if [ -n "$frozen" ]; then
   fail "text with a frozen point size ignores Dynamic Type; use .scaledFont(size:) from FactoryKit:"
   echo "$frozen" | sed 's/^/    /'
