@@ -86,6 +86,58 @@ if (!has(/confetti\(|CountUp\(|Haptics\.celebrate|Tones\.shared/)) {
   tell("FAIL", "no-reward", "the loop's win uses none of confetti, CountUp, Haptics.celebrate or Tones: finishing is not a moment");
 }
 
+// Frozen type. `.system(size:)` looks identical at the largest accessibility text size as it
+// does at the default, so a display face quietly stops scaling — and neither the compliance
+// grep nor a screenshot at default settings catches it. `scaledFont(size:)` and
+// `brandDisplay(size:)` say the same point size and still scale.
+//
+// The one honest exception is a share card: `ShareImage.render` draws into an ImageRenderer at
+// a fixed pixel size, outside the view hierarchy, where Dynamic Type has nothing to scale
+// against. So a frozen font is allowed if — and only if — it never reaches a screen. A helper
+// that returns a frozen Font is judged by where it is called, not by where it is written.
+const bitmap = (f) => /ShareImage\.render|ImageRenderer\s*\(/.test(f.lines.join("\n"));
+const bitmapFiles = new Set(files.filter(bitmap).map((f) => f.file));
+const frozen = /\.system\(size:/;
+
+/** The name of the `-> Font` helper this line sits inside, if it sits inside one. */
+function fontHelperAt(f, i) {
+  for (let j = i; j >= 0 && i - j < 12; j--) {
+    const m = f.lines[j].match(/func\s+(\w+)\s*\(.*->\s*Font\b/);
+    if (m) return m[1];
+    // A different declaration between here and the line means we left the helper.
+    if (j < i && /\bfunc\s+\w+\s*\(|\bvar\s+body\b/.test(f.lines[j])) return null;
+  }
+  return null;
+}
+
+/**
+ * Files other than bitmap renderers that call the helper.
+ *
+ * Only a qualified call counts — `AppBrand.dateline(…)`, `Self.press(…)`. A bare `.dateline(…)`
+ * is a view modifier chained onto a Text, and an app may well have both under one name:
+ * Quizday's `.dateline(_:tracking:color:)` scales and its `AppBrand.dateline(_:)` does not,
+ * which is exactly the arrangement this tell is meant to allow.
+ */
+function screenCallers(name) {
+  const call = new RegExp(`(?:\\b[A-Z]\\w*|Self)\\.${name}\\s*\\(`);
+  return files
+    .filter((f) => !bitmapFiles.has(f.file) && f.lines.some((line) => call.test(line)))
+    .map((f) => path.basename(f.file));
+}
+
+each(frozen, (where, line, f, i) => {
+  if (bitmapFiles.has(f.file)) return;
+  const helper = fontHelperAt(f, i);
+  if (!helper) {
+    tell("FAIL", "frozen-type", `a frozen point size on screen — it will not scale with Dynamic Type; use scaledFont(size:) or brandDisplay(size:): ${line.slice(0, 80)}`, where);
+    return;
+  }
+  const callers = screenCallers(helper);
+  if (callers.length) {
+    tell("FAIL", "frozen-type", `${helper}() returns a frozen Font and is used on screen (${[...new Set(callers)].join(", ")}), so that type will not scale with Dynamic Type`, where);
+  }
+});
+
 // ── Smells ───────────────────────────────────────────────────────────────────
 each(/presentationDetents\(\[\.medium\]\)/, (where, line, f) => {
   const text = f.lines.join("\n");

@@ -70,10 +70,15 @@ jobs:
       # Everything expensive is below this. An upload is the one irreversible thing the
       # factory does, so it refuses code whose green results belong to a different version
       # of itself: an agent can fix a build, get a green verify, then rewrite three screens.
-      - name: Refuse to upload unverified or stale code
+      #
+      # `design` is in the list because taste is a gate, not a review step. Without it the
+      # taste bar is only an edge in the chain — true while the chain runs in order, and
+      # walked around by any direct dispatch or by app-await-record's cron. An app that
+      # never faced the critic does not go to TestFlight.
+      - name: Refuse to upload unverified, stale or untasted code
         run: |
           set -euo pipefail
-          if .github/scripts/require-stage.sh "$SLUG" verify compliance pages; then
+          if .github/scripts/require-stage.sh "$SLUG" verify compliance pages design; then
             exit 0
           fi
           if [ "${{ inputs.override_gate }}" = "true" ]; then

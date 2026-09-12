@@ -100,6 +100,12 @@ Any one of these fails the critique. They are what the first two apps shipped wi
 - The icon is text on a gradient.
 - Nothing on any screen bigger than `.largeTitle`.
 - Praise that never changes.
+- Type frozen at a point size: `.font(.system(size: 44))` on screen, or a `-> Font` helper that
+  returns one. It looks identical at the largest accessibility setting as at the default, so
+  the design quietly stops working for the people who need it most. Say the same size with
+  `scaledFont(size:)` or `brandDisplay(size:)` and it scales. The one exception is a share card
+  drawn by `ShareImage.render`, which has no Dynamic Type to scale against — `tells.mjs` allows
+  a frozen font there and nowhere else.
 
 `node tools/design/tells.mjs <slug>` finds the mechanical ones in the code; its FAILs are the
 list above. The critic finds the rest in the screenshots.

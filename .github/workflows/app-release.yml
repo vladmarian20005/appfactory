@@ -30,6 +30,11 @@ on:
         required: false
         type: boolean
         default: false
+      override_device_pass:
+        description: Submit even though nobody has run this build on a phone.
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -75,6 +80,23 @@ jobs:
             echo "::warning::The stage gate failed and override_gate was set. Submitting anyway."
             exit 0
           fi
+          exit 1
+
+      # The last gate before Apple, and the only one whose evidence a runner cannot produce.
+      # It has its own override rather than riding on override_gate: the two refuse different
+      # things, and a person skipping a phone test should have to say so in those words.
+      - name: Refuse to submit a build nobody has run on a phone
+        run: |
+          set -euo pipefail
+          if .github/scripts/require-device-pass.sh "$SLUG"; then
+            exit 0
+          fi
+          if [ "${{ inputs.override_device_pass }}" = "true" ]; then
+            echo "::warning::No device pass on record and override_device_pass was set. Submitting anyway."
+            echo "⚠️ Submitted to App Review with no device pass on record, by explicit override." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "Run the TestFlight build on a phone, set \`device_tested\` (and \`storekit_verified\` if it sells) in apps/$SLUG/state.json, or dispatch again with override_device_pass." >> "$GITHUB_STEP_SUMMARY"
           exit 1
 
       - uses: ruby/setup-ruby@v1
