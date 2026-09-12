@@ -32,6 +32,62 @@ levels", "it gave me a board that can't be solved". The feeling Tidepour sells i
 without pressure**: it is always solvable, it always saves, it never asks for anything, and the
 screen is a calm place at the end of the day.
 
+## The play
+
+Pour the rack clean in as few moves as the charted line, and keep going up a shore that keeps
+getting deeper. Written 12 Sep 2026, after the first build shipped without this section and
+nobody noticed the game stopped being a game at level 36.
+
+**The session.** Eight minutes, three or four racks. It ends when he stops, not when the app
+says so; nothing is rationed and nothing waits for tomorrow.
+
+**At risk.** The charted line — the solver's own optimal move count, shown as a rail that fills
+as he pours. Going over it costs the clean sweep for that rack: the win is quieter, the confetti
+does not fire, and the verdict says so kindly. It costs the rack and nothing else. There is no
+life, nothing to buy back, and the rack stays cleared. A replay can still beat it, and `Results`
+keeps the best moves, so an over-par board is an open question rather than a loss.
+
+**The ladder.** `LevelGenerator.ladder`, and the numbers are measured rather than reasoned —
+every row below is a real generated board, verified solvable with par proven optimal.
+
+| Rack | Colours | Depth | Par | Generates in |
+| --- | --- | --- | --- | --- |
+| 1 | 3 | 4 | 8 | instant |
+| 12 | 5 | 4 | 17 | 12 ms |
+| 31 | 9 | 4 | 28 | 52 ms |
+| 80 | 9 | 4 | 28 | 29 ms |
+| 125 | 9 | 5 | 36 | 70 ms |
+| 200 | 9 | 6 | 47 | 700 ms |
+| 400 | 9 | 6 | 43 | 125 ms |
+
+Colours widen to nine by rack 31; the glass is blown deeper at 125 and again at 200. **The rack
+stops changing shape at 200** — `ladder.flattensAt` says so out loud — which is about seven
+months at a rack a day, and past it the pool serves nine colours six deep for as long as anyone
+keeps pouring. That ceiling is the app's own promise: every board is dealt, solved and thrown
+away if the solver cannot finish it, and beyond six deep the search stops being able to *prove*
+par, which is the one number Tidepour tells the truth about. If the shore ever needs to go
+further, the next dimension is a second rack on the same flat, not a seventh measure.
+
+**What comes next.** The rung. Each rack's board is its level number seeded, dealt up to ten
+times, and kept only when the solver both finishes it and finds a line at least as long as the
+bar for that shape. Nothing is random from the player's side: rack 41 is the same board on every
+phone and after every reinstall.
+
+**Earned.** `AppInfo.earned` — three milestones, all of them free, none of them purchasable.
+The ninth light at rack 31, tall glass at 125, deep glass at 200. Each is the ladder's own next
+opening, named at the win the moment it is crossed; when nothing was crossed, the win names the
+one still coming ("Tall glass at rack 125."). The paywall stays exactly where it was, at rack 60
+— it buys *more shore*, and these three arrive whether or not it is ever paid.
+
+**The ending.** The win ends on what opened, or on what is still on its way, above the two
+buttons — never on a number over "Come back tomorrow". The daily's own ending sends him back to
+the shore with the streak intact.
+
+**The daily** climbs too, now. It used to be six colours and par 18 on every date the app would
+ever see, which made the one board everybody plays together the flattest thing in the game. It
+walks a fortnight up its own ladder and back — rack-equivalent 6 to 45 — so the shared board in
+March is not the shared board in September.
+
 ## The look
 
 ### Canvas

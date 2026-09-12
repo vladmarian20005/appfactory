@@ -30,6 +30,13 @@ no Xcode window. Everything below works there. Nothing below needs a human.
   `Color(.systemGroupedBackground)` and friends do not appear in this app.
 - **The signature interaction and the reward are the MVP, not polish.** A screen that works
   but does not move the way DESIGN.md says is not done.
+- **So is the play.** DESIGN.md's `## The play` is built with the first screen, not bolted on
+  later: the ladder as a `Ladder` with a dial that has no ceiling, the selection rule that
+  reads what the player has done (`Mastery`, or the app's own), a `Run` holding what is at
+  risk this session, and one `Earned` milestone that arrives for playing rather than paying.
+  What the app serves next is never `%` over a fixed list and never uniform random. The
+  factory shipped five apps whose fortieth session is identical to their first; `tells.mjs`
+  now fails a build for it.
 - **The product is not the pitch.** No "no ads", "no timer", "nothing to buy" anywhere in the
   UI except the paywall's promise line. No text explaining the controls; teach by affordance.
 - **Build against the iOS 26 SDK.** App Store Connect rejects anything older. Deployment
@@ -117,6 +124,13 @@ no Xcode window. Everything below works there. Nothing below needs a human.
    `interval`, `note`) — at least the signature interaction and the win. `app-verify` and
    `app-shots` drive the screens; `app-polish` films the moments. Include the win as a
    screen: it is usually the best screenshot the app has.
+
+   And `ladder`: the same screen at three or four points on the curve, shallow to deep — a
+   first session, a middling one, and one far enough in that a player would have been at it
+   for weeks (`{ "name": "level-400", "args": [… "-level", "400" …] }`). These compose into
+   one strip the critic scores Escalation from. It is the only way anyone downstream can tell
+   a curve from a flat line, so the launch flags have to be able to *reach* deep state — a
+   `-level`, a `-sessions`, a `-mastery` that seeds a played-in app.
 
 8. **Write `apps/<slug>/privacy.json`** — what the app actually stores, any network call it
    makes, and every required-reason API it touches (`@AppStorage` is

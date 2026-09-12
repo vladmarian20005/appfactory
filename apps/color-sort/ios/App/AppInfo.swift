@@ -45,4 +45,23 @@ enum AppInfo {
 
     /// Levels playable without the unlock. The daily puzzle is outside this and always free.
     static let freeLevelCount = 60
+
+    /// What playing opens, as distinct from what the one payment opens.
+    ///
+    /// Every `unlock` in this app used to be `store.isUnlocked`: the paywall was the only door
+    /// in it, and nothing whatever arrived for playing well. These are the three rungs where
+    /// `LevelGenerator.ladder` changes the rack itself — a ninth colour, then vials blown
+    /// deeper twice — which used to happen silently. Now the shore says so when you reach it,
+    /// and the win names the next one, so there is always something on the way in.
+    static let earned = Earned([
+        Earned.Milestone(id: "ninth-light", title: "The ninth light",
+                         blurb: "A ninth colour comes into the flat. The rack is as wide as the pool gets.",
+                         at: 31),
+        Earned.Milestone(id: "tall-glass", title: "Tall glass",
+                         blurb: "The glass is blown deeper — five measures to a vial, and longer lines to walk.",
+                         at: 125),
+        Earned.Milestone(id: "deep-glass", title: "Deep glass",
+                         blurb: "Six measures. The longest pours in the pool, and the last shape the rack takes.",
+                         at: 200),
+    ])
 }

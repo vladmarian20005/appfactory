@@ -190,7 +190,7 @@ final class GameModel: ObservableObject {
         }
         if board.canPour(from: from, to: index) {
             pour(from: from, to: index)
-        } else if board.tubes[index].count >= Board.capacity {
+        } else if board.tubes[index].count >= board.capacity {
             // No room. A warm refusal: the glass shakes once and keeps what it has.
             refusedTube = index
             refusals += 1
@@ -249,7 +249,7 @@ final class GameModel: ObservableObject {
             flight?.stage = .land
             withMotion(Motion.bouncy) { rise = 1 }
             Haptics.rigid()
-            Tones.shared.play(.step(min(Board.capacity, landing + amount) - 1))
+            Tones.shared.play(.step(min(board.capacity, landing + amount) - 1))
             withAnimation(.easeOut(duration: 0.16)) { stream = 0 }
             noteCompletion(of: to)
 

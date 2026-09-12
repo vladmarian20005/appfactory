@@ -11,6 +11,11 @@ struct LevelClearedView: View {
     let board: Board
     let style: BoardStyle
     let streak: Int
+    /// What this clear opened, if it opened anything.
+    var earned: Earned.Milestone?
+    /// What is waiting further up the shore, so the win ends on what is next rather than on
+    /// a number and a door.
+    var nextEarned: Earned.Milestone?
     let onNext: () -> Void
     let onReplay: () -> Void
 
@@ -57,6 +62,7 @@ struct LevelClearedView: View {
                         .multilineTextAlignment(.center)
                     rail
                     finishedRack
+                    opened
                     actions
                 }
                 .padding(.horizontal, FactoryTheme.padding)
@@ -136,6 +142,33 @@ struct LevelClearedView: View {
         .padding(.horizontal, 6)
     }
 
+    /// What this clear opened, and failing that what is still on its way. The win used to end
+    /// on a number and two buttons; this is the line that says the pool is still changing.
+    @ViewBuilder
+    private var opened: some View {
+        if let earned {
+            VStack(spacing: 4) {
+                Text(earned.title)
+                    .brandFont(.headline)
+                    .foregroundStyle(brand.palette.accent)
+                Text(earned.blurb)
+                    .font(.subheadline)
+                    .foregroundStyle(brand.palette.inkSoft)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.horizontal, 8)
+            .popIn(delay: 0.9)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("\(earned.title). \(earned.blurb)")
+        } else if let nextEarned, let n = result.levelID.number, nextEarned.at > n {
+            Text("\(nextEarned.title) at rack \(nextEarned.at).")
+                .font(.footnote)
+                .foregroundStyle(brand.palette.inkSoft)
+                .popIn(delay: 0.9)
+        }
+    }
+
     /// Every vial standing full and lit, one at a time.
     private var finishedRack: some View {
         HStack(alignment: .bottom, spacing: 10) {
@@ -144,6 +177,7 @@ struct LevelClearedView: View {
                          style: style,
                          width: 42,
                          unitHeight: 21,
+                         capacity: max(Board.baseCapacity, contents.count),
                          isComplete: true)
                     .popIn(delay: 0.4 + Double(index) * 0.06)
             }
@@ -243,7 +277,9 @@ struct RackCard: View {
                 HStack(alignment: .bottom, spacing: 7) {
                     ForEach(Array(rack.prefix(7).enumerated()), id: \.offset) { _, contents in
                         TubeView(contents: contents, style: style,
-                                 width: 30, unitHeight: 16, isComplete: true)
+                                 width: 30, unitHeight: 16,
+                                 capacity: max(Board.baseCapacity, contents.count),
+                                 isComplete: true)
                     }
                 }
                 .padding(.top, 6)

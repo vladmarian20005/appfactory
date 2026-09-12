@@ -12,8 +12,11 @@ struct RackLayout {
     let rowSpacing: CGFloat
     let rows: [[Int]]
     let size: CGSize
+    /// How deep this board's vials are. Deeper racks arrive from level 45 on, so the geometry
+    /// has to come from the board rather than from a constant.
+    let capacity: Int
 
-    var tubeHeight: CGFloat { unit * CGFloat(Board.capacity) }
+    var tubeHeight: CGFloat { unit * CGFloat(capacity) }
 
     private var totalHeight: CGFloat {
         tubeHeight * CGFloat(rows.count) + rowSpacing * CGFloat(max(0, rows.count - 1))
@@ -40,9 +43,12 @@ struct RackLayout {
     func mouth(of index: Int, tilt: Double = 0, offset: CGSize = .zero) -> CGPoint {
         let c = center(of: index)
         let base = CGPoint(x: c.x + offset.width, y: c.y + tubeHeight / 2 + offset.height)
-        let radians = tilt * .pi / 180
-        return CGPoint(x: base.x + tubeHeight * sin(radians),
-                       y: base.y - tubeHeight * cos(radians))
+        // Spelled CGFloat on both sides rather than left to the CGFloat/Double bridge: which
+        // `sin` overload that picks depends on the toolchain, and on Xcode 16 it does not pick
+        // one at all ("ambiguous use of 'sin'"), so the app cannot be built outside CI.
+        let radians = CGFloat(tilt) * .pi / 180
+        return CGPoint(x: base.x + tubeHeight * CGFloat(sin(radians)),
+                       y: base.y - tubeHeight * CGFloat(cos(radians)))
     }
 
     func unitPoint(of index: Int) -> UnitPoint {
@@ -106,9 +112,10 @@ struct BoardView: View {
         // not sitting on the row below it.
         let rowSpacing = spacing * 1.6 + width * 0.3
         let perRow = (size.height - rowSpacing * CGFloat(max(0, rows.count - 1))) / CGFloat(max(1, rows.count))
-        let unit = min(width * 0.95, perRow / CGFloat(Board.capacity))
+        let unit = min(width * 0.95, perRow / CGFloat(board.capacity))
         return RackLayout(width: width, unit: max(18, unit), spacing: spacing,
-                          rowSpacing: rowSpacing, rows: rows, size: size)
+                          rowSpacing: rowSpacing, rows: rows, size: size,
+                          capacity: board.capacity)
     }
 
     var body: some View {
@@ -143,6 +150,7 @@ struct BoardView: View {
                  style: style,
                  width: rack.width,
                  unitHeight: rack.unit,
+                 capacity: rack.capacity,
                  isSelected: isChosen || isSource,
                  isHintSource: hint?.from == index,
                  isHintTarget: hint?.to == index,

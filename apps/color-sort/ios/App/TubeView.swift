@@ -11,6 +11,9 @@ struct TubeView: View {
     let style: BoardStyle
     let width: CGFloat
     let unitHeight: CGFloat
+    /// How deep this vial is. The rack gets deeper from level 50 on, so the glass cannot be
+    /// drawn against a constant.
+    var capacity: Int = Board.baseCapacity
     var isSelected = false
     /// The vial the hint wants liquid to come out of.
     var isHintSource = false
@@ -42,7 +45,7 @@ struct TubeView: View {
                                style: .continuous)
     }
 
-    private var height: CGFloat { unitHeight * CGFloat(Board.capacity) }
+    private var height: CGFloat { unitHeight * CGFloat(capacity) }
 
     /// The rim: mint when it is chosen or charted, kelp when it is done, otherwise the faint
     /// edge of wet glass.

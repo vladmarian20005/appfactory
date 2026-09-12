@@ -38,6 +38,28 @@
       "note": "The first screen anyone sees: no -onboarded, so onboarding runs. A drawn rack in the wet flat under 'Every light wants its own glass.' — the promise the app then keeps."
     }
   ],
+  "ladder": [
+    {
+      "name": "rack-3",
+      "args": ["-onboarded", "-reset", "-pro", "-level", "3", "-moves", "3"],
+      "note": "The shallow end: three colours, four measures to a vial, a line about ten pours long."
+    },
+    {
+      "name": "rack-40",
+      "args": ["-onboarded", "-reset", "-pro", "-level", "40", "-moves", "3"],
+      "note": "Nine colours, the widest the flat gets, still four deep. Par has roughly trebled."
+    },
+    {
+      "name": "rack-130",
+      "args": ["-onboarded", "-reset", "-pro", "-level", "130", "-moves", "3"],
+      "note": "Tall glass: five measures to a vial. Earned at rack 125, and visibly a different rack."
+    },
+    {
+      "name": "rack-210",
+      "args": ["-onboarded", "-reset", "-pro", "-level", "210", "-moves", "3"],
+      "note": "Deep glass, six measures — the last shape the rack takes, at rung 200. Par is five times the opening board's."
+    }
+  ],
   "moments": [
     {
       "name": "pour",

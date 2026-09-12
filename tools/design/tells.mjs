@@ -47,6 +47,9 @@ const files = walk(src).map((file) => ({
 const all = files.flatMap((f) => f.lines).join("\n");
 const has = (re) => re.test(all);
 
+const release = path.join(app, "store", "release.json");
+const isGame = fs.existsSync(release) && /"GAMES"/.test(fs.readFileSync(release, "utf8"));
+
 const tells = [];
 const tell = (level, id, message, where) => tells.push({ level, id, message, where: where ?? null });
 const each = (re, fn, filter = () => true) => {
@@ -107,6 +110,66 @@ each(frozen, (where, line) => {
   tell("FAIL", "frozen-type", `a frozen point size — it will not scale with Dynamic Type; use scaledFont(size:) or brandDisplay(size:): ${line.slice(0, 80)}`, where);
 });
 
+// ── The second session ───────────────────────────────────────────────────────
+// These are the tells of an app nobody opens twice. Nothing downstream of the build could
+// see them before: a screenshot of level 40 and a screenshot of level 400 are the same
+// screenshot, so a flat game passed every gate the factory had. Added 12 Sep 2026 with
+// TASTE.md's "The second session".
+
+// Content picked by `% count` repeats verbatim and never ramps. Quizday holds 30 rounds and
+// deals `dayNumber % rounds.count`, so day 31 is day 1 again, in the same order, forever.
+// Named collections only — a modulo over a palette or a frame index is fine.
+// Two spellings, because the first one it was written to catch — quizday's — binds the length
+// to a local first (`let count = shared.rounds.count` … `n % count`) and slips a grep for
+// `% rounds.count` by one variable.
+const contentNames = "round|question|level|item|card|pack|puzzle|word|prompt|challenge|task|verse|clue";
+const content = new RegExp(`%\\s*\\w*(${contentNames})s?(\\.count|\\.length)|%\\s*(count|total|\\w+(Count|Total))\\b`, "i");
+each(content, (where, line) =>
+  tell("FAIL", "content-modulo", `content chosen by modulo over a fixed list — it repeats verbatim and never gets harder: ${line.trim().slice(0, 90)}`, where));
+
+// Where the ladder stops climbing, computed from the dials the same way `Ladder.flattensAt`
+// computes it, because the rung it stops on is the rung players leave on. 150 is about five
+// months at a level a day; Tidepour's original curve stopped at 36.
+//
+// This does not ask for a dial with no ceiling. Rebuilding Tidepour against that rule showed
+// it forces a lie: a puzzle whose every board is solver-verified has a hardest board, and an
+// open dial only means demanding solutions no board of that shape contains.
+const REACH = 150;
+if (has(/\bLadder\(/)) {
+  const dials = [];
+  each(/(?:\.init|Ladder\.Dial)\(\s*"([^"]+)"/, (where, line) => {
+    const num = (key) => {
+      const m = line.match(new RegExp(`\\b${key}:\\s*(-?\\d+)`));
+      return m ? Number(m[1]) : null;
+    };
+    dials.push({ name: line.match(/"([^"]+)"/)[1], where, from: num("from"), by: num("by") ?? 1,
+                 every: num("every") ?? 1, opensAt: num("opensAt") ?? 1, ceiling: num("ceiling") });
+  });
+  const open = dials.some((d) => d.ceiling === null);
+  // A ceiling written as a constant rather than a literal (`ceiling: Board.maxCapacity`) reads
+  // as null here, so only judge a ladder every dial of which parsed.
+  const parsed = dials.filter((d) => d.from !== null && !/ceiling:\s*[A-Za-z_]/.test(d.where ?? ""));
+  if (dials.length && !open) {
+    const raw = files.flatMap((f) => f.lines).join("\n");
+    const symbolic = /ceiling:\s*[A-Za-z_]/.test(raw);
+    if (!symbolic && parsed.length === dials.length) {
+      const flattensAt = Math.max(...dials.map((d) =>
+        d.opensAt + d.every * Math.ceil((d.ceiling - d.from) / d.by)));
+      if (flattensAt < REACH) {
+        tell("FAIL", "flat-ladder", `the ladder stops changing the game at rung ${flattensAt}; nothing after that is different (Ladder.climbs(through: ${REACH}))`);
+      }
+    }
+  }
+}
+
+// The app decides what to serve next without consulting anything the player has done.
+const play = /\bLadder\(|\bMastery[<(]|\bRun\(\)|\bEarned\(/;
+if (!has(play)) {
+  const message = "nothing decides what comes next from what the player has done: no Ladder, Mastery, Run or Earned anywhere, so every session is the first session";
+  if (isGame) tell("FAIL", "no-second-session", message);
+  else tell("WARN", "no-second-session", `${message} — for a utility, show what deepens as the data piles up`);
+}
+
 // ── Smells ───────────────────────────────────────────────────────────────────
 each(/presentationDetents\(\[\.medium\]\)/, (where, line, f) => {
   const text = f.lines.join("\n");
@@ -149,10 +212,24 @@ each(/PaywallView\(/, (where, line, f) => {
   }
 });
 if (has(/ShareLink\(/) && !has(/ShareImage/)) tell("WARN", "text-share", "the result shares as text, not as an image (ShareImage)");
-const release = path.join(app, "store", "release.json");
-if (fs.existsSync(release) && /"GAMES"/.test(fs.readFileSync(release, "utf8")) && !has(/Tones\.shared/)) {
+if (isGame && !has(/Tones\.shared/)) {
   tell("WARN", "silent-game", "a game with no sound: use Tones, or say in DESIGN.md why it is silent");
 }
+
+// A difficulty that is stored and shown and never read. Quizday carries the word 332 times —
+// on every one of 300 bundled questions — and nothing anywhere compares one.
+// Reading it means comparing, sorting, filtering or switching on it — not carrying it through
+// an initialiser, which is how the first version of this check talked itself out of firing.
+const readsDifficulty = /difficulty\s*(==|!=|<|>|<=|>=)|(sorted|filter|first|drop|prefix|contains|allSatisfy|max|min|partition)\s*[({][^\n]*difficulty|switch\s+\w*\.?\w*[Dd]ifficulty/i;
+if (has(/\bdifficulty\b/i) && !has(readsDifficulty)) {
+  tell("WARN", "metadata-difficulty", "a `difficulty` the app stores and shows but never compares: nothing reads it to decide what the player gets next");
+}
+// Every door in the app is the paywall. A paywall is a fine door; it cannot be the only one.
+if (has(/[Uu]nlock/) && !has(/\bEarned\(|\bearned\b/)) {
+  tell("WARN", "paid-unlocks-only", "every unlock in the app is a purchase: give the player at least one thing that arrives for playing well (Earned)");
+}
+each(/"[^"]*\b(come back tomorrow|see you tomorrow|check back tomorrow)\b[^"]*"/i, (where, line) =>
+  tell("WARN", "dead-end", `the session ends on a dead end — name what is waiting instead: ${line.trim().slice(0, 90)}`, where));
 if (has(/\.easeOut\(duration: 0\.1\d?\)|\.easeInOut\(duration: 0\.1\d?\)/) && !has(/spring|Motion\./)) {
   tell("WARN", "ease-only", "the only motion is a short ease: nothing has weight");
 }

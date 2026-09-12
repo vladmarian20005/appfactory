@@ -27,7 +27,15 @@ UDID is in `$SIM_UDID`. Commit **and push** after every fix that works:
    `-stillFrames`, and **Read it next to the mock**. For motion, film it: launch with
    `-demo <moment>`, `tools/sim.sh frames …`, `node tools/qa/filmstrip.mjs …`, Read the
    strip. Not fixed until the capture shows it. Commit and push, then the next fix.
-3. **If the critique says the idea itself is weak** — the Idea or Look score is under 3 — fix
+3. **If the critique says nobody would open it twice** — Escalation or Pull under 4 — fix
+   DESIGN.md's `## The play` first, then the code. These are not screenshot fixes and you
+   cannot capture your way out of them: a ladder that stops, content dealt off a fixed list,
+   a session with nothing at risk, unlocks that are all purchases. Reach for the kit —
+   `Ladder` (leave one dial without a `ceiling:`), `Mastery` for what comes next, `Run` for
+   what is at risk, `Earned` for what playing opens — and add the `ladder` rungs to qa.json
+   so the next critic can see the difference. Keep the spec's promises: no lives, nothing
+   that runs out, no guilt for a missed day. Stakes cost the run and nothing outside it.
+4. **If the critique says the idea itself is weak** — the Idea or Look score is under 3 — fix
    DESIGN.md first: sharpen the idea, the palette, the voice, re-render the mocks
    (`node tools/design/render.mjs apps/<slug>/design/mock-*.html`) and Read them. Then build
    to the new direction. Keep the spec's promise and every screen it names.
@@ -35,14 +43,16 @@ UDID is in `$SIM_UDID`. Commit **and push** after every fix that works:
    it, or one you just sharpened — bring all of it in: DESIGN.md's Tokens into
    `App/AppBrand.swift`, `design/icon-1024.png` over the app icon, every `design/art/*.svg`
    into the asset catalog with `tools/design/art.mjs`, the Voice lines into the UI.
-4. **Reach for FactoryKit** before inventing: TASTE.md's vocabulary table covers the canvas,
+5. **Reach for FactoryKit** before inventing: TASTE.md's vocabulary table covers the canvas,
    surfaces, display type, springs, entrances, confetti, count-ups, haptics, tones, share
-   images, onboarding and paywall art.
-5. **Finish green.** `.github/scripts/verify-app.sh <slug>` must pass and
+   images, onboarding and paywall art, the ladder, mastery, the run and what play earns.
+6. **Finish green.** `.github/scripts/verify-app.sh <slug>` must pass and
    `node tools/design/tells.mjs <slug>` must report no FAIL. qa.json needs `moments` — at
    least the signature interaction and the win, each reached with a `-demo <moment>` flag the
    app plays by itself (new-app step 5) — so the next critic can see them move; add them if
-   they are missing. If you changed which screens exist or how they are reached, update
+   they are missing. It needs `ladder` too: the same screen at three or four points from a
+   first session to one weeks in, which is the only evidence anyone downstream has that the
+   app keeps changing. If you changed which screens exist or how they are reached, update
    qa.json's screens and, if the store screenshots' titles no longer match,
    `store/screenshots.json`.
 

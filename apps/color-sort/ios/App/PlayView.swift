@@ -17,6 +17,9 @@ struct PlayView: View {
     @AppStorage("tidepour.currentLevel") private var currentLevel = 1
     @AppStorage("tidepour.highestCleared") private var highestCleared = 0
 
+    /// What the clear just now opened, set as the result is recorded so the win can name it.
+    @State private var justEarned: Earned.Milestone?
+
     private var style: BoardStyle {
         BoardStyle(accessiblePalette: accessiblePalette && store.isUnlocked,
                    calm: calmMode && store.isUnlocked,
@@ -61,6 +64,8 @@ struct PlayView: View {
                              board: model.board,
                              style: style,
                              streak: streak,
+                             earned: justEarned,
+                             nextEarned: AppInfo.earned.next(after: highestCleared),
                              onNext: { advance(from: result) },
                              onReplay: {
                                  model.pendingResult = nil
@@ -258,6 +263,9 @@ struct PlayView: View {
                                        par: result.par))
         }
         if let n = result.levelID.number {
+            // What this clear opened, if anything: measured against the deepest rung reached
+            // before it, so a replay of level 125 does not announce tall glass a second time.
+            justEarned = AppInfo.earned.justUnlocked(from: highestCleared, to: max(highestCleared, n)).first
             highestCleared = max(highestCleared, n)
             currentLevel = max(currentLevel, n)
         }

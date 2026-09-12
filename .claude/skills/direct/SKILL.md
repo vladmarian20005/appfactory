@@ -10,7 +10,14 @@ the brief the build implements and the critic holds it to.
 
 Read `TASTE.md` first, all of it. That is the bar. Your job is to decide, before any Swift
 exists, what this app is like to use — specifically enough that a builder with no taste of
-its own would still produce something people want to screenshot.
+its own would still produce something people want to screenshot, and still be opening on
+Thursday.
+
+Both halves, and the second one is the one this stage kept skipping. The first five apps got
+a win choreographed to the millisecond and a reason to come back in one borrowed sentence —
+"open, play today's ten, see the streak, come back tomorrow" — and it shows in every one of
+them. `## The play` below is not optional and it is not the spec's job: the spec says what
+screens exist, you decide what makes the fortieth session different from the first.
 
 The spec was written by a market analyst. It knows what the competition gets wrong and what
 reviewers love; it says nothing about how the app should feel, and its voice — "no ads, no
@@ -44,9 +51,11 @@ least as finished as the best.
 ## 3. Three ideas, then one
 
 Write three different ideas, each one sentence that describes a world (see TASTE.md §1), with
-a line each on palette, signature interaction and voice. Make them genuinely different — a
-calm one, a playful one, a strange one. Pick the one that best fits §1's feeling and that
-nobody in §2 owns. Keep the other two as "Roads not taken", one line each.
+a line each on palette, signature interaction, voice, and **what keeps getting more
+interesting** — the thing that is different about the fortieth session. An idea with no answer
+to the last one is a screensaver; kill it here rather than at the critic. Make them genuinely
+different — a calm one, a playful one, a strange one. Pick the one that best fits §1's feeling
+and that nobody in §2 owns. Keep the other two as "Roads not taken", one line each.
 
 The idea has to survive the medium: SwiftUI, iOS 17, no 3D engine, no licensed art or fonts
 (the SF families and New York are free to use), art drawn as SVG or SwiftUI shapes. A world
@@ -73,6 +82,27 @@ category cliché we refuse).
 
 ## Who and when
 The three sentences from step 1.
+
+## The play
+The loop in one sentence: what they do over and over, and what they are chasing. Then, in
+this order, with numbers:
+
+- **The session.** How long, how many units, how it paces, and how it ends.
+- **At risk.** What can be lost inside a session, and what losing it costs — the run, and
+  nothing outside it (`Run`). Never a life, never progress already earned, never tomorrow.
+- **The ladder.** The dials, as a `Ladder`: what each is, where it starts, when it opens,
+  how fast it climbs. Say what session 5, session 50 and session 500 are each like. It has
+  to still be changing the game at session 150 — `ladder.climbs(through: 150)`, which
+  `tells.mjs` checks — and wherever it does stop, say the rung and what happens after it.
+  Do not reach for a dial with no ceiling to dodge the question: an unbounded dial is
+  usually a fiction, and Tidepour's was one.
+- **What comes next.** The rule that chooses the next unit from what the player has already
+  done — `Mastery`, or the app's own scheduler. Never `%` over a fixed list, never uniform
+  random, never a `difficulty` field nothing reads.
+- **Earned.** At least one thing that arrives for playing well rather than paying (`Earned`):
+  what it is, the mark that opens it, and the line that announces it.
+- **The ending.** The exact words a finished session says, naming what is waiting. The bar is
+  Thousand's: "The bench is swept. Twenty-two tiles are drying, eleven are ready tomorrow."
 
 ## The signature interaction
 The core verb, beat by beat with timings: what the finger does, what moves and how (spring
@@ -176,3 +206,8 @@ DESIGN.md has every section, with real hex values, timings and lines of copy; th
 exist, rendered and revised; the icon and every art piece render; the palette's contrast is
 checked; everything is pushed. The builder should be able to implement the app without
 making a single aesthetic decision you did not make first.
+
+And `## The play` answers, in numbers a builder can implement: what is at risk, what the
+ladder's dials are and which one has no ceiling, what rule picks the next unit, what is earned
+by playing, and the words a session ends on. If you cannot say how session 500 differs from
+session 50, you have not finished this stage — go back to the ladder before you draw anything.

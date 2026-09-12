@@ -143,7 +143,7 @@ enum Solver {
     private static func rank(_ move: Move, on board: Board) -> Int {
         if board.tubes[move.to].isEmpty { return 3 }
         let amount = board.pourAmount(from: move.from, to: move.to)
-        if board.tubes[move.to].count + amount == Board.capacity { return 0 }
+        if board.tubes[move.to].count + amount == board.capacity { return 0 }
         if amount == board.topRun(move.from) { return 1 }
         return 2
     }

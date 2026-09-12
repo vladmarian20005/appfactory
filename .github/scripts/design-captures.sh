@@ -93,6 +93,35 @@ for i in $(upto "$moments"); do
 done
 echo "::endgroup::"
 
+# The ladder: the same screen deep into the app, so a flat curve is visible to someone who
+# only ever sees stills. A screenshot of session 5 and a screenshot of session 500 being the
+# same screenshot is the whole finding — the factory shipped a game whose difficulty stopped
+# at level 36 and every gate passed it. `ladder` entries are ordered shallow to deep and are
+# composed into one strip, left to right, for the critic's Escalation score (TASTE.md, "The
+# second session"). Added 12 Sep 2026.
+#
+#   "ladder": [
+#     { "name": "level-1", "args": ["-onboarded", "-reset", "-level", "1", "-moves", "3"] },
+#     { "name": "level-40", "args": ["-onboarded", "-reset", "-level", "40", "-moves", "3"] },
+#     { "name": "level-400", "args": ["-onboarded", "-reset", "-level", "400", "-moves", "3"] }
+#   ]
+echo "::group::Ladder"
+rungs=$(node -p "(require('./$qa_json').ladder || []).length")
+if [ "$rungs" -lt 2 ]; then
+  echo "::warning::$qa_json has fewer than two ladder rungs, so nobody can see whether the app changes as it is played"
+else
+  mkdir -p "$tmp/ladder"
+  for i in $(upto "$rungs"); do
+    name=$(node -p "require('./$qa_json').ladder[$i].name")
+    args=()
+    while IFS= read -r line; do [ -n "$line" ] && args+=("$line"); done < <(args_of "ladder[$i].args")
+    launch ${args[@]+"${args[@]}"} -stillFrames
+    tools/sim.sh shot "$app_dir" "$scheme" "$(printf '%s/ladder/%02d-%s.png' "$tmp" "$i" "$name")"
+  done
+  node tools/qa/filmstrip.mjs "$out/ladder.png" "$tmp"/ladder/*.png
+fi
+echo "::endgroup::"
+
 rm -rf "$tmp"
 echo "design captures for $slug in $out:"
 ls -1 "$out"

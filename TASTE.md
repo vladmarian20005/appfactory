@@ -13,9 +13,11 @@ compliance: an app that builds, passes verify and fails this is not done.
 ## The test
 
 Would a stranger, shown one screenshot, know which app it is — and want it? Would they
-screenshot the win and send it to someone?
+screenshot the win and send it to someone? And on Thursday, with nothing prompting them,
+would they open it again?
 
-If the honest answer is "it's a clean template", it fails.
+If the honest answer is "it's a clean template", it fails. If it is "it's beautiful, and I
+have seen everything it does", it fails too.
 
 Calibrate against apps people love for how they feel, not what they do: Duolingo's lesson
 complete, Wordle's share grid, (Not Boring)'s tactility, Carrot's voice, Alto's Odyssey's
@@ -71,6 +73,81 @@ their look.
 And an **icon** that is a drawing of the idea — `design/icon.svg` — never a letter or a
 number on a gradient.
 
+## The second session
+
+Those seven are what an app is like in a screenshot. This section is what it is like on
+Thursday, and the factory has been failing it silently because nothing downstream can see it.
+
+The evidence, from the five apps built so far. Each one specifies its win animation to the
+millisecond and its reason to come back in a single sentence, copied between specs: "three
+screens, one loop: open, play today's ten, see the streak, come back tomorrow." It shows.
+Quizday holds thirty rounds and picks with `dayNumber % rounds.count`, so on day 31 it deals
+day 1's ten questions back in the same order, forever. Tidepour's generator climbs to seven
+colors at level 26 and its par bar saturates at level 36, so every board from there to level
+10,000 is the same board — the exact complaint its own spec mocks the competition for.
+Thousand has the best content scheduler in the repo and caps the session: sweep the bench and
+there is nothing else it will give you. The word `difficulty` appears 332 times in Quizday and
+not once does any code read it to decide what to serve. The word `mastery` appears once in the
+repository, in prose. `unlock` appears fifty-odd times and every single one is a purchase.
+
+They are lovely and there is no reason to open them twice. Decided 12 Sep 2026.
+
+### Pull, not push
+
+Every spec here is written as a subtraction — no ads, no lives, no coins, no timer, no
+streak, nothing runs out, a missed day costs nothing. That wedge is right and it stays: those
+are the mechanics the incumbents extract with, and the reviews we build from are people
+saying so in their own words.
+
+But each of them is a real thing bent into a weapon. The factory removed the weapon and never
+put the real thing back, and an app with nothing of either in it is not calm, it is weightless.
+So: **take the pull, refuse the push.** Pull is wanting to know what the next one is. Push is
+owing the app something.
+
+| Theirs | What it deforms | We take | We refuse |
+| --- | --- | --- | --- |
+| Lives | stakes | a run that can still be saved; a perfect still intact | anything that ends play, or costs money to continue |
+| Streak counters | continuity | that the app remembers you, and shows it unasked | a number that shames, a flame that dies, a notification that guilts |
+| Countdown timers | tension | pressure the player opted into — a chain that decays, a bonus fading | a clock on a screen someone opened for calm |
+| Coins and gems | something worth working toward | things earned by playing well | anything bought, and anything that runs out |
+| Energy meters | pacing | a day's serving that feels complete, not cut off | being made to wait, or to pay to keep going |
+
+A missed day still costs nothing. Nothing still runs out. Every store promise stays true.
+
+### What every app owes the second session
+
+1. **Something at risk, that costs only the run.** If nothing can be lost, nothing that
+   happens matters. A chain that breaks, a perfect that spoils, a par you can still beat — and
+   when it goes, it costs this run and nothing else. Never a life, never progress already
+   earned, never tomorrow.
+
+2. **A curve that is still climbing long after anyone is counting.** The level after which
+   every session is the same is where players leave, so it has to be further out than they
+   get: `Ladder` computes it as `flattensAt`, and the gate fails a curve that stops inside
+   150 sessions. When one dimension saturates — colors, speed, depth — the next one opens.
+   Say in DESIGN.md what session 5, 50 and 500 are like, where the ladder does stop, and
+   what happens past it.
+
+   Not "a dial with no ceiling". That was this file's first answer and rebuilding Tidepour
+   against it showed it forces a lie: a puzzle whose every board is solver-verified has a
+   hardest board, and the open dial only demanded solutions no board of that shape contains —
+   which produced a flat, noisy curve costing six seconds a level to generate. A bounded
+   ladder, stated honestly, beats an unbounded one that is not true.
+
+3. **Content that knows what it has already served.** What comes next is *chosen* — from what
+   the player got wrong, has not seen, or just barely got right. Never `%` over a fixed array,
+   never uniform random, never a `difficulty` field that is written and displayed and never
+   read. The app is paying attention, and the player can tell.
+
+4. **Something earned by playing.** At least one thing that arrives because someone played
+   well, not because they paid: a mode, a board type, a color, a title, a piece of the world.
+   A paywall is a fine door. It cannot be the *only* door.
+
+5. **An ending that opens.** A session ends by naming what is waiting. Thousand gets this
+   right and is the standard: "The bench is swept. Twenty-two tiles are drying, eleven are
+   ready tomorrow." Specific, earned, true, and no guilt in it. Never a score in a card over
+   "Come back tomorrow."
+
 ## The product is not the pitch
 
 The store listing sells the wedge: no ads, every level solvable, nothing runs out. The app
@@ -115,8 +192,23 @@ Any one of these fails the critique. They are what the first two apps shipped wi
   has to argue the case in a comment. Decided 12 Sep 2026, after `app-compliance` failed an app
   for the frozen sizes this file used to bless and left the pipeline with no legal move.
 
+And the tells of an app nobody opens twice:
+
+- Content chosen by `%` over a fixed array, or drawn uniformly at random: it repeats, and it
+  never ramps.
+- A `difficulty` — or `level`, or `strength` — that is stored and shown and never read to
+  decide what the player gets next.
+- A ladder whose last rung arrives in the first week, after which every session is identical
+  (`Ladder.flattensAt` under 150).
+- Every unlock in the app is a purchase; nothing is earned by playing.
+- Stats that accumulate where nothing consults them: a per-category accuracy on a Progress
+  screen that chooses nothing.
+- The session cannot be lost, extended, or done badly — there is no run, only a list to finish.
+- The end of a session is a number and "Come back tomorrow".
+- The reason to return is a streak counter, and the streak does nothing but count.
+
 `node tools/design/tells.mjs <slug>` finds the mechanical ones in the code; its FAILs are the
-list above. The critic finds the rest in the screenshots.
+list above. The critic finds the rest in the screenshots and the ladder strip.
 
 ## Games need juice
 
@@ -170,6 +262,10 @@ interaction and its win on a `-demo <name>` launch flag, and `design-captures.sh
 | Ambient life | `.ambientFloat()`, `.breathing()`, `brandBackground(drift: true)` |
 | A wrong answer | `.shake(trigger:)` |
 | Wins | `.confetti(trigger:power:)`, `CountUp(to:onTick:)` |
+| Difficulty that keeps climbing | `Ladder([.init("par", from: 9, every: 3)])`, `ladder.climbsForever` |
+| What to serve next | `Mastery.next(from:count:avoiding:)`, `mastery.record(_:correct:)` |
+| What is at risk this session | `Run` — `hit()`, `miss()`, `chain`, `isClean`, `tier(beating:)` |
+| What playing earns | `Earned`, `earned.next(after:)` for what a session ends on |
 | Touch | `Haptics.tap`, `selection`, `soft`, `rigid`, `thud`, `impact(_:)`, `success`, `celebrate` |
 | Sound | `Tones.shared.play(.pop / .success / .fanfare / .miss / .step(n))`, `SoundsToggle()` |
 | Sharing | `ShareImage.render { … }` into `ShareLink(item:preview:)` |
@@ -192,6 +288,14 @@ that is a fail.
 | Voice | labels | friendly | a character, varied, never the pitch |
 | Craft | cramped, misaligned | tidy | hierarchy, rhythm, dark mode designed, large text holds |
 | First minute | onboarding of symbols | branded | the first ten seconds make a promise the app keeps |
+| Escalation | every session is identical | a ladder that stops in week one | session 500 is a different game from session 5 |
+| Pull | nothing waits | a streak counter that counts | you want to know what the next one is |
+
+The last two are judged over time, not in a still: from the ladder strip, the code that chooses
+what comes next, and what the app says when a session ends. For an app with no loop to climb —
+a counter, a log — Escalation is scored on whether it deepens as the player's own data
+accumulates, and an app that looks the same at 500 entries as at 5 scores 1.
 
 **Pass:** no FAIL from `tells.mjs`, none of the slop tells in the screenshots, Idea, Look,
-Signature interaction, Reward and Voice at 4 or more, Craft and First minute at 3 or more.
+Signature interaction, Reward, Voice and Pull at 4 or more, Craft, First minute and Escalation
+at 3 or more.
