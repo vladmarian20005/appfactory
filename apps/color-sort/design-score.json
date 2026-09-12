@@ -1,15 +1,15 @@
 {
   "pass": true,
-  "scores": { "idea": 5, "look": 4, "signature": 4, "reward": 5, "voice": 4, "craft": 4, "firstMinute": 4 },
+  "scores": { "idea": 5, "look": 4, "signature": 4, "reward": 4, "voice": 5, "craft": 4, "firstMinute": 4, "escalation": 4, "pull": 4 },
   "tells": [],
-  "summary": "A tide pool at dusk that happens to contain a sorting puzzle: light inside glass on deep water in both appearances, a pour with anticipation, weight and follow-through, and a win that is a sun over a lit rack with a 96 pt serif count — recognisable from one crop and worth sending to a friend.",
+  "summary": "A tide pool at dusk that happens to contain a sorting puzzle — light inside glass on deep water, a keeper's voice, a win that is a sun over a lit rack — and the first app here whose ladder can prove it is still climbing at rung 200, though nothing it records about the player ever changes what it deals next.",
   "fixes": [
-    "Make the pour's arc visible: take the source's travel to 0.62 and its rise to unit * 1.1 so the tipped mouth sits over the receiving rim, and stretch pourDuration from 0.24 s to 0.34 s (0.5 s calm) — ten moment-pour frames currently show no stream at all.",
-    "Give the paywall and onboarding the keeper's voice by adding subhead:/cta: to FactoryKit's PaywallView and nextTitle:/finishTitle: to OnboardingView (defaults unchanged), then say 'Open the shore' instead of the kit's hardcoded 'Continue'.",
-    "Put a shore on the Shore: head PacksView with the OpenWater art on a waterline and band the shelf in tens with a chart mark each, so 40 vials five across stop reading as a swatch wall.",
-    "Fix the win at accessibility sizes: size the lantern ring from its content so 'POURS' stops sitting across the stroke, and past AX2 drop the ring and rail so the praise, the rack and 'Take the next one' are above the fold.",
-    "Wrap each vial in a Button with .buttonStyle(.pressable) and Haptics.soft() on finger-down — BoardView uses a bare .onTapGesture, so there is no press state under the thumb.",
-    "Replace checkmark.seal.fill on the Charted badge and the day's result with a drawn charted-line glyph; it is the last system verification mark in a world of glass and water.",
-    "Let light mode actually be lighter — the two appearances measure one step of depth apart (#14394A against #0A2732), so take the light mesh up toward dusk in the shallows and leave dark exactly as it is."
+    "Make the pour look like a pour: source travel 0.34 -> 0.62 and rise unit*0.62 -> unit*1.15 (BoardView.swift:201), pourDuration 0.24 -> 0.34 s (Palette.swift:124), and hold `stream` through the landing instead of fading it at GameModel.swift:253 — ten moment-pour frames currently show no stream at all.",
+    "Retime the win moment (qa.json moments[1]: delay 2.2 -> 0.8, interval 0.12, frames 12) and deal on the calling actor under Motion.isStill (GameModel.swift:115) so moment-win stops being ten identical frames and ax-01-win stops being the dealing screen.",
+    "Wrap each vial in a Button with .buttonStyle(.pressable) and Haptics.soft() on finger-down — BoardView.swift:168 is a bare .onTapGesture, so nothing answers under the thumb until the finger lifts.",
+    "Put what playing opens on the Shore: a band drawn from AppInfo.earned above the paid toggles, lit at 31/125/200 with the next one named, so PacksView stops being a screen where every door is a purchase.",
+    "Read what the app already records: draw an over-par rack as half-lit glass on the shelf and offer 'Walk rack 23 again — you were four over' on the win, since LevelResult stores moves against par (Results.swift:7) and nothing consults it.",
+    "Break the plateau at racks 31-124 (one shape, bar 28, ninety-four times): move the depth dial in (opensAt 45, every 40) or open a fourth dimension around rack 60, and fix the three comments still claiming depth changes at 45/50.",
+    "Balance the rack rows in BoardView.swift:96 — eleven vials lay out 5/5/1 and the last one floats alone in a half-screen of empty water."
   ]
 }
