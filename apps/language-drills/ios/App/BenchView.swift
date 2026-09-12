@@ -96,8 +96,12 @@ struct GradeChips: View {
             Text(title)
                 .brandFont(.headline)
                 .foregroundStyle(filled ? brand.palette.onAccent : tint)
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.5)
+                // The three of them have to stay legible side by side: a grade that reads
+                // "Not…" is a grade nobody can give.
+                .dynamicTypeSize(...DynamicTypeSize.accessibility3)
                 .padding(.vertical, 15)
                 .frame(maxWidth: .infinity)
                 .background {

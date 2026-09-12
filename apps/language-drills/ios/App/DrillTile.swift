@@ -212,7 +212,9 @@ struct TurningTile: View, Animatable {
                     .foregroundStyle(AppBrand.faceInkSoft)
             }
             .multilineTextAlignment(.center)
+            .minimumScaleFactor(0.6)
             .frame(maxWidth: .infinity)
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.top, 12)
 
             Spacer(minLength: 4)
@@ -227,7 +229,10 @@ struct TurningTile: View, Animatable {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+        // A tile is 318 points square whatever the text setting, because it is an object and
+        // not a paragraph. Its face scales up to here and then holds, so the word, the example
+        // and the chime all stay on the tile instead of falling off the edge of it.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
 
     /// The sheen runs the face as the tile turns: a window caught on a glaze, not a card
@@ -254,5 +259,11 @@ struct Mark: View {
             .scaledFont(size: size, weight: .semibold, relativeTo: .caption)
             .tracking(1.6)
             .lineLimit(1)
+            .minimumScaleFactor(0.7)
+            // These are the marks written on the bench in pencil, beside the work rather than
+            // instead of it. They scale — at the largest accessibility size this is still half
+            // as big again — but a chalk note that grows to fill the screen has stopped being
+            // a note, and it pushes the tile it labels off the bench.
+            .dynamicTypeSize(...DynamicTypeSize.accessibility2)
     }
 }

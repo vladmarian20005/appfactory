@@ -165,11 +165,12 @@ struct WallLine: View {
             }
             .frame(height: 11)
 
-            HStack {
+            HStack(spacing: 10) {
                 Mark("THE WALL").foregroundStyle(brand.palette.inkSoft)
-                Spacer(minLength: 10)
+                Spacer(minLength: 0)
                 Mark("\(nextHundred) NEXT").foregroundStyle(brand.palette.inkSoft)
             }
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         }
         .frame(maxWidth: width)
         .accessibilityElement(children: .ignore)
