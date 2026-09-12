@@ -9,7 +9,18 @@
  * build. This fails on:
  *
  *   · a near-uniform image (a black, white or single-colour screen)
- *   · an image whose content is confined to the status bar, i.e. an empty app window
+ *   · an image whose content sits in one small part of the frame, i.e. an empty app window
+ *
+ * It asks "did a screen render", never "is this screen busy enough". The distinction matters
+ * because it got this wrong once, expensively. The old rule failed any capture where fewer
+ * than 4% of pixels differed from the background colour, which is not a property of an
+ * unrendered screen — it is a property of a calm one. Tidepour's sparest screens tripped it
+ * while its dense ones passed, so the same app produced "blank" captures on a different
+ * screen each run; the answer at the time was to wait longer, which could not have helped,
+ * because nothing was ever going to draw more pixels. Measured across every real capture in
+ * the repository, a rendered screen occupies 68-123 of 128 cells and a minimal one still
+ * occupies 30, against 0 for a window that never drew — so occupancy separates the two
+ * cleanly and density does not separate them at all.
  *
  * Exits non-zero and names the file, so a CI log says which screen broke.
  */
@@ -27,10 +38,17 @@ if (files.length === 0) {
 const say = (...a) => { if (!quiet) console.log(...a); };
 const warn = (...a) => { if (!quiet) console.error(...a); };
 
-// Below this fraction of distinct coarse colours the image is treated as flat.
+// Below this many distinct coarse colours the image is treated as flat.
 const MIN_DISTINCT = Number(process.env.QA_MIN_DISTINCT ?? 12);
-// Fraction of pixels that must differ from the modal colour.
-const MIN_VARIED = Number(process.env.QA_MIN_VARIED ?? 0.04);
+// Cells of the frame (below the status bar) that must contain something other than the
+// background. 8 of 128 is a twelfth of the screen; the sparsest real capture measured 30.
+const MIN_CELLS = Number(process.env.QA_MIN_CELLS ?? 8);
+// A backstop for an image that is uniform but for a speck: a rendered screen always clears
+// this by an order of magnitude. It is deliberately far below any real design — a calm screen
+// is not an unrendered one, and this must never be the check that decides.
+const MIN_VARIED = Number(process.env.QA_MIN_VARIED ?? 0.004);
+const COLS = 8;
+const ROWS = 16;
 
 let failed = 0;
 
@@ -47,6 +65,7 @@ for (const file of files) {
   // Ignore the top 6% so a rendered status bar cannot rescue an otherwise empty screen.
   const startY = Math.floor(height * 0.06);
   const buckets = new Map();
+  const samples = [];
   let counted = 0;
 
   for (let y = startY; y < height; y += 4) {
@@ -56,22 +75,37 @@ for (const file of files) {
       const key = ((data[i] >> 3) << 10) | ((data[i + 1] >> 3) << 5) | (data[i + 2] >> 3);
       buckets.set(key, (buckets.get(key) ?? 0) + 1);
       counted++;
+      const cx = Math.min(COLS - 1, Math.floor((x / width) * COLS));
+      const cy = Math.min(ROWS - 1, Math.floor(((y - startY) / (height - startY)) * ROWS));
+      samples.push([cy * COLS + cx, key]);
     }
   }
 
   const distinct = buckets.size;
-  const modal = Math.max(...buckets.values());
+  let modalKey = null;
+  let modal = 0;
+  for (const [k, v] of buckets) if (v > modal) { modal = v; modalKey = k; }
   const varied = 1 - modal / counted;
+
+  // Where the content is, not how much of it there is. A window that never drew has its
+  // content nowhere; a spare screen still has a title, a control and a tab bar, spread apart.
+  const cells = Array.from({ length: COLS * ROWS }, () => ({ n: 0, diff: 0 }));
+  for (const [ci, key] of samples) {
+    cells[ci].n++;
+    if (key !== modalKey) cells[ci].diff++;
+  }
+  const occupied = cells.filter((c) => c.n > 0 && c.diff / c.n >= 0.02).length;
 
   const problems = [];
   if (distinct < MIN_DISTINCT) problems.push(`only ${distinct} distinct colours (min ${MIN_DISTINCT})`);
-  if (varied < MIN_VARIED) problems.push(`${(varied * 100).toFixed(1)}% of pixels differ from the modal colour (min ${(MIN_VARIED * 100).toFixed(0)}%)`);
+  if (occupied < MIN_CELLS) problems.push(`content in only ${occupied} of ${COLS * ROWS} cells (min ${MIN_CELLS})`);
+  if (varied < MIN_VARIED) problems.push(`${(varied * 100).toFixed(2)}% of pixels differ from the modal colour (min ${(MIN_VARIED * 100).toFixed(1)}%)`);
 
   if (problems.length) {
     warn(`FAIL ${file}: ${problems.join("; ")} — looks like a blank or unrendered screen`);
     failed++;
   } else {
-    say(`ok   ${file}  ${width}x${height}  ${distinct} colours  ${(varied * 100).toFixed(1)}% varied`);
+    say(`ok   ${file}  ${width}x${height}  ${distinct} colours  ${occupied}/${COLS * ROWS} cells  ${(varied * 100).toFixed(1)}% varied`);
   }
 }
 

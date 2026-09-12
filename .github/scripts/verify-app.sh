@@ -33,7 +33,7 @@ echo "::endgroup::"
 
 # What App Store Connect would reject at upload, caught on the simulator build instead.
 echo "::group::Check the bundle"
-built=$(find "$app_dir/.build/Build/Products/Debug-iphonesimulator" -maxdepth 1 -name "*.app" | head -1)
+built=$(find "$app_dir/.build/Build/Products/${SIM_CONFIG:-Release}-iphonesimulator" -maxdepth 1 -name "*.app" | head -1)
 [ -n "$built" ] || { echo "::error::the build produced no .app"; exit 1; }
 .github/scripts/bundle-check.sh "$built"
 echo "::endgroup::"

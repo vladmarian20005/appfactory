@@ -113,11 +113,37 @@ capture_stable() {
   # screenshots on the first CI run: an app that has launched but not yet rendered shows a
   # flat white window, and two consecutive captures of flat white are identical, so the
   # stability test below declares victory on an empty screen. Wait for content first.
+  local drew=0
   while [ "$(date +%s)" -lt "$deadline" ]; do
     xcrun simctl io "$udid" screenshot --type=png "$tmp_a" >/dev/null 2>&1 || die "screenshot failed"
-    if node "$SCRIPT_DIR/qa/check-shot.mjs" --quiet "$tmp_a"; then break; fi
+    if node "$SCRIPT_DIR/qa/check-shot.mjs" --quiet "$tmp_a"; then drew=1; break; fi
     sleep 0.5
   done
+
+  # A screen that never drew is the one failure this tooling kept turning into a mystery: the
+  # run ends with a flat white PNG and nothing that says whether the app was busy, dead, or
+  # never launched. Waiting longer was the last answer and it only moved the threshold. Say
+  # what the state actually was, while the simulator still has it.
+  if [ "$drew" -eq 0 ]; then
+    {
+      echo "sim.sh: nothing drew in ${SHOT_TIMEOUT:-60}s — the capture below is a blank window."
+      if [ -n "${SHOT_BUNDLE:-}" ]; then
+        local pid
+        pid=$(xcrun simctl spawn "$udid" launchctl list 2>/dev/null | awk -v b="$SHOT_BUNDLE" '$3 ~ b {print $1}' | head -1)
+        if [ -n "$pid" ] && [ "$pid" != "-" ]; then
+          echo "  $SHOT_BUNDLE is running as pid $pid, so it launched and is still working or stuck."
+        else
+          echo "  $SHOT_BUNDLE is NOT running: it exited or crashed rather than being slow."
+        fi
+        echo "  last log lines from the app:"
+        xcrun simctl spawn "$udid" log show --style compact --last 90s \
+          --predicate "subsystem CONTAINS '$SHOT_BUNDLE' OR process CONTAINS '$SHOT_BUNDLE'" 2>/dev/null \
+          | tail -20 | sed 's/^/    /'
+      else
+        echo "  (set SHOT_BUNDLE to the bundle id for process and log diagnostics)"
+      fi
+    } >&2
+  fi
 
   # Phase 2: now that there is content, wait for it to stop moving.
   while [ "$(date +%s)" -lt "$deadline" ]; do
@@ -132,7 +158,7 @@ capture_stable() {
 
   # A screen with a live countdown never settles. Capturing the last frame is correct; the
   # blank check in verify-app.sh is what decides whether it is usable.
-  echo "sim.sh: screen never settled in ${SHOT_TIMEOUT:-30}s; capturing the last frame" >&2
+  [ "$drew" -eq 1 ] && echo "sim.sh: screen never settled in ${SHOT_TIMEOUT:-60}s; capturing the last frame" >&2
   mv "$tmp_a" "$out"; rm -f "$tmp_b"
 }
 
@@ -171,7 +197,15 @@ udid=$(resolve_udid)
 [ -n "$udid" ] || die "no available simulator (SIM_UDID unset, no device named '$FACTORY_DEVICE'). Run 'sim.sh boot'."
 dir=$(cd "$dir" 2>/dev/null && pwd) || die "no such directory: $2"
 derived="$dir/.build"
-products="$derived/Build/Products/Debug-iphonesimulator"
+# Release, not Debug. Swift builds Debug at -Onone, and an app whose work is a search — a
+# solver, a generator, a layout over a few thousand items — can be tens of times slower there
+# than in the build a player gets. That is what made captures photograph a window that had
+# not drawn yet: not a hang, an unoptimized one. It also makes the store screenshots pictures
+# of the shipped app rather than of a debug build. Nothing is gated on DEBUG — every launch
+# flag in LaunchOptions reads ProcessInfo.arguments — so nothing is lost by optimizing.
+# Override with SIM_CONFIG=Debug to step through something in Xcode.
+config=${SIM_CONFIG:-Release}
+products="$derived/Build/Products/$config-iphonesimulator"
 
 find_app() {
   [ -d "$products" ] || die "no build products; run 'sim.sh build' first"
@@ -186,7 +220,7 @@ case "$cmd" in
     [ -d "$dir/$scheme.xcodeproj" ] || (cd "$dir" && xcodegen generate -q) \
       || die "no $scheme.xcodeproj and xcodegen failed"
     xcodebuild -project "$dir/$scheme.xcodeproj" -scheme "$scheme" -sdk iphonesimulator \
-      -destination "id=$udid" -derivedDataPath "$derived" \
+      -configuration "$config" -destination "id=$udid" -derivedDataPath "$derived" \
       COMPILER_INDEX_STORE_ENABLE=NO -quiet build
     echo "Built $scheme"
     ;;
@@ -199,6 +233,11 @@ case "$cmd" in
     echo "Launched $bundle"
     ;;
   shot)
+    # The bundle id lets a failed capture say whether the app was working, stuck or gone.
+    if [ -z "${SHOT_BUNDLE:-}" ] && [ -d "$products" ]; then
+      app=$(find "$products" -maxdepth 1 -name "*.app" | head -1)
+      [ -n "$app" ] && SHOT_BUNDLE=$(plutil -extract CFBundleIdentifier raw -o - "$app/Info.plist" 2>/dev/null) && export SHOT_BUNDLE
+    fi
     capture_stable "$udid" "${arg4:?out.png}"
     echo "Saved $arg4"
     ;;
