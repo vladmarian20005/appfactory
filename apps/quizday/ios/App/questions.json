@@ -1,5 +1,5 @@
 {
- "version": 1,
+ "version": 2,
  "rounds": [
   {
    "round": 1,
@@ -9,8 +9,8 @@
      "question": "What is the capital of Japan?",
      "answers": [
       "Osaka",
-      "Kyoto",
       "Nagoya",
+      "Kyoto",
       "Tokyo"
      ],
      "correct": 3,
@@ -23,12 +23,12 @@
      "id": "r01q02",
      "question": "How many sides does a hexagon have?",
      "answers": [
-      "Seven",
+      "Six",
       "Eight",
-      "Five",
-      "Six"
+      "Seven",
+      "Five"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "The prefix hexa- is Greek for six.",
      "source": "Oxford English Dictionary",
      "category": "General Knowledge",
@@ -38,10 +38,10 @@
      "id": "r01q03",
      "question": "Which planet is known as the Red Planet?",
      "answers": [
-      "Venus",
+      "Jupiter",
       "Mars",
       "Mercury",
-      "Jupiter"
+      "Venus"
      ],
      "correct": 1,
      "explanation": "Iron oxide dust across the surface gives Mars its rusty colour.",
@@ -53,12 +53,12 @@
      "id": "r01q04",
      "question": "Which element has the chemical symbol Au?",
      "answers": [
+      "Silver",
       "Gold",
       "Argon",
-      "Aluminium",
-      "Silver"
+      "Aluminium"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Au comes from aurum, the Latin word for gold.",
      "source": "Royal Society of Chemistry",
      "category": "Science",
@@ -83,12 +83,12 @@
      "id": "r01q06",
      "question": "Which is the largest ocean on Earth?",
      "answers": [
-      "Pacific",
       "Indian",
-      "Arctic",
-      "Atlantic"
+      "Atlantic",
+      "Pacific",
+      "Arctic"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "The Pacific covers about a third of the planet's surface, more than all the land combined.",
      "source": "NOAA",
      "category": "Geography",
@@ -98,12 +98,12 @@
      "id": "r01q07",
      "question": "In which country were the ancient Olympic Games held?",
      "answers": [
-      "Italy",
       "Egypt",
       "Greece",
-      "Turkey"
+      "Turkey",
+      "Italy"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "They were held at Olympia from 776 BC.",
      "source": "International Olympic Committee",
      "category": "History",
@@ -113,12 +113,12 @@
      "id": "r01q08",
      "question": "What is the longest bone in the human body?",
      "answers": [
-      "Humerus",
-      "Femur",
       "Tibia",
-      "Fibula"
+      "Fibula",
+      "Femur",
+      "Humerus"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "The femur, or thigh bone, is roughly a quarter of a person's height.",
      "source": "Gray's Anatomy",
      "category": "Science",
@@ -129,11 +129,11 @@
      "question": "Which novel opens with the line Call me Ishmael?",
      "answers": [
       "Treasure Island",
-      "Moby-Dick",
       "The Old Man and the Sea",
-      "Robinson Crusoe"
+      "Robinson Crusoe",
+      "Moby-Dick"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Herman Melville opened his 1851 novel with those three words.",
      "source": "Britannica",
      "category": "Art & Literature",
@@ -143,12 +143,12 @@
      "id": "r01q10",
      "question": "What is the smallest country in the world by area?",
      "answers": [
-      "Vatican City",
-      "Monaco",
       "Nauru",
-      "San Marino"
+      "Monaco",
+      "San Marino",
+      "Vatican City"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Vatican City covers about 0.44 square kilometres.",
      "source": "CIA World Factbook",
      "category": "Geography",
@@ -163,12 +163,12 @@
      "id": "r02q01",
      "question": "How many continents are there?",
      "answers": [
+      "Five",
       "Eight",
-      "Seven",
       "Six",
-      "Five"
+      "Seven"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Africa, Antarctica, Asia, Australia, Europe, North America and South America.",
      "source": "National Geographic",
      "category": "Geography",
@@ -178,12 +178,12 @@
      "id": "r02q02",
      "question": "What colour do you get by mixing blue and yellow paint?",
      "answers": [
-      "Purple",
-      "Orange",
+      "Green",
       "Brown",
-      "Green"
+      "Orange",
+      "Purple"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "Blue and yellow pigments each absorb what the other reflects, leaving green.",
      "source": "Britannica",
      "category": "General Knowledge",
@@ -193,12 +193,12 @@
      "id": "r02q03",
      "question": "Which animal is the largest living land mammal?",
      "answers": [
+      "Giraffe",
       "African elephant",
-      "White rhinoceros",
       "Hippopotamus",
-      "Giraffe"
+      "White rhinoceros"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "A bull African elephant can weigh over six tonnes.",
      "source": "World Wildlife Fund",
      "category": "Nature",
@@ -208,8 +208,8 @@
      "id": "r02q04",
      "question": "Which country gave the Statue of Liberty to the United States?",
      "answers": [
-      "Britain",
       "Spain",
+      "Britain",
       "Italy",
       "France"
      ],
@@ -224,11 +224,11 @@
      "question": "What is the hardest naturally occurring substance?",
      "answers": [
       "Quartz",
-      "Steel",
       "Granite",
-      "Diamond"
+      "Diamond",
+      "Steel"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Diamond sits at 10, the top of the Mohs scale of hardness.",
      "source": "US Geological Survey",
      "category": "Science",
@@ -240,8 +240,8 @@
      "answers": [
       "Piano",
       "Accordion",
-      "Harpsichord",
-      "Organ"
+      "Organ",
+      "Harpsichord"
      ],
      "correct": 0,
      "explanation": "A modern grand or upright piano has 52 white and 36 black keys.",
@@ -253,9 +253,9 @@
      "id": "r02q07",
      "question": "In which city would you find the Colosseum?",
      "answers": [
-      "Naples",
-      "Istanbul",
       "Athens",
+      "Istanbul",
+      "Naples",
       "Rome"
      ],
      "correct": 3,
@@ -268,12 +268,12 @@
      "id": "r02q08",
      "question": "What does the acronym LASER stand for?",
      "answers": [
-      "Linear Amplified Signal Emission Ray",
       "Light Absorption by Silicon Emission Resistor",
-      "Light Amplification by Stimulated Emission of Radiation",
-      "Layered Analysis of Spectral Energy Range"
+      "Layered Analysis of Spectral Energy Range",
+      "Linear Amplified Signal Emission Ray",
+      "Light Amplification by Stimulated Emission of Radiation"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "The name describes exactly how the device produces its beam.",
      "source": "Britannica",
      "category": "Science",
@@ -283,12 +283,12 @@
      "id": "r02q09",
      "question": "Which sea is the saltiest large body of water on Earth's surface?",
      "answers": [
-      "Dead Sea",
       "Mediterranean Sea",
       "Caspian Sea",
+      "Dead Sea",
       "Red Sea"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "It is roughly ten times saltier than the ocean, which is why swimmers float so easily.",
      "source": "Britannica",
      "category": "Geography",
@@ -298,12 +298,12 @@
      "id": "r02q10",
      "question": "Who wrote the play A Doll's House?",
      "answers": [
-      "Bertolt Brecht",
-      "Henrik Ibsen",
       "Anton Chekhov",
-      "August Strindberg"
+      "August Strindberg",
+      "Bertolt Brecht",
+      "Henrik Ibsen"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Ibsen's 1879 play caused a scandal for the ending, in which Nora walks out.",
      "source": "Britannica",
      "category": "Art & Literature",
@@ -318,12 +318,12 @@
      "id": "r03q01",
      "question": "How many minutes are in a full day?",
      "answers": [
-      "1,600",
       "1,200",
-      "1,440",
-      "2,400"
+      "2,400",
+      "1,600",
+      "1,440"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "24 hours times 60 minutes.",
      "source": "General arithmetic",
      "category": "General Knowledge",
@@ -333,12 +333,12 @@
      "id": "r03q02",
      "question": "What is the freezing point of water in degrees Celsius?",
      "answers": [
-      "0",
-      "100",
       "10",
-      "32"
+      "32",
+      "100",
+      "0"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "The Celsius scale sets zero at the freezing point of water at sea level.",
      "source": "National Institute of Standards and Technology",
      "category": "Science",
@@ -350,8 +350,8 @@
      "answers": [
       "Penguin",
       "Petrel",
-      "Puffin",
-      "Albatross"
+      "Albatross",
+      "Puffin"
      ],
      "correct": 0,
      "explanation": "Penguin wings work as flippers for swimming rather than for flight.",
@@ -363,12 +363,12 @@
      "id": "r03q04",
      "question": "Which river runs through Paris?",
      "answers": [
-      "Seine",
       "Rhone",
+      "Seine",
       "Garonne",
       "Loire"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "The Seine crosses the city from south-east to south-west.",
      "source": "Britannica",
      "category": "Geography",
@@ -378,12 +378,12 @@
      "id": "r03q05",
      "question": "Who was the first person to walk on the Moon?",
      "answers": [
+      "Buzz Aldrin",
       "Yuri Gagarin",
       "Michael Collins",
-      "Neil Armstrong",
-      "Buzz Aldrin"
+      "Neil Armstrong"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "Armstrong stepped onto the surface on 20 July 1969, ahead of Buzz Aldrin.",
      "source": "NASA",
      "category": "Space",
@@ -409,8 +409,8 @@
      "question": "Which gas do plants absorb from the air for photosynthesis?",
      "answers": [
       "Carbon dioxide",
-      "Hydrogen",
       "Nitrogen",
+      "Hydrogen",
       "Oxygen"
      ],
      "correct": 0,
@@ -424,11 +424,11 @@
      "question": "Which country has the most time zones?",
      "answers": [
       "China",
-      "Russia",
       "United States",
-      "France"
+      "France",
+      "Russia"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Counting its overseas territories, France spans twelve.",
      "source": "CIA World Factbook",
      "category": "Geography",
@@ -438,12 +438,12 @@
      "id": "r03q09",
      "question": "What is the study of fungi called?",
      "answers": [
-      "Entomology",
       "Mycology",
+      "Virology",
       "Botany",
-      "Virology"
+      "Entomology"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "From the Greek mykes, meaning mushroom.",
      "source": "Oxford English Dictionary",
      "category": "Science",
@@ -453,12 +453,12 @@
      "id": "r03q10",
      "question": "Which composer wrote the opera The Magic Flute?",
      "answers": [
-      "Franz Schubert",
-      "Joseph Haydn",
       "Ludwig van Beethoven",
-      "Wolfgang Amadeus Mozart"
+      "Wolfgang Amadeus Mozart",
+      "Franz Schubert",
+      "Joseph Haydn"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Mozart finished it in 1791, the year he died.",
      "source": "Britannica",
      "category": "Music",
@@ -473,10 +473,10 @@
      "id": "r04q01",
      "question": "What is the largest planet in the solar system?",
      "answers": [
-      "Neptune",
-      "Jupiter",
       "Uranus",
-      "Saturn"
+      "Jupiter",
+      "Saturn",
+      "Neptune"
      ],
      "correct": 1,
      "explanation": "Jupiter is more massive than all the other planets put together.",
@@ -488,12 +488,12 @@
      "id": "r04q02",
      "question": "How many colours are in a rainbow as traditionally listed?",
      "answers": [
-      "Six",
-      "Eight",
       "Seven",
-      "Five"
+      "Six",
+      "Five",
+      "Eight"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "Red, orange, yellow, green, blue, indigo and violet.",
      "source": "Britannica",
      "category": "General Knowledge",
@@ -503,12 +503,12 @@
      "id": "r04q03",
      "question": "What is the main ingredient in guacamole?",
      "answers": [
-      "Pea",
+      "Avocado",
       "Courgette",
-      "Cucumber",
-      "Avocado"
+      "Pea",
+      "Cucumber"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "Guacamole comes from the Nahuatl ahuacamolli, meaning avocado sauce.",
      "source": "Oxford English Dictionary",
      "category": "Food & Drink",
@@ -518,12 +518,12 @@
      "id": "r04q04",
      "question": "Which country is home to the kangaroo?",
      "answers": [
-      "Australia",
+      "South Africa",
       "India",
       "Brazil",
-      "South Africa"
+      "Australia"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "All four large kangaroo species are native to Australia.",
      "source": "Australian Museum",
      "category": "Nature",
@@ -533,12 +533,12 @@
      "id": "r04q05",
      "question": "In which year did the Second World War end?",
      "answers": [
-      "1944",
       "1945",
       "1946",
+      "1944",
       "1943"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "Germany surrendered in May and Japan in September 1945.",
      "source": "Imperial War Museum",
      "category": "History",
@@ -548,12 +548,12 @@
      "id": "r04q06",
      "question": "What does CPU stand for in computing?",
      "answers": [
-      "Central Processing Unit",
       "Computer Processing Unit",
-      "Core Programming Unit",
-      "Central Power Unit"
+      "Central Processing Unit",
+      "Central Power Unit",
+      "Core Programming Unit"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "It is the chip that carries out a program's instructions.",
      "source": "Britannica",
      "category": "Technology",
@@ -565,8 +565,8 @@
      "answers": [
       "Hamlet",
       "King Lear",
-      "Macbeth",
-      "Othello"
+      "Othello",
+      "Macbeth"
      ],
      "correct": 0,
      "explanation": "They are Hamlet's old schoolfriends, sent to spy on him.",
@@ -578,12 +578,12 @@
      "id": "r04q08",
      "question": "What is the capital of Canada?",
      "answers": [
-      "Toronto",
+      "Ottawa",
       "Montreal",
       "Vancouver",
-      "Ottawa"
+      "Toronto"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "Queen Victoria chose Ottawa as the capital in 1857, ahead of the larger cities.",
      "source": "Government of Canada",
      "category": "Geography",
@@ -593,12 +593,12 @@
      "id": "r04q09",
      "question": "Which metal is liquid at room temperature?",
      "answers": [
-      "Mercury",
-      "Zinc",
       "Lead",
-      "Tin"
+      "Tin",
+      "Mercury",
+      "Zinc"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "Mercury melts at about minus 39 degrees Celsius.",
      "source": "Royal Society of Chemistry",
      "category": "Science",
@@ -608,12 +608,12 @@
      "id": "r04q10",
      "question": "Who directed the 1960 film Psycho?",
      "answers": [
-      "Orson Welles",
-      "Alfred Hitchcock",
       "John Huston",
-      "Billy Wilder"
+      "Billy Wilder",
+      "Alfred Hitchcock",
+      "Orson Welles"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "Hitchcock shot it in black and white with the crew from his television series.",
      "source": "British Film Institute",
      "category": "Film & TV",
@@ -628,12 +628,12 @@
      "id": "r05q01",
      "question": "How many legs does a spider have?",
      "answers": [
-      "Twelve",
-      "Eight",
       "Ten",
-      "Six"
+      "Six",
+      "Twelve",
+      "Eight"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Eight legs separate spiders from insects, which have six.",
      "source": "Natural History Museum",
      "category": "Nature",
@@ -643,12 +643,12 @@
      "id": "r05q02",
      "question": "What is the currency of the United Kingdom?",
      "answers": [
-      "Krona",
       "Euro",
-      "Franc",
-      "Pound sterling"
+      "Krona",
+      "Pound sterling",
+      "Franc"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Sterling is one of the oldest currencies still in use.",
      "source": "Bank of England",
      "category": "General Knowledge",
@@ -659,9 +659,9 @@
      "question": "Which sport is played at Wimbledon?",
      "answers": [
       "Tennis",
-      "Golf",
       "Rugby",
-      "Cricket"
+      "Cricket",
+      "Golf"
      ],
      "correct": 0,
      "explanation": "The championships have been played on grass in south-west London since 1877.",
@@ -673,12 +673,12 @@
      "id": "r05q04",
      "question": "What is the chemical formula for water?",
      "answers": [
-      "H2O",
-      "H2O2",
       "NaCl",
-      "CO2"
+      "H2O",
+      "CO2",
+      "H2O2"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Two hydrogen atoms bonded to one oxygen atom.",
      "source": "Royal Society of Chemistry",
      "category": "Science",
@@ -688,12 +688,12 @@
      "id": "r05q05",
      "question": "Which country built the Great Wall?",
      "answers": [
-      "Japan",
       "China",
       "Korea",
+      "Japan",
       "Mongolia"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "Successive dynasties built and rebuilt it over roughly two thousand years.",
      "source": "UNESCO",
      "category": "History",
@@ -703,12 +703,12 @@
      "id": "r05q06",
      "question": "What is the longest river in Africa?",
      "answers": [
-      "Niger",
       "Nile",
+      "Congo",
       "Zambezi",
-      "Congo"
+      "Niger"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "The Nile runs about 6,650 kilometres to the Mediterranean.",
      "source": "Britannica",
      "category": "Geography",
@@ -718,12 +718,12 @@
      "id": "r05q07",
      "question": "Which artist cut off part of his own ear?",
      "answers": [
+      "Henri Matisse",
       "Salvador Dali",
-      "Vincent van Gogh",
       "Pablo Picasso",
-      "Henri Matisse"
+      "Vincent van Gogh"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Van Gogh injured his left ear in Arles in December 1888.",
      "source": "Van Gogh Museum",
      "category": "Art & Literature",
@@ -733,12 +733,12 @@
      "id": "r05q08",
      "question": "What is the largest organ of the human body?",
      "answers": [
-      "Liver",
-      "Intestine",
       "Skin",
-      "Lung"
+      "Liver",
+      "Lung",
+      "Intestine"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "An adult's skin covers roughly two square metres.",
      "source": "National Institutes of Health",
      "category": "Science",
@@ -748,12 +748,12 @@
      "id": "r05q09",
      "question": "Which language has the most native speakers worldwide?",
      "answers": [
-      "Mandarin Chinese",
-      "Spanish",
       "Hindi",
-      "English"
+      "English",
+      "Spanish",
+      "Mandarin Chinese"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Mandarin has more first-language speakers than any other language.",
      "source": "Ethnologue",
      "category": "Language",
@@ -763,12 +763,12 @@
      "id": "r05q10",
      "question": "In Greek myth, who flew too close to the Sun?",
      "answers": [
-      "Orpheus",
       "Theseus",
-      "Icarus",
-      "Perseus"
+      "Perseus",
+      "Orpheus",
+      "Icarus"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "The heat melted the wax in his wings and he fell into the sea.",
      "source": "Britannica",
      "category": "Art & Literature",
@@ -783,12 +783,12 @@
      "id": "r06q01",
      "question": "What do bees collect to make honey?",
      "answers": [
-      "Sap",
-      "Pollen",
       "Dew",
-      "Nectar"
+      "Pollen",
+      "Nectar",
+      "Sap"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Bees gather nectar and reduce its water content inside the hive.",
      "source": "Royal Entomological Society",
      "category": "Nature",
@@ -798,12 +798,12 @@
      "id": "r06q02",
      "question": "How many strings does a standard guitar have?",
      "answers": [
-      "Four",
-      "Seven",
       "Five",
-      "Six"
+      "Seven",
+      "Six",
+      "Four"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Standard tuning runs E, A, D, G, B, E.",
      "source": "Britannica",
      "category": "Music",
@@ -814,9 +814,9 @@
      "question": "Which shape has three sides?",
      "answers": [
       "Triangle",
-      "Square",
       "Pentagon",
-      "Rhombus"
+      "Rhombus",
+      "Square"
      ],
      "correct": 0,
      "explanation": "Tri- means three in both Latin and Greek.",
@@ -828,12 +828,12 @@
      "id": "r06q04",
      "question": "What is the capital of Australia?",
      "answers": [
-      "Canberra",
-      "Melbourne",
+      "Perth",
       "Sydney",
-      "Perth"
+      "Melbourne",
+      "Canberra"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Canberra was built as a compromise between rivals Sydney and Melbourne.",
      "source": "Parliament of Australia",
      "category": "Geography",
@@ -843,12 +843,12 @@
      "id": "r06q05",
      "question": "Who wrote the theory of general relativity?",
      "answers": [
-      "Isaac Newton",
       "Niels Bohr",
-      "Albert Einstein",
-      "Max Planck"
+      "Max Planck",
+      "Isaac Newton",
+      "Albert Einstein"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "Einstein published it in 1915, describing gravity as curved spacetime.",
      "source": "Nobel Prize",
      "category": "Science",
@@ -858,12 +858,12 @@
      "id": "r06q06",
      "question": "Which country hosted the first modern Olympic Games in 1896?",
      "answers": [
-      "Greece",
-      "Britain",
       "France",
-      "United States"
+      "Britain",
+      "United States",
+      "Greece"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "They were held in Athens, reviving the ancient games.",
      "source": "International Olympic Committee",
      "category": "Sport",
@@ -873,12 +873,12 @@
      "id": "r06q07",
      "question": "What is the main gas in Earth's atmosphere?",
      "answers": [
-      "Argon",
-      "Carbon dioxide",
       "Oxygen",
-      "Nitrogen"
+      "Nitrogen",
+      "Argon",
+      "Carbon dioxide"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Nitrogen makes up about 78 per cent of the air.",
      "source": "NOAA",
      "category": "Science",
@@ -888,12 +888,12 @@
      "id": "r06q08",
      "question": "Which city is home to the Hermitage Museum?",
      "answers": [
-      "Moscow",
-      "Vienna",
+      "Saint Petersburg",
       "Prague",
-      "Saint Petersburg"
+      "Moscow",
+      "Vienna"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "The museum grew from Catherine the Great's private collection.",
      "source": "UNESCO",
      "category": "Art & Literature",
@@ -903,12 +903,12 @@
      "id": "r06q09",
      "question": "What is the deepest point in the ocean?",
      "answers": [
-      "Mariana Trench",
+      "Tonga Trench",
       "Java Trench",
       "Puerto Rico Trench",
-      "Tonga Trench"
+      "Mariana Trench"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Challenger Deep in the Mariana Trench is about 11 kilometres down.",
      "source": "NOAA",
      "category": "Geography",
@@ -919,11 +919,11 @@
      "question": "Which vitamin is produced by the skin in sunlight?",
      "answers": [
       "Vitamin K",
-      "Vitamin C",
       "Vitamin D",
+      "Vitamin C",
       "Vitamin A"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Ultraviolet B light triggers vitamin D synthesis in the skin.",
      "source": "National Institutes of Health",
      "category": "Science",
@@ -938,12 +938,12 @@
      "id": "r07q01",
      "question": "What is the opposite of nocturnal?",
      "answers": [
-      "Diurnal",
-      "Arboreal",
+      "Aquatic",
       "Migratory",
-      "Aquatic"
+      "Diurnal",
+      "Arboreal"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "Diurnal animals are active in daylight.",
      "source": "Oxford English Dictionary",
      "category": "Language",
@@ -954,11 +954,11 @@
      "question": "Which fruit is traditionally used to make cider?",
      "answers": [
       "Cherry",
-      "Apple",
+      "Pear",
       "Grape",
-      "Pear"
+      "Apple"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Cider is fermented apple juice; the pear version is called perry.",
      "source": "Britannica",
      "category": "Food & Drink",
@@ -968,12 +968,12 @@
      "id": "r07q03",
      "question": "How many wheels does a standard bicycle have?",
      "answers": [
-      "Three",
       "One",
-      "Four",
-      "Two"
+      "Two",
+      "Three",
+      "Four"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Bi- means two, as in bicycle.",
      "source": "Oxford English Dictionary",
      "category": "General Knowledge",
@@ -983,12 +983,12 @@
      "id": "r07q04",
      "question": "Which planet has the most prominent ring system?",
      "answers": [
-      "Saturn",
       "Jupiter",
+      "Uranus",
       "Neptune",
-      "Uranus"
+      "Saturn"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Saturn's rings are mostly water ice and span hundreds of thousands of kilometres.",
      "source": "NASA",
      "category": "Space",
@@ -998,12 +998,12 @@
      "id": "r07q05",
      "question": "In which country is Machu Picchu?",
      "answers": [
-      "Chile",
-      "Bolivia",
+      "Peru",
       "Ecuador",
-      "Peru"
+      "Chile",
+      "Bolivia"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "The Inca site sits high in the Andes above the Urubamba valley.",
      "source": "UNESCO",
      "category": "Geography",
@@ -1013,10 +1013,10 @@
      "id": "r07q06",
      "question": "Who wrote Pride and Prejudice?",
      "answers": [
-      "George Eliot",
+      "Elizabeth Gaskell",
       "Jane Austen",
-      "Charlotte Bronte",
-      "Elizabeth Gaskell"
+      "George Eliot",
+      "Charlotte Bronte"
      ],
      "correct": 1,
      "explanation": "Austen published it anonymously in 1813.",
@@ -1028,12 +1028,12 @@
      "id": "r07q07",
      "question": "What does DNA stand for?",
      "answers": [
-      "Deoxyribonucleic acid",
+      "Dinucleic acid",
       "Deoxyribose nucleotide array",
-      "Double nucleic acid",
-      "Dinucleic acid"
+      "Deoxyribonucleic acid",
+      "Double nucleic acid"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "The molecule carries the genetic instructions of living things.",
      "source": "National Human Genome Research Institute",
      "category": "Science",
@@ -1043,12 +1043,12 @@
      "id": "r07q08",
      "question": "Which empire was ruled by Genghis Khan?",
      "answers": [
-      "Ottoman Empire",
-      "Byzantine Empire",
       "Mongol Empire",
+      "Byzantine Empire",
+      "Ottoman Empire",
       "Persian Empire"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "He united the Mongol tribes and began the largest contiguous land empire in history.",
      "source": "Britannica",
      "category": "History",
@@ -1059,8 +1059,8 @@
      "question": "What is the term for a word that reads the same forwards and backwards?",
      "answers": [
       "Acronym",
-      "Anagram",
       "Homonym",
+      "Anagram",
       "Palindrome"
      ],
      "correct": 3,
@@ -1073,12 +1073,12 @@
      "id": "r07q10",
      "question": "Which animal has the longest recorded lifespan?",
      "answers": [
-      "Ocean quahog clam",
-      "Galapagos tortoise",
       "Greenland shark",
-      "Bowhead whale"
+      "Ocean quahog clam",
+      "Bowhead whale",
+      "Galapagos tortoise"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "One ocean quahog was dated at over 500 years by its shell rings.",
      "source": "Bangor University",
      "category": "Nature",
@@ -1093,12 +1093,12 @@
      "id": "r08q01",
      "question": "What is the capital of Italy?",
      "answers": [
-      "Florence",
-      "Venice",
+      "Rome",
       "Milan",
-      "Rome"
+      "Venice",
+      "Florence"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "Rome has been the capital of unified Italy since 1871.",
      "source": "Britannica",
      "category": "Geography",
@@ -1108,12 +1108,12 @@
      "id": "r08q02",
      "question": "How many days are in a leap year?",
      "answers": [
+      "365",
       "367",
-      "366",
       "364",
-      "365"
+      "366"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "A leap year adds 29 February to keep the calendar in step with the seasons.",
      "source": "US Naval Observatory",
      "category": "General Knowledge",
@@ -1123,12 +1123,12 @@
      "id": "r08q03",
      "question": "Which large cat is known for its mane?",
      "answers": [
-      "Jaguar",
       "Tiger",
       "Lion",
+      "Jaguar",
       "Leopard"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Only male lions grow the mane, and it thickens with age.",
      "source": "World Wildlife Fund",
      "category": "Nature",
@@ -1138,12 +1138,12 @@
      "id": "r08q04",
      "question": "What is the speed of light in a vacuum, to the nearest thousand kilometres per second?",
      "answers": [
-      "1,000,000 km/s",
-      "150,000 km/s",
       "300,000 km/s",
-      "500,000 km/s"
+      "500,000 km/s",
+      "1,000,000 km/s",
+      "150,000 km/s"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "The exact figure is 299,792 kilometres per second.",
      "source": "National Institute of Standards and Technology",
      "category": "Science",
@@ -1154,8 +1154,8 @@
      "question": "Which country is the largest by land area?",
      "answers": [
       "China",
-      "Canada",
       "United States",
+      "Canada",
       "Russia"
      ],
      "correct": 3,
@@ -1169,9 +1169,9 @@
      "question": "Who composed the Ninth Symphony that ends with the Ode to Joy?",
      "answers": [
       "Ludwig van Beethoven",
-      "Gustav Mahler",
       "Johannes Brahms",
-      "Franz Schubert"
+      "Franz Schubert",
+      "Gustav Mahler"
      ],
      "correct": 0,
      "explanation": "Beethoven finished it in 1824, when he was almost totally deaf.",
@@ -1183,12 +1183,12 @@
      "id": "r08q07",
      "question": "What is the largest species of shark?",
      "answers": [
-      "Basking shark",
       "Tiger shark",
       "Whale shark",
-      "Great white shark"
+      "Great white shark",
+      "Basking shark"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Whale sharks reach about 18 metres and feed on plankton.",
      "source": "Marine Conservation Society",
      "category": "Nature",
@@ -1198,12 +1198,12 @@
      "id": "r08q08",
      "question": "Which two elements make up common table salt?",
      "answers": [
-      "Sodium and chlorine",
-      "Potassium and chlorine",
       "Sodium and sulphur",
-      "Calcium and chlorine"
+      "Calcium and chlorine",
+      "Potassium and chlorine",
+      "Sodium and chlorine"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Table salt is sodium chloride, NaCl.",
      "source": "Royal Society of Chemistry",
      "category": "Science",
@@ -1213,12 +1213,12 @@
      "id": "r08q09",
      "question": "In which century did the French Revolution begin?",
      "answers": [
-      "17th",
       "19th",
       "16th",
-      "18th"
+      "18th",
+      "17th"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "It began in 1789, near the end of the eighteenth century.",
      "source": "Britannica",
      "category": "History",
@@ -1228,12 +1228,12 @@
      "id": "r08q10",
      "question": "What is the collective noun for a group of crows?",
      "answers": [
-      "A pride",
-      "A murder",
       "A gaggle",
-      "A parliament"
+      "A parliament",
+      "A murder",
+      "A pride"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "The term dates from late medieval lists of hunting nouns.",
      "source": "Oxford English Dictionary",
      "category": "Language",
@@ -1248,9 +1248,9 @@
      "id": "r09q01",
      "question": "Which meal is traditionally eaten in the morning?",
      "answers": [
-      "Dinner",
-      "Breakfast",
       "Lunch",
+      "Breakfast",
+      "Dinner",
       "Supper"
      ],
      "correct": 1,
@@ -1263,12 +1263,12 @@
      "id": "r09q02",
      "question": "How many sides does a cube have?",
      "answers": [
-      "Twelve",
-      "Eight",
       "Four",
-      "Six"
+      "Eight",
+      "Six",
+      "Twelve"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "A cube has six square faces, twelve edges and eight corners.",
      "source": "Britannica",
      "category": "General Knowledge",
@@ -1278,10 +1278,10 @@
      "id": "r09q03",
      "question": "What is the largest mammal on Earth?",
      "answers": [
-      "African elephant",
+      "Sperm whale",
       "Blue whale",
-      "Giraffe",
-      "Sperm whale"
+      "African elephant",
+      "Giraffe"
      ],
      "correct": 1,
      "explanation": "A blue whale can reach 30 metres and 150 tonnes.",
@@ -1293,12 +1293,12 @@
      "id": "r09q04",
      "question": "Which country is famous for the tango?",
      "answers": [
-      "Mexico",
       "Argentina",
-      "Spain",
-      "Brazil"
+      "Brazil",
+      "Mexico",
+      "Spain"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "The dance grew out of the working districts of Buenos Aires and Montevideo.",
      "source": "UNESCO",
      "category": "Music",
@@ -1309,11 +1309,11 @@
      "question": "What is the tallest mountain above sea level?",
      "answers": [
       "Kangchenjunga",
-      "Denali",
       "K2",
-      "Mount Everest"
+      "Mount Everest",
+      "Denali"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Everest reaches about 8,849 metres on the Nepal-Tibet border.",
      "source": "National Geographic",
      "category": "Geography",
@@ -1323,10 +1323,10 @@
      "id": "r09q06",
      "question": "Who painted the ceiling of the Sistine Chapel?",
      "answers": [
-      "Raphael",
-      "Michelangelo",
       "Donatello",
-      "Leonardo da Vinci"
+      "Michelangelo",
+      "Leonardo da Vinci",
+      "Raphael"
      ],
      "correct": 1,
      "explanation": "He worked on it between 1508 and 1512, mostly standing on scaffolding.",
@@ -1338,9 +1338,9 @@
      "id": "r09q07",
      "question": "What force keeps planets in orbit around the Sun?",
      "answers": [
-      "Friction",
-      "Gravity",
       "Inertia",
+      "Gravity",
+      "Friction",
       "Magnetism"
      ],
      "correct": 1,
@@ -1353,8 +1353,8 @@
      "id": "r09q08",
      "question": "Which organ produces insulin?",
      "answers": [
-      "Thyroid",
       "Kidney",
+      "Thyroid",
       "Pancreas",
       "Liver"
      ],
@@ -1368,12 +1368,12 @@
      "id": "r09q09",
      "question": "Which ancient wonder stood in the harbour of Rhodes?",
      "answers": [
-      "Temple of Artemis",
       "Colossus of Rhodes",
       "Hanging Gardens",
-      "Lighthouse of Alexandria"
+      "Lighthouse of Alexandria",
+      "Temple of Artemis"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "The bronze statue stood about 33 metres tall before an earthquake toppled it.",
      "source": "Britannica",
      "category": "History",
@@ -1383,12 +1383,12 @@
      "id": "r09q10",
      "question": "What is the only letter not appearing in any US state name?",
      "answers": [
-      "Q",
+      "Z",
       "J",
       "X",
-      "Z"
+      "Q"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "J appears in New Jersey, X in Texas and Z in Arizona.",
      "source": "US Census Bureau",
      "category": "Language",
@@ -1403,12 +1403,12 @@
      "id": "r10q01",
      "question": "What colour is a ripe banana?",
      "answers": [
-      "Purple",
-      "Red",
       "Blue",
-      "Yellow"
+      "Yellow",
+      "Purple",
+      "Red"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Chlorophyll breaks down as the fruit ripens, leaving yellow pigments.",
      "source": "Britannica",
      "category": "Food & Drink",
@@ -1418,10 +1418,10 @@
      "id": "r10q02",
      "question": "How many hours are in two days?",
      "answers": [
-      "36",
       "24",
+      "72",
       "48",
-      "72"
+      "36"
      ],
      "correct": 2,
      "explanation": "Two days of 24 hours each.",
@@ -1433,12 +1433,12 @@
      "id": "r10q03",
      "question": "Which season comes after summer?",
      "answers": [
+      "Monsoon",
       "Autumn",
       "Winter",
-      "Monsoon",
       "Spring"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Autumn follows summer and precedes winter.",
      "source": "Oxford English Dictionary",
      "category": "General Knowledge",
@@ -1448,12 +1448,12 @@
      "id": "r10q04",
      "question": "What is the capital of Egypt?",
      "answers": [
-      "Luxor",
       "Alexandria",
-      "Cairo",
-      "Giza"
+      "Luxor",
+      "Giza",
+      "Cairo"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "Cairo sits on the Nile and is the largest city in the Arab world.",
      "source": "Britannica",
      "category": "Geography",
@@ -1463,12 +1463,12 @@
      "id": "r10q05",
      "question": "Which gas makes up most of the Sun?",
      "answers": [
-      "Carbon",
       "Hydrogen",
+      "Carbon",
       "Oxygen",
       "Helium"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "About three quarters of the Sun's mass is hydrogen, which it fuses into helium.",
      "source": "NASA",
      "category": "Space",
@@ -1493,12 +1493,12 @@
      "id": "r10q07",
      "question": "In which sport would you perform a slam dunk?",
      "answers": [
+      "Basketball",
       "Netball",
       "Handball",
-      "Basketball",
       "Volleyball"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "A dunk is scored by pushing the ball down through the hoop.",
      "source": "NBA",
      "category": "Sport",
@@ -1523,12 +1523,12 @@
      "id": "r10q09",
      "question": "Which country has the longest coastline?",
      "answers": [
-      "Indonesia",
       "Australia",
       "Canada",
+      "Indonesia",
       "Russia"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Canada's coastline runs over 200,000 kilometres including its islands.",
      "source": "CIA World Factbook",
      "category": "Geography",
@@ -1538,12 +1538,12 @@
      "id": "r10q10",
      "question": "What does the Richter scale measure?",
      "answers": [
-      "Wind speed",
-      "Sound volume",
       "Earthquake magnitude",
-      "Ocean depth"
+      "Ocean depth",
+      "Sound volume",
+      "Wind speed"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "It expresses the energy released by an earthquake on a logarithmic scale.",
      "source": "US Geological Survey",
      "category": "Science",
@@ -1558,12 +1558,12 @@
      "id": "r11q01",
      "question": "Which meal does the word brunch combine?",
      "answers": [
+      "Breakfast and lunch",
       "Breakfast and dinner",
-      "Tea and supper",
       "Lunch and dinner",
-      "Breakfast and lunch"
+      "Tea and supper"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "The blended word first appeared in British student slang in the 1890s.",
      "source": "Oxford English Dictionary",
      "category": "Food & Drink",
@@ -1573,12 +1573,12 @@
      "id": "r11q02",
      "question": "What device do you use to make a phone call?",
      "answers": [
+      "Telegraph",
       "Telephone",
-      "Thermometer",
       "Telescope",
-      "Telegraph"
+      "Thermometer"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Tele- means far off and -phone means sound.",
      "source": "Oxford English Dictionary",
      "category": "Technology",
@@ -1589,9 +1589,9 @@
      "question": "Which sport uses a shuttlecock?",
      "answers": [
       "Badminton",
+      "Table tennis",
       "Squash",
-      "Lacrosse",
-      "Table tennis"
+      "Lacrosse"
      ],
      "correct": 0,
      "explanation": "The feathered shuttlecock slows down quickly, which shapes the whole game.",
@@ -1603,12 +1603,12 @@
      "id": "r11q04",
      "question": "Who played Jack Dawson in the 1997 film Titanic?",
      "answers": [
-      "Brad Pitt",
-      "Matt Damon",
+      "Leonardo DiCaprio",
       "Johnny Depp",
-      "Leonardo DiCaprio"
+      "Brad Pitt",
+      "Matt Damon"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "DiCaprio starred opposite Kate Winslet in James Cameron's film.",
      "source": "British Film Institute",
      "category": "Film & TV",
@@ -1618,12 +1618,12 @@
      "id": "r11q05",
      "question": "Which company created the iPhone?",
      "answers": [
-      "Samsung",
       "Apple",
       "Microsoft",
+      "Samsung",
       "Nokia"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "Apple announced the first iPhone in January 2007.",
      "source": "Apple",
      "category": "Technology",
@@ -1635,10 +1635,10 @@
      "answers": [
       "Blank",
       "Duck",
-      "Nil",
-      "Love"
+      "Love",
+      "Nil"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "The term may come from playing for love, meaning for nothing.",
      "source": "Oxford English Dictionary",
      "category": "Sport",
@@ -1648,12 +1648,12 @@
      "id": "r11q07",
      "question": "Which spice is the most expensive by weight?",
      "answers": [
+      "Cinnamon",
       "Saffron",
       "Vanilla",
-      "Cardamom",
-      "Cinnamon"
+      "Cardamom"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Each crocus flower yields only three stigmas, all picked by hand.",
      "source": "Britannica",
      "category": "Food & Drink",
@@ -1663,9 +1663,9 @@
      "id": "r11q08",
      "question": "Which film won the first Academy Award for Best Picture?",
      "answers": [
+      "Metropolis",
       "The Jazz Singer",
       "Sunrise",
-      "Metropolis",
       "Wings"
      ],
      "correct": 3,
@@ -1679,11 +1679,11 @@
      "question": "What does HTTP stand for?",
      "answers": [
       "Host Transfer Text Protocol",
+      "Hyperlink Text Transport Process",
       "High Transfer Text Protocol",
-      "Hypertext Transfer Protocol",
-      "Hyperlink Text Transport Process"
+      "Hypertext Transfer Protocol"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "It is the set of rules browsers use to request web pages.",
      "source": "Internet Engineering Task Force",
      "category": "Technology",
@@ -1694,9 +1694,9 @@
      "question": "Which country has won the most FIFA World Cup titles?",
      "answers": [
       "Brazil",
+      "Italy",
       "Germany",
-      "Argentina",
-      "Italy"
+      "Argentina"
      ],
      "correct": 0,
      "explanation": "Brazil has won the men's tournament five times.",
@@ -1713,12 +1713,12 @@
      "id": "r12q01",
      "question": "What is the first letter of the Greek alphabet?",
      "answers": [
-      "Alpha",
-      "Omega",
       "Gamma",
+      "Omega",
+      "Alpha",
       "Beta"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "Alpha gave English the first half of the word alphabet.",
      "source": "Oxford English Dictionary",
      "category": "Language",
@@ -1728,12 +1728,12 @@
      "id": "r12q02",
      "question": "Which drink is made from crushed grapes?",
      "answers": [
-      "Beer",
-      "Cider",
+      "Wine",
       "Whisky",
-      "Wine"
+      "Cider",
+      "Beer"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "Fermenting grape juice turns its sugars into alcohol.",
      "source": "Britannica",
      "category": "Food & Drink",
@@ -1743,12 +1743,12 @@
      "id": "r12q03",
      "question": "How many players are in a basketball team on court?",
      "answers": [
-      "Five",
+      "Six",
       "Four",
       "Seven",
-      "Six"
+      "Five"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Each side fields five players at a time.",
      "source": "NBA",
      "category": "Sport",
@@ -1758,12 +1758,12 @@
      "id": "r12q04",
      "question": "Which band recorded the album Abbey Road?",
      "answers": [
-      "Pink Floyd",
-      "The Rolling Stones",
       "The Who",
-      "The Beatles"
+      "Pink Floyd",
+      "The Beatles",
+      "The Rolling Stones"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "It was the last album the four recorded together, in 1969.",
      "source": "British Library",
      "category": "Music",
@@ -1774,11 +1774,11 @@
      "question": "What is the capital of Spain?",
      "answers": [
       "Barcelona",
-      "Valencia",
+      "Madrid",
       "Seville",
-      "Madrid"
+      "Valencia"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Madrid sits almost exactly in the geographic centre of the country.",
      "source": "Britannica",
      "category": "Geography",
@@ -1789,11 +1789,11 @@
      "question": "Which animated studio made Toy Story?",
      "answers": [
       "DreamWorks",
-      "Illumination",
       "Pixar",
-      "Studio Ghibli"
+      "Studio Ghibli",
+      "Illumination"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Toy Story was the first feature film animated entirely by computer.",
      "source": "British Film Institute",
      "category": "Film & TV",
@@ -1819,9 +1819,9 @@
      "question": "Which Italian city is built on a lagoon and known for canals?",
      "answers": [
       "Venice",
-      "Genoa",
+      "Naples",
       "Pisa",
-      "Naples"
+      "Genoa"
      ],
      "correct": 0,
      "explanation": "The city stands on more than a hundred small islands.",
@@ -1833,12 +1833,12 @@
      "id": "r12q09",
      "question": "Who wrote the music for the ballet The Nutcracker?",
      "answers": [
-      "Pyotr Ilyich Tchaikovsky",
-      "Modest Mussorgsky",
       "Sergei Prokofiev",
-      "Igor Stravinsky"
+      "Pyotr Ilyich Tchaikovsky",
+      "Igor Stravinsky",
+      "Modest Mussorgsky"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Tchaikovsky wrote it in 1892, near the end of his life.",
      "source": "Britannica",
      "category": "Music",
@@ -1848,12 +1848,12 @@
      "id": "r12q10",
      "question": "What is the most widely eaten staple grain in the world?",
      "answers": [
+      "Wheat",
       "Rice",
       "Barley",
-      "Maize",
-      "Wheat"
+      "Maize"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Rice feeds more people as a daily staple than any other crop.",
      "source": "Food and Agriculture Organization",
      "category": "Food & Drink",
@@ -1868,12 +1868,12 @@
      "id": "r13q01",
      "question": "What do you call a baby dog?",
      "answers": [
-      "Foal",
       "Puppy",
+      "Foal",
       "Kitten",
       "Cub"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "Puppy comes from the French poupee, meaning doll.",
      "source": "Oxford English Dictionary",
      "category": "Nature",
@@ -1883,12 +1883,12 @@
      "id": "r13q02",
      "question": "Which month has 28 days in a common year?",
      "answers": [
-      "June",
-      "February",
       "January",
-      "April"
+      "April",
+      "June",
+      "February"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "February gains a 29th day in leap years.",
      "source": "US Naval Observatory",
      "category": "General Knowledge",
@@ -1899,8 +1899,8 @@
      "question": "What is the name of the toy cowboy in Toy Story?",
      "answers": [
       "Woody",
-      "Rex",
       "Buzz",
+      "Rex",
       "Hamm"
      ],
      "correct": 0,
@@ -1913,12 +1913,12 @@
      "id": "r13q04",
      "question": "Which planet is closest to the Sun?",
      "answers": [
-      "Mercury",
-      "Venus",
       "Earth",
-      "Mars"
+      "Mars",
+      "Venus",
+      "Mercury"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Mercury orbits at about 58 million kilometres from the Sun.",
      "source": "NASA",
      "category": "Space",
@@ -1928,12 +1928,12 @@
      "id": "r13q05",
      "question": "Who wrote the song Imagine?",
      "answers": [
-      "George Harrison",
-      "Paul McCartney",
       "John Lennon",
-      "Bob Dylan"
+      "Bob Dylan",
+      "Paul McCartney",
+      "George Harrison"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "Lennon released it as the title track of his 1971 album.",
      "source": "British Library",
      "category": "Music",
@@ -1943,12 +1943,12 @@
      "id": "r13q06",
      "question": "What is the largest desert in the world?",
      "answers": [
+      "Sahara",
       "Gobi",
-      "Antarctic Desert",
       "Arabian Desert",
-      "Sahara"
+      "Antarctic Desert"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "A desert is defined by low precipitation, and Antarctica is the driest continent.",
      "source": "National Geographic",
      "category": "Geography",
@@ -1958,12 +1958,12 @@
      "id": "r13q07",
      "question": "Which sport is associated with the Tour de France?",
      "answers": [
-      "Rowing",
-      "Running",
       "Cycling",
-      "Motor racing"
+      "Rowing",
+      "Motor racing",
+      "Running"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "The three-week road race has run since 1903.",
      "source": "Union Cycliste Internationale",
      "category": "Sport",
@@ -1973,12 +1973,12 @@
      "id": "r13q08",
      "question": "Which programming pioneer is credited with the first algorithm intended for a machine?",
      "answers": [
-      "Grace Hopper",
-      "Ada Lovelace",
+      "Alan Turing",
       "Charles Babbage",
-      "Alan Turing"
+      "Grace Hopper",
+      "Ada Lovelace"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Her 1843 notes on the Analytical Engine describe a method for computing Bernoulli numbers.",
      "source": "Science Museum, London",
      "category": "Technology",
@@ -1988,12 +1988,12 @@
      "id": "r13q09",
      "question": "What is the highest-grossing film category award at the Cannes Film Festival?",
      "answers": [
-      "Palme d'Or",
       "Golden Lion",
-      "Silver Ribbon",
-      "Golden Bear"
+      "Golden Bear",
+      "Palme d'Or",
+      "Silver Ribbon"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "The Palme d'Or is Cannes' top prize; the Golden Lion and Bear belong to Venice and Berlin.",
      "source": "Festival de Cannes",
      "category": "Film & TV",
@@ -2023,12 +2023,12 @@
      "id": "r14q01",
      "question": "How many minutes are in an hour?",
      "answers": [
-      "45",
-      "30",
       "60",
-      "90"
+      "30",
+      "90",
+      "45"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "An hour is divided into 60 minutes, a system inherited from Babylonian counting.",
      "source": "Britannica",
      "category": "General Knowledge",
@@ -2040,10 +2040,10 @@
      "answers": [
       "Horse",
       "Goat",
-      "Cow",
-      "Sheep"
+      "Sheep",
+      "Cow"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "The word moo is an imitation of the sound itself.",
      "source": "Oxford English Dictionary",
      "category": "Nature",
@@ -2053,12 +2053,12 @@
      "id": "r14q03",
      "question": "What is the main ingredient in bread?",
      "answers": [
+      "Flour",
       "Butter",
       "Sugar",
-      "Flour",
       "Egg"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "Flour, water, salt and a raising agent make a basic loaf.",
      "source": "Britannica",
      "category": "Food & Drink",
@@ -2068,12 +2068,12 @@
      "id": "r14q04",
      "question": "Which superhero is known as the Caped Crusader?",
      "answers": [
-      "Batman",
-      "Superman",
       "Iron Man",
+      "Superman",
+      "Batman",
       "Spider-Man"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "Batman first appeared in Detective Comics in 1939.",
      "source": "Britannica",
      "category": "Film & TV",
@@ -2083,12 +2083,12 @@
      "id": "r14q05",
      "question": "What is the capital of Germany?",
      "answers": [
-      "Berlin",
-      "Frankfurt",
       "Hamburg",
-      "Munich"
+      "Munich",
+      "Berlin",
+      "Frankfurt"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "Berlin became the capital again after reunification in 1990.",
      "source": "Britannica",
      "category": "Geography",
@@ -2098,9 +2098,9 @@
      "id": "r14q06",
      "question": "Which instrument does a percussionist strike with mallets and has tuned metal bars?",
      "answers": [
-      "Oboe",
       "Cello",
       "Clarinet",
+      "Oboe",
       "Vibraphone"
      ],
      "correct": 3,
@@ -2113,12 +2113,12 @@
      "id": "r14q07",
      "question": "In which sport do teams compete for the Ashes?",
      "answers": [
-      "Football",
-      "Rugby",
+      "Cricket",
       "Hockey",
-      "Cricket"
+      "Football",
+      "Rugby"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "England and Australia have played for the urn since 1882.",
      "source": "Marylebone Cricket Club",
      "category": "Sport",
@@ -2128,12 +2128,12 @@
      "id": "r14q08",
      "question": "What was the first commercially successful video game?",
      "answers": [
+      "Asteroids",
       "Pong",
-      "Pac-Man",
       "Space Invaders",
-      "Asteroids"
+      "Pac-Man"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Atari released the table tennis game in 1972.",
      "source": "Computer History Museum",
      "category": "Technology",
@@ -2143,12 +2143,12 @@
      "id": "r14q09",
      "question": "Which director made the films Rashomon and Seven Samurai?",
      "answers": [
-      "Akira Kurosawa",
       "Kenji Mizoguchi",
+      "Akira Kurosawa",
       "Yasujiro Ozu",
       "Hayao Miyazaki"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Kurosawa's Rashomon won at Venice in 1951 and opened Japanese cinema to the West.",
      "source": "British Film Institute",
      "category": "Film & TV",
@@ -2159,11 +2159,11 @@
      "question": "Which country produces the most coffee?",
      "answers": [
       "Vietnam",
-      "Colombia",
       "Ethiopia",
-      "Brazil"
+      "Brazil",
+      "Colombia"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Brazil has led world coffee production for over a century.",
      "source": "International Coffee Organization",
      "category": "Food & Drink",
@@ -2178,12 +2178,12 @@
      "id": "r15q01",
      "question": "What colour is the sky on a clear day?",
      "answers": [
-      "Yellow",
-      "Blue",
       "Red",
-      "Green"
+      "Yellow",
+      "Green",
+      "Blue"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Air scatters short blue wavelengths more than longer red ones.",
      "source": "NOAA",
      "category": "Science",
@@ -2193,12 +2193,12 @@
      "id": "r15q02",
      "question": "How many letters are in the English alphabet?",
      "answers": [
-      "28",
       "24",
       "25",
-      "26"
+      "26",
+      "28"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Twenty-six letters, from A to Z.",
      "source": "Oxford English Dictionary",
      "category": "Language",
@@ -2208,12 +2208,12 @@
      "id": "r15q03",
      "question": "Which sport is played with a bat, a ball and bases?",
      "answers": [
-      "Tennis",
-      "Golf",
+      "Bowling",
       "Baseball",
-      "Bowling"
+      "Tennis",
+      "Golf"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Batters run a diamond of four bases to score.",
      "source": "Major League Baseball",
      "category": "Sport",
@@ -2223,12 +2223,12 @@
      "id": "r15q04",
      "question": "What is the world's most streamed music service by subscribers?",
      "answers": [
-      "Spotify",
-      "Deezer",
       "Apple Music",
-      "Amazon Music"
+      "Amazon Music",
+      "Deezer",
+      "Spotify"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Spotify has led paid music streaming subscriptions since the 2010s.",
      "source": "International Federation of the Phonographic Industry",
      "category": "Music",
@@ -2239,11 +2239,11 @@
      "question": "Which continent is Egypt mainly in?",
      "answers": [
       "Asia",
-      "Oceania",
       "Europe",
-      "Africa"
+      "Africa",
+      "Oceania"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Most of Egypt lies in north-east Africa, with the Sinai in Asia.",
      "source": "Britannica",
      "category": "Geography",
@@ -2253,10 +2253,10 @@
      "id": "r15q06",
      "question": "What does GPS stand for?",
      "answers": [
-      "Geographic Point Signal",
+      "General Position Sensor",
       "Global Path Service",
       "Global Positioning System",
-      "General Position Sensor"
+      "Geographic Point Signal"
      ],
      "correct": 2,
      "explanation": "A network of satellites lets a receiver work out where it is.",
@@ -2268,12 +2268,12 @@
      "id": "r15q07",
      "question": "Which television series features the fictional Iron Throne?",
      "answers": [
-      "The Crown",
       "Rome",
       "Game of Thrones",
-      "Vikings"
+      "Vikings",
+      "The Crown"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "The HBO series adapted George R. R. Martin's novels.",
      "source": "British Film Institute",
      "category": "Film & TV",
@@ -2283,12 +2283,12 @@
      "id": "r15q08",
      "question": "Which musical instrument family does the saxophone belong to?",
      "answers": [
-      "Brass",
       "Woodwind",
-      "String",
-      "Percussion"
+      "Brass",
+      "Percussion",
+      "String"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "Though made of brass, it uses a single reed, which makes it a woodwind.",
      "source": "Britannica",
      "category": "Music",
@@ -2298,12 +2298,12 @@
      "id": "r15q09",
      "question": "What is the oldest continuously inhabited city commonly cited by historians?",
      "answers": [
-      "Jerusalem",
-      "Damascus",
       "Athens",
-      "Cairo"
+      "Jerusalem",
+      "Cairo",
+      "Damascus"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Damascus is frequently named as the oldest city continuously lived in.",
      "source": "UNESCO",
      "category": "History",
@@ -2313,12 +2313,12 @@
      "id": "r15q10",
      "question": "Which fruit contains the most seeds on its outside rather than inside?",
      "answers": [
+      "Strawberry",
       "Blueberry",
       "Grape",
-      "Strawberry",
       "Raspberry"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "The tiny specks on a strawberry are the actual fruits, each holding a seed.",
      "source": "Royal Horticultural Society",
      "category": "Nature",
@@ -2333,12 +2333,12 @@
      "id": "r16q01",
      "question": "What do you call frozen water?",
      "answers": [
-      "Steam",
       "Fog",
-      "Ice",
-      "Mist"
+      "Steam",
+      "Mist",
+      "Ice"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "Water freezes into ice at zero degrees Celsius.",
      "source": "National Institute of Standards and Technology",
      "category": "Science",
@@ -2349,11 +2349,11 @@
      "question": "Which day comes after Friday?",
      "answers": [
       "Sunday",
-      "Thursday",
+      "Saturday",
       "Monday",
-      "Saturday"
+      "Thursday"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Saturday takes its name from the Roman god Saturn.",
      "source": "Oxford English Dictionary",
      "category": "General Knowledge",
@@ -2364,9 +2364,9 @@
      "question": "What is a young cat called?",
      "answers": [
       "Kitten",
+      "Lamb",
       "Calf",
-      "Puppy",
-      "Lamb"
+      "Puppy"
      ],
      "correct": 0,
      "explanation": "Kitten shares a root with the French chaton.",
@@ -2395,8 +2395,8 @@
      "answers": [
       "Ben Jonson",
       "William Shakespeare",
-      "Christopher Marlowe",
-      "John Webster"
+      "John Webster",
+      "Christopher Marlowe"
      ],
      "correct": 1,
      "explanation": "Shakespeare wrote it in the mid-1590s.",
@@ -2423,12 +2423,12 @@
      "id": "r16q07",
      "question": "Which country invented tea as a drink?",
      "answers": [
-      "Sri Lanka",
       "India",
       "China",
-      "Japan"
+      "Japan",
+      "Sri Lanka"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Tea drinking is recorded in China long before it spread elsewhere.",
      "source": "Britannica",
      "category": "Food & Drink",
@@ -2439,9 +2439,9 @@
      "question": "What is the term for an animal that eats both plants and meat?",
      "answers": [
       "Omnivore",
-      "Detritivore",
       "Herbivore",
-      "Carnivore"
+      "Carnivore",
+      "Detritivore"
      ],
      "correct": 0,
      "explanation": "Omni- means all in Latin.",
@@ -2453,12 +2453,12 @@
      "id": "r16q09",
      "question": "Which Renaissance artist designed a famous flying machine in his notebooks?",
      "answers": [
-      "Titian",
-      "Raphael",
+      "Michelangelo",
       "Leonardo da Vinci",
-      "Michelangelo"
+      "Titian",
+      "Raphael"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "His notebooks include sketches for an ornithopter with flapping wings.",
      "source": "Britannica",
      "category": "Art & Literature",
@@ -2470,10 +2470,10 @@
      "answers": [
       "Borneo",
       "New Guinea",
-      "Greenland",
-      "Madagascar"
+      "Madagascar",
+      "Greenland"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "Australia is larger but is classed as a continent, not an island.",
      "source": "CIA World Factbook",
      "category": "Geography",
@@ -2488,12 +2488,12 @@
      "id": "r17q01",
      "question": "How many wheels does a car normally have?",
      "answers": [
+      "Six",
       "Four",
       "Two",
-      "Three",
-      "Six"
+      "Three"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Four wheels give a car a stable rectangular footprint.",
      "source": "Britannica",
      "category": "General Knowledge",
@@ -2503,8 +2503,8 @@
      "id": "r17q02",
      "question": "Which insect makes honey?",
      "answers": [
-      "Wasp",
       "Ant",
+      "Wasp",
       "Beetle",
       "Bee"
      ],
@@ -2518,12 +2518,12 @@
      "id": "r17q03",
      "question": "What is the opposite of hot?",
      "answers": [
-      "Mild",
-      "Cold",
       "Warm",
-      "Dry"
+      "Dry",
+      "Mild",
+      "Cold"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Hot and cold are the two ends of the temperature scale in everyday use.",
      "source": "Oxford English Dictionary",
      "category": "Language",
@@ -2533,12 +2533,12 @@
      "id": "r17q04",
      "question": "Which US city is known as the Big Apple?",
      "answers": [
-      "New York",
       "Boston",
+      "Los Angeles",
       "Chicago",
-      "Los Angeles"
+      "New York"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "The nickname spread through 1920s horse racing and later jazz slang.",
      "source": "New York Public Library",
      "category": "Geography",
@@ -2548,12 +2548,12 @@
      "id": "r17q05",
      "question": "Who directed the film Jaws?",
      "answers": [
+      "Martin Scorsese",
       "Francis Ford Coppola",
       "George Lucas",
-      "Steven Spielberg",
-      "Martin Scorsese"
+      "Steven Spielberg"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "The 1975 film made Spielberg's name and invented the summer blockbuster.",
      "source": "British Film Institute",
      "category": "Film & TV",
@@ -2563,12 +2563,12 @@
      "id": "r17q06",
      "question": "Which metal is the best conductor of electricity?",
      "answers": [
-      "Aluminium",
-      "Copper",
       "Gold",
-      "Silver"
+      "Copper",
+      "Silver",
+      "Aluminium"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Silver conducts slightly better than copper, but costs far more.",
      "source": "Royal Society of Chemistry",
      "category": "Science",
@@ -2578,12 +2578,12 @@
      "id": "r17q07",
      "question": "In which country did sushi originate?",
      "answers": [
+      "Thailand",
       "Japan",
       "Korea",
-      "China",
-      "Thailand"
+      "China"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Sushi developed in Japan from earlier methods of preserving fish in rice.",
      "source": "Britannica",
      "category": "Food & Drink",
@@ -2593,12 +2593,12 @@
      "id": "r17q08",
      "question": "What is the study of earthquakes called?",
      "answers": [
-      "Seismology",
       "Geology",
-      "Volcanology",
-      "Meteorology"
+      "Meteorology",
+      "Seismology",
+      "Volcanology"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "From the Greek seismos, meaning shaking.",
      "source": "US Geological Survey",
      "category": "Science",
@@ -2609,11 +2609,11 @@
      "question": "Which composer became deaf later in life but kept writing music?",
      "answers": [
       "Antonio Vivaldi",
-      "Frederic Chopin",
       "Ludwig van Beethoven",
-      "Johann Sebastian Bach"
+      "Johann Sebastian Bach",
+      "Frederic Chopin"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Beethoven's hearing failed from his late twenties onward.",
      "source": "Britannica",
      "category": "Music",
@@ -2624,9 +2624,9 @@
      "question": "Which empire was centred on the city of Tenochtitlan?",
      "answers": [
       "Aztec Empire",
-      "Inca Empire",
+      "Maya civilisation",
       "Olmec civilisation",
-      "Maya civilisation"
+      "Inca Empire"
      ],
      "correct": 0,
      "explanation": "Tenochtitlan stood where Mexico City is today.",
@@ -2643,12 +2643,12 @@
      "id": "r18q01",
      "question": "What is the name for a group of fish swimming together?",
      "answers": [
-      "Pack",
-      "Herd",
       "School",
-      "Flock"
+      "Pack",
+      "Flock",
+      "Herd"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "School and shoal are both used for fish moving as a group.",
      "source": "Oxford English Dictionary",
      "category": "Nature",
@@ -2660,10 +2660,10 @@
      "answers": [
       "Twelve",
       "Eleven",
-      "Eight",
-      "Ten"
+      "Ten",
+      "Eight"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Ten is the base of the decimal system.",
      "source": "Britannica",
      "category": "General Knowledge",
@@ -2673,12 +2673,12 @@
      "id": "r18q03",
      "question": "What do you call a person who flies an aircraft?",
      "answers": [
-      "Captain",
-      "Navigator",
       "Pilot",
-      "Engineer"
+      "Navigator",
+      "Engineer",
+      "Captain"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "The word comes from the Greek for a ship's steersman.",
      "source": "Oxford English Dictionary",
      "category": "Technology",
@@ -2688,12 +2688,12 @@
      "id": "r18q04",
      "question": "Which country is shaped like a boot?",
      "answers": [
+      "Portugal",
       "Greece",
       "Italy",
-      "Portugal",
       "Croatia"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "The peninsula's outline resembles a boot kicking Sicily.",
      "source": "Britannica",
      "category": "Geography",
@@ -2703,12 +2703,12 @@
      "id": "r18q05",
      "question": "Who is the author of the Harry Potter novels?",
      "answers": [
-      "Philip Pullman",
       "Roald Dahl",
+      "J. K. Rowling",
       "C. S. Lewis",
-      "J. K. Rowling"
+      "Philip Pullman"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "The first book was published in 1997.",
      "source": "British Library",
      "category": "Art & Literature",
@@ -2718,12 +2718,12 @@
      "id": "r18q06",
      "question": "What does the C in CPR stand for?",
      "answers": [
-      "Compression",
-      "Cardiac arrest",
       "Critical",
-      "Cardio"
+      "Cardiac arrest",
+      "Cardio",
+      "Compression"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "CPR stands for cardiopulmonary resuscitation.",
      "source": "American Heart Association",
      "category": "Science",
@@ -2734,9 +2734,9 @@
      "question": "Which video game features a plumber named Mario?",
      "answers": [
       "Donkey Kong Country",
-      "Sonic the Hedgehog",
+      "Mega Man",
       "Super Mario Bros.",
-      "Mega Man"
+      "Sonic the Hedgehog"
      ],
      "correct": 2,
      "explanation": "Nintendo released it in 1985.",
@@ -2748,12 +2748,12 @@
      "id": "r18q08",
      "question": "What is the world's most spoken second language?",
      "answers": [
-      "Spanish",
-      "French",
+      "English",
       "Arabic",
-      "English"
+      "French",
+      "Spanish"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "English has more second-language speakers than any other language.",
      "source": "Ethnologue",
      "category": "Language",
@@ -2763,12 +2763,12 @@
      "id": "r18q09",
      "question": "Which planet takes the longest to orbit the Sun?",
      "answers": [
-      "Uranus",
       "Jupiter",
+      "Neptune",
       "Saturn",
-      "Neptune"
+      "Uranus"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Neptune takes about 165 Earth years to complete one orbit.",
      "source": "NASA",
      "category": "Space",
@@ -2778,12 +2778,12 @@
      "id": "r18q10",
      "question": "Which dish is made from raw fish sliced without rice?",
      "answers": [
-      "Tartare",
-      "Sashimi",
       "Ceviche",
-      "Sushi"
+      "Tartare",
+      "Sushi",
+      "Sashimi"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Sashimi is fish alone; sushi is defined by the seasoned rice.",
      "source": "Britannica",
      "category": "Food & Drink",
@@ -2798,12 +2798,12 @@
      "id": "r19q01",
      "question": "What is the capital of France?",
      "answers": [
-      "Paris",
       "Lyon",
+      "Marseille",
       "Nice",
-      "Marseille"
+      "Paris"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Paris has been the capital since the tenth century.",
      "source": "Britannica",
      "category": "Geography",
@@ -2813,12 +2813,12 @@
      "id": "r19q02",
      "question": "How many players are on a volleyball team on court?",
      "answers": [
-      "Six",
-      "Eight",
       "Seven",
-      "Five"
+      "Six",
+      "Five",
+      "Eight"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Six per side rotate positions after winning serve.",
      "source": "Federation Internationale de Volleyball",
      "category": "Sport",
@@ -2828,12 +2828,12 @@
      "id": "r19q03",
      "question": "What is the young of a sheep called?",
      "answers": [
-      "Calf",
       "Foal",
-      "Kid",
-      "Lamb"
+      "Lamb",
+      "Calf",
+      "Kid"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "A kid is a young goat and a calf a young cow.",
      "source": "Oxford English Dictionary",
      "category": "Nature",
@@ -2843,12 +2843,12 @@
      "id": "r19q04",
      "question": "Which artist is known for paintings of soup cans?",
      "answers": [
-      "Andy Warhol",
-      "Roy Lichtenstein",
       "Jasper Johns",
+      "Roy Lichtenstein",
+      "Andy Warhol",
       "Jackson Pollock"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "Warhol exhibited his Campbell's Soup Cans in 1962.",
      "source": "Museum of Modern Art",
      "category": "Art & Literature",
@@ -2858,12 +2858,12 @@
      "id": "r19q05",
      "question": "What is the largest bird by wingspan?",
      "answers": [
-      "Great bustard",
-      "Wandering albatross",
+      "Andean condor",
       "Golden eagle",
-      "Andean condor"
+      "Wandering albatross",
+      "Great bustard"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "Its wings can span over three metres.",
      "source": "British Antarctic Survey",
      "category": "Nature",
@@ -2875,8 +2875,8 @@
      "answers": [
       "Brazil",
       "Japan",
-      "Britain",
-      "China"
+      "China",
+      "Britain"
      ],
      "correct": 0,
      "explanation": "Rio de Janeiro was the first South American host city.",
@@ -2889,11 +2889,11 @@
      "question": "What does the abbreviation e.g. stand for?",
      "answers": [
       "Et cetera",
-      "Exempli gratia",
+      "Et alia",
       "Ergo",
-      "Et alia"
+      "Exempli gratia"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "It is Latin for for example; i.e. means that is.",
      "source": "Oxford English Dictionary",
      "category": "Language",
@@ -2903,8 +2903,8 @@
      "id": "r19q08",
      "question": "Which element has the atomic number 1?",
      "answers": [
-      "Oxygen",
       "Helium",
+      "Oxygen",
       "Hydrogen",
       "Carbon"
      ],
@@ -2920,10 +2920,10 @@
      "answers": [
       "Isabel Allende",
       "Mario Vargas Llosa",
-      "Gabriel Garcia Marquez",
-      "Jorge Luis Borges"
+      "Jorge Luis Borges",
+      "Gabriel Garcia Marquez"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "The Colombian writer published it in 1967.",
      "source": "Nobel Prize",
      "category": "Art & Literature",
@@ -2933,12 +2933,12 @@
      "id": "r19q10",
      "question": "Which sea creature has three hearts?",
      "answers": [
+      "Starfish",
       "Dolphin",
       "Octopus",
-      "Jellyfish",
-      "Starfish"
+      "Jellyfish"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "Two hearts pump blood to the gills and one to the rest of the body.",
      "source": "Marine Biological Association",
      "category": "Nature",
@@ -2953,12 +2953,12 @@
      "id": "r20q01",
      "question": "What do you use to write on a blackboard?",
      "answers": [
-      "Chalk",
-      "Ink",
       "Graphite",
+      "Ink",
+      "Chalk",
       "Paint"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "Chalk is a soft form of limestone that leaves a mark on slate.",
      "source": "US Geological Survey",
      "category": "General Knowledge",
@@ -2983,12 +2983,12 @@
      "id": "r20q03",
      "question": "How many days are in a week?",
      "answers": [
-      "Seven",
-      "Five",
+      "Six",
       "Eight",
-      "Six"
+      "Five",
+      "Seven"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "The seven-day week spread from Babylonian and Jewish practice.",
      "source": "Britannica",
      "category": "General Knowledge",
@@ -2998,12 +2998,12 @@
      "id": "r20q04",
      "question": "Which film features the line Here's looking at you, kid?",
      "answers": [
-      "Gone with the Wind",
       "The Maltese Falcon",
       "Casablanca",
+      "Gone with the Wind",
       "Citizen Kane"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Humphrey Bogart says it to Ingrid Bergman in the 1942 film.",
      "source": "British Film Institute",
      "category": "Film & TV",
@@ -3030,10 +3030,10 @@
      "answers": [
       "Vitamin B12",
       "Vitamin D",
-      "Vitamin C",
-      "Vitamin E"
+      "Vitamin E",
+      "Vitamin C"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "A lack of vitamin C causes scurvy, once common among sailors.",
      "source": "National Institutes of Health",
      "category": "Science",
@@ -3043,12 +3043,12 @@
      "id": "r20q07",
      "question": "Which instrument is played by pressing keys that open holes and is held sideways?",
      "answers": [
-      "Harp",
       "Trumpet",
-      "Violin",
-      "Flute"
+      "Harp",
+      "Flute",
+      "Violin"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "The player blows across the mouth hole rather than into a reed.",
      "source": "Britannica",
      "category": "Music",
@@ -3058,12 +3058,12 @@
      "id": "r20q08",
      "question": "Which ancient civilisation built the pyramids at Giza?",
      "answers": [
-      "Sumerians",
-      "Romans",
+      "Phoenicians",
       "Ancient Egyptians",
-      "Phoenicians"
+      "Romans",
+      "Sumerians"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "They were built as royal tombs during the Old Kingdom.",
      "source": "UNESCO",
      "category": "History",
@@ -3075,10 +3075,10 @@
      "answers": [
       "Greyhound",
       "Lion",
-      "Cheetah",
-      "Pronghorn"
+      "Pronghorn",
+      "Cheetah"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "A cheetah can reach about 100 kilometres per hour in short bursts.",
      "source": "World Wildlife Fund",
      "category": "Nature",
@@ -3088,12 +3088,12 @@
      "id": "r20q10",
      "question": "Which programming language was named after a British comedy troupe?",
      "answers": [
-      "Perl",
+      "Java",
       "Ruby",
-      "Python",
-      "Java"
+      "Perl",
+      "Python"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "Guido van Rossum named it after Monty Python's Flying Circus.",
      "source": "Python Software Foundation",
      "category": "Technology",
@@ -3108,12 +3108,12 @@
      "id": "r21q01",
      "question": "What shape is a standard football (soccer) pitch?",
      "answers": [
-      "Rectangle",
-      "Circle",
       "Hexagon",
-      "Triangle"
+      "Circle",
+      "Triangle",
+      "Rectangle"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "The laws set a rectangular field of play with touchlines longer than the goal lines.",
      "source": "FIFA Laws of the Game",
      "category": "Sport",
@@ -3123,10 +3123,10 @@
      "id": "r21q02",
      "question": "Which animal is known for its black and white stripes?",
      "answers": [
-      "Leopard",
-      "Zebra",
       "Hyena",
-      "Cheetah"
+      "Zebra",
+      "Cheetah",
+      "Leopard"
      ],
      "correct": 1,
      "explanation": "No two zebras have the same stripe pattern.",
@@ -3138,12 +3138,12 @@
      "id": "r21q03",
      "question": "What do you call the person who leads an orchestra?",
      "answers": [
-      "Producer",
-      "Conductor",
       "Soloist",
-      "Composer"
+      "Composer",
+      "Producer",
+      "Conductor"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "The conductor sets tempo and balance for the players.",
      "source": "Britannica",
      "category": "Music",
@@ -3153,12 +3153,12 @@
      "id": "r21q04",
      "question": "Which US president appears on the one dollar bill?",
      "answers": [
+      "Thomas Jefferson",
       "Abraham Lincoln",
       "George Washington",
-      "Thomas Jefferson",
       "Benjamin Franklin"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "Washington has appeared on the one dollar note since 1869.",
      "source": "US Bureau of Engraving and Printing",
      "category": "History",
@@ -3168,12 +3168,12 @@
      "id": "r21q05",
      "question": "What is the hottest planet in the solar system?",
      "answers": [
-      "Venus",
-      "Mars",
+      "Jupiter",
       "Mercury",
-      "Jupiter"
+      "Venus",
+      "Mars"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "A thick carbon dioxide atmosphere traps heat, making Venus hotter than Mercury.",
      "source": "NASA",
      "category": "Space",
@@ -3184,11 +3184,11 @@
      "question": "Which sea separates Europe from Africa?",
      "answers": [
       "Black Sea",
-      "Baltic Sea",
+      "Mediterranean Sea",
       "North Sea",
-      "Mediterranean Sea"
+      "Baltic Sea"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "The Strait of Gibraltar links it to the Atlantic.",
      "source": "Britannica",
      "category": "Geography",
@@ -3198,12 +3198,12 @@
      "id": "r21q07",
      "question": "Who wrote the dystopian novel Nineteen Eighty-Four?",
      "answers": [
-      "George Orwell",
-      "Ray Bradbury",
       "H. G. Wells",
-      "Aldous Huxley"
+      "George Orwell",
+      "Aldous Huxley",
+      "Ray Bradbury"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Orwell published it in 1949, the year before he died.",
      "source": "British Library",
      "category": "Art & Literature",
@@ -3213,12 +3213,12 @@
      "id": "r21q08",
      "question": "What is the medical term for the kneecap?",
      "answers": [
-      "Sternum",
       "Patella",
+      "Scapula",
       "Clavicle",
-      "Scapula"
+      "Sternum"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "The patella is a small bone that protects the knee joint.",
      "source": "Gray's Anatomy",
      "category": "Science",
@@ -3228,12 +3228,12 @@
      "id": "r21q09",
      "question": "Which country was the first to give women the vote in national elections?",
      "answers": [
-      "United States",
+      "New Zealand",
       "Finland",
-      "Britain",
-      "New Zealand"
+      "United States",
+      "Britain"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "New Zealand granted women the vote in 1893.",
      "source": "New Zealand Parliament",
      "category": "History",
@@ -3243,12 +3243,12 @@
      "id": "r21q10",
      "question": "What is the name for a shape with ten sides?",
      "answers": [
-      "Dodecagon",
-      "Decagon",
       "Nonagon",
-      "Octagon"
+      "Dodecagon",
+      "Octagon",
+      "Decagon"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Deca- is Greek for ten.",
      "source": "Oxford English Dictionary",
      "category": "General Knowledge",
@@ -3264,11 +3264,11 @@
      "question": "Which utensil is used to eat soup?",
      "answers": [
       "Chopsticks",
-      "Knife",
       "Spoon",
+      "Knife",
       "Fork"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "A spoon's bowl holds liquid, which a fork cannot.",
      "source": "Oxford English Dictionary",
      "category": "Food & Drink",
@@ -3278,12 +3278,12 @@
      "id": "r22q02",
      "question": "What is the colour of an emerald?",
      "answers": [
-      "Blue",
+      "Green",
       "Yellow",
-      "Red",
-      "Green"
+      "Blue",
+      "Red"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "Traces of chromium give emerald its green colour.",
      "source": "US Geological Survey",
      "category": "General Knowledge",
@@ -3293,12 +3293,12 @@
      "id": "r22q03",
      "question": "Which animal is the tallest in the world?",
      "answers": [
-      "Camel",
-      "Giraffe",
       "Elephant",
-      "Ostrich"
+      "Camel",
+      "Ostrich",
+      "Giraffe"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "An adult male giraffe can stand over five metres tall.",
      "source": "World Wildlife Fund",
      "category": "Nature",
@@ -3308,12 +3308,12 @@
      "id": "r22q04",
      "question": "In which country is the city of Marrakesh?",
      "answers": [
-      "Morocco",
       "Egypt",
-      "Algeria",
-      "Tunisia"
+      "Morocco",
+      "Tunisia",
+      "Algeria"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Marrakesh lies at the foot of the Atlas Mountains.",
      "source": "UNESCO",
      "category": "Geography",
@@ -3323,12 +3323,12 @@
      "id": "r22q05",
      "question": "Which film series features a wizard school called Hogwarts?",
      "answers": [
-      "Narnia",
       "Harry Potter",
       "His Dark Materials",
-      "The Lord of the Rings"
+      "The Lord of the Rings",
+      "Narnia"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "Eight films were adapted from the seven novels.",
      "source": "British Film Institute",
      "category": "Film & TV",
@@ -3338,12 +3338,12 @@
      "id": "r22q06",
      "question": "What is the chemical symbol for iron?",
      "answers": [
-      "Fr",
-      "Fe",
       "Ir",
-      "In"
+      "Fr",
+      "In",
+      "Fe"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "Fe comes from ferrum, the Latin for iron.",
      "source": "Royal Society of Chemistry",
      "category": "Science",
@@ -3353,12 +3353,12 @@
      "id": "r22q07",
      "question": "Which musical term means to play softly?",
      "answers": [
-      "Forte",
       "Piano",
+      "Allegro",
       "Staccato",
-      "Allegro"
+      "Forte"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "The instrument is named for its ability to play both piano and forte.",
      "source": "Britannica",
      "category": "Music",
@@ -3369,11 +3369,11 @@
      "question": "Which mountain range separates Europe from Asia?",
      "answers": [
       "Caucasus",
-      "Carpathians",
+      "Ural Mountains",
       "Alps",
-      "Ural Mountains"
+      "Carpathians"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "The Urals run roughly north to south through Russia.",
      "source": "Britannica",
      "category": "Geography",
@@ -3383,12 +3383,12 @@
      "id": "r22q09",
      "question": "What is the name of the largest moon of Saturn?",
      "answers": [
-      "Io",
-      "Ganymede",
       "Titan",
-      "Europa"
+      "Europa",
+      "Ganymede",
+      "Io"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "Titan is the only moon known to have a dense atmosphere.",
      "source": "NASA",
      "category": "Space",
@@ -3399,11 +3399,11 @@
      "question": "Which writer created the detective Hercule Poirot?",
      "answers": [
       "Dorothy L. Sayers",
-      "Georges Simenon",
+      "Agatha Christie",
       "Arthur Conan Doyle",
-      "Agatha Christie"
+      "Georges Simenon"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Poirot first appeared in The Mysterious Affair at Styles in 1920.",
      "source": "British Library",
      "category": "Art & Literature",
@@ -3418,12 +3418,12 @@
      "id": "r23q01",
      "question": "How many zeros are in one thousand?",
      "answers": [
-      "Two",
+      "Three",
       "Four",
-      "Five",
-      "Three"
+      "Two",
+      "Five"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "One thousand is written 1,000.",
      "source": "General arithmetic",
      "category": "General Knowledge",
@@ -3433,12 +3433,12 @@
      "id": "r23q02",
      "question": "Which bird is a symbol of peace?",
      "answers": [
-      "Dove",
-      "Owl",
       "Raven",
+      "Owl",
+      "Dove",
       "Eagle"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "The dove with an olive branch became a peace emblem through the story of Noah.",
      "source": "Britannica",
      "category": "Nature",
@@ -3450,8 +3450,8 @@
      "answers": [
       "Pharmacist",
       "Veterinarian",
-      "Surgeon",
-      "Physician"
+      "Physician",
+      "Surgeon"
      ],
      "correct": 1,
      "explanation": "Vet comes from the Latin veterinae, meaning working animals.",
@@ -3463,12 +3463,12 @@
      "id": "r23q04",
      "question": "Which country is the largest producer of olive oil?",
      "answers": [
+      "Spain",
       "Greece",
       "Italy",
-      "Spain",
       "Turkey"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "Spain produces roughly half the world's olive oil.",
      "source": "International Olive Council",
      "category": "Food & Drink",
@@ -3478,12 +3478,12 @@
      "id": "r23q05",
      "question": "Who was the first woman to win a Nobel Prize?",
      "answers": [
-      "Marie Curie",
-      "Dorothy Hodgkin",
       "Rosalind Franklin",
-      "Lise Meitner"
+      "Lise Meitner",
+      "Marie Curie",
+      "Dorothy Hodgkin"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "Curie won the physics prize in 1903 and later the chemistry prize.",
      "source": "Nobel Prize",
      "category": "Science",
@@ -3493,12 +3493,12 @@
      "id": "r23q06",
      "question": "Which city hosted the 2012 Summer Olympics?",
      "answers": [
-      "Sydney",
-      "London",
+      "Beijing",
       "Athens",
-      "Beijing"
+      "Sydney",
+      "London"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "London became the first city to host the modern Games three times.",
      "source": "International Olympic Committee",
      "category": "Sport",
@@ -3508,12 +3508,12 @@
      "id": "r23q07",
      "question": "What is the capital of Argentina?",
      "answers": [
-      "Mendoza",
       "Cordoba",
       "Buenos Aires",
-      "Rosario"
+      "Rosario",
+      "Mendoza"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "The name means good winds in Spanish.",
      "source": "Britannica",
      "category": "Geography",
@@ -3523,12 +3523,12 @@
      "id": "r23q08",
      "question": "Which artist painted Guernica?",
      "answers": [
-      "Pablo Picasso",
-      "Francisco Goya",
       "Joan Miro",
+      "Francisco Goya",
+      "Pablo Picasso",
       "Salvador Dali"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "Picasso painted it in 1937 in response to the bombing of the Basque town.",
      "source": "Museo Reina Sofia",
      "category": "Art & Literature",
@@ -3538,12 +3538,12 @@
      "id": "r23q09",
      "question": "What is the smallest unit of an element that retains its properties?",
      "answers": [
-      "Atom",
       "Cell",
-      "Molecule",
-      "Electron"
+      "Atom",
+      "Electron",
+      "Molecule"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Split the atom and you no longer have that element.",
      "source": "Royal Society of Chemistry",
      "category": "Science",
@@ -3553,12 +3553,12 @@
      "id": "r23q10",
      "question": "Which sport awards the Vince Lombardi Trophy?",
      "answers": [
-      "Baseball",
-      "Ice hockey",
+      "Basketball",
       "American football",
-      "Basketball"
+      "Ice hockey",
+      "Baseball"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "It goes to the winner of the Super Bowl.",
      "source": "National Football League",
      "category": "Sport",
@@ -3573,12 +3573,12 @@
      "id": "r24q01",
      "question": "What is the main colour of a traditional London bus?",
      "answers": [
-      "Green",
-      "Red",
       "Blue",
-      "Yellow"
+      "Yellow",
+      "Red",
+      "Green"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "London's double-deckers have been red since the early twentieth century.",
      "source": "Transport for London",
      "category": "General Knowledge",
@@ -3588,8 +3588,8 @@
      "id": "r24q02",
      "question": "Which fruit is dried to make a raisin?",
      "answers": [
-      "Fig",
       "Plum",
+      "Fig",
       "Apricot",
       "Grape"
      ],
@@ -3604,11 +3604,11 @@
      "question": "What is the opposite of ancient?",
      "answers": [
       "Antique",
-      "Modern",
       "Historic",
+      "Modern",
       "Classic"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "Modern describes the present or recent times.",
      "source": "Oxford English Dictionary",
      "category": "Language",
@@ -3619,11 +3619,11 @@
      "question": "Which planet do we live on?",
      "answers": [
       "Mars",
+      "Venus",
       "Earth",
-      "Mercury",
-      "Venus"
+      "Mercury"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "Earth is the third planet from the Sun.",
      "source": "NASA",
      "category": "Space",
@@ -3634,11 +3634,11 @@
      "question": "Who wrote the fairy tale The Little Mermaid?",
      "answers": [
       "The Brothers Grimm",
-      "Aesop",
       "Hans Christian Andersen",
+      "Aesop",
       "Charles Perrault"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Andersen published the Danish story in 1837.",
      "source": "Royal Danish Library",
      "category": "Art & Literature",
@@ -3648,9 +3648,9 @@
      "id": "r24q06",
      "question": "Which gas do humans breathe out in the greatest increase?",
      "answers": [
-      "Helium",
-      "Carbon dioxide",
       "Nitrogen",
+      "Carbon dioxide",
+      "Helium",
       "Oxygen"
      ],
      "correct": 1,
@@ -3664,11 +3664,11 @@
      "question": "In which country did the sauna originate?",
      "answers": [
       "Sweden",
-      "Norway",
       "Russia",
-      "Finland"
+      "Finland",
+      "Norway"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "The word sauna is Finnish and the practice is central to Finnish life.",
      "source": "UNESCO",
      "category": "Geography",
@@ -3678,12 +3678,12 @@
      "id": "r24q08",
      "question": "Which band released the album The Dark Side of the Moon?",
      "answers": [
-      "The Doors",
       "Queen",
       "Pink Floyd",
+      "The Doors",
       "Led Zeppelin"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "The 1973 album stayed on the charts for years.",
      "source": "British Library",
      "category": "Music",
@@ -3693,12 +3693,12 @@
      "id": "r24q09",
      "question": "What is the largest internal organ in the human body?",
      "answers": [
-      "Liver",
       "Stomach",
+      "Liver",
       "Kidney",
       "Heart"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "The liver weighs around 1.5 kilograms in an adult.",
      "source": "National Institutes of Health",
      "category": "Science",
@@ -3730,8 +3730,8 @@
      "answers": [
       "Two",
       "Four",
-      "Three",
-      "One"
+      "One",
+      "Three"
      ],
      "correct": 0,
      "explanation": "Two forward-facing eyes give humans depth perception.",
@@ -3745,10 +3745,10 @@
      "answers": [
       "Parrot",
       "Cat",
-      "Horse",
-      "Dog"
+      "Dog",
+      "Horse"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Dogs were the first animals humans domesticated.",
      "source": "Natural History Museum",
      "category": "Nature",
@@ -3758,10 +3758,10 @@
      "id": "r25q03",
      "question": "What is the first month of the year?",
      "answers": [
-      "February",
+      "December",
       "January",
       "March",
-      "December"
+      "February"
      ],
      "correct": 1,
      "explanation": "January is named after Janus, the Roman god of beginnings.",
@@ -3774,11 +3774,11 @@
      "question": "Which ocean lies between Europe and North America?",
      "answers": [
       "Indian",
-      "Arctic",
+      "Atlantic",
       "Pacific",
-      "Atlantic"
+      "Arctic"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "The Atlantic is the second largest ocean.",
      "source": "NOAA",
      "category": "Geography",
@@ -3789,11 +3789,11 @@
      "question": "Who directed the film Parasite?",
      "answers": [
       "Kim Ki-duk",
+      "Park Chan-wook",
       "Bong Joon-ho",
-      "Lee Chang-dong",
-      "Park Chan-wook"
+      "Lee Chang-dong"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "It was the first film not in English to win Best Picture.",
      "source": "Academy of Motion Picture Arts and Sciences",
      "category": "Film & TV",
@@ -3803,12 +3803,12 @@
      "id": "r25q06",
      "question": "Which acid is found in vinegar?",
      "answers": [
-      "Lactic acid",
       "Acetic acid",
+      "Lactic acid",
       "Citric acid",
       "Sulphuric acid"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "Vinegar is a dilute solution of acetic acid in water.",
      "source": "Royal Society of Chemistry",
      "category": "Science",
@@ -3818,12 +3818,12 @@
      "id": "r25q07",
      "question": "What is the national sport of Japan often described as?",
      "answers": [
-      "Judo",
       "Sumo",
       "Kendo",
+      "Judo",
       "Karate"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "Sumo has ceremonial roots going back centuries.",
      "source": "Japan Sumo Association",
      "category": "Sport",
@@ -3833,12 +3833,12 @@
      "id": "r25q08",
      "question": "Which country has the most people?",
      "answers": [
+      "India",
       "China",
       "United States",
-      "Indonesia",
-      "India"
+      "Indonesia"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "India passed China as the most populous country in 2023.",
      "source": "United Nations Population Division",
      "category": "Geography",
@@ -3848,12 +3848,12 @@
      "id": "r25q09",
      "question": "What does the term photosynthesis literally mean?",
      "answers": [
-      "Feeding on air",
-      "Growing towards light",
       "Breaking down with water",
-      "Putting together with light"
+      "Putting together with light",
+      "Feeding on air",
+      "Growing towards light"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "From the Greek photo, light, and synthesis, putting together.",
      "source": "Oxford English Dictionary",
      "category": "Science",
@@ -3863,12 +3863,12 @@
      "id": "r25q10",
      "question": "Which instrument did Louis Armstrong famously play?",
      "answers": [
-      "Piano",
-      "Double bass",
       "Trumpet",
-      "Saxophone"
+      "Piano",
+      "Saxophone",
+      "Double bass"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "Armstrong reshaped jazz with his trumpet playing and his voice.",
      "source": "Britannica",
      "category": "Music",
@@ -3884,8 +3884,8 @@
      "question": "What do caterpillars turn into?",
      "answers": [
       "Beetles",
-      "Spiders",
       "Dragonflies",
+      "Spiders",
       "Butterflies or moths"
      ],
      "correct": 3,
@@ -3898,12 +3898,12 @@
      "id": "r26q02",
      "question": "Which drink is known for containing caffeine and made from roasted beans?",
      "answers": [
-      "Lemonade",
       "Tea",
       "Cocoa",
-      "Coffee"
+      "Coffee",
+      "Lemonade"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "Coffee is brewed from roasted and ground coffee beans.",
      "source": "International Coffee Organization",
      "category": "Food & Drink",
@@ -3913,12 +3913,12 @@
      "id": "r26q03",
      "question": "How many degrees are in a right angle?",
      "answers": [
-      "45",
       "180",
       "90",
-      "360"
+      "360",
+      "45"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Four right angles make a full turn of 360 degrees.",
      "source": "Britannica",
      "category": "General Knowledge",
@@ -3928,12 +3928,12 @@
      "id": "r26q04",
      "question": "Which language is spoken in Brazil?",
      "answers": [
-      "French",
-      "Italian",
       "Spanish",
-      "Portuguese"
+      "Portuguese",
+      "French",
+      "Italian"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Brazil was colonised by Portugal, unlike most of South America.",
      "source": "Britannica",
      "category": "Language",
@@ -3943,10 +3943,10 @@
      "id": "r26q05",
      "question": "What is the tallest building in the world?",
      "answers": [
-      "Taipei 101",
+      "Shanghai Tower",
       "Burj Khalifa",
-      "One World Trade Center",
-      "Shanghai Tower"
+      "Taipei 101",
+      "One World Trade Center"
      ],
      "correct": 1,
      "explanation": "The Burj Khalifa in Dubai stands about 828 metres.",
@@ -3958,12 +3958,12 @@
      "id": "r26q06",
      "question": "Which sea creature is known for changing colour to blend in?",
      "answers": [
-      "Herring",
-      "Cod",
+      "Tuna",
       "Cuttlefish",
-      "Tuna"
+      "Cod",
+      "Herring"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Cuttlefish use pigment cells called chromatophores to change appearance in an instant.",
      "source": "Marine Biological Association",
      "category": "Nature",
@@ -3973,12 +3973,12 @@
      "id": "r26q07",
      "question": "Who painted the Mona Lisa?",
      "answers": [
-      "Raphael",
       "Michelangelo",
-      "Botticelli",
-      "Leonardo da Vinci"
+      "Leonardo da Vinci",
+      "Raphael",
+      "Botticelli"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "He worked on the portrait from about 1503.",
      "source": "Louvre Museum",
      "category": "Art & Literature",
@@ -3988,12 +3988,12 @@
      "id": "r26q08",
      "question": "What is the deepest lake in the world?",
      "answers": [
-      "Lake Superior",
       "Caspian Sea",
-      "Lake Tanganyika",
-      "Lake Baikal"
+      "Lake Baikal",
+      "Lake Superior",
+      "Lake Tanganyika"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Baikal in Siberia is over 1,600 metres deep and holds a fifth of the world's unfrozen fresh water.",
      "source": "UNESCO",
      "category": "Geography",
@@ -4003,12 +4003,12 @@
      "id": "r26q09",
      "question": "Which scientist proposed the three laws of motion?",
      "answers": [
-      "Isaac Newton",
-      "Johannes Kepler",
       "Robert Hooke",
-      "Galileo Galilei"
+      "Isaac Newton",
+      "Galileo Galilei",
+      "Johannes Kepler"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Newton set them out in the Principia in 1687.",
      "source": "Royal Society",
      "category": "Science",
@@ -4018,12 +4018,12 @@
      "id": "r26q10",
      "question": "Which country's flag is a red circle on a white background?",
      "answers": [
-      "Bangladesh",
-      "South Korea",
+      "Japan",
       "Switzerland",
-      "Japan"
+      "Bangladesh",
+      "South Korea"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "The red disc represents the sun.",
      "source": "Britannica",
      "category": "Geography",
@@ -4038,12 +4038,12 @@
      "id": "r27q01",
      "question": "What do you call the sound a dog makes?",
      "answers": [
-      "Meow",
-      "Bark",
       "Moo",
-      "Neigh"
+      "Neigh",
+      "Bark",
+      "Meow"
      ],
-     "correct": 1,
+     "correct": 2,
      "explanation": "Bark is used for dogs, foxes and some seals.",
      "source": "Oxford English Dictionary",
      "category": "Nature",
@@ -4053,12 +4053,12 @@
      "id": "r27q02",
      "question": "Which room is food usually cooked in?",
      "answers": [
-      "Bedroom",
-      "Garage",
       "Bathroom",
-      "Kitchen"
+      "Bedroom",
+      "Kitchen",
+      "Garage"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "The word comes from the Latin coquina, meaning cooking place.",
      "source": "Oxford English Dictionary",
      "category": "General Knowledge",
@@ -4068,12 +4068,12 @@
      "id": "r27q03",
      "question": "How many sides does a square have?",
      "answers": [
-      "Four",
       "Five",
+      "Six",
       "Three",
-      "Six"
+      "Four"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "All four sides of a square are equal in length.",
      "source": "Britannica",
      "category": "General Knowledge",
@@ -4084,11 +4084,11 @@
      "question": "Which country is home to the fjords?",
      "answers": [
       "Netherlands",
-      "Ireland",
       "Norway",
-      "Denmark"
+      "Denmark",
+      "Ireland"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Glaciers carved Norway's deep coastal inlets.",
      "source": "UNESCO",
      "category": "Geography",
@@ -4098,12 +4098,12 @@
      "id": "r27q05",
      "question": "What is the main language spoken in Austria?",
      "answers": [
-      "Czech",
       "German",
+      "Czech",
       "Austrian",
       "Hungarian"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "There is no separate Austrian language; the state language is German.",
      "source": "Britannica",
      "category": "Language",
@@ -4113,12 +4113,12 @@
      "id": "r27q06",
      "question": "Which television talent show format began in Britain in 2001 as Pop Idol?",
      "answers": [
-      "X Factor",
-      "Got Talent",
       "Idol",
-      "The Voice"
+      "Got Talent",
+      "The Voice",
+      "X Factor"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "The Idol format was later exported as American Idol and many other versions.",
      "source": "British Film Institute",
      "category": "Film & TV",
@@ -4129,11 +4129,11 @@
      "question": "What is the process of water turning into vapour called?",
      "answers": [
       "Sublimation",
-      "Precipitation",
       "Evaporation",
+      "Precipitation",
       "Condensation"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Condensation is the reverse, when vapour becomes liquid.",
      "source": "NOAA",
      "category": "Science",
@@ -4144,8 +4144,8 @@
      "question": "Which mammal is capable of true sustained flight?",
      "answers": [
       "Bat",
-      "Colugo",
       "Sugar glider",
+      "Colugo",
       "Flying squirrel"
      ],
      "correct": 0,
@@ -4158,12 +4158,12 @@
      "id": "r27q09",
      "question": "Which city was the capital of the Byzantine Empire?",
      "answers": [
-      "Constantinople",
-      "Antioch",
       "Alexandria",
+      "Antioch",
+      "Constantinople",
       "Rome"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "It is now Istanbul.",
      "source": "Britannica",
      "category": "History",
@@ -4173,12 +4173,12 @@
      "id": "r27q10",
      "question": "Which chess piece can only move diagonally?",
      "answers": [
-      "Bishop",
       "Knight",
       "King",
-      "Rook"
+      "Rook",
+      "Bishop"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "The rook moves in straight lines and the knight in an L shape.",
      "source": "International Chess Federation",
      "category": "Sport",
@@ -4193,8 +4193,8 @@
      "id": "r28q01",
      "question": "Which sense do you use to detect smells?",
      "answers": [
-      "Hearing",
       "Sight",
+      "Hearing",
       "Smell",
       "Touch"
      ],
@@ -4208,9 +4208,9 @@
      "id": "r28q02",
      "question": "What is the colour of snow?",
      "answers": [
-      "Grey",
-      "White",
       "Clear",
+      "White",
+      "Grey",
       "Blue"
      ],
      "correct": 1,
@@ -4223,12 +4223,12 @@
      "id": "r28q03",
      "question": "Which animal lives in a hive?",
      "answers": [
-      "Badger",
       "Bee",
       "Rabbit",
+      "Badger",
       "Mole"
      ],
-     "correct": 1,
+     "correct": 0,
      "explanation": "A colony of honeybees lives together in a hive.",
      "source": "Royal Entomological Society",
      "category": "Nature",
@@ -4239,8 +4239,8 @@
      "question": "Which country is known as the Land of the Rising Sun?",
      "answers": [
       "Thailand",
-      "Vietnam",
       "China",
+      "Vietnam",
       "Japan"
      ],
      "correct": 3,
@@ -4254,11 +4254,11 @@
      "question": "Who was the first President of the United States?",
      "answers": [
       "John Adams",
-      "Thomas Jefferson",
       "George Washington",
+      "Thomas Jefferson",
       "James Madison"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "He took office in 1789.",
      "source": "US National Archives",
      "category": "History",
@@ -4268,12 +4268,12 @@
      "id": "r28q06",
      "question": "Which dance style originated in Argentina and is danced in close embrace?",
      "answers": [
-      "Samba",
       "Salsa",
+      "Tango",
       "Flamenco",
-      "Tango"
+      "Samba"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Tango grew from the port districts of Buenos Aires.",
      "source": "UNESCO",
      "category": "Music",
@@ -4283,12 +4283,12 @@
      "id": "r28q07",
      "question": "What is the standard unit of electrical resistance?",
      "answers": [
-      "Ohm",
-      "Ampere",
       "Watt",
-      "Volt"
+      "Ampere",
+      "Volt",
+      "Ohm"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "It is named after Georg Ohm.",
      "source": "National Institute of Standards and Technology",
      "category": "Science",
@@ -4298,12 +4298,12 @@
      "id": "r28q08",
      "question": "Which planet was reclassified as a dwarf planet in 2006?",
      "answers": [
+      "Makemake",
       "Pluto",
-      "Eris",
       "Ceres",
-      "Makemake"
+      "Eris"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "The International Astronomical Union redefined what counts as a planet.",
      "source": "International Astronomical Union",
      "category": "Space",
@@ -4313,12 +4313,12 @@
      "id": "r28q09",
      "question": "What is the world's most visited art museum?",
      "answers": [
+      "The Louvre",
       "Metropolitan Museum of Art",
       "British Museum",
-      "The Louvre",
       "Uffizi Gallery"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "The Louvre in Paris draws more visitors than any other art museum.",
      "source": "Louvre Museum",
      "category": "Art & Literature",
@@ -4329,8 +4329,8 @@
      "question": "Which grain is used to make traditional Japanese sake?",
      "answers": [
       "Wheat",
-      "Barley",
       "Millet",
+      "Barley",
       "Rice"
      ],
      "correct": 3,
@@ -4348,12 +4348,12 @@
      "id": "r29q01",
      "question": "How many hours are in a day?",
      "answers": [
-      "24",
-      "12",
       "36",
-      "18"
+      "18",
+      "24",
+      "12"
      ],
-     "correct": 0,
+     "correct": 2,
      "explanation": "The 24-hour day comes from ancient Egyptian timekeeping.",
      "source": "Britannica",
      "category": "General Knowledge",
@@ -4363,12 +4363,12 @@
      "id": "r29q02",
      "question": "Which body part do you hear with?",
      "answers": [
-      "Nose",
       "Tongue",
       "Ear",
+      "Nose",
       "Eye"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "The eardrum turns sound waves into vibrations the inner ear can read.",
      "source": "National Institutes of Health",
      "category": "Science",
@@ -4378,12 +4378,12 @@
      "id": "r29q03",
      "question": "What is a group of wolves called?",
      "answers": [
-      "Flock",
-      "School",
       "Herd",
-      "Pack"
+      "School",
+      "Pack",
+      "Flock"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "A pack is usually a family group.",
      "source": "Oxford English Dictionary",
      "category": "Nature",
@@ -4393,12 +4393,12 @@
      "id": "r29q04",
      "question": "Which country invented paper?",
      "answers": [
+      "Greece",
       "China",
       "India",
-      "Egypt",
-      "Greece"
+      "Egypt"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Paper making is recorded in Han dynasty China around AD 105.",
      "source": "Britannica",
      "category": "History",
@@ -4408,12 +4408,12 @@
      "id": "r29q05",
      "question": "Which film won Best Picture at the 2020 Academy Awards?",
      "answers": [
-      "Once Upon a Time in Hollywood",
-      "Parasite",
       "1917",
-      "Joker"
+      "Once Upon a Time in Hollywood",
+      "Joker",
+      "Parasite"
      ],
-     "correct": 1,
+     "correct": 3,
      "explanation": "It was the first film not in English to take the award.",
      "source": "Academy of Motion Picture Arts and Sciences",
      "category": "Film & TV",
@@ -4423,12 +4423,12 @@
      "id": "r29q06",
      "question": "What is the capital of India?",
      "answers": [
-      "Chennai",
       "Kolkata",
       "Mumbai",
-      "New Delhi"
+      "New Delhi",
+      "Chennai"
      ],
-     "correct": 3,
+     "correct": 2,
      "explanation": "The capital moved from Calcutta to New Delhi in 1911.",
      "source": "Government of India",
      "category": "Geography",
@@ -4439,11 +4439,11 @@
      "question": "Which instrument has pedals, strings and a soundboard and is plucked?",
      "answers": [
       "Guitar",
-      "Banjo",
       "Harp",
-      "Cello"
+      "Cello",
+      "Banjo"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Pedals on a concert harp change the pitch of the strings.",
      "source": "Britannica",
      "category": "Music",
@@ -4453,12 +4453,12 @@
      "id": "r29q08",
      "question": "What does the acronym RADAR stand for?",
      "answers": [
-      "Radio Detection and Ranging",
-      "Range Detection and Return",
       "Rapid Detection and Recording",
-      "Radio Direction and Reading"
+      "Radio Detection and Ranging",
+      "Radio Direction and Reading",
+      "Range Detection and Return"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "It measures distance by timing radio echoes.",
      "source": "Britannica",
      "category": "Technology",
@@ -4468,12 +4468,12 @@
      "id": "r29q09",
      "question": "Which blood type is known as the universal donor for red cells?",
      "answers": [
-      "A positive",
       "B negative",
-      "O negative",
-      "AB positive"
+      "A positive",
+      "AB positive",
+      "O negative"
      ],
-     "correct": 2,
+     "correct": 3,
      "explanation": "O negative cells carry none of the main antigens that trigger rejection.",
      "source": "American Red Cross",
      "category": "Science",
@@ -4484,11 +4484,11 @@
      "question": "Which mountain is the highest in Africa?",
      "answers": [
       "Mount Stanley",
-      "Ras Dashen",
+      "Kilimanjaro",
       "Mount Kenya",
-      "Kilimanjaro"
+      "Ras Dashen"
      ],
-     "correct": 3,
+     "correct": 1,
      "explanation": "Kilimanjaro in Tanzania rises about 5,895 metres.",
      "source": "National Geographic",
      "category": "Geography",
@@ -4503,12 +4503,12 @@
      "id": "r30q01",
      "question": "What do you call a story that is not true and is written to entertain?",
      "answers": [
+      "Report",
       "Fiction",
-      "Biography",
       "Documentary",
-      "Report"
+      "Biography"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Non-fiction covers writing that reports fact.",
      "source": "Oxford English Dictionary",
      "category": "Art & Literature",
@@ -4520,8 +4520,8 @@
      "answers": [
       "Soup course",
       "Packed food",
-      "Banquet",
-      "Roast dinner"
+      "Roast dinner",
+      "Banquet"
      ],
      "correct": 1,
      "explanation": "A picnic is a meal carried and eaten outdoors.",
@@ -4533,12 +4533,12 @@
      "id": "r30q03",
      "question": "How many players serve at a time in a singles tennis match?",
      "answers": [
-      "Four",
       "Three",
       "One",
-      "Two"
+      "Two",
+      "Four"
      ],
-     "correct": 2,
+     "correct": 1,
      "explanation": "Singles is one player per side.",
      "source": "International Tennis Federation",
      "category": "Sport",
@@ -4548,12 +4548,12 @@
      "id": "r30q04",
      "question": "Which continent has the fewest countries?",
      "answers": [
-      "Antarctica",
+      "Australia",
       "South America",
       "Europe",
-      "Australia"
+      "Antarctica"
      ],
-     "correct": 0,
+     "correct": 3,
      "explanation": "Antarctica has no countries at all; it is governed by treaty.",
      "source": "Antarctic Treaty Secretariat",
      "category": "Geography",
@@ -4563,8 +4563,8 @@
      "id": "r30q05",
      "question": "Who wrote the novel Frankenstein?",
      "answers": [
-      "Edgar Allan Poe",
       "Emily Bronte",
+      "Edgar Allan Poe",
       "Mary Shelley",
       "Bram Stoker"
      ],
@@ -4578,12 +4578,12 @@
      "id": "r30q06",
      "question": "Which layer of the atmosphere contains most of the ozone?",
      "answers": [
-      "Thermosphere",
-      "Mesosphere",
       "Stratosphere",
-      "Troposphere"
+      "Troposphere",
+      "Mesosphere",
+      "Thermosphere"
      ],
-     "correct": 2,
+     "correct": 0,
      "explanation": "The ozone layer sits roughly 15 to 35 kilometres up.",
      "source": "NOAA",
      "category": "Science",
@@ -4593,12 +4593,12 @@
      "id": "r30q07",
      "question": "What is the name of the galaxy that contains our solar system?",
      "answers": [
+      "Milky Way",
       "Whirlpool",
-      "Andromeda",
       "Triangulum",
-      "Milky Way"
+      "Andromeda"
      ],
-     "correct": 3,
+     "correct": 0,
      "explanation": "Our solar system sits in one of its spiral arms.",
      "source": "NASA",
      "category": "Space",
@@ -4608,12 +4608,12 @@
      "id": "r30q08",
      "question": "Which composer wrote The Four Seasons?",
      "answers": [
-      "Antonio Vivaldi",
       "Johann Sebastian Bach",
-      "Arcangelo Corelli",
-      "George Frideric Handel"
+      "Antonio Vivaldi",
+      "George Frideric Handel",
+      "Arcangelo Corelli"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Vivaldi published the four violin concertos in 1725.",
      "source": "Britannica",
      "category": "Music",
@@ -4623,12 +4623,12 @@
      "id": "r30q09",
      "question": "What is the term for the study of word origins?",
      "answers": [
-      "Etymology",
       "Entomology",
-      "Epidemiology",
-      "Ecology"
+      "Etymology",
+      "Ecology",
+      "Epidemiology"
      ],
-     "correct": 0,
+     "correct": 1,
      "explanation": "Entomology, easily confused with it, is the study of insects.",
      "source": "Oxford English Dictionary",
      "category": "Language",
@@ -4638,13 +4638,2338 @@
      "id": "r30q10",
      "question": "Which country first launched an artificial satellite into orbit?",
      "answers": [
-      "Britain",
       "France",
+      "United States",
       "Soviet Union",
-      "United States"
+      "Britain"
      ],
      "correct": 2,
      "explanation": "Sputnik 1 was launched in October 1957.",
+     "source": "NASA",
+     "category": "Space",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 31,
+   "questions": [
+    {
+     "id": "r31q01",
+     "question": "How many seconds are in a minute?",
+     "answers": [
+      "100",
+      "120",
+      "30",
+      "60"
+     ],
+     "correct": 3,
+     "explanation": "Sixty seconds make a minute, and sixty minutes an hour.",
+     "source": "Britannica",
+     "category": "General Knowledge",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r31q02",
+     "question": "What do you call a baby horse?",
+     "answers": [
+      "Calf",
+      "Kid",
+      "Foal",
+      "Cub"
+     ],
+     "correct": 2,
+     "explanation": "A young goat, by contrast, is a kid.",
+     "source": "Oxford English Dictionary",
+     "category": "Nature",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r31q03",
+     "question": "Which country lies directly south of the United States?",
+     "answers": [
+      "Cuba",
+      "Belize",
+      "Guatemala",
+      "Mexico"
+     ],
+     "correct": 3,
+     "explanation": "The two share a border of about 3,100 kilometres.",
+     "source": "CIA World Factbook",
+     "category": "Geography",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r31q04",
+     "question": "What is the centre of an atom called?",
+     "answers": [
+      "The core field",
+      "The nucleus",
+      "The electron shell",
+      "The proton ring"
+     ],
+     "correct": 1,
+     "explanation": "Protons and neutrons sit in the nucleus; electrons move around it.",
+     "source": "Royal Society of Chemistry",
+     "category": "Science",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r31q05",
+     "question": "Which ship carried the Pilgrims to America in 1620?",
+     "answers": [
+      "Mayflower",
+      "Beagle",
+      "Santa Maria",
+      "Endeavour"
+     ],
+     "correct": 0,
+     "explanation": "It landed at what became Plymouth, Massachusetts.",
+     "source": "Library of Congress",
+     "category": "History",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r31q06",
+     "question": "Which Russian novelist wrote War and Peace?",
+     "answers": [
+      "Anton Chekhov",
+      "Fyodor Dostoevsky",
+      "Leo Tolstoy",
+      "Ivan Turgenev"
+     ],
+     "correct": 2,
+     "explanation": "It was published in full in 1869.",
+     "source": "Britannica",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r31q07",
+     "question": "Which planet has a day longer than its year?",
+     "answers": [
+      "Mars",
+      "Mercury",
+      "Uranus",
+      "Venus"
+     ],
+     "correct": 3,
+     "explanation": "Venus turns once every 243 Earth days and orbits the Sun in 225.",
+     "source": "NASA",
+     "category": "Space",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r31q08",
+     "question": "What is the SI unit of force?",
+     "answers": [
+      "Newton",
+      "Joule",
+      "Pascal",
+      "Watt"
+     ],
+     "correct": 0,
+     "explanation": "One newton accelerates a kilogram by one metre per second squared.",
+     "source": "National Institute of Standards and Technology",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r31q09",
+     "question": "Which Italian musical term means to play very loudly?",
+     "answers": [
+      "Andante",
+      "Legato",
+      "Pianissimo",
+      "Fortissimo"
+     ],
+     "correct": 3,
+     "explanation": "Piano means softly and forte means loudly; the -issimo ending doubles it.",
+     "source": "Britannica",
+     "category": "Music",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r31q10",
+     "question": "Which vegetable gives borscht its colour?",
+     "answers": [
+      "Potato",
+      "Turnip",
+      "Beetroot",
+      "Cabbage"
+     ],
+     "correct": 2,
+     "explanation": "The soup comes from Eastern Europe and is built on beetroot.",
+     "source": "Britannica",
+     "category": "Food & Drink",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 32,
+   "questions": [
+    {
+     "id": "r32q01",
+     "question": "Which part of the body pumps blood?",
+     "answers": [
+      "The heart",
+      "The stomach",
+      "The liver",
+      "The lungs"
+     ],
+     "correct": 0,
+     "explanation": "It beats around 100,000 times a day.",
+     "source": "Royal Society of Biology",
+     "category": "Science",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r32q02",
+     "question": "How many months are there in a year?",
+     "answers": [
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Ten"
+     ],
+     "correct": 1,
+     "explanation": "The calendar year is divided into twelve months of unequal length.",
+     "source": "Britannica",
+     "category": "General Knowledge",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r32q03",
+     "question": "Which is the largest US state by area?",
+     "answers": [
+      "California",
+      "Alaska",
+      "Texas",
+      "Montana"
+     ],
+     "correct": 1,
+     "explanation": "Alaska is more than twice the size of Texas.",
+     "source": "US Census Bureau",
+     "category": "Geography",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r32q04",
+     "question": "In which year did the American Civil War begin?",
+     "answers": [
+      "1776",
+      "1861",
+      "1812",
+      "1898"
+     ],
+     "correct": 1,
+     "explanation": "It began with the attack on Fort Sumter in April 1861.",
+     "source": "Library of Congress",
+     "category": "History",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r32q05",
+     "question": "Which actor played Indiana Jones?",
+     "answers": [
+      "Harrison Ford",
+      "Mel Gibson",
+      "Tom Hanks",
+      "Kevin Costner"
+     ],
+     "correct": 0,
+     "explanation": "Ford first took the part in Raiders of the Lost Ark in 1981.",
+     "source": "British Film Institute",
+     "category": "Film & TV",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r32q06",
+     "question": "Which part of a cell converts nutrients into usable energy?",
+     "answers": [
+      "The Golgi body",
+      "The mitochondrion",
+      "The nucleus",
+      "The ribosome"
+     ],
+     "correct": 1,
+     "explanation": "A busy cell can hold thousands of them.",
+     "source": "Royal Society of Biology",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r32q07",
+     "question": "What does the abbreviation i.e. stand for?",
+     "answers": [
+      "Inter alia",
+      "In example",
+      "In ecclesia",
+      "Id est"
+     ],
+     "correct": 3,
+     "explanation": "It is Latin for that is, and introduces a restatement rather than an example.",
+     "source": "Oxford English Dictionary",
+     "category": "Language",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r32q08",
+     "question": "Which African country has the largest population?",
+     "answers": [
+      "South Africa",
+      "Egypt",
+      "Ethiopia",
+      "Nigeria"
+     ],
+     "correct": 3,
+     "explanation": "More than two hundred million people live there.",
+     "source": "United Nations",
+     "category": "Geography",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r32q09",
+     "question": "Which instrument family does the cello belong to?",
+     "answers": [
+      "Woodwind",
+      "Brass",
+      "Percussion",
+      "Strings"
+     ],
+     "correct": 3,
+     "explanation": "It is bowed, like the violin and the viola, but rests on the floor.",
+     "source": "Britannica",
+     "category": "Music",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r32q10",
+     "question": "How many planets are in our solar system?",
+     "answers": [
+      "Ten",
+      "Nine",
+      "Eight",
+      "Seven"
+     ],
+     "correct": 2,
+     "explanation": "The count fell to eight when Pluto was reclassified as a dwarf planet.",
+     "source": "NASA",
+     "category": "Space",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 33,
+   "questions": [
+    {
+     "id": "r33q01",
+     "question": "Which animal is famous for building dams?",
+     "answers": [
+      "Badger",
+      "Otter",
+      "Beaver",
+      "Mole"
+     ],
+     "correct": 2,
+     "explanation": "Beavers fell trees with their teeth and dam streams to make ponds.",
+     "source": "World Wildlife Fund",
+     "category": "Nature",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r33q02",
+     "question": "Which vegetable gets its colour from beta-carotene?",
+     "answers": [
+      "Turnip",
+      "Parsnip",
+      "Swede",
+      "Carrot"
+     ],
+     "correct": 3,
+     "explanation": "The same pigment colours pumpkins and sweet potatoes.",
+     "source": "Britannica",
+     "category": "Food & Drink",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r33q03",
+     "question": "Which Carthaginian general crossed the Alps with elephants?",
+     "answers": [
+      "Hamilcar",
+      "Hannibal",
+      "Scipio",
+      "Pyrrhus"
+     ],
+     "correct": 1,
+     "explanation": "He invaded Italy in 218 BC during the Second Punic War.",
+     "source": "Britannica",
+     "category": "History",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r33q04",
+     "question": "What is normal human body temperature in degrees Celsius, to the nearest degree?",
+     "answers": [
+      "41",
+      "39",
+      "35",
+      "37"
+     ],
+     "correct": 3,
+     "explanation": "It varies by a degree or so through the day and between people.",
+     "source": "National Health Service",
+     "category": "Science",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r33q05",
+     "question": "In which country does the Amazon river rise?",
+     "answers": [
+      "Colombia",
+      "Peru",
+      "Ecuador",
+      "Brazil"
+     ],
+     "correct": 1,
+     "explanation": "Its headwaters are high in the Peruvian Andes.",
+     "source": "Britannica",
+     "category": "Geography",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r33q06",
+     "question": "Which Dutch painter made The Night Watch?",
+     "answers": [
+      "Rembrandt",
+      "Johannes Vermeer",
+      "Frans Hals",
+      "Jan Steen"
+     ],
+     "correct": 0,
+     "explanation": "He finished the group portrait in 1642.",
+     "source": "Rijksmuseum",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r33q07",
+     "question": "What does URL stand for?",
+     "answers": [
+      "Uniform resource locator",
+      "User routing layer",
+      "Unified retrieval list",
+      "Universal reference link"
+     ],
+     "correct": 0,
+     "explanation": "It is the address of a page or file on the web.",
+     "source": "World Wide Web Consortium",
+     "category": "Technology",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r33q08",
+     "question": "How many points is a touchdown worth in American football?",
+     "answers": [
+      "Five",
+      "Seven",
+      "Six",
+      "Three"
+     ],
+     "correct": 2,
+     "explanation": "The extra-point kick afterwards adds one more.",
+     "source": "National Football League",
+     "category": "Sport",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r33q09",
+     "question": "Which is the least dense metal?",
+     "answers": [
+      "Lithium",
+      "Aluminium",
+      "Sodium",
+      "Magnesium"
+     ],
+     "correct": 0,
+     "explanation": "It is light enough to float on water, which it also reacts with.",
+     "source": "Royal Society of Chemistry",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r33q10",
+     "question": "What is a word that means the opposite of another called?",
+     "answers": [
+      "An acronym",
+      "A synonym",
+      "An antonym",
+      "A homonym"
+     ],
+     "correct": 2,
+     "explanation": "A synonym means much the same thing.",
+     "source": "Oxford English Dictionary",
+     "category": "Language",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 34,
+   "questions": [
+    {
+     "id": "r34q01",
+     "question": "What is the meal eaten at midday usually called?",
+     "answers": [
+      "Elevenses",
+      "Supper",
+      "Brunch",
+      "Lunch"
+     ],
+     "correct": 3,
+     "explanation": "In some regions dinner also means the midday meal.",
+     "source": "Oxford English Dictionary",
+     "category": "General Knowledge",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r34q02",
+     "question": "Which object orbits the Earth and lights the night sky?",
+     "answers": [
+      "The Moon",
+      "The Sun",
+      "Mars",
+      "Venus"
+     ],
+     "correct": 0,
+     "explanation": "It takes about twenty-seven days to go round once.",
+     "source": "NASA",
+     "category": "Space",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r34q03",
+     "question": "Which creature has the largest eyes of any living animal?",
+     "answers": [
+      "Giant squid",
+      "Blue whale",
+      "Ostrich",
+      "Horse"
+     ],
+     "correct": 0,
+     "explanation": "A giant squid's eye can be the size of a dinner plate.",
+     "source": "Natural History Museum",
+     "category": "Nature",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r34q04",
+     "question": "Which country has Lisbon as its capital?",
+     "answers": [
+      "Mexico",
+      "Brazil",
+      "Spain",
+      "Portugal"
+     ],
+     "correct": 3,
+     "explanation": "Lisbon sits on the estuary of the Tagus.",
+     "source": "Britannica",
+     "category": "Geography",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r34q05",
+     "question": "Which plague swept Europe in the fourteenth century?",
+     "answers": [
+      "The Spanish flu",
+      "Cholera",
+      "The Black Death",
+      "The Great Plague of London"
+     ],
+     "correct": 2,
+     "explanation": "It may have killed a third of the people in Europe.",
+     "source": "Britannica",
+     "category": "History",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r34q06",
+     "question": "How many bones are there in an adult human body?",
+     "answers": [
+      "206",
+      "180",
+      "226",
+      "300"
+     ],
+     "correct": 0,
+     "explanation": "Babies are born with about 270; a number of them fuse as they grow.",
+     "source": "Gray's Anatomy",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r34q07",
+     "question": "Who wrote the novel Don Quixote?",
+     "answers": [
+      "Federico Garcia Lorca",
+      "Miguel de Cervantes",
+      "Camilo Jose Cela",
+      "Lope de Vega"
+     ],
+     "correct": 1,
+     "explanation": "Its first part appeared in 1605.",
+     "source": "Britannica",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r34q08",
+     "question": "Which major key has no sharps and no flats?",
+     "answers": [
+      "F major",
+      "D major",
+      "C major",
+      "G major"
+     ],
+     "correct": 2,
+     "explanation": "On a piano it is played on the white keys alone.",
+     "source": "Britannica",
+     "category": "Music",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r34q09",
+     "question": "In which sport is the Davis Cup contested?",
+     "answers": [
+      "Tennis",
+      "Golf",
+      "Sailing",
+      "Rowing"
+     ],
+     "correct": 0,
+     "explanation": "It is the men's international team competition, first played in 1900.",
+     "source": "International Tennis Federation",
+     "category": "Sport",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r34q10",
+     "question": "What does AI stand for in computing?",
+     "answers": [
+      "Artificial intelligence",
+      "Adaptive interface",
+      "Applied informatics",
+      "Automated input"
+     ],
+     "correct": 0,
+     "explanation": "The term was coined for a research conference in 1956.",
+     "source": "Britannica",
+     "category": "Technology",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 35,
+   "questions": [
+    {
+     "id": "r35q01",
+     "question": "What do plants need from the Sun in order to grow?",
+     "answers": [
+      "Sound",
+      "Wind",
+      "Light",
+      "Sand"
+     ],
+     "correct": 2,
+     "explanation": "They use it to turn carbon dioxide and water into sugar.",
+     "source": "Royal Society of Biology",
+     "category": "Science",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r35q02",
+     "question": "Which country is the Great Barrier Reef off the coast of?",
+     "answers": [
+      "Fiji",
+      "Indonesia",
+      "Australia",
+      "New Zealand"
+     ],
+     "correct": 2,
+     "explanation": "It runs for more than 2,000 kilometres along Queensland.",
+     "source": "UNESCO",
+     "category": "Geography",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r35q03",
+     "question": "How many degrees are there in a full circle?",
+     "answers": [
+      "270",
+      "180",
+      "360",
+      "90"
+     ],
+     "correct": 2,
+     "explanation": "The division into 360 parts comes from Babylonian astronomy.",
+     "source": "Britannica",
+     "category": "General Knowledge",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r35q04",
+     "question": "Which country does the dish paella come from?",
+     "answers": [
+      "Spain",
+      "Greece",
+      "Portugal",
+      "Italy"
+     ],
+     "correct": 0,
+     "explanation": "It belongs to the Valencia region on the east coast.",
+     "source": "Britannica",
+     "category": "Food & Drink",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r35q05",
+     "question": "In which film series does the character Darth Vader appear?",
+     "answers": [
+      "Star Trek",
+      "Dune",
+      "Battlestar Galactica",
+      "Star Wars"
+     ],
+     "correct": 3,
+     "explanation": "He first appeared in the 1977 film.",
+     "source": "British Film Institute",
+     "category": "Film & TV",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r35q06",
+     "question": "Which Russian city was called Leningrad until 1991?",
+     "answers": [
+      "Moscow",
+      "Kazan",
+      "Saint Petersburg",
+      "Volgograd"
+     ],
+     "correct": 2,
+     "explanation": "It was also called Petrograd between 1914 and 1924.",
+     "source": "Britannica",
+     "category": "History",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r35q07",
+     "question": "What is the study of the weather called?",
+     "answers": [
+      "Hydrology",
+      "Geology",
+      "Meteorology",
+      "Astrology"
+     ],
+     "correct": 2,
+     "explanation": "The name comes from the Greek for things high in the air.",
+     "source": "Royal Meteorological Society",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r35q08",
+     "question": "Which is the tallest tree species in the world?",
+     "answers": [
+      "Mountain ash",
+      "Douglas fir",
+      "Coast redwood",
+      "Giant sequoia"
+     ],
+     "correct": 2,
+     "explanation": "The tallest known specimens stand over 115 metres.",
+     "source": "National Park Service",
+     "category": "Nature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r35q09",
+     "question": "Which alphabet is used to write Russian?",
+     "answers": [
+      "Greek",
+      "Arabic",
+      "Cyrillic",
+      "Latin"
+     ],
+     "correct": 2,
+     "explanation": "It is named after Cyril, a ninth-century missionary.",
+     "source": "Britannica",
+     "category": "Language",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r35q10",
+     "question": "How many people have walked on the Moon?",
+     "answers": [
+      "Fifteen",
+      "Twelve",
+      "Six",
+      "Nine"
+     ],
+     "correct": 1,
+     "explanation": "All twelve walked there between 1969 and 1972.",
+     "source": "NASA",
+     "category": "Space",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 36,
+   "questions": [
+    {
+     "id": "r36q01",
+     "question": "What is a group of lions called?",
+     "answers": [
+      "A herd",
+      "A flock",
+      "A pride",
+      "A pack"
+     ],
+     "correct": 2,
+     "explanation": "Wolves move in a pack and sheep in a flock.",
+     "source": "Oxford English Dictionary",
+     "category": "Nature",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r36q02",
+     "question": "How many sides does an octagon have?",
+     "answers": [
+      "Ten",
+      "Seven",
+      "Six",
+      "Eight"
+     ],
+     "correct": 3,
+     "explanation": "Octa- is Greek for eight.",
+     "source": "Oxford English Dictionary",
+     "category": "General Knowledge",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r36q03",
+     "question": "Which is the longest river in Europe?",
+     "answers": [
+      "Don",
+      "Danube",
+      "Rhine",
+      "Volga"
+     ],
+     "correct": 3,
+     "explanation": "It runs about 3,530 kilometres through Russia to the Caspian Sea.",
+     "source": "Britannica",
+     "category": "Geography",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r36q04",
+     "question": "What is the name for animals with a backbone?",
+     "answers": [
+      "Arthropods",
+      "Vertebrates",
+      "Invertebrates",
+      "Molluscs"
+     ],
+     "correct": 1,
+     "explanation": "Insects, crabs and squid have no backbone and are invertebrates.",
+     "source": "Natural History Museum",
+     "category": "Science",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r36q05",
+     "question": "Which country was ruled by the Tsars?",
+     "answers": [
+      "Russia",
+      "Serbia",
+      "Bulgaria",
+      "Poland"
+     ],
+     "correct": 0,
+     "explanation": "The last tsar, Nicholas II, abdicated in 1917.",
+     "source": "Britannica",
+     "category": "History",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r36q06",
+     "question": "Which sculptor made The Thinker?",
+     "answers": [
+      "Alberto Giacometti",
+      "Auguste Rodin",
+      "Henry Moore",
+      "Antonio Canova"
+     ],
+     "correct": 1,
+     "explanation": "He modelled it in 1880 as part of a much larger doorway.",
+     "source": "Musee Rodin",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r36q07",
+     "question": "Which instrument was Ravi Shankar known for playing?",
+     "answers": [
+      "Sarod",
+      "Tabla",
+      "Veena",
+      "Sitar"
+     ],
+     "correct": 3,
+     "explanation": "He brought Indian classical music to Western audiences in the 1960s.",
+     "source": "Britannica",
+     "category": "Music",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r36q08",
+     "question": "What does a barometer measure?",
+     "answers": [
+      "Air pressure",
+      "Temperature",
+      "Humidity",
+      "Wind speed"
+     ],
+     "correct": 0,
+     "explanation": "Falling pressure usually means the weather is about to change.",
+     "source": "Royal Meteorological Society",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r36q09",
+     "question": "Which fruit is limoncello made from?",
+     "answers": [
+      "Lime",
+      "Lemon",
+      "Grapefruit",
+      "Orange"
+     ],
+     "correct": 1,
+     "explanation": "The liqueur comes from the Amalfi coast and the Gulf of Naples.",
+     "source": "Britannica",
+     "category": "Food & Drink",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r36q10",
+     "question": "How many rings are on the Olympic flag?",
+     "answers": [
+      "Four",
+      "Seven",
+      "Six",
+      "Five"
+     ],
+     "correct": 3,
+     "explanation": "They stand for the five inhabited continents as the founders counted them.",
+     "source": "International Olympic Committee",
+     "category": "Sport",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 37,
+   "questions": [
+    {
+     "id": "r37q01",
+     "question": "In which direction does the Sun rise?",
+     "answers": [
+      "The north",
+      "The south",
+      "The west",
+      "The east"
+     ],
+     "correct": 3,
+     "explanation": "It sets in the west.",
+     "source": "Royal Observatory Greenwich",
+     "category": "General Knowledge",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r37q02",
+     "question": "What is the main ingredient of an omelette?",
+     "answers": [
+      "Cheese",
+      "Flour",
+      "Milk",
+      "Eggs"
+     ],
+     "correct": 3,
+     "explanation": "They are beaten and set in a pan, usually with butter.",
+     "source": "Britannica",
+     "category": "Food & Drink",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r37q03",
+     "question": "Which reptile can shed and regrow its tail?",
+     "answers": [
+      "Turtle",
+      "Snake",
+      "Crocodile",
+      "Lizard"
+     ],
+     "correct": 3,
+     "explanation": "Many lizards drop the tail to escape a predator's grip.",
+     "source": "Natural History Museum",
+     "category": "Nature",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r37q04",
+     "question": "What does USB stand for?",
+     "answers": [
+      "User service board",
+      "Universal storage box",
+      "United system backup",
+      "Universal serial bus"
+     ],
+     "correct": 3,
+     "explanation": "It became the standard connector for peripherals in the late 1990s.",
+     "source": "Britannica",
+     "category": "Technology",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r37q05",
+     "question": "In which country is Mount Fuji?",
+     "answers": [
+      "Japan",
+      "China",
+      "Taiwan",
+      "South Korea"
+     ],
+     "correct": 0,
+     "explanation": "It rises to 3,776 metres south-west of Tokyo.",
+     "source": "UNESCO",
+     "category": "Geography",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r37q06",
+     "question": "Which English king had six wives?",
+     "answers": [
+      "Henry VII",
+      "James I",
+      "Henry VIII",
+      "Edward VI"
+     ],
+     "correct": 2,
+     "explanation": "He ruled from 1509 to 1547.",
+     "source": "Royal Collection Trust",
+     "category": "History",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r37q07",
+     "question": "What is the hardest substance in the human body?",
+     "answers": [
+      "Nail",
+      "Cartilage",
+      "Tooth enamel",
+      "Bone"
+     ],
+     "correct": 2,
+     "explanation": "It is harder than bone, and the body cannot grow it back.",
+     "source": "Gray's Anatomy",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r37q08",
+     "question": "Who wrote the novel Things Fall Apart?",
+     "answers": [
+      "Chinua Achebe",
+      "Ben Okri",
+      "Wole Soyinka",
+      "Ngugi wa Thiong'o"
+     ],
+     "correct": 0,
+     "explanation": "The Nigerian novelist published it in 1958.",
+     "source": "British Library",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r37q09",
+     "question": "Which rover landed in Mars's Jezero Crater in 2021?",
+     "answers": [
+      "Spirit",
+      "Opportunity",
+      "Perseverance",
+      "Curiosity"
+     ],
+     "correct": 2,
+     "explanation": "It carried the first helicopter flown on another planet.",
+     "source": "NASA",
+     "category": "Space",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r37q10",
+     "question": "What is a word formed from the first letters of others called?",
+     "answers": [
+      "An abbreviation",
+      "A compound",
+      "A contraction",
+      "An acronym"
+     ],
+     "correct": 3,
+     "explanation": "NATO and laser are both acronyms.",
+     "source": "Oxford English Dictionary",
+     "category": "Language",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 38,
+   "questions": [
+    {
+     "id": "r38q01",
+     "question": "What is the study of living things called?",
+     "answers": [
+      "Chemistry",
+      "Biology",
+      "Geology",
+      "Physics"
+     ],
+     "correct": 1,
+     "explanation": "Bio- is Greek for life.",
+     "source": "Oxford English Dictionary",
+     "category": "Science",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r38q02",
+     "question": "Which is the smallest ocean?",
+     "answers": [
+      "Southern",
+      "Atlantic",
+      "Arctic",
+      "Indian"
+     ],
+     "correct": 2,
+     "explanation": "It is the shallowest as well as the smallest.",
+     "source": "NOAA",
+     "category": "Geography",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r38q03",
+     "question": "Which instrument is bowed and held under the chin?",
+     "answers": [
+      "Cello",
+      "Violin",
+      "Double bass",
+      "Harp"
+     ],
+     "correct": 1,
+     "explanation": "The viola is held the same way but is larger and lower.",
+     "source": "Britannica",
+     "category": "Music",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r38q04",
+     "question": "Which two countries fought the Hundred Years' War?",
+     "answers": [
+      "England and France",
+      "Austria and Prussia",
+      "Spain and Portugal",
+      "Russia and Sweden"
+     ],
+     "correct": 0,
+     "explanation": "It ran, on and off, from 1337 to 1453.",
+     "source": "Britannica",
+     "category": "History",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r38q05",
+     "question": "Which nut is used in traditional Genoese pesto?",
+     "answers": [
+      "Pine nut",
+      "Cashew",
+      "Almond",
+      "Walnut"
+     ],
+     "correct": 0,
+     "explanation": "It is pounded with basil, garlic, oil and parmesan.",
+     "source": "Britannica",
+     "category": "Food & Drink",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r38q06",
+     "question": "Which scientist arranged the first widely used periodic table?",
+     "answers": [
+      "Robert Boyle",
+      "Antoine Lavoisier",
+      "Dmitri Mendeleev",
+      "John Dalton"
+     ],
+     "correct": 2,
+     "explanation": "He ordered the elements by atomic weight in 1869 and left gaps for unknown ones.",
+     "source": "Royal Society of Chemistry",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r38q07",
+     "question": "Which country has the most islands?",
+     "answers": [
+      "Norway",
+      "Philippines",
+      "Indonesia",
+      "Sweden"
+     ],
+     "correct": 3,
+     "explanation": "It counts more than 260,000, the great majority uninhabited.",
+     "source": "Statistics Sweden",
+     "category": "Geography",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r38q08",
+     "question": "Which film is set in a hotel called the Overlook?",
+     "answers": [
+      "Rosemary's Baby",
+      "The Shining",
+      "Psycho",
+      "The Birds"
+     ],
+     "correct": 1,
+     "explanation": "Stanley Kubrick adapted it from Stephen King in 1980.",
+     "source": "British Film Institute",
+     "category": "Film & TV",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r38q09",
+     "question": "Which animal makes the loudest recorded sound?",
+     "answers": [
+      "Howler monkey",
+      "Sperm whale",
+      "Blue whale",
+      "African elephant"
+     ],
+     "correct": 1,
+     "explanation": "Its clicks have been measured above 230 decibels underwater.",
+     "source": "NOAA",
+     "category": "Nature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r38q10",
+     "question": "How many squares are there on a chessboard?",
+     "answers": [
+      "Forty-nine",
+      "Sixty-four",
+      "Eighty-one",
+      "One hundred"
+     ],
+     "correct": 1,
+     "explanation": "Eight rows of eight.",
+     "source": "International Chess Federation",
+     "category": "Sport",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 39,
+   "questions": [
+    {
+     "id": "r39q01",
+     "question": "What is a young cow called?",
+     "answers": [
+      "A foal",
+      "A lamb",
+      "A calf",
+      "A piglet"
+     ],
+     "correct": 2,
+     "explanation": "A young horse is a foal and a young sheep a lamb.",
+     "source": "Oxford English Dictionary",
+     "category": "Nature",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r39q02",
+     "question": "What colour is a ruby?",
+     "answers": [
+      "Yellow",
+      "Green",
+      "Red",
+      "Blue"
+     ],
+     "correct": 2,
+     "explanation": "A blue stone of the same mineral is called a sapphire.",
+     "source": "Britannica",
+     "category": "General Knowledge",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r39q03",
+     "question": "Which organs filter waste from the blood?",
+     "answers": [
+      "The lungs",
+      "The spleen",
+      "The kidneys",
+      "The heart"
+     ],
+     "correct": 2,
+     "explanation": "They produce about a litre and a half of urine a day.",
+     "source": "Royal Society of Biology",
+     "category": "Science",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r39q04",
+     "question": "In which country is the Taj Mahal?",
+     "answers": [
+      "Nepal",
+      "Bangladesh",
+      "Pakistan",
+      "India"
+     ],
+     "correct": 3,
+     "explanation": "It was built at Agra in the seventeenth century as a tomb.",
+     "source": "UNESCO",
+     "category": "Geography",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r39q05",
+     "question": "Which country did Napoleon Bonaparte lead?",
+     "answers": [
+      "Italy",
+      "France",
+      "Austria",
+      "Spain"
+     ],
+     "correct": 1,
+     "explanation": "He crowned himself emperor in 1804.",
+     "source": "Britannica",
+     "category": "History",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r39q06",
+     "question": "Who wrote the poem The Waste Land?",
+     "answers": [
+      "W. B. Yeats",
+      "Ezra Pound",
+      "Wilfred Owen",
+      "T. S. Eliot"
+     ],
+     "correct": 3,
+     "explanation": "It was published in 1922 and runs to 434 lines.",
+     "source": "British Library",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r39q07",
+     "question": "How many notes are in a major scale before it repeats?",
+     "answers": [
+      "Twelve",
+      "Seven",
+      "Five",
+      "Eight"
+     ],
+     "correct": 1,
+     "explanation": "The eighth note is the octave: the first one again, higher.",
+     "source": "Britannica",
+     "category": "Music",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r39q08",
+     "question": "Which sugar gives DNA the D in its name?",
+     "answers": [
+      "Ribose",
+      "Fructose",
+      "Deoxyribose",
+      "Glucose"
+     ],
+     "correct": 2,
+     "explanation": "RNA uses ribose, which has the oxygen DNA's sugar is missing.",
+     "source": "Royal Society of Chemistry",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r39q09",
+     "question": "What does PDF stand for?",
+     "answers": [
+      "Portable document format",
+      "Page display format",
+      "Printed document form",
+      "Public data file"
+     ],
+     "correct": 0,
+     "explanation": "Adobe created it in 1993 so a page would look the same everywhere.",
+     "source": "Britannica",
+     "category": "Technology",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r39q10",
+     "question": "Which spacecraft has travelled furthest from Earth?",
+     "answers": [
+      "Pioneer 10",
+      "New Horizons",
+      "Voyager 1",
+      "Voyager 2"
+     ],
+     "correct": 2,
+     "explanation": "Launched in 1977, it crossed into interstellar space in 2012.",
+     "source": "NASA",
+     "category": "Space",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 40,
+   "questions": [
+    {
+     "id": "r40q01",
+     "question": "Which is the coldest continent?",
+     "answers": [
+      "Europe",
+      "South America",
+      "Antarctica",
+      "Asia"
+     ],
+     "correct": 2,
+     "explanation": "It holds the record low of about minus 89 degrees Celsius.",
+     "source": "British Antarctic Survey",
+     "category": "Geography",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r40q02",
+     "question": "Which force slows a sliding object down?",
+     "answers": [
+      "Pressure",
+      "Gravity",
+      "Magnetism",
+      "Friction"
+     ],
+     "correct": 3,
+     "explanation": "It turns movement into heat, which is why rubbing warms your hands.",
+     "source": "Britannica",
+     "category": "Science",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r40q03",
+     "question": "Which is the largest living reptile?",
+     "answers": [
+      "Green anaconda",
+      "Komodo dragon",
+      "Galapagos tortoise",
+      "Saltwater crocodile"
+     ],
+     "correct": 3,
+     "explanation": "Males can exceed six metres.",
+     "source": "Natural History Museum",
+     "category": "Nature",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r40q04",
+     "question": "What is the Roman numeral for fifty?",
+     "answers": [
+      "D",
+      "X",
+      "C",
+      "L"
+     ],
+     "correct": 3,
+     "explanation": "C is one hundred and D is five hundred.",
+     "source": "Oxford English Dictionary",
+     "category": "General Knowledge",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r40q05",
+     "question": "Which film studio's logo is a mountain ringed with stars?",
+     "answers": [
+      "Paramount",
+      "Universal",
+      "Warner Bros",
+      "Columbia"
+     ],
+     "correct": 0,
+     "explanation": "The mountain has been its emblem since 1914.",
+     "source": "British Film Institute",
+     "category": "Film & TV",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r40q06",
+     "question": "Which country did Britain hand Hong Kong back to in 1997?",
+     "answers": [
+      "Portugal",
+      "China",
+      "Japan",
+      "Taiwan"
+     ],
+     "correct": 1,
+     "explanation": "The handover took place on 1 July 1997.",
+     "source": "Britannica",
+     "category": "History",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r40q07",
+     "question": "Which is the most common blood type worldwide?",
+     "answers": [
+      "A positive",
+      "B positive",
+      "AB negative",
+      "O positive"
+     ],
+     "correct": 3,
+     "explanation": "Roughly a third of people have it.",
+     "source": "World Health Organization",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r40q08",
+     "question": "Which Norwegian painter made The Scream?",
+     "answers": [
+      "Edvard Munch",
+      "Vincent van Gogh",
+      "Gustav Klimt",
+      "Egon Schiele"
+     ],
+     "correct": 0,
+     "explanation": "He made several versions, the first in 1893.",
+     "source": "National Museum of Norway",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r40q09",
+     "question": "What is the official language of the Vatican?",
+     "answers": [
+      "Italian",
+      "French",
+      "Greek",
+      "Latin"
+     ],
+     "correct": 3,
+     "explanation": "Italian is what is actually spoken there day to day.",
+     "source": "Holy See",
+     "category": "Language",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r40q10",
+     "question": "Which country does Gouda cheese come from?",
+     "answers": [
+      "Denmark",
+      "Belgium",
+      "Germany",
+      "The Netherlands"
+     ],
+     "correct": 3,
+     "explanation": "It is named after the market town where it was traded.",
+     "source": "Britannica",
+     "category": "Food & Drink",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 41,
+   "questions": [
+    {
+     "id": "r41q01",
+     "question": "What do we call water falling from clouds?",
+     "answers": [
+      "Rain",
+      "Fog",
+      "Frost",
+      "Wind"
+     ],
+     "correct": 0,
+     "explanation": "Frozen, the same water falls as hail or snow.",
+     "source": "Royal Meteorological Society",
+     "category": "Science",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r41q02",
+     "question": "Which animal is known for its long trunk?",
+     "answers": [
+      "Rhinoceros",
+      "Tapir",
+      "Hippopotamus",
+      "Elephant"
+     ],
+     "correct": 3,
+     "explanation": "The trunk is a fused nose and upper lip, with no bone in it.",
+     "source": "World Wildlife Fund",
+     "category": "Nature",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r41q03",
+     "question": "Which city is known as the Eternal City?",
+     "answers": [
+      "Istanbul",
+      "Jerusalem",
+      "Athens",
+      "Rome"
+     ],
+     "correct": 3,
+     "explanation": "The name goes back to Roman poets of the first century BC.",
+     "source": "Britannica",
+     "category": "Geography",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r41q04",
+     "question": "Which scale measures the hardness of minerals?",
+     "answers": [
+      "Richter",
+      "Beaufort",
+      "Mohs",
+      "Kelvin"
+     ],
+     "correct": 2,
+     "explanation": "It runs from talc at one to diamond at ten.",
+     "source": "US Geological Survey",
+     "category": "Science",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r41q05",
+     "question": "How many periods are there in an ice hockey match?",
+     "answers": [
+      "Four",
+      "Five",
+      "Three",
+      "Two"
+     ],
+     "correct": 2,
+     "explanation": "Each lasts twenty minutes of playing time.",
+     "source": "International Ice Hockey Federation",
+     "category": "Sport",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r41q06",
+     "question": "Which explorer reached the South Pole first?",
+     "answers": [
+      "Roald Amundsen",
+      "Fridtjof Nansen",
+      "Robert Falcon Scott",
+      "Ernest Shackleton"
+     ],
+     "correct": 0,
+     "explanation": "His party arrived in December 1911, weeks ahead of Scott's.",
+     "source": "British Antarctic Survey",
+     "category": "History",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r41q07",
+     "question": "Which Japanese artist made The Great Wave off Kanagawa?",
+     "answers": [
+      "Hokusai",
+      "Hiroshige",
+      "Utamaro",
+      "Sharaku"
+     ],
+     "correct": 0,
+     "explanation": "The woodblock print dates from about 1831.",
+     "source": "British Museum",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r41q08",
+     "question": "What is the chemical symbol for tin?",
+     "answers": [
+      "Sn",
+      "Ti",
+      "Tn",
+      "St"
+     ],
+     "correct": 0,
+     "explanation": "Sn comes from stannum, the Latin name.",
+     "source": "Royal Society of Chemistry",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r41q09",
+     "question": "Which opera house stands in Milan?",
+     "answers": [
+      "La Scala",
+      "Covent Garden",
+      "San Carlo",
+      "La Fenice"
+     ],
+     "correct": 0,
+     "explanation": "It opened in 1778 on the site of a demolished church.",
+     "source": "Britannica",
+     "category": "Music",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r41q10",
+     "question": "Bluetooth is named after a king of which country?",
+     "answers": [
+      "Norway",
+      "the Netherlands",
+      "Denmark",
+      "Sweden"
+     ],
+     "correct": 2,
+     "explanation": "Harald Bluetooth united Denmark and Norway in the tenth century.",
+     "source": "Britannica",
+     "category": "Technology",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 42,
+   "questions": [
+    {
+     "id": "r42q01",
+     "question": "What is the hard centre of a peach called?",
+     "answers": [
+      "The stone",
+      "The husk",
+      "The pip",
+      "The core"
+     ],
+     "correct": 0,
+     "explanation": "An apple has a core; a peach, a plum and a cherry have stones.",
+     "source": "Oxford English Dictionary",
+     "category": "Food & Drink",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r42q02",
+     "question": "In which country does the statue of Christ the Redeemer stand?",
+     "answers": [
+      "Brazil",
+      "Argentina",
+      "Peru",
+      "Portugal"
+     ],
+     "correct": 0,
+     "explanation": "It looks out over Rio de Janeiro from Corcovado mountain.",
+     "source": "Britannica",
+     "category": "Geography",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r42q03",
+     "question": "Who wrote the Communist Manifesto with Friedrich Engels?",
+     "answers": [
+      "Joseph Stalin",
+      "Leon Trotsky",
+      "Karl Marx",
+      "Vladimir Lenin"
+     ],
+     "correct": 2,
+     "explanation": "It was published in London in 1848.",
+     "source": "British Library",
+     "category": "History",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r42q04",
+     "question": "Which is the fastest growing plant in the world?",
+     "answers": [
+      "Eucalyptus",
+      "Sunflower",
+      "Kudzu",
+      "Bamboo"
+     ],
+     "correct": 3,
+     "explanation": "Some species put on nearly a metre in a day.",
+     "source": "Royal Botanic Gardens Kew",
+     "category": "Nature",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r42q05",
+     "question": "Which grain is porridge traditionally made from?",
+     "answers": [
+      "Barley",
+      "Wheat",
+      "Oats",
+      "Rye"
+     ],
+     "correct": 2,
+     "explanation": "The grain is rolled or cut before it is cooked.",
+     "source": "Britannica",
+     "category": "Food & Drink",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r42q06",
+     "question": "Which telescope, launched in 1990, orbits the Earth?",
+     "answers": [
+      "Chandra",
+      "Kepler",
+      "James Webb",
+      "Hubble"
+     ],
+     "correct": 3,
+     "explanation": "It is named after Edwin Hubble, who showed the universe is expanding.",
+     "source": "NASA",
+     "category": "Space",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r42q07",
+     "question": "What is the process by which a liquid becomes a solid?",
+     "answers": [
+      "Condensation",
+      "Freezing",
+      "Sublimation",
+      "Melting"
+     ],
+     "correct": 1,
+     "explanation": "Melting is the same change run backwards.",
+     "source": "Britannica",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r42q08",
+     "question": "What does RSVP stand for?",
+     "answers": [
+      "Reply soon via post",
+      "Reserve seats very promptly",
+      "Repondez s'il vous plait",
+      "Regrets sent very politely"
+     ],
+     "correct": 2,
+     "explanation": "It is French for reply, if you please.",
+     "source": "Oxford English Dictionary",
+     "category": "Language",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r42q09",
+     "question": "How many consecutive strikes make a turkey in ten-pin bowling?",
+     "answers": [
+      "Four",
+      "Three",
+      "Five",
+      "Two"
+     ],
+     "correct": 1,
+     "explanation": "Six in a row is sometimes called a wild turkey.",
+     "source": "World Bowling",
+     "category": "Sport",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r42q10",
+     "question": "Who directed and starred in Citizen Kane?",
+     "answers": [
+      "John Huston",
+      "Orson Welles",
+      "Buster Keaton",
+      "Charlie Chaplin"
+     ],
+     "correct": 1,
+     "explanation": "He was twenty-five when it was released in 1941.",
+     "source": "British Film Institute",
+     "category": "Film & TV",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 43,
+   "questions": [
+    {
+     "id": "r43q01",
+     "question": "Which bird is known for repeating human speech?",
+     "answers": [
+      "Owl",
+      "Parrot",
+      "Sparrow",
+      "Robin"
+     ],
+     "correct": 1,
+     "explanation": "Some parrots mimic sounds they hear often, including other birds.",
+     "source": "Natural History Museum",
+     "category": "Nature",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r43q02",
+     "question": "How many is a dozen?",
+     "answers": [
+      "Six",
+      "Twenty",
+      "Twelve",
+      "Ten"
+     ],
+     "correct": 2,
+     "explanation": "Half a dozen is six and a baker's dozen is thirteen.",
+     "source": "Oxford English Dictionary",
+     "category": "General Knowledge",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r43q03",
+     "question": "Which sea lies between Australia and New Zealand?",
+     "answers": [
+      "Timor Sea",
+      "Tasman Sea",
+      "Coral Sea",
+      "Arafura Sea"
+     ],
+     "correct": 1,
+     "explanation": "It is named after the Dutch navigator Abel Tasman.",
+     "source": "Britannica",
+     "category": "Geography",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r43q04",
+     "question": "Which part of the eye controls how much light gets in?",
+     "answers": [
+      "The retina",
+      "The lens",
+      "The cornea",
+      "The iris"
+     ],
+     "correct": 3,
+     "explanation": "The pupil is the opening the iris opens and closes.",
+     "source": "Royal Society of Biology",
+     "category": "Science",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r43q05",
+     "question": "Which country industrialised first?",
+     "answers": [
+      "United States",
+      "France",
+      "Britain",
+      "Germany"
+     ],
+     "correct": 2,
+     "explanation": "The Industrial Revolution began there in the late eighteenth century.",
+     "source": "Britannica",
+     "category": "History",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r43q06",
+     "question": "Who sculpted the statue of David in Florence?",
+     "answers": [
+      "Verrocchio",
+      "Ghiberti",
+      "Donatello",
+      "Michelangelo"
+     ],
+     "correct": 3,
+     "explanation": "He carved it from a single block of marble between 1501 and 1504.",
+     "source": "Galleria dell'Accademia",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r43q07",
+     "question": "Which country was the composer Edvard Grieg from?",
+     "answers": [
+      "Finland",
+      "Sweden",
+      "Norway",
+      "Denmark"
+     ],
+     "correct": 2,
+     "explanation": "He wrote the Peer Gynt suites for Ibsen's play.",
+     "source": "Britannica",
+     "category": "Music",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r43q08",
+     "question": "What is an animal's winter sleep called?",
+     "answers": [
+      "Migration",
+      "Hibernation",
+      "Torpor",
+      "Aestivation"
+     ],
+     "correct": 1,
+     "explanation": "Aestivation is the same idea in a hot, dry season.",
+     "source": "Britannica",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r43q09",
+     "question": "Which company built the first cars on a moving assembly line?",
+     "answers": [
+      "General Motors",
+      "Chrysler",
+      "Ford",
+      "Daimler"
+     ],
+     "correct": 2,
+     "explanation": "The Model T line opened at Highland Park in 1913.",
+     "source": "Britannica",
+     "category": "Technology",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r43q10",
+     "question": "Which country does moussaka come from?",
+     "answers": [
+      "Italy",
+      "Turkey",
+      "Greece",
+      "Lebanon"
+     ],
+     "correct": 2,
+     "explanation": "It layers aubergine and minced meat under a bechamel sauce.",
+     "source": "Britannica",
+     "category": "Food & Drink",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 44,
+   "questions": [
+    {
+     "id": "r44q01",
+     "question": "In which country is the Great Pyramid of Giza?",
+     "answers": [
+      "Egypt",
+      "Sudan",
+      "Israel",
+      "Libya"
+     ],
+     "correct": 0,
+     "explanation": "It was built as a tomb for the pharaoh Khufu.",
+     "source": "UNESCO",
+     "category": "Geography",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r44q02",
+     "question": "What happens to a metal when it is heated enough?",
+     "answers": [
+      "It melts",
+      "It freezes",
+      "It vanishes",
+      "It hardens"
+     ],
+     "correct": 0,
+     "explanation": "Every metal has its own melting point; tungsten's is the highest.",
+     "source": "Royal Society of Chemistry",
+     "category": "Science",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r44q03",
+     "question": "Which animal can sleep standing up?",
+     "answers": [
+      "Cat",
+      "Horse",
+      "Otter",
+      "Rabbit"
+     ],
+     "correct": 1,
+     "explanation": "It can lock the joints in its legs and doze upright.",
+     "source": "Royal Veterinary College",
+     "category": "Nature",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r44q04",
+     "question": "What is the Roman numeral for one thousand?",
+     "answers": [
+      "M",
+      "C",
+      "D",
+      "L"
+     ],
+     "correct": 0,
+     "explanation": "MM is two thousand.",
+     "source": "Oxford English Dictionary",
+     "category": "General Knowledge",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r44q05",
+     "question": "Who is responsible for how a film looks through the camera?",
+     "answers": [
+      "The cinematographer",
+      "The editor",
+      "The gaffer",
+      "The producer"
+     ],
+     "correct": 0,
+     "explanation": "The role is also called the director of photography.",
+     "source": "British Film Institute",
+     "category": "Film & TV",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r44q06",
+     "question": "Which wall divided a German city until 1989?",
+     "answers": [
+      "The Maginot Line",
+      "Offa's Dyke",
+      "The Berlin Wall",
+      "Hadrian's Wall"
+     ],
+     "correct": 2,
+     "explanation": "It stood from 1961 until the crossings opened in November 1989.",
+     "source": "Britannica",
+     "category": "History",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r44q07",
+     "question": "Which element is pencil lead actually made of?",
+     "answers": [
+      "Silicon",
+      "Lead",
+      "Tin",
+      "Carbon"
+     ],
+     "correct": 3,
+     "explanation": "Pencils use graphite, a form of carbon; there is no lead in them.",
+     "source": "Royal Society of Chemistry",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r44q08",
+     "question": "Who wrote The Canterbury Tales?",
+     "answers": [
+      "Thomas Malory",
+      "William Langland",
+      "John Milton",
+      "Geoffrey Chaucer"
+     ],
+     "correct": 3,
+     "explanation": "He wrote it in Middle English in the late fourteenth century.",
+     "source": "British Library",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r44q09",
+     "question": "What is the boundary around a black hole that nothing escapes called?",
+     "answers": [
+      "The photon sphere",
+      "The event horizon",
+      "The singularity",
+      "The accretion disc"
+     ],
+     "correct": 1,
+     "explanation": "Inside it, not even light can get back out.",
+     "source": "European Space Agency",
+     "category": "Space",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r44q10",
+     "question": "Which of these languages is written from right to left?",
+     "answers": [
+      "Russian",
+      "Greek",
+      "Arabic",
+      "Turkish"
+     ],
+     "correct": 2,
+     "explanation": "Hebrew, Persian and Urdu are written right to left as well.",
+     "source": "Britannica",
+     "category": "Language",
+     "difficulty": "hard"
+    }
+   ]
+  },
+  {
+   "round": 45,
+   "questions": [
+    {
+     "id": "r45q01",
+     "question": "How many seconds are in an hour?",
+     "answers": [
+      "3,600",
+      "6,000",
+      "600",
+      "1,800"
+     ],
+     "correct": 0,
+     "explanation": "Sixty seconds times sixty minutes.",
+     "source": "General arithmetic",
+     "category": "General Knowledge",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r45q02",
+     "question": "Which farm animal gives us wool?",
+     "answers": [
+      "Sheep",
+      "Goat",
+      "Pig",
+      "Cow"
+     ],
+     "correct": 0,
+     "explanation": "The fleece is sheared, usually once a year in spring.",
+     "source": "Britannica",
+     "category": "Nature",
+     "difficulty": "easy"
+    },
+    {
+     "id": "r45q03",
+     "question": "What does a doctor listen to with a stethoscope?",
+     "answers": [
+      "Bone density",
+      "The heart and lungs",
+      "Brain activity",
+      "Eyesight"
+     ],
+     "correct": 1,
+     "explanation": "Rene Laennec invented it in 1816, from a rolled tube of paper.",
+     "source": "Britannica",
+     "category": "Science",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r45q04",
+     "question": "Which country has Wellington as its capital?",
+     "answers": [
+      "Fiji",
+      "New Zealand",
+      "Papua New Guinea",
+      "Australia"
+     ],
+     "correct": 1,
+     "explanation": "It sits at the southern tip of the North Island.",
+     "source": "Britannica",
+     "category": "Geography",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r45q05",
+     "question": "In which year did humans first land on the Moon?",
+     "answers": [
+      "1969",
+      "1974",
+      "1965",
+      "1971"
+     ],
+     "correct": 0,
+     "explanation": "Apollo 11 touched down on 20 July 1969.",
+     "source": "NASA",
+     "category": "History",
+     "difficulty": "medium"
+    },
+    {
+     "id": "r45q06",
+     "question": "Who wrote the novel Crime and Punishment?",
+     "answers": [
+      "Leo Tolstoy",
+      "Fyodor Dostoevsky",
+      "Nikolai Gogol",
+      "Mikhail Bulgakov"
+     ],
+     "correct": 1,
+     "explanation": "It was published in instalments through 1866.",
+     "source": "Britannica",
+     "category": "Art & Literature",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r45q07",
+     "question": "Which instrument does a timpanist play?",
+     "answers": [
+      "Kettledrums",
+      "Xylophone",
+      "Cymbals",
+      "Snare drum"
+     ],
+     "correct": 0,
+     "explanation": "Timpani are tuned drums, struck with felt-headed mallets.",
+     "source": "Britannica",
+     "category": "Music",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r45q08",
+     "question": "What speeds up a chemical reaction without being used up?",
+     "answers": [
+      "A catalyst",
+      "A solvent",
+      "A compound",
+      "A reagent"
+     ],
+     "correct": 0,
+     "explanation": "Enzymes are the body's own catalysts.",
+     "source": "Royal Society of Chemistry",
+     "category": "Science",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r45q09",
+     "question": "Which sport uses the terms birdie and eagle?",
+     "answers": [
+      "Golf",
+      "Archery",
+      "Rowing",
+      "Cricket"
+     ],
+     "correct": 0,
+     "explanation": "They are scores of one and two under par on a hole.",
+     "source": "Royal and Ancient Golf Club",
+     "category": "Sport",
+     "difficulty": "hard"
+    },
+    {
+     "id": "r45q10",
+     "question": "Which is the largest moon in the solar system?",
+     "answers": [
+      "Europa",
+      "Callisto",
+      "Ganymede",
+      "Titan"
+     ],
+     "correct": 2,
+     "explanation": "Jupiter's largest moon is bigger than the planet Mercury.",
      "source": "NASA",
      "category": "Space",
      "difficulty": "hard"

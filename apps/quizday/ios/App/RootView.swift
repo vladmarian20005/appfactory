@@ -121,7 +121,8 @@ struct QuizdaySettings: View {
         Section {
             SoundsToggle()
             LabeledContent("Editions filed", value: "\(results.count)")
-            LabeledContent("Questions in the pack", value: "\(DailyPack.shared.rounds.count * 10)")
+            LabeledContent("Questions in the pack", value: "\(DailyPack.all.count)")
+            LabeledContent("Questions you have seen", value: "\(desk.mastery.records.count)")
             if !reports.isEmpty {
                 NavigationLink {
                     ReportsView()

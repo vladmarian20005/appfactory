@@ -1,16 +1,36 @@
-# Quizday question pack builder.
-# Q(question, correct, [three distractors], explanation, source, category, difficulty)
-import json, random, sys, os
+#!/usr/bin/env node
+/**
+ * Quizday's question pack: the source of the 450 bundled questions, and the builder that
+ * emits them.
+ *
+ *   node apps/quizday/pack/build.mjs [out.json] [review.md]
+ *
+ * Q(question, correct, [three distractors], explanation, source, category, difficulty).
+ * Every question is original to Quizday and carries a source; the reviewer reads REVIEW.md
+ * and rejects anything doubtful.
+ *
+ * Rounds are how the pack was written and checked, not how it is served: the app deals from
+ * the whole pack through `Desk`, by what the player has missed and what the ladder asks for.
+ * Keeping them is what lets `validate` check that each block of ten ramps easy to hard, which
+ * is a decent proxy for whether the difficulty labels mean anything.
+ *
+ * Ported from build.py on 12 Sep 2026, when the pack grew from 300 to 450: everything else in
+ * this repo's tooling is node, and the option shuffle is now a seeded SplitMix rather than
+ * Python's Mersenne Twister, so answer positions moved once and are fixed from here.
+ */
+import fs from "node:fs";
 
-ROUNDS = []
-def R(*qs):
-    assert len(qs) == 10, f"round {len(ROUNDS)+1} has {len(qs)} questions"
-    ROUNDS.append(list(qs))
-def Q(q, correct, wrong, exp, src, cat, diff):
-    assert len(wrong) == 3, q
-    return dict(q=q, correct=correct, wrong=wrong, exp=exp, src=src, cat=cat, diff=diff)
+const ROUNDS = [];
+const R = (...qs) => {
+  if (qs.length !== 10) throw new Error(`round ${ROUNDS.length + 1} has ${qs.length} questions`);
+  ROUNDS.push(qs);
+};
+const Q = (q, correct, wrong, exp, src, cat, diff) => {
+  if (wrong.length !== 3) throw new Error(q);
+  return { q, correct, wrong, exp, src, cat, diff };
+};
 
-# ---------------- Round 1 ----------------
+// ---------------- Round 1 ----------------
 R(
 Q("What is the capital of Japan?","Tokyo",["Osaka","Kyoto","Nagoya"],"Tokyo became the seat of government in 1868, when the emperor moved there from Kyoto.","Britannica","Geography","easy"),
 Q("How many sides does a hexagon have?","Six",["Five","Seven","Eight"],"The prefix hexa- is Greek for six.","Oxford English Dictionary","General Knowledge","easy"),
@@ -24,7 +44,7 @@ Q("Which novel opens with the line Call me Ishmael?","Moby-Dick",["Treasure Isla
 Q("What is the smallest country in the world by area?","Vatican City",["Monaco","Nauru","San Marino"],"Vatican City covers about 0.44 square kilometres.","CIA World Factbook","Geography","hard"),
 )
 
-# ---------------- Round 2 ----------------
+// ---------------- Round 2 ----------------
 R(
 Q("How many continents are there?","Seven",["Five","Six","Eight"],"Africa, Antarctica, Asia, Australia, Europe, North America and South America.","National Geographic","Geography","easy"),
 Q("What colour do you get by mixing blue and yellow paint?","Green",["Purple","Orange","Brown"],"Blue and yellow pigments each absorb what the other reflects, leaving green.","Britannica","General Knowledge","easy"),
@@ -38,7 +58,7 @@ Q("Which sea is the saltiest large body of water on Earth's surface?","Dead Sea"
 Q("Who wrote the play A Doll's House?","Henrik Ibsen",["Anton Chekhov","August Strindberg","Bertolt Brecht"],"Ibsen's 1879 play caused a scandal for the ending, in which Nora walks out.","Britannica","Art & Literature","hard"),
 )
 
-# ---------------- Round 3 ----------------
+// ---------------- Round 3 ----------------
 R(
 Q("How many minutes are in a full day?","1,440",["1,200","1,600","2,400"],"24 hours times 60 minutes.","General arithmetic","General Knowledge","easy"),
 Q("What is the freezing point of water in degrees Celsius?","0",["32","10","100"],"The Celsius scale sets zero at the freezing point of water at sea level.","National Institute of Standards and Technology","Science","easy"),
@@ -52,7 +72,7 @@ Q("What is the study of fungi called?","Mycology",["Botany","Entomology","Virolo
 Q("Which composer wrote the opera The Magic Flute?","Wolfgang Amadeus Mozart",["Ludwig van Beethoven","Joseph Haydn","Franz Schubert"],"Mozart finished it in 1791, the year he died.","Britannica","Music","hard"),
 )
 
-# ---------------- Round 4 ----------------
+// ---------------- Round 4 ----------------
 R(
 Q("What is the largest planet in the solar system?","Jupiter",["Saturn","Neptune","Uranus"],"Jupiter is more massive than all the other planets put together.","NASA","Space","easy"),
 Q("How many colours are in a rainbow as traditionally listed?","Seven",["Five","Six","Eight"],"Red, orange, yellow, green, blue, indigo and violet.","Britannica","General Knowledge","easy"),
@@ -66,7 +86,7 @@ Q("Which metal is liquid at room temperature?","Mercury",["Lead","Tin","Zinc"],"
 Q("Who directed the 1960 film Psycho?","Alfred Hitchcock",["Orson Welles","Billy Wilder","John Huston"],"Hitchcock shot it in black and white with the crew from his television series.","British Film Institute","Film & TV","hard"),
 )
 
-# ---------------- Round 5 ----------------
+// ---------------- Round 5 ----------------
 R(
 Q("How many legs does a spider have?","Eight",["Six","Ten","Twelve"],"Eight legs separate spiders from insects, which have six.","Natural History Museum","Nature","easy"),
 Q("What is the currency of the United Kingdom?","Pound sterling",["Euro","Krona","Franc"],"Sterling is one of the oldest currencies still in use.","Bank of England","General Knowledge","easy"),
@@ -80,7 +100,7 @@ Q("Which language has the most native speakers worldwide?","Mandarin Chinese",["
 Q("In Greek myth, who flew too close to the Sun?","Icarus",["Perseus","Theseus","Orpheus"],"The heat melted the wax in his wings and he fell into the sea.","Britannica","Art & Literature","hard"),
 )
 
-# ---------------- Round 6 ----------------
+// ---------------- Round 6 ----------------
 R(
 Q("What do bees collect to make honey?","Nectar",["Pollen","Sap","Dew"],"Bees gather nectar and reduce its water content inside the hive.","Royal Entomological Society","Nature","easy"),
 Q("How many strings does a standard guitar have?","Six",["Four","Five","Seven"],"Standard tuning runs E, A, D, G, B, E.","Britannica","Music","easy"),
@@ -94,7 +114,7 @@ Q("What is the deepest point in the ocean?","Mariana Trench",["Puerto Rico Trenc
 Q("Which vitamin is produced by the skin in sunlight?","Vitamin D",["Vitamin A","Vitamin C","Vitamin K"],"Ultraviolet B light triggers vitamin D synthesis in the skin.","National Institutes of Health","Science","hard"),
 )
 
-# ---------------- Round 7 ----------------
+// ---------------- Round 7 ----------------
 R(
 Q("What is the opposite of nocturnal?","Diurnal",["Aquatic","Arboreal","Migratory"],"Diurnal animals are active in daylight.","Oxford English Dictionary","Language","easy"),
 Q("Which fruit is traditionally used to make cider?","Apple",["Pear","Grape","Cherry"],"Cider is fermented apple juice; the pear version is called perry.","Britannica","Food & Drink","easy"),
@@ -108,7 +128,7 @@ Q("What is the term for a word that reads the same forwards and backwards?","Pal
 Q("Which animal has the longest recorded lifespan?","Ocean quahog clam",["Galapagos tortoise","Bowhead whale","Greenland shark"],"One ocean quahog was dated at over 500 years by its shell rings.","Bangor University","Nature","hard"),
 )
 
-# ---------------- Round 8 ----------------
+// ---------------- Round 8 ----------------
 R(
 Q("What is the capital of Italy?","Rome",["Milan","Venice","Florence"],"Rome has been the capital of unified Italy since 1871.","Britannica","Geography","easy"),
 Q("How many days are in a leap year?","366",["364","365","367"],"A leap year adds 29 February to keep the calendar in step with the seasons.","US Naval Observatory","General Knowledge","easy"),
@@ -122,7 +142,7 @@ Q("In which century did the French Revolution begin?","18th",["16th","17th","19t
 Q("What is the collective noun for a group of crows?","A murder",["A parliament","A gaggle","A pride"],"The term dates from late medieval lists of hunting nouns.","Oxford English Dictionary","Language","hard"),
 )
 
-# ---------------- Round 9 ----------------
+// ---------------- Round 9 ----------------
 R(
 Q("Which meal is traditionally eaten in the morning?","Breakfast",["Lunch","Dinner","Supper"],"The word means breaking the overnight fast.","Oxford English Dictionary","Food & Drink","easy"),
 Q("How many sides does a cube have?","Six",["Four","Eight","Twelve"],"A cube has six square faces, twelve edges and eight corners.","Britannica","General Knowledge","easy"),
@@ -136,7 +156,7 @@ Q("Which ancient wonder stood in the harbour of Rhodes?","Colossus of Rhodes",["
 Q("What is the only letter not appearing in any US state name?","Q",["J","X","Z"],"J appears in New Jersey, X in Texas and Z in Arizona.","US Census Bureau","Language","hard"),
 )
 
-# ---------------- Round 10 ----------------
+// ---------------- Round 10 ----------------
 R(
 Q("What colour is a ripe banana?","Yellow",["Blue","Red","Purple"],"Chlorophyll breaks down as the fruit ripens, leaving yellow pigments.","Britannica","Food & Drink","easy"),
 Q("How many hours are in two days?","48",["24","36","72"],"Two days of 24 hours each.","General arithmetic","General Knowledge","easy"),
@@ -150,7 +170,7 @@ Q("Which country has the longest coastline?","Canada",["Russia","Indonesia","Aus
 Q("What does the Richter scale measure?","Earthquake magnitude",["Wind speed","Ocean depth","Sound volume"],"It expresses the energy released by an earthquake on a logarithmic scale.","US Geological Survey","Science","hard"),
 )
 
-# ---------------- Round 11 ----------------
+// ---------------- Round 11 ----------------
 R(
 Q("Which meal does the word brunch combine?","Breakfast and lunch",["Breakfast and dinner","Lunch and dinner","Tea and supper"],"The blended word first appeared in British student slang in the 1890s.","Oxford English Dictionary","Food & Drink","easy"),
 Q("What device do you use to make a phone call?","Telephone",["Telescope","Thermometer","Telegraph"],"Tele- means far off and -phone means sound.","Oxford English Dictionary","Technology","easy"),
@@ -164,7 +184,7 @@ Q("What does HTTP stand for?","Hypertext Transfer Protocol",["High Transfer Text
 Q("Which country has won the most FIFA World Cup titles?","Brazil",["Germany","Italy","Argentina"],"Brazil has won the men's tournament five times.","FIFA","Sport","hard"),
 )
 
-# ---------------- Round 12 ----------------
+// ---------------- Round 12 ----------------
 R(
 Q("What is the first letter of the Greek alphabet?","Alpha",["Beta","Gamma","Omega"],"Alpha gave English the first half of the word alphabet.","Oxford English Dictionary","Language","easy"),
 Q("Which drink is made from crushed grapes?","Wine",["Beer","Cider","Whisky"],"Fermenting grape juice turns its sugars into alcohol.","Britannica","Food & Drink","easy"),
@@ -178,7 +198,7 @@ Q("Who wrote the music for the ballet The Nutcracker?","Pyotr Ilyich Tchaikovsky
 Q("What is the most widely eaten staple grain in the world?","Rice",["Wheat","Maize","Barley"],"Rice feeds more people as a daily staple than any other crop.","Food and Agriculture Organization","Food & Drink","hard"),
 )
 
-# ---------------- Round 13 ----------------
+// ---------------- Round 13 ----------------
 R(
 Q("What do you call a baby dog?","Puppy",["Kitten","Cub","Foal"],"Puppy comes from the French poupee, meaning doll.","Oxford English Dictionary","Nature","easy"),
 Q("Which month has 28 days in a common year?","February",["January","April","June"],"February gains a 29th day in leap years.","US Naval Observatory","General Knowledge","easy"),
@@ -192,7 +212,7 @@ Q("What is the highest-grossing film category award at the Cannes Film Festival?
 Q("Which cheese is traditionally used on a Margherita pizza?","Mozzarella",["Cheddar","Gouda","Parmesan"],"The classic Neapolitan version uses mozzarella, tomato and basil.","Associazione Verace Pizza Napoletana","Food & Drink","hard"),
 )
 
-# ---------------- Round 14 ----------------
+// ---------------- Round 14 ----------------
 R(
 Q("How many minutes are in an hour?","60",["30","45","90"],"An hour is divided into 60 minutes, a system inherited from Babylonian counting.","Britannica","General Knowledge","easy"),
 Q("Which animal says moo?","Cow",["Sheep","Goat","Horse"],"The word moo is an imitation of the sound itself.","Oxford English Dictionary","Nature","easy"),
@@ -206,7 +226,7 @@ Q("Which director made the films Rashomon and Seven Samurai?","Akira Kurosawa",[
 Q("Which country produces the most coffee?","Brazil",["Colombia","Vietnam","Ethiopia"],"Brazil has led world coffee production for over a century.","International Coffee Organization","Food & Drink","hard"),
 )
 
-# ---------------- Round 15 ----------------
+// ---------------- Round 15 ----------------
 R(
 Q("What colour is the sky on a clear day?","Blue",["Green","Red","Yellow"],"Air scatters short blue wavelengths more than longer red ones.","NOAA","Science","easy"),
 Q("How many letters are in the English alphabet?","26",["24","25","28"],"Twenty-six letters, from A to Z.","Oxford English Dictionary","Language","easy"),
@@ -220,7 +240,7 @@ Q("What is the oldest continuously inhabited city commonly cited by historians?"
 Q("Which fruit contains the most seeds on its outside rather than inside?","Strawberry",["Blueberry","Raspberry","Grape"],"The tiny specks on a strawberry are the actual fruits, each holding a seed.","Royal Horticultural Society","Nature","hard"),
 )
 
-# ---------------- Round 16 ----------------
+// ---------------- Round 16 ----------------
 R(
 Q("What do you call frozen water?","Ice",["Steam","Fog","Mist"],"Water freezes into ice at zero degrees Celsius.","National Institute of Standards and Technology","Science","easy"),
 Q("Which day comes after Friday?","Saturday",["Thursday","Sunday","Monday"],"Saturday takes its name from the Roman god Saturn.","Oxford English Dictionary","General Knowledge","easy"),
@@ -234,7 +254,7 @@ Q("Which Renaissance artist designed a famous flying machine in his notebooks?",
 Q("What is the largest island in the world?","Greenland",["New Guinea","Borneo","Madagascar"],"Australia is larger but is classed as a continent, not an island.","CIA World Factbook","Geography","hard"),
 )
 
-# ---------------- Round 17 ----------------
+// ---------------- Round 17 ----------------
 R(
 Q("How many wheels does a car normally have?","Four",["Two","Three","Six"],"Four wheels give a car a stable rectangular footprint.","Britannica","General Knowledge","easy"),
 Q("Which insect makes honey?","Bee",["Wasp","Ant","Beetle"],"Honeybees store nectar as honey to feed the colony through winter.","Royal Entomological Society","Nature","easy"),
@@ -248,7 +268,7 @@ Q("Which composer became deaf later in life but kept writing music?","Ludwig van
 Q("Which empire was centred on the city of Tenochtitlan?","Aztec Empire",["Inca Empire","Maya civilisation","Olmec civilisation"],"Tenochtitlan stood where Mexico City is today.","Britannica","History","hard"),
 )
 
-# ---------------- Round 18 ----------------
+// ---------------- Round 18 ----------------
 R(
 Q("What is the name for a group of fish swimming together?","School",["Herd","Flock","Pack"],"School and shoal are both used for fish moving as a group.","Oxford English Dictionary","Nature","easy"),
 Q("Which number comes after nine?","Ten",["Eight","Eleven","Twelve"],"Ten is the base of the decimal system.","Britannica","General Knowledge","easy"),
@@ -262,7 +282,7 @@ Q("Which planet takes the longest to orbit the Sun?","Neptune",["Uranus","Saturn
 Q("Which dish is made from raw fish sliced without rice?","Sashimi",["Sushi","Ceviche","Tartare"],"Sashimi is fish alone; sushi is defined by the seasoned rice.","Britannica","Food & Drink","hard"),
 )
 
-# ---------------- Round 19 ----------------
+// ---------------- Round 19 ----------------
 R(
 Q("What is the capital of France?","Paris",["Lyon","Marseille","Nice"],"Paris has been the capital since the tenth century.","Britannica","Geography","easy"),
 Q("How many players are on a volleyball team on court?","Six",["Five","Seven","Eight"],"Six per side rotate positions after winning serve.","Federation Internationale de Volleyball","Sport","easy"),
@@ -276,7 +296,7 @@ Q("Who wrote the novel One Hundred Years of Solitude?","Gabriel Garcia Marquez",
 Q("Which sea creature has three hearts?","Octopus",["Dolphin","Jellyfish","Starfish"],"Two hearts pump blood to the gills and one to the rest of the body.","Marine Biological Association","Nature","hard"),
 )
 
-# ---------------- Round 20 ----------------
+// ---------------- Round 20 ----------------
 R(
 Q("What do you use to write on a blackboard?","Chalk",["Ink","Paint","Graphite"],"Chalk is a soft form of limestone that leaves a mark on slate.","US Geological Survey","General Knowledge","easy"),
 Q("Which meal is eaten in the evening?","Dinner",["Breakfast","Brunch","Elevenses"],"Dinner is the main evening meal in most English-speaking usage.","Oxford English Dictionary","Food & Drink","easy"),
@@ -290,7 +310,7 @@ Q("What is the fastest land animal over a short distance?","Cheetah",["Pronghorn
 Q("Which programming language was named after a British comedy troupe?","Python",["Java","Ruby","Perl"],"Guido van Rossum named it after Monty Python's Flying Circus.","Python Software Foundation","Technology","hard"),
 )
 
-# ---------------- Round 21 ----------------
+// ---------------- Round 21 ----------------
 R(
 Q("What shape is a standard football (soccer) pitch?","Rectangle",["Circle","Triangle","Hexagon"],"The laws set a rectangular field of play with touchlines longer than the goal lines.","FIFA Laws of the Game","Sport","easy"),
 Q("Which animal is known for its black and white stripes?","Zebra",["Leopard","Cheetah","Hyena"],"No two zebras have the same stripe pattern.","World Wildlife Fund","Nature","easy"),
@@ -304,7 +324,7 @@ Q("Which country was the first to give women the vote in national elections?","N
 Q("What is the name for a shape with ten sides?","Decagon",["Nonagon","Octagon","Dodecagon"],"Deca- is Greek for ten.","Oxford English Dictionary","General Knowledge","hard"),
 )
 
-# ---------------- Round 22 ----------------
+// ---------------- Round 22 ----------------
 R(
 Q("Which utensil is used to eat soup?","Spoon",["Fork","Knife","Chopsticks"],"A spoon's bowl holds liquid, which a fork cannot.","Oxford English Dictionary","Food & Drink","easy"),
 Q("What is the colour of an emerald?","Green",["Blue","Red","Yellow"],"Traces of chromium give emerald its green colour.","US Geological Survey","General Knowledge","easy"),
@@ -318,7 +338,7 @@ Q("What is the name of the largest moon of Saturn?","Titan",["Europa","Ganymede"
 Q("Which writer created the detective Hercule Poirot?","Agatha Christie",["Arthur Conan Doyle","Dorothy L. Sayers","Georges Simenon"],"Poirot first appeared in The Mysterious Affair at Styles in 1920.","British Library","Art & Literature","hard"),
 )
 
-# ---------------- Round 23 ----------------
+// ---------------- Round 23 ----------------
 R(
 Q("How many zeros are in one thousand?","Three",["Two","Four","Five"],"One thousand is written 1,000.","General arithmetic","General Knowledge","easy"),
 Q("Which bird is a symbol of peace?","Dove",["Eagle","Owl","Raven"],"The dove with an olive branch became a peace emblem through the story of Noah.","Britannica","Nature","easy"),
@@ -332,7 +352,7 @@ Q("What is the smallest unit of an element that retains its properties?","Atom",
 Q("Which sport awards the Vince Lombardi Trophy?","American football",["Ice hockey","Baseball","Basketball"],"It goes to the winner of the Super Bowl.","National Football League","Sport","hard"),
 )
 
-# ---------------- Round 24 ----------------
+// ---------------- Round 24 ----------------
 R(
 Q("What is the main colour of a traditional London bus?","Red",["Blue","Green","Yellow"],"London's double-deckers have been red since the early twentieth century.","Transport for London","General Knowledge","easy"),
 Q("Which fruit is dried to make a raisin?","Grape",["Plum","Apricot","Fig"],"A dried plum is a prune and a dried apricot keeps its own name.","Oxford English Dictionary","Food & Drink","easy"),
@@ -346,7 +366,7 @@ Q("What is the largest internal organ in the human body?","Liver",["Heart","Stom
 Q("Which war ended with the Treaty of Versailles?","First World War",["Second World War","Crimean War","Napoleonic Wars"],"The treaty was signed in 1919, the year after the fighting stopped.","Imperial War Museum","History","hard"),
 )
 
-# ---------------- Round 25 ----------------
+// ---------------- Round 25 ----------------
 R(
 Q("How many eyes does a typical human have?","Two",["One","Three","Four"],"Two forward-facing eyes give humans depth perception.","National Institutes of Health","Science","easy"),
 Q("Which animal is known as man's best friend?","Dog",["Cat","Horse","Parrot"],"Dogs were the first animals humans domesticated.","Natural History Museum","Nature","easy"),
@@ -360,7 +380,7 @@ Q("What does the term photosynthesis literally mean?","Putting together with lig
 Q("Which instrument did Louis Armstrong famously play?","Trumpet",["Saxophone","Piano","Double bass"],"Armstrong reshaped jazz with his trumpet playing and his voice.","Britannica","Music","hard"),
 )
 
-# ---------------- Round 26 ----------------
+// ---------------- Round 26 ----------------
 R(
 Q("What do caterpillars turn into?","Butterflies or moths",["Beetles","Spiders","Dragonflies"],"Both butterflies and moths begin life as caterpillars.","Natural History Museum","Nature","easy"),
 Q("Which drink is known for containing caffeine and made from roasted beans?","Coffee",["Tea","Cocoa","Lemonade"],"Coffee is brewed from roasted and ground coffee beans.","International Coffee Organization","Food & Drink","easy"),
@@ -374,7 +394,7 @@ Q("Which scientist proposed the three laws of motion?","Isaac Newton",["Galileo 
 Q("Which country's flag is a red circle on a white background?","Japan",["Bangladesh","South Korea","Switzerland"],"The red disc represents the sun.","Britannica","Geography","hard"),
 )
 
-# ---------------- Round 27 ----------------
+// ---------------- Round 27 ----------------
 R(
 Q("What do you call the sound a dog makes?","Bark",["Meow","Moo","Neigh"],"Bark is used for dogs, foxes and some seals.","Oxford English Dictionary","Nature","easy"),
 Q("Which room is food usually cooked in?","Kitchen",["Bedroom","Bathroom","Garage"],"The word comes from the Latin coquina, meaning cooking place.","Oxford English Dictionary","General Knowledge","easy"),
@@ -388,7 +408,7 @@ Q("Which city was the capital of the Byzantine Empire?","Constantinople",["Rome"
 Q("Which chess piece can only move diagonally?","Bishop",["Rook","Knight","King"],"The rook moves in straight lines and the knight in an L shape.","International Chess Federation","Sport","hard"),
 )
 
-# ---------------- Round 28 ----------------
+// ---------------- Round 28 ----------------
 R(
 Q("Which sense do you use to detect smells?","Smell",["Sight","Hearing","Touch"],"The olfactory receptors sit high inside the nose.","National Institutes of Health","Science","easy"),
 Q("What is the colour of snow?","White",["Grey","Blue","Clear"],"Snow scatters all wavelengths of visible light roughly equally.","NOAA","General Knowledge","easy"),
@@ -402,7 +422,7 @@ Q("What is the world's most visited art museum?","The Louvre",["British Museum",
 Q("Which grain is used to make traditional Japanese sake?","Rice",["Barley","Wheat","Millet"],"Sake is brewed from polished rice, water and koji mould.","Britannica","Food & Drink","hard"),
 )
 
-# ---------------- Round 29 ----------------
+// ---------------- Round 29 ----------------
 R(
 Q("How many hours are in a day?","24",["12","18","36"],"The 24-hour day comes from ancient Egyptian timekeeping.","Britannica","General Knowledge","easy"),
 Q("Which body part do you hear with?","Ear",["Nose","Eye","Tongue"],"The eardrum turns sound waves into vibrations the inner ear can read.","National Institutes of Health","Science","easy"),
@@ -416,7 +436,7 @@ Q("Which blood type is known as the universal donor for red cells?","O negative"
 Q("Which mountain is the highest in Africa?","Kilimanjaro",["Mount Kenya","Mount Stanley","Ras Dashen"],"Kilimanjaro in Tanzania rises about 5,895 metres.","National Geographic","Geography","hard"),
 )
 
-# ---------------- Round 30 ----------------
+// ---------------- Round 30 ----------------
 R(
 Q("What do you call a story that is not true and is written to entertain?","Fiction",["Biography","Documentary","Report"],"Non-fiction covers writing that reports fact.","Oxford English Dictionary","Art & Literature","easy"),
 Q("Which meal do people traditionally eat on a picnic?","Packed food",["Roast dinner","Soup course","Banquet"],"A picnic is a meal carried and eaten outdoors.","Oxford English Dictionary","Food & Drink","easy"),
@@ -430,62 +450,330 @@ Q("What is the term for the study of word origins?","Etymology",["Entomology","E
 Q("Which country first launched an artificial satellite into orbit?","Soviet Union",["United States","Britain","France"],"Sputnik 1 was launched in October 1957.","NASA","Space","hard"),
 )
 
-# ------------------------------------------------------------------
-def emit(path):
-    rng = random.Random(20260909)
-    out = []
-    for ri, rnd in enumerate(ROUNDS):
-        qs = []
-        for qi, item in enumerate(rnd):
-            opts = [item["correct"]] + list(item["wrong"])
-            rng.shuffle(opts)
-            qs.append({
-                "id": f"r{ri+1:02d}q{qi+1:02d}",
-                "question": item["q"],
-                "answers": opts,
-                "correct": opts.index(item["correct"]),
-                "explanation": item["exp"],
-                "source": item["src"],
-                "category": item["cat"],
-                "difficulty": item["diff"],
-            })
-        out.append({"round": ri + 1, "questions": qs})
-    doc = {"version": 1, "rounds": out}
-    json.dump(doc, open(path, "w"), indent=1, ensure_ascii=True)
-    return doc
+// ==================================================================
+// Rounds 31-45, written 12 Sep 2026.
+//
+// The first thirty rounds were all 3 easy / 4 medium / 3 hard, which was fine when the date
+// picked a whole round and nothing read the difficulty. `Desk.ladder` now asks for six hard
+// questions in an edition past rung 153, and the selector filters on `difficulty`, so a pack
+// that is only 30 per cent hard runs dry at the deep end long before the easy ones do. These
+// fifteen rounds are 2 easy / 3 medium / 5 hard, which takes the pack to 121 / 164 / 165.
+// ==================================================================
 
-def validate(doc):
-    errs, seen_q = [], {}
-    order = {"easy": 0, "medium": 1, "hard": 2}
-    for r in doc["rounds"]:
-        qs = r["questions"]
-        if len(qs) != 10: errs.append(f"round {r['round']}: {len(qs)} questions")
-        diffs = [order[q["difficulty"]] for q in qs]
-        if diffs != sorted(diffs): errs.append(f"round {r['round']}: difficulty not ramping: {[q['difficulty'] for q in qs]}")
-        for q in qs:
-            key = q["question"].strip().lower()
-            if key in seen_q: errs.append(f"duplicate question: {q['question'][:50]} ({seen_q[key]} and {q['id']})")
-            seen_q[key] = q["id"]
-            if len(q["answers"]) != 4: errs.append(f"{q['id']}: {len(q['answers'])} answers")
-            if len(set(q["answers"])) != 4: errs.append(f"{q['id']}: duplicate answer text")
-            if not (0 <= q["correct"] < 4): errs.append(f"{q['id']}: bad correct index")
-            for f in ("explanation", "source", "category"):
-                if not q[f].strip(): errs.append(f"{q['id']}: empty {f}")
-            if len(q["question"]) > 130: errs.append(f"{q['id']}: question too long ({len(q['question'])})")
-            if len(q["explanation"]) > 160: errs.append(f"{q['id']}: explanation too long ({len(q['explanation'])})")
-            for a in q["answers"]:
-                if len(a) > 60: errs.append(f"{q['id']}: answer too long: {a[:40]}")
-    return errs
+// ---------------- Round 31 ----------------
+R(
+Q("How many seconds are in a minute?","60",["30","100","120"],"Sixty seconds make a minute, and sixty minutes an hour.","Britannica","General Knowledge","easy"),
+Q("What do you call a baby horse?","Foal",["Calf","Cub","Kid"],"A young goat, by contrast, is a kid.","Oxford English Dictionary","Nature","easy"),
+Q("Which country lies directly south of the United States?","Mexico",["Guatemala","Cuba","Belize"],"The two share a border of about 3,100 kilometres.","CIA World Factbook","Geography","medium"),
+Q("What is the centre of an atom called?","The nucleus",["The electron shell","The proton ring","The core field"],"Protons and neutrons sit in the nucleus; electrons move around it.","Royal Society of Chemistry","Science","medium"),
+Q("Which ship carried the Pilgrims to America in 1620?","Mayflower",["Santa Maria","Endeavour","Beagle"],"It landed at what became Plymouth, Massachusetts.","Library of Congress","History","medium"),
+Q("Which Russian novelist wrote War and Peace?","Leo Tolstoy",["Fyodor Dostoevsky","Anton Chekhov","Ivan Turgenev"],"It was published in full in 1869.","Britannica","Art & Literature","hard"),
+Q("Which planet has a day longer than its year?","Venus",["Mercury","Mars","Uranus"],"Venus turns once every 243 Earth days and orbits the Sun in 225.","NASA","Space","hard"),
+Q("What is the SI unit of force?","Newton",["Joule","Pascal","Watt"],"One newton accelerates a kilogram by one metre per second squared.","National Institute of Standards and Technology","Science","hard"),
+Q("Which Italian musical term means to play very loudly?","Fortissimo",["Pianissimo","Andante","Legato"],"Piano means softly and forte means loudly; the -issimo ending doubles it.","Britannica","Music","hard"),
+Q("Which vegetable gives borscht its colour?","Beetroot",["Cabbage","Potato","Turnip"],"The soup comes from Eastern Europe and is built on beetroot.","Britannica","Food & Drink","hard"),
+)
 
-if __name__ == "__main__":
-    path = sys.argv[1]
-    doc = emit(path)
-    errs = validate(doc)
-    n = sum(len(r["questions"]) for r in doc["rounds"])
-    print(f"rounds={len(doc['rounds'])} questions={n} bytes={os.path.getsize(path)}")
-    cats = {}
-    for r in doc["rounds"]:
-        for q in r["questions"]: cats[q["category"]] = cats.get(q["category"], 0) + 1
-    print("categories:", dict(sorted(cats.items(), key=lambda kv: -kv[1])))
-    print("ERRORS:" if errs else "no errors")
-    for e in errs: print("  -", e)
+// ---------------- Round 32 ----------------
+R(
+Q("Which part of the body pumps blood?","The heart",["The lungs","The liver","The stomach"],"It beats around 100,000 times a day.","Royal Society of Biology","Science","easy"),
+Q("How many months are there in a year?","Twelve",["Ten","Eleven","Thirteen"],"The calendar year is divided into twelve months of unequal length.","Britannica","General Knowledge","easy"),
+Q("Which is the largest US state by area?","Alaska",["Texas","California","Montana"],"Alaska is more than twice the size of Texas.","US Census Bureau","Geography","medium"),
+Q("In which year did the American Civil War begin?","1861",["1776","1812","1898"],"It began with the attack on Fort Sumter in April 1861.","Library of Congress","History","medium"),
+Q("Which actor played Indiana Jones?","Harrison Ford",["Tom Hanks","Kevin Costner","Mel Gibson"],"Ford first took the part in Raiders of the Lost Ark in 1981.","British Film Institute","Film & TV","medium"),
+Q("Which part of a cell converts nutrients into usable energy?","The mitochondrion",["The nucleus","The ribosome","The Golgi body"],"A busy cell can hold thousands of them.","Royal Society of Biology","Science","hard"),
+Q("What does the abbreviation i.e. stand for?","Id est",["In example","Inter alia","In ecclesia"],"It is Latin for that is, and introduces a restatement rather than an example.","Oxford English Dictionary","Language","hard"),
+Q("Which African country has the largest population?","Nigeria",["Egypt","Ethiopia","South Africa"],"More than two hundred million people live there.","United Nations","Geography","hard"),
+Q("Which instrument family does the cello belong to?","Strings",["Woodwind","Brass","Percussion"],"It is bowed, like the violin and the viola, but rests on the floor.","Britannica","Music","hard"),
+Q("How many planets are in our solar system?","Eight",["Nine","Seven","Ten"],"The count fell to eight when Pluto was reclassified as a dwarf planet.","NASA","Space","hard"),
+)
+
+// ---------------- Round 33 ----------------
+R(
+Q("Which animal is famous for building dams?","Beaver",["Otter","Badger","Mole"],"Beavers fell trees with their teeth and dam streams to make ponds.","World Wildlife Fund","Nature","easy"),
+Q("Which vegetable gets its colour from beta-carotene?","Carrot",["Parsnip","Turnip","Swede"],"The same pigment colours pumpkins and sweet potatoes.","Britannica","Food & Drink","easy"),
+Q("Which Carthaginian general crossed the Alps with elephants?","Hannibal",["Scipio","Hamilcar","Pyrrhus"],"He invaded Italy in 218 BC during the Second Punic War.","Britannica","History","medium"),
+Q("What is normal human body temperature in degrees Celsius, to the nearest degree?","37",["35","39","41"],"It varies by a degree or so through the day and between people.","National Health Service","Science","medium"),
+Q("In which country does the Amazon river rise?","Peru",["Brazil","Colombia","Ecuador"],"Its headwaters are high in the Peruvian Andes.","Britannica","Geography","medium"),
+Q("Which Dutch painter made The Night Watch?","Rembrandt",["Johannes Vermeer","Frans Hals","Jan Steen"],"He finished the group portrait in 1642.","Rijksmuseum","Art & Literature","hard"),
+Q("What does URL stand for?","Uniform resource locator",["Universal reference link","User routing layer","Unified retrieval list"],"It is the address of a page or file on the web.","World Wide Web Consortium","Technology","hard"),
+Q("How many points is a touchdown worth in American football?","Six",["Three","Seven","Five"],"The extra-point kick afterwards adds one more.","National Football League","Sport","hard"),
+Q("Which is the least dense metal?","Lithium",["Aluminium","Magnesium","Sodium"],"It is light enough to float on water, which it also reacts with.","Royal Society of Chemistry","Science","hard"),
+Q("What is a word that means the opposite of another called?","An antonym",["A synonym","A homonym","An acronym"],"A synonym means much the same thing.","Oxford English Dictionary","Language","hard"),
+)
+
+// ---------------- Round 34 ----------------
+R(
+Q("What is the meal eaten at midday usually called?","Lunch",["Supper","Brunch","Elevenses"],"In some regions dinner also means the midday meal.","Oxford English Dictionary","General Knowledge","easy"),
+Q("Which object orbits the Earth and lights the night sky?","The Moon",["The Sun","Mars","Venus"],"It takes about twenty-seven days to go round once.","NASA","Space","easy"),
+Q("Which creature has the largest eyes of any living animal?","Giant squid",["Blue whale","Ostrich","Horse"],"A giant squid's eye can be the size of a dinner plate.","Natural History Museum","Nature","medium"),
+Q("Which country has Lisbon as its capital?","Portugal",["Spain","Brazil","Mexico"],"Lisbon sits on the estuary of the Tagus.","Britannica","Geography","medium"),
+Q("Which plague swept Europe in the fourteenth century?","The Black Death",["The Spanish flu","The Great Plague of London","Cholera"],"It may have killed a third of the people in Europe.","Britannica","History","medium"),
+Q("How many bones are there in an adult human body?","206",["180","226","300"],"Babies are born with about 270; a number of them fuse as they grow.","Gray's Anatomy","Science","hard"),
+Q("Who wrote the novel Don Quixote?","Miguel de Cervantes",["Lope de Vega","Federico Garcia Lorca","Camilo Jose Cela"],"Its first part appeared in 1605.","Britannica","Art & Literature","hard"),
+Q("Which major key has no sharps and no flats?","C major",["G major","F major","D major"],"On a piano it is played on the white keys alone.","Britannica","Music","hard"),
+Q("In which sport is the Davis Cup contested?","Tennis",["Golf","Sailing","Rowing"],"It is the men's international team competition, first played in 1900.","International Tennis Federation","Sport","hard"),
+Q("What does AI stand for in computing?","Artificial intelligence",["Automated input","Applied informatics","Adaptive interface"],"The term was coined for a research conference in 1956.","Britannica","Technology","hard"),
+)
+
+// ---------------- Round 35 ----------------
+R(
+Q("What do plants need from the Sun in order to grow?","Light",["Sound","Wind","Sand"],"They use it to turn carbon dioxide and water into sugar.","Royal Society of Biology","Science","easy"),
+Q("Which country is the Great Barrier Reef off the coast of?","Australia",["New Zealand","Indonesia","Fiji"],"It runs for more than 2,000 kilometres along Queensland.","UNESCO","Geography","easy"),
+Q("How many degrees are there in a full circle?","360",["180","90","270"],"The division into 360 parts comes from Babylonian astronomy.","Britannica","General Knowledge","medium"),
+Q("Which country does the dish paella come from?","Spain",["Italy","Portugal","Greece"],"It belongs to the Valencia region on the east coast.","Britannica","Food & Drink","medium"),
+Q("In which film series does the character Darth Vader appear?","Star Wars",["Star Trek","Dune","Battlestar Galactica"],"He first appeared in the 1977 film.","British Film Institute","Film & TV","medium"),
+Q("Which Russian city was called Leningrad until 1991?","Saint Petersburg",["Moscow","Volgograd","Kazan"],"It was also called Petrograd between 1914 and 1924.","Britannica","History","hard"),
+Q("What is the study of the weather called?","Meteorology",["Astrology","Geology","Hydrology"],"The name comes from the Greek for things high in the air.","Royal Meteorological Society","Science","hard"),
+Q("Which is the tallest tree species in the world?","Coast redwood",["Douglas fir","Mountain ash","Giant sequoia"],"The tallest known specimens stand over 115 metres.","National Park Service","Nature","hard"),
+Q("Which alphabet is used to write Russian?","Cyrillic",["Latin","Greek","Arabic"],"It is named after Cyril, a ninth-century missionary.","Britannica","Language","hard"),
+Q("How many people have walked on the Moon?","Twelve",["Six","Nine","Fifteen"],"All twelve walked there between 1969 and 1972.","NASA","Space","hard"),
+)
+
+// ---------------- Round 36 ----------------
+R(
+Q("What is a group of lions called?","A pride",["A pack","A herd","A flock"],"Wolves move in a pack and sheep in a flock.","Oxford English Dictionary","Nature","easy"),
+Q("How many sides does an octagon have?","Eight",["Six","Seven","Ten"],"Octa- is Greek for eight.","Oxford English Dictionary","General Knowledge","easy"),
+Q("Which is the longest river in Europe?","Volga",["Danube","Rhine","Don"],"It runs about 3,530 kilometres through Russia to the Caspian Sea.","Britannica","Geography","medium"),
+Q("What is the name for animals with a backbone?","Vertebrates",["Invertebrates","Arthropods","Molluscs"],"Insects, crabs and squid have no backbone and are invertebrates.","Natural History Museum","Science","medium"),
+Q("Which country was ruled by the Tsars?","Russia",["Poland","Bulgaria","Serbia"],"The last tsar, Nicholas II, abdicated in 1917.","Britannica","History","medium"),
+Q("Which sculptor made The Thinker?","Auguste Rodin",["Antonio Canova","Henry Moore","Alberto Giacometti"],"He modelled it in 1880 as part of a much larger doorway.","Musee Rodin","Art & Literature","hard"),
+Q("Which instrument was Ravi Shankar known for playing?","Sitar",["Tabla","Sarod","Veena"],"He brought Indian classical music to Western audiences in the 1960s.","Britannica","Music","hard"),
+Q("What does a barometer measure?","Air pressure",["Temperature","Humidity","Wind speed"],"Falling pressure usually means the weather is about to change.","Royal Meteorological Society","Science","hard"),
+Q("Which fruit is limoncello made from?","Lemon",["Orange","Lime","Grapefruit"],"The liqueur comes from the Amalfi coast and the Gulf of Naples.","Britannica","Food & Drink","hard"),
+Q("How many rings are on the Olympic flag?","Five",["Four","Six","Seven"],"They stand for the five inhabited continents as the founders counted them.","International Olympic Committee","Sport","hard"),
+)
+
+// ---------------- Round 37 ----------------
+R(
+Q("In which direction does the Sun rise?","The east",["The west","The north","The south"],"It sets in the west.","Royal Observatory Greenwich","General Knowledge","easy"),
+Q("What is the main ingredient of an omelette?","Eggs",["Flour","Milk","Cheese"],"They are beaten and set in a pan, usually with butter.","Britannica","Food & Drink","easy"),
+Q("Which reptile can shed and regrow its tail?","Lizard",["Snake","Turtle","Crocodile"],"Many lizards drop the tail to escape a predator's grip.","Natural History Museum","Nature","medium"),
+Q("What does USB stand for?","Universal serial bus",["United system backup","User service board","Universal storage box"],"It became the standard connector for peripherals in the late 1990s.","Britannica","Technology","medium"),
+Q("In which country is Mount Fuji?","Japan",["China","South Korea","Taiwan"],"It rises to 3,776 metres south-west of Tokyo.","UNESCO","Geography","medium"),
+Q("Which English king had six wives?","Henry VIII",["Henry VII","Edward VI","James I"],"He ruled from 1509 to 1547.","Royal Collection Trust","History","hard"),
+Q("What is the hardest substance in the human body?","Tooth enamel",["Bone","Cartilage","Nail"],"It is harder than bone, and the body cannot grow it back.","Gray's Anatomy","Science","hard"),
+Q("Who wrote the novel Things Fall Apart?","Chinua Achebe",["Wole Soyinka","Ngugi wa Thiong'o","Ben Okri"],"The Nigerian novelist published it in 1958.","British Library","Art & Literature","hard"),
+Q("Which rover landed in Mars's Jezero Crater in 2021?","Perseverance",["Curiosity","Opportunity","Spirit"],"It carried the first helicopter flown on another planet.","NASA","Space","hard"),
+Q("What is a word formed from the first letters of others called?","An acronym",["An abbreviation","A contraction","A compound"],"NATO and laser are both acronyms.","Oxford English Dictionary","Language","hard"),
+)
+
+// ---------------- Round 38 ----------------
+R(
+Q("What is the study of living things called?","Biology",["Chemistry","Physics","Geology"],"Bio- is Greek for life.","Oxford English Dictionary","Science","easy"),
+Q("Which is the smallest ocean?","Arctic",["Indian","Atlantic","Southern"],"It is the shallowest as well as the smallest.","NOAA","Geography","easy"),
+Q("Which instrument is bowed and held under the chin?","Violin",["Cello","Double bass","Harp"],"The viola is held the same way but is larger and lower.","Britannica","Music","medium"),
+Q("Which two countries fought the Hundred Years' War?","England and France",["Spain and Portugal","Austria and Prussia","Russia and Sweden"],"It ran, on and off, from 1337 to 1453.","Britannica","History","medium"),
+Q("Which nut is used in traditional Genoese pesto?","Pine nut",["Almond","Cashew","Walnut"],"It is pounded with basil, garlic, oil and parmesan.","Britannica","Food & Drink","medium"),
+Q("Which scientist arranged the first widely used periodic table?","Dmitri Mendeleev",["Antoine Lavoisier","John Dalton","Robert Boyle"],"He ordered the elements by atomic weight in 1869 and left gaps for unknown ones.","Royal Society of Chemistry","Science","hard"),
+Q("Which country has the most islands?","Sweden",["Indonesia","Philippines","Norway"],"It counts more than 260,000, the great majority uninhabited.","Statistics Sweden","Geography","hard"),
+Q("Which film is set in a hotel called the Overlook?","The Shining",["Psycho","Rosemary's Baby","The Birds"],"Stanley Kubrick adapted it from Stephen King in 1980.","British Film Institute","Film & TV","hard"),
+Q("Which animal makes the loudest recorded sound?","Sperm whale",["Blue whale","Howler monkey","African elephant"],"Its clicks have been measured above 230 decibels underwater.","NOAA","Nature","hard"),
+Q("How many squares are there on a chessboard?","Sixty-four",["Forty-nine","Eighty-one","One hundred"],"Eight rows of eight.","International Chess Federation","Sport","hard"),
+)
+
+// ---------------- Round 39 ----------------
+R(
+Q("What is a young cow called?","A calf",["A foal","A lamb","A piglet"],"A young horse is a foal and a young sheep a lamb.","Oxford English Dictionary","Nature","easy"),
+Q("What colour is a ruby?","Red",["Blue","Green","Yellow"],"A blue stone of the same mineral is called a sapphire.","Britannica","General Knowledge","easy"),
+Q("Which organs filter waste from the blood?","The kidneys",["The lungs","The spleen","The heart"],"They produce about a litre and a half of urine a day.","Royal Society of Biology","Science","medium"),
+Q("In which country is the Taj Mahal?","India",["Pakistan","Bangladesh","Nepal"],"It was built at Agra in the seventeenth century as a tomb.","UNESCO","Geography","medium"),
+Q("Which country did Napoleon Bonaparte lead?","France",["Italy","Spain","Austria"],"He crowned himself emperor in 1804.","Britannica","History","medium"),
+Q("Who wrote the poem The Waste Land?","T. S. Eliot",["Ezra Pound","W. B. Yeats","Wilfred Owen"],"It was published in 1922 and runs to 434 lines.","British Library","Art & Literature","hard"),
+Q("How many notes are in a major scale before it repeats?","Seven",["Five","Eight","Twelve"],"The eighth note is the octave: the first one again, higher.","Britannica","Music","hard"),
+Q("Which sugar gives DNA the D in its name?","Deoxyribose",["Glucose","Fructose","Ribose"],"RNA uses ribose, which has the oxygen DNA's sugar is missing.","Royal Society of Chemistry","Science","hard"),
+Q("What does PDF stand for?","Portable document format",["Public data file","Printed document form","Page display format"],"Adobe created it in 1993 so a page would look the same everywhere.","Britannica","Technology","hard"),
+Q("Which spacecraft has travelled furthest from Earth?","Voyager 1",["Voyager 2","New Horizons","Pioneer 10"],"Launched in 1977, it crossed into interstellar space in 2012.","NASA","Space","hard"),
+)
+
+// ---------------- Round 40 ----------------
+R(
+Q("Which is the coldest continent?","Antarctica",["Europe","Asia","South America"],"It holds the record low of about minus 89 degrees Celsius.","British Antarctic Survey","Geography","easy"),
+Q("Which force slows a sliding object down?","Friction",["Gravity","Magnetism","Pressure"],"It turns movement into heat, which is why rubbing warms your hands.","Britannica","Science","easy"),
+Q("Which is the largest living reptile?","Saltwater crocodile",["Komodo dragon","Green anaconda","Galapagos tortoise"],"Males can exceed six metres.","Natural History Museum","Nature","medium"),
+Q("What is the Roman numeral for fifty?","L",["C","X","D"],"C is one hundred and D is five hundred.","Oxford English Dictionary","General Knowledge","medium"),
+Q("Which film studio's logo is a mountain ringed with stars?","Paramount",["Universal","Columbia","Warner Bros"],"The mountain has been its emblem since 1914.","British Film Institute","Film & TV","medium"),
+Q("Which country did Britain hand Hong Kong back to in 1997?","China",["Japan","Taiwan","Portugal"],"The handover took place on 1 July 1997.","Britannica","History","hard"),
+Q("Which is the most common blood type worldwide?","O positive",["A positive","B positive","AB negative"],"Roughly a third of people have it.","World Health Organization","Science","hard"),
+Q("Which Norwegian painter made The Scream?","Edvard Munch",["Vincent van Gogh","Gustav Klimt","Egon Schiele"],"He made several versions, the first in 1893.","National Museum of Norway","Art & Literature","hard"),
+Q("What is the official language of the Vatican?","Latin",["Italian","Greek","French"],"Italian is what is actually spoken there day to day.","Holy See","Language","hard"),
+Q("Which country does Gouda cheese come from?","The Netherlands",["Belgium","Germany","Denmark"],"It is named after the market town where it was traded.","Britannica","Food & Drink","hard"),
+)
+
+// ---------------- Round 41 ----------------
+R(
+Q("What do we call water falling from clouds?","Rain",["Wind","Fog","Frost"],"Frozen, the same water falls as hail or snow.","Royal Meteorological Society","Science","easy"),
+Q("Which animal is known for its long trunk?","Elephant",["Rhinoceros","Hippopotamus","Tapir"],"The trunk is a fused nose and upper lip, with no bone in it.","World Wildlife Fund","Nature","easy"),
+Q("Which city is known as the Eternal City?","Rome",["Athens","Jerusalem","Istanbul"],"The name goes back to Roman poets of the first century BC.","Britannica","Geography","medium"),
+Q("Which scale measures the hardness of minerals?","Mohs",["Richter","Beaufort","Kelvin"],"It runs from talc at one to diamond at ten.","US Geological Survey","Science","medium"),
+Q("How many periods are there in an ice hockey match?","Three",["Two","Four","Five"],"Each lasts twenty minutes of playing time.","International Ice Hockey Federation","Sport","medium"),
+Q("Which explorer reached the South Pole first?","Roald Amundsen",["Robert Falcon Scott","Ernest Shackleton","Fridtjof Nansen"],"His party arrived in December 1911, weeks ahead of Scott's.","British Antarctic Survey","History","hard"),
+Q("Which Japanese artist made The Great Wave off Kanagawa?","Hokusai",["Hiroshige","Utamaro","Sharaku"],"The woodblock print dates from about 1831.","British Museum","Art & Literature","hard"),
+Q("What is the chemical symbol for tin?","Sn",["Ti","Tn","St"],"Sn comes from stannum, the Latin name.","Royal Society of Chemistry","Science","hard"),
+Q("Which opera house stands in Milan?","La Scala",["La Fenice","San Carlo","Covent Garden"],"It opened in 1778 on the site of a demolished church.","Britannica","Music","hard"),
+Q("Bluetooth is named after a king of which country?","Denmark",["Sweden","the Netherlands","Norway"],"Harald Bluetooth united Denmark and Norway in the tenth century.","Britannica","Technology","hard"),
+)
+
+// ---------------- Round 42 ----------------
+R(
+Q("What is the hard centre of a peach called?","The stone",["The core","The pip","The husk"],"An apple has a core; a peach, a plum and a cherry have stones.","Oxford English Dictionary","Food & Drink","easy"),
+Q("In which country does the statue of Christ the Redeemer stand?","Brazil",["Argentina","Peru","Portugal"],"It looks out over Rio de Janeiro from Corcovado mountain.","Britannica","Geography","easy"),
+Q("Who wrote the Communist Manifesto with Friedrich Engels?","Karl Marx",["Vladimir Lenin","Leon Trotsky","Joseph Stalin"],"It was published in London in 1848.","British Library","History","medium"),
+Q("Which is the fastest growing plant in the world?","Bamboo",["Kudzu","Sunflower","Eucalyptus"],"Some species put on nearly a metre in a day.","Royal Botanic Gardens Kew","Nature","medium"),
+Q("Which grain is porridge traditionally made from?","Oats",["Barley","Rye","Wheat"],"The grain is rolled or cut before it is cooked.","Britannica","Food & Drink","medium"),
+Q("Which telescope, launched in 1990, orbits the Earth?","Hubble",["James Webb","Kepler","Chandra"],"It is named after Edwin Hubble, who showed the universe is expanding.","NASA","Space","hard"),
+Q("What is the process by which a liquid becomes a solid?","Freezing",["Melting","Sublimation","Condensation"],"Melting is the same change run backwards.","Britannica","Science","hard"),
+Q("What does RSVP stand for?","Repondez s'il vous plait",["Reserve seats very promptly","Reply soon via post","Regrets sent very politely"],"It is French for reply, if you please.","Oxford English Dictionary","Language","hard"),
+Q("How many consecutive strikes make a turkey in ten-pin bowling?","Three",["Two","Four","Five"],"Six in a row is sometimes called a wild turkey.","World Bowling","Sport","hard"),
+Q("Who directed and starred in Citizen Kane?","Orson Welles",["Charlie Chaplin","John Huston","Buster Keaton"],"He was twenty-five when it was released in 1941.","British Film Institute","Film & TV","hard"),
+)
+
+// ---------------- Round 43 ----------------
+R(
+Q("Which bird is known for repeating human speech?","Parrot",["Sparrow","Robin","Owl"],"Some parrots mimic sounds they hear often, including other birds.","Natural History Museum","Nature","easy"),
+Q("How many is a dozen?","Twelve",["Ten","Twenty","Six"],"Half a dozen is six and a baker's dozen is thirteen.","Oxford English Dictionary","General Knowledge","easy"),
+Q("Which sea lies between Australia and New Zealand?","Tasman Sea",["Coral Sea","Timor Sea","Arafura Sea"],"It is named after the Dutch navigator Abel Tasman.","Britannica","Geography","medium"),
+Q("Which part of the eye controls how much light gets in?","The iris",["The retina","The cornea","The lens"],"The pupil is the opening the iris opens and closes.","Royal Society of Biology","Science","medium"),
+Q("Which country industrialised first?","Britain",["France","Germany","United States"],"The Industrial Revolution began there in the late eighteenth century.","Britannica","History","medium"),
+Q("Who sculpted the statue of David in Florence?","Michelangelo",["Donatello","Verrocchio","Ghiberti"],"He carved it from a single block of marble between 1501 and 1504.","Galleria dell'Accademia","Art & Literature","hard"),
+Q("Which country was the composer Edvard Grieg from?","Norway",["Sweden","Denmark","Finland"],"He wrote the Peer Gynt suites for Ibsen's play.","Britannica","Music","hard"),
+Q("What is an animal's winter sleep called?","Hibernation",["Migration","Aestivation","Torpor"],"Aestivation is the same idea in a hot, dry season.","Britannica","Science","hard"),
+Q("Which company built the first cars on a moving assembly line?","Ford",["General Motors","Chrysler","Daimler"],"The Model T line opened at Highland Park in 1913.","Britannica","Technology","hard"),
+Q("Which country does moussaka come from?","Greece",["Turkey","Lebanon","Italy"],"It layers aubergine and minced meat under a bechamel sauce.","Britannica","Food & Drink","hard"),
+)
+
+// ---------------- Round 44 ----------------
+R(
+Q("In which country is the Great Pyramid of Giza?","Egypt",["Sudan","Libya","Israel"],"It was built as a tomb for the pharaoh Khufu.","UNESCO","Geography","easy"),
+Q("What happens to a metal when it is heated enough?","It melts",["It freezes","It vanishes","It hardens"],"Every metal has its own melting point; tungsten's is the highest.","Royal Society of Chemistry","Science","easy"),
+Q("Which animal can sleep standing up?","Horse",["Cat","Rabbit","Otter"],"It can lock the joints in its legs and doze upright.","Royal Veterinary College","Nature","medium"),
+Q("What is the Roman numeral for one thousand?","M",["C","D","L"],"MM is two thousand.","Oxford English Dictionary","General Knowledge","medium"),
+Q("Who is responsible for how a film looks through the camera?","The cinematographer",["The editor","The producer","The gaffer"],"The role is also called the director of photography.","British Film Institute","Film & TV","medium"),
+Q("Which wall divided a German city until 1989?","The Berlin Wall",["Hadrian's Wall","The Maginot Line","Offa's Dyke"],"It stood from 1961 until the crossings opened in November 1989.","Britannica","History","hard"),
+Q("Which element is pencil lead actually made of?","Carbon",["Lead","Tin","Silicon"],"Pencils use graphite, a form of carbon; there is no lead in them.","Royal Society of Chemistry","Science","hard"),
+Q("Who wrote The Canterbury Tales?","Geoffrey Chaucer",["John Milton","William Langland","Thomas Malory"],"He wrote it in Middle English in the late fourteenth century.","British Library","Art & Literature","hard"),
+Q("What is the boundary around a black hole that nothing escapes called?","The event horizon",["The singularity","The accretion disc","The photon sphere"],"Inside it, not even light can get back out.","European Space Agency","Space","hard"),
+Q("Which of these languages is written from right to left?","Arabic",["Russian","Greek","Turkish"],"Hebrew, Persian and Urdu are written right to left as well.","Britannica","Language","hard"),
+)
+
+// ---------------- Round 45 ----------------
+R(
+Q("How many seconds are in an hour?","3,600",["600","1,800","6,000"],"Sixty seconds times sixty minutes.","General arithmetic","General Knowledge","easy"),
+Q("Which farm animal gives us wool?","Sheep",["Cow","Pig","Goat"],"The fleece is sheared, usually once a year in spring.","Britannica","Nature","easy"),
+Q("What does a doctor listen to with a stethoscope?","The heart and lungs",["Brain activity","Bone density","Eyesight"],"Rene Laennec invented it in 1816, from a rolled tube of paper.","Britannica","Science","medium"),
+Q("Which country has Wellington as its capital?","New Zealand",["Australia","Fiji","Papua New Guinea"],"It sits at the southern tip of the North Island.","Britannica","Geography","medium"),
+Q("In which year did humans first land on the Moon?","1969",["1965","1971","1974"],"Apollo 11 touched down on 20 July 1969.","NASA","History","medium"),
+Q("Who wrote the novel Crime and Punishment?","Fyodor Dostoevsky",["Leo Tolstoy","Nikolai Gogol","Mikhail Bulgakov"],"It was published in instalments through 1866.","Britannica","Art & Literature","hard"),
+Q("Which instrument does a timpanist play?","Kettledrums",["Cymbals","Xylophone","Snare drum"],"Timpani are tuned drums, struck with felt-headed mallets.","Britannica","Music","hard"),
+Q("What speeds up a chemical reaction without being used up?","A catalyst",["A reagent","A solvent","A compound"],"Enzymes are the body's own catalysts.","Royal Society of Chemistry","Science","hard"),
+Q("Which sport uses the terms birdie and eagle?","Golf",["Cricket","Archery","Rowing"],"They are scores of one and two under par on a hole.","Royal and Ancient Golf Club","Sport","hard"),
+Q("Which is the largest moon in the solar system?","Ganymede",["Titan","Callisto","Europa"],"Jupiter's largest moon is bigger than the planet Mercury.","NASA","Space","hard"),
+)
+// ------------------------------------------------------------------
+/// Deterministic, so two builds of the same questions put the answers in the same places.
+function splitMix(seed) {
+  let state = BigInt.asUintN(64, BigInt(seed));
+  return () => {
+    state = BigInt.asUintN(64, state + 0x9e3779b97f4a7c15n);
+    let z = state;
+    z = BigInt.asUintN(64, (z ^ (z >> 30n)) * 0xbf58476d1ce4e5b9n);
+    z = BigInt.asUintN(64, (z ^ (z >> 27n)) * 0x94d049bb133111ebn);
+    z = z ^ (z >> 31n);
+    return Number(z >> 11n) / 2 ** 53;
+  };
+}
+
+function emit() {
+  const rng = splitMix(20260909);
+  return {
+    version: 2,
+    rounds: ROUNDS.map((round, ri) => ({
+      round: ri + 1,
+      questions: round.map((item, qi) => {
+        const opts = [item.correct, ...item.wrong];
+        for (let i = opts.length - 1; i > 0; i--) {
+          const j = Math.min(Math.floor(rng() * (i + 1)), i);
+          [opts[i], opts[j]] = [opts[j], opts[i]];
+        }
+        return {
+          id: `r${String(ri + 1).padStart(2, "0")}q${String(qi + 1).padStart(2, "0")}`,
+          question: item.q,
+          answers: opts,
+          correct: opts.indexOf(item.correct),
+          explanation: item.exp,
+          source: item.src,
+          category: item.cat,
+          difficulty: item.diff,
+        };
+      }),
+    })),
+  };
+}
+
+function validate(doc) {
+  const errs = [];
+  const seen = new Map();
+  const order = { easy: 0, medium: 1, hard: 2 };
+  for (const r of doc.rounds) {
+    const qs = r.questions;
+    if (qs.length !== 10) errs.push(`round ${r.round}: ${qs.length} questions`);
+    const diffs = qs.map((q) => order[q.difficulty]);
+    if (diffs.some((d, i) => i && d < diffs[i - 1])) {
+      errs.push(`round ${r.round}: difficulty not ramping: ${qs.map((q) => q.difficulty).join(",")}`);
+    }
+    for (const q of qs) {
+      const key = q.question.trim().toLowerCase();
+      if (seen.has(key)) errs.push(`duplicate question: ${q.question.slice(0, 50)} (${seen.get(key)} and ${q.id})`);
+      seen.set(key, q.id);
+      if (q.answers.length !== 4) errs.push(`${q.id}: ${q.answers.length} answers`);
+      if (new Set(q.answers).size !== 4) errs.push(`${q.id}: duplicate answer text`);
+      if (!(q.correct >= 0 && q.correct < 4)) errs.push(`${q.id}: bad correct index`);
+      for (const f of ["explanation", "source", "category"]) {
+        if (!q[f].trim()) errs.push(`${q.id}: empty ${f}`);
+      }
+      if (q.question.length > 130) errs.push(`${q.id}: question too long (${q.question.length})`);
+      if (q.explanation.length > 160) errs.push(`${q.id}: explanation too long (${q.explanation.length})`);
+      for (const a of q.answers) if (a.length > 60) errs.push(`${q.id}: answer too long: ${a.slice(0, 40)}`);
+    }
+  }
+  return errs;
+}
+
+function review(doc) {
+  const out = [
+    `# Quizday question pack — all ${doc.rounds.length * 10} questions`,
+    "",
+    "Generated by `pack/build.mjs`. Every question is original to Quizday.",
+    "Correct answer marked **bold**. Reject anything doubtful and I will replace it.",
+    "",
+  ];
+  for (const r of doc.rounds) {
+    out.push(`## Round ${r.round}`, "");
+    r.questions.forEach((q, i) => {
+      const opts = q.answers.map((a, j) => (j === q.correct ? `**${a}**` : a)).join(" · ");
+      out.push(`${i + 1}. _${q.category} · ${q.difficulty}_ — ${q.question}`);
+      out.push(`   - ${opts}`);
+      out.push(`   - ${q.explanation} (Source: ${q.source})`);
+    });
+    out.push("");
+  }
+  return out.join("\n");
+}
+
+const [outPath = "apps/quizday/ios/App/questions.json", reviewPath = "apps/quizday/pack/REVIEW.md"] =
+  process.argv.slice(2);
+const doc = emit();
+fs.writeFileSync(outPath, JSON.stringify(doc, null, 1));
+fs.writeFileSync(reviewPath, review(doc));
+const n = doc.rounds.reduce((t, r) => t + r.questions.length, 0);
+console.log(`rounds=${doc.rounds.length} questions=${n} bytes=${fs.statSync(outPath).size}`);
+const counts = {};
+for (const r of doc.rounds) for (const q of r.questions) counts[q.category] = (counts[q.category] ?? 0) + 1;
+console.log("categories:", Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1])));
+const diffs = {};
+for (const r of doc.rounds) for (const q of r.questions) diffs[q.difficulty] = (diffs[q.difficulty] ?? 0) + 1;
+console.log("difficulty:", diffs);
+const errs = validate(doc);
+console.log(errs.length ? "ERRORS:" : "no errors");
+for (const e of errs) console.log("  -", e);
+if (errs.length) process.exit(1);
