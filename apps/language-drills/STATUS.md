@@ -82,6 +82,21 @@ loop. **Thousand** is the app; `language-drills` is the slug.
 - **`-sampleData` is a fiction, deliberately.** Nothing on a runner can drill for a
   fortnight, so it lays 213 words in the wall, 54 more drying, and a session waiting, in
   the shape a real fortnight would leave. It is only reachable from a launch argument.
+- **`-demo` performs for the camera, and only for the camera.** This runner's `simctl`
+  takes about one frame every two seconds, so the turn (340 ms) and the reward (1500 ms)
+  both fell between frames and the first filmstrips of each contained no motion at all.
+  Under a `-demo` launch — and nowhere else — the turn uses a slower spring and holds the
+  answer face, and the win plays its choreography four times slower with the tier thrown
+  three times. In the hand every one of those runs at the speed DESIGN.md's tables give.
+- **Settings is the system's `List` on the brand's canvas**, exactly as DESIGN.md asks:
+  its rows are the platform's, so they are white in light mode rather than bisque. The
+  asset catalog's accent is cobalt in both modes, so the row glyphs are the app's blue and
+  not the template's teal.
+- **The four SVG illustrations have no dark variants.** `art.mjs` supports one
+  (`--dark`), and the drawings were read in dark mode: the lamp in `swept-bench` and
+  `kept-wall` carries them, and the unglazed tiles reading as light against night indigo
+  is coherent rather than broken. If the critic disagrees, the fix is four recoloured SVGs,
+  not code.
 - **The daily reminder is scheduled but never seen here.** `UNUserNotificationCenter`
   accepts the request on the simulator; whether it fires, and what it looks like on a lock
   screen, is a device question.

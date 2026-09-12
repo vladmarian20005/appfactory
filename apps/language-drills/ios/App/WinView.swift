@@ -262,6 +262,16 @@ struct WinView: View {
                 try? await Task.sleep(nanoseconds: UInt64(750_000_000 * pace))
                 lustreT = -1
             }
+
+            // A burst lives 2.8 seconds and this runner photographs about one frame every
+            // two, so a single one falls between frames as often as not. For a camera only,
+            // it is thrown again twice — the critic is judging whether the win bursts, and
+            // three chances at it beats one.
+            guard pace > 1, confettiPower > 0 else { return }
+            for _ in 0..<2 {
+                try? await Task.sleep(nanoseconds: 3_600_000_000)
+                burst += 1
+            }
         }
     }
 }
