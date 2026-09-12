@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="glaze" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0" stop-color="#2468B4"/>
+      <stop offset="0.55" stop-color="#1C5AA6"/>
+      <stop offset="1" stop-color="#174B8B"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.03"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.12"/>
+    </linearGradient>
+    <linearGradient id="specular" x1="0" y1="0" x2="1" y2="0.6">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.3" stop-color="#ffffff" stop-opacity="0.26"/>
+      <stop offset="0.46" stop-color="#ffffff" stop-opacity="0.02"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="daylight" cx="0.22" cy="0.14" r="0.95">
+      <stop offset="0" stop-color="#FBF3E6"/>
+      <stop offset="1" stop-color="#E3D6C3"/>
+    </radialGradient>
+    <filter id="setShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#2B211A" flood-opacity="0.26"/>
+    </filter>
+  </defs>
+
+  <!-- lime plaster, daylight from the top left -->
+  <rect width="1024" height="1024" fill="url(#daylight)"/>
+
+  <!-- the neighbouring tiles of the wall, cropping at every edge -->
+  <g>
+    <rect x="-476" y="-476" width="620" height="620" rx="34" fill="#E0D2C0"/>
+    <rect x="-476" y="202" width="620" height="620" rx="34" fill="#2F6B57"/>
+    <rect x="-476" y="880" width="620" height="620" rx="34" fill="#E0D2C0"/>
+    <rect x="202" y="-476" width="620" height="620" rx="34" fill="#A8701B"/>
+    <rect x="202" y="880" width="620" height="620" rx="34" fill="#9E4630"/>
+    <rect x="880" y="-476" width="620" height="620" rx="34" fill="#E0D2C0"/>
+    <rect x="880" y="202" width="620" height="620" rx="34" fill="#2A7E8E"/>
+    <rect x="880" y="880" width="620" height="620" rx="34" fill="#E0D2C0"/>
+    <!-- the same sheen and bevel the neighbours have in the app -->
+    <rect x="-476" y="202" width="620" height="620" rx="34" fill="url(#sheen)"/>
+    <rect x="202" y="-476" width="620" height="620" rx="34" fill="url(#sheen)"/>
+    <rect x="202" y="880" width="620" height="620" rx="34" fill="url(#sheen)"/>
+    <rect x="880" y="202" width="620" height="620" rx="34" fill="url(#sheen)"/>
+    <rect x="-476" y="-476" width="620" height="620" rx="34" fill="url(#sheen)"/>
+    <rect x="880" y="-476" width="620" height="620" rx="34" fill="url(#sheen)"/>
+    <rect x="-476" y="880" width="620" height="620" rx="34" fill="url(#sheen)"/>
+    <rect x="880" y="880" width="620" height="620" rx="34" fill="url(#sheen)"/>
+  </g>
+
+  <!-- the grout the centre tile is bedded in -->
+  <rect x="182" y="182" width="660" height="660" rx="46" fill="#C9B79F" opacity="0.55"/>
+
+  <!-- the tile -->
+  <g filter="url(#setShadow)">
+    <rect x="202" y="202" width="620" height="620" rx="34" fill="url(#glaze)"/>
+    <rect x="202" y="202" width="620" height="620" rx="34" fill="url(#sheen)"/>
+    <!-- the pressed bevel: light on the top and left, shadow on the bottom and right -->
+    <path d="M236 214 H788 M214 236 V788" stroke="#ffffff" stroke-opacity="0.22" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <path d="M236 810 H788 M810 236 V788" stroke="#000000" stroke-opacity="0.18" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <!-- the painted fillet -->
+    <rect x="250" y="250" width="524" height="524" rx="18" fill="none" stroke="#F4ECDD" stroke-opacity="0.5" stroke-width="6"/>
+    <!-- the eight-point star of a tile shelf — two squares, one turned — set by hand
+         and so not quite square to the tile itself -->
+    <g transform="rotate(6 512 512)">
+      <rect x="371" y="371" width="282" height="282" rx="10" fill="#F4ECDD"/>
+      <rect x="371" y="371" width="282" height="282" rx="10" fill="#F4ECDD" transform="rotate(45 512 512)"/>
+      <circle cx="512" cy="512" r="78" fill="#1C5AA6"/>
+      <circle cx="512" cy="512" r="52" fill="#E0A03C"/>
+      <circle cx="512" cy="512" r="52" fill="url(#sheen)"/>
+    </g>
+    <!-- the window the glaze catches -->
+    <rect x="202" y="202" width="620" height="300" rx="34" fill="url(#specular)"/>
+  </g>
+</svg>
