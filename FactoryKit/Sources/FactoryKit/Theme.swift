@@ -19,22 +19,24 @@ public struct ScaledFont: ViewModifier {
     @ScaledMetric private var size: CGFloat
     private let weight: Font.Weight
     private let design: Font.Design
+    private let width: Font.Width
 
-    public init(size: CGFloat, weight: Font.Weight = .regular, design: Font.Design = .default, relativeTo style: Font.TextStyle = .largeTitle) {
+    public init(size: CGFloat, weight: Font.Weight = .regular, design: Font.Design = .default, width: Font.Width = .standard, relativeTo style: Font.TextStyle = .largeTitle) {
         _size = ScaledMetric(wrappedValue: size, relativeTo: style)
         self.weight = weight
         self.design = design
+        self.width = width
     }
 
     public func body(content: Content) -> some View {
-        content.font(.system(size: size, weight: weight, design: design))
+        content.font(.system(size: size, weight: weight, design: design).width(width))
     }
 }
 
 public extension View {
     /// See ``ScaledFont``. Prefer a semantic text style where one fits.
-    func scaledFont(size: CGFloat, weight: Font.Weight = .regular, design: Font.Design = .default, relativeTo style: Font.TextStyle = .largeTitle) -> some View {
-        modifier(ScaledFont(size: size, weight: weight, design: design, relativeTo: style))
+    func scaledFont(size: CGFloat, weight: Font.Weight = .regular, design: Font.Design = .default, width: Font.Width = .standard, relativeTo style: Font.TextStyle = .largeTitle) -> some View {
+        modifier(ScaledFont(size: size, weight: weight, design: design, width: width, relativeTo: style))
     }
 }
 

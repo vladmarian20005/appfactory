@@ -3,9 +3,12 @@ import SwiftUI
 
 /// What goes into a group chat: a picture of your own wall, not a score.
 ///
-/// Two people's cards look different at a glance, because the picture *is* the progress. This
-/// is the one place in the app a frozen point size is right — `ShareImage.render` draws into
-/// an `ImageRenderer` at a fixed pixel size, where there is no Dynamic Type to scale against.
+/// Two people's cards look different at a glance, because the picture *is* the progress.
+///
+/// The sizes here are the sizes the card draws at: `ShareImage.render` pins Dynamic Type to
+/// `.large` for the render, because a fixed 1080×1350 canvas bound for someone else's chat
+/// has to lay out the same for everybody. `scaledFont` is still the right call — it is what
+/// the rest of the app uses, and pinning happens in one place in the kit rather than here.
 struct ShareCard: View {
     @Environment(\.brand) private var brand
 
@@ -18,16 +21,16 @@ struct ShareCard: View {
         VStack(spacing: 0) {
             VStack(spacing: 0) {
                 Text("\(known)")
-                    .font(.system(size: 96, weight: .semibold).width(.expanded))
+                    .scaledFont(size: 96, weight: .semibold, width: .expanded)
                     .monospacedDigit()
                     .foregroundStyle(brand.palette.ink)
                 Text(Deck.totalMark)
-                    .font(.system(size: 12, weight: .semibold))
+                    .scaledFont(size: 12, weight: .semibold)
                     .tracking(1.8)
                     .foregroundStyle(brand.palette.inkSoft)
                 if today > 0 {
                     Text("+\(today) TODAY")
-                        .font(.system(size: 12, weight: .semibold))
+                        .scaledFont(size: 12, weight: .semibold)
                         .tracking(1.8)
                         .foregroundStyle(brand.palette.highlight)
                         .padding(.top, 5)
@@ -47,7 +50,7 @@ struct ShareCard: View {
                     ZStack {
                         GlazedTile(glaze: AppBrand.glaze(newest.theme), radius: 8, bevel: 2)
                         Text(newest.word)
-                            .font(.system(size: 15, weight: .semibold).width(.expanded))
+                            .scaledFont(size: 15, weight: .semibold, width: .expanded)
                             .foregroundStyle(brand.palette.onAccent)
                             .minimumScaleFactor(0.5)
                             .lineLimit(2)
@@ -60,11 +63,11 @@ struct ShareCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Spacer(minLength: 0)
                     Text(dateline)
-                        .font(.system(size: 11, weight: .semibold))
+                        .scaledFont(size: 11, weight: .semibold)
                         .tracking(1.6)
                         .foregroundStyle(brand.palette.inkSoft)
                     Text("THOUSAND")
-                        .font(.system(size: 15, weight: .semibold).width(.expanded))
+                        .scaledFont(size: 15, weight: .semibold, width: .expanded)
                         .tracking(1.6)
                         .foregroundStyle(brand.palette.ink)
                 }
