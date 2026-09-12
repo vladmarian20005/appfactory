@@ -173,8 +173,15 @@ jobs:
             judge the app `${{ env.SLUG }}`.
 
             The captures from this run are in apps/${{ env.SLUG }}/qa/ (every screen, light) and
-            apps/${{ env.SLUG }}/qa/design/ (dark, largest text, and the moments as filmstrips).
-            Read every one of them.
+            apps/${{ env.SLUG }}/qa/design/ (dark, largest text, the moments as filmstrips, and
+            ladder.png — the same screen shallow to deep). Read every one of them.
+
+            Judge the play as well as the look. A screenshot of session 5 and one of session 500
+            are the same screenshot, which is how this factory shipped a game whose difficulty
+            stopped at level 36 and a quiz that repeats its questions verbatim on day 31, past
+            every gate it had. Read the code that decides what the player gets next — the skill
+            names the four questions — and score Escalation and Pull from that and from
+            ladder.png, not from the pretty screens.
 
             Write apps/${{ env.SLUG }}/CRITIQUE.md and apps/${{ env.SLUG }}/design-score.json
             and nothing else. Do not commit.

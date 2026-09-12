@@ -224,14 +224,23 @@ jobs:
                AppInfo; build clean. Push.
             2. The core screen with its signature interaction, then the reward, exactly as
                DESIGN.md describes them, in the brand from the first line. Push.
-            3. Every other screen in the spec, in the brand. qa.json with screens and
-               moments. Push.
-            4. Make .github/scripts/verify-app.sh ${{ env.SLUG }} pass and
+            3. DESIGN.md's "The play", which is what makes anyone open this a second time:
+               the FactoryKit `Ladder` (still climbing at session 150 — `climbs(through:)`),
+               the rule that chooses the next unit from what the player has done (`Mastery`,
+               or the app's own), the `Run` holding what is at risk this session, and the one
+               `Earned` milestone that arrives for playing rather than paying. Never `%` over
+               a fixed list and never uniform random. Push.
+            4. Every other screen in the spec, in the brand. qa.json with screens, moments,
+               and `ladder` — the same screen at three or four points from a first session to
+               one weeks in, which is the only evidence the critic has that the app keeps
+               changing. Push.
+            5. Make .github/scripts/verify-app.sh ${{ env.SLUG }} pass and
                node tools/design/tells.mjs ${{ env.SLUG }} report no FAIL. Push.
-            5. privacy.json + sync, the listing files, STATUS.md. Push.
-            6. Dark mode and large text, against the mocks, with the turns that remain.
-            Styling is not a pass that comes after the app works: an app that works and looks
-            like the template fails the next stage, which is a critic with TASTE.md.
+            6. privacy.json + sync, the listing files, STATUS.md. Push.
+            7. Dark mode and large text, against the mocks, with the turns that remain.
+            Neither styling nor the play is a pass that comes after the app works. An app that
+            works and looks like the template fails the next stage, which is a critic with
+            TASTE.md — and so does one that is beautiful and identical on its fortieth session.
           claude_args: >-
             --max-turns ${{ env.MAX_TURNS }}
             --model ${{ env.MODEL }}
