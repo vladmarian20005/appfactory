@@ -240,8 +240,86 @@ Nothing ran after `release` before this.
 had no verdict for "still fails TASTE.md after its polish passes", which is the one outcome
 that stops and asks for a person. Now `TASTE_FAILED`, and 180 minutes.
 
+## Session 3 · 12 September · the second session
+
+The owner's verdict on all five apps: **"not fun enough, they did not hook me."** Separate
+from the "slop" verdict that produced the taste bar — that one was about looks, and the looks
+got fixed. This is about whether anyone opens the app twice.
+
+**What was actually wrong.** Two causes, both in this repo, neither visible to any gate:
+
+1. Every `SPEC.md` defines its app by subtraction — no ads, no lives, no coins, no timer, no
+   streak, a missed day costs nothing. Those are the incumbents' hooks correctly identified as
+   predatory and removed, with nothing put back. Lives are stakes bent into a weapon; streaks
+   are continuity bent into guilt. Remove the weapon, restore nothing, and the app is not calm,
+   it is weightless.
+2. Everything downstream judged stills. TASTE.md's seven requirements are all true of a
+   screenshot; `tells.mjs` greps for gray canvases; the critic reads PNGs. A screenshot of
+   session 5 and one of session 500 are the same screenshot. So this shipped, unnoticed:
+   Quizday picks the day's round with `dayNumber % rounds.count` over 30 rounds, so day 31
+   deals day 1's ten questions back in the same order, forever, while carrying the word
+   `difficulty` 332 times that no code ever compares. Tidepour capped colours at level 26 and
+   its par bar saturated at 36 — every board from there to level 10,000 identical, which is the
+   complaint its own comment mocks Water Sort for, four lines above the `min()` causing it.
+   Across all five apps `unlock` appears fifty-odd times and every one is a purchase;
+   `mastery` appears once, in prose.
+
+**The rule: pull, not push.** Take the stakes, the continuity, the thing worth working toward.
+Refuse the guilt, the lives, the panic and anything that runs out. Every store promise stays
+true — a missed day still costs nothing. TASTE.md's "The second session" is the bar, with the
+mechanic-by-mechanic table, five requirements, eight new slop tells, and two rubric rows
+(Escalation, Pull) wired into the pass rule.
+
+**What is new and load-bearing:**
+
+- `FactoryKit`: `Ladder` (a curve that knows where it flattens), `Mastery` (what to serve next,
+  deterministic so captures can show it), `Run` (what is at risk, costing the run and nothing
+  outside it), `Earned` (what playing opens, as against what the payment opens).
+- `tells.mjs`: fails content picked by modulo, a ladder stopping inside 150 rungs (computed
+  from the dial literals, the same arithmetic `Ladder.flattensAt` does), and an app with no
+  selection logic at all. Warns on write-only `difficulty`, purchase-only unlocks, dead-end
+  endings.
+- `design-captures.sh`: a `ladder` block films the same screen shallow to deep into one strip.
+  This is the only way a still-image critic can tell a curve from a flat line. qa.json gains a
+  `ladder` array; an app without one gets a warning, not a failure.
+- `app-build.yml` and `app-polish.yml` carry it in the *running order*, not just the skills.
+  The builder is told its turn budget is finite, so anything absent from its ordered list gets
+  dropped — the play is step 3 now, ahead of the remaining screens.
+
+**The doctrine was corrected by measurement, and this is the part worth remembering.** The
+first rule written here was "at least one dial with no ceiling". Rebuilding Tidepour against it
+showed that forces a lie. A puzzle whose every board is solver-verified has a hardest board,
+and the open par dial only demanded solutions no board of that shape contains: par went 40, 40,
+37, 48, 49 across levels 100 to 300 — flat, noisy, and 5 to 6.7 seconds a level to generate.
+Two more walls came the same way: dropping to one spare at level 240 made boards unsolvable, so
+the *hardest* rung served a one-pour fallback; and past six deep the solver can no longer prove
+par, which is the one number the app promises. The rule is now **"still climbing at rung 150,
+and say in DESIGN.md where it stops"** — `Ladder.climbs(through:)`. Do not let an agent reach
+for an unbounded dial to dodge the question.
+
+**Tidepour is the proof.** Colours to nine by rack 31, deeper glass at 125 and 200,
+`flattensAt` 200. `Board.capacity` is per-board (old saves still decode at four deep) and the
+position fingerprint widened from 16 to 32 bits — four 4-bit slots were what actually capped
+depth, and a fifth unit would have shifted off the top so the solver called solvable boards
+unsolvable, silently. Three `Earned` milestones arrive for playing and are named at the win.
+The daily climbs a fortnight instead of being six colours and par 18 on every date forever.
+Verified: levels 1–60 plus 125 and 200 all solvable with par proven optimal, generation under
+750 ms, `app-verify` green on all five apps in CI, `compliance.sh` clean, and the rack at 210
+renders nine colours six deep against a 47-pour line.
+
 ## Open questions for the next session, in order
 
+0. **The apps that still fail the second-session gate, and the one that cannot be fixed in
+   code.** `node tools/design/tells.mjs <slug>` for each. Tidepour is clean. Quizday has two
+   hard tells and is the interesting one: `content-modulo` is not a bug to patch but a content
+   problem wearing a code disguise — 300 questions at ten a day is thirty days, full stop, and
+   no amount of reshuffling makes day 31 new. Assembling each day's ten from the whole pool by
+   a date seed with a difficulty ramp (which is what `Ladder` is for, and would finally make
+   that 332-times-mentioned `difficulty` field mean something) kills the *verbatim* repeat and
+   buys real variety, but the honest fix is more questions, and they have to be fact-checked or
+   the app becomes the thing its own spec attacks. Decide that before spending an agent on it.
+   `plainfood` and `tallies` have pre-existing hard tells and no `DESIGN.md`; they predate the
+   taste bar and are unrelated to this work.
 1. **The owner's device pass, then the first `app-release` the factory has ever run.** This is
    now the only thing between the two apps and the store. Run the TestFlight build on a phone
    — the reminder firing, haptics, the share sheet, a real sandbox purchase — then set
@@ -281,20 +359,22 @@ that stops and asks for a person. Now `TASTE_FAILED`, and 180 minutes.
 ```
 Read docs/HANDOFF.md in appfactory, then TASTE.md and CLAUDE.md.
 
-The taste bar is a real gate now, the framework question is decided, and app-monitor
-watches what happens after release. Quizday and Tidepour are on TestFlight and neither
-has ever been submitted for review — app-release has never run for any app.
+The taste bar and the second-session bar are both real gates now. Tidepour is rebuilt
+against the second one and is the worked example: read LevelGenerator.ladder and
+DESIGN.md's "The play" before designing a curve for anything else.
 
 Your job this session, in order:
 
-1. Get the first app into App Review. The device pass is the owner's; app-release now
+1. Watch the first app built after the second-session work — read its DESIGN.md
+   "The play" and its qa/design/ladder.png before anything else. If the panels are
+   interchangeable, the direction stage failed and that is the thing to fix, not the app.
+2. Get the first app into App Review. The device pass is the owner's; app-release now
    refuses a build with no device_tested on record. Watch the run — it is the one
    workflow that touches Apple irreversibly and it has never succeeded.
-2. Watch language-drills through the gate. It is the first app to go through the whole
-   chain with the new code, and the first chance to see a second critique, or the
-   "out of polish passes → a human" path that nothing has exercised yet.
-3. Then the FactoryKit additions in open question 5, cheapest first — burst, then
-   Core Haptics. Prove Metal-in-SwiftPM on one CI run before committing to brandTexture.
+3. Decide open question 0 on Quizday: its content-modulo tell is a content problem, not
+   a code one, and the choice about writing and fact-checking more questions is the
+   owner's, not an agent's.
 
-Great UX, great UI is the bar. Ask before anything that reaches Apple.
+Great UX, great UI, and worth opening twice, is the bar. Ask before anything that
+reaches Apple.
 ```
