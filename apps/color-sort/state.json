@@ -10,9 +10,9 @@
     },
     "verify": {
       "status": "ok",
-      "sha": "6270a3f07f8a0595cdf4119941ddb6a089e71e1d",
-      "at": "2026-09-11T23:48:08.735Z",
-      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34658701682"
+      "sha": "01c202f981c7840445025e0fcfb7df3b58b2ae4d",
+      "at": "2026-09-12T09:02:58.428Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34684429088"
     },
     "aso": {
       "status": "ok",
