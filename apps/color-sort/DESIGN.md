@@ -53,20 +53,31 @@ every row below is a real generated board, verified solvable with par proven opt
 | Rack | Colours | Depth | Par | Generates in |
 | --- | --- | --- | --- | --- |
 | 1 | 3 | 4 | 8 | instant |
-| 12 | 5 | 4 | 17 | 12 ms |
-| 31 | 9 | 4 | 28 | 52 ms |
-| 80 | 9 | 4 | 28 | 29 ms |
-| 125 | 9 | 5 | 36 | 70 ms |
-| 200 | 9 | 6 | 47 | 700 ms |
-| 400 | 9 | 6 | 43 | 125 ms |
+| 9 | 4 | 4 | 11 | instant |
+| 33 | 7 | 4 | 23 | 12 ms |
+| 65 | 11 | 4 | 34 | 53 ms |
+| 81 | 13 | 4 | 41 | 112 ms |
+| 105 | 13 | 5 | 55 | 1.1 s |
+| 155 | 13 | 6 | 69 | 2.3 s |
+| 300 | 13 | 6 | 68 | 2.0 s |
 
-Colours widen to nine by rack 31; the glass is blown deeper at 125 and again at 200. **The rack
-stops changing shape at 200** — `ladder.flattensAt` says so out loud — which is about seven
-months at a rack a day, and past it the pool serves nine colours six deep for as long as anyone
-keeps pouring. That ceiling is the app's own promise: every board is dealt, solved and thrown
-away if the solver cannot finish it, and beyond six deep the search stops being able to *prove*
-par, which is the one number Tidepour tells the truth about. If the shore ever needs to go
-further, the next dimension is a second rack on the same flat, not a seventh measure.
+A light comes into the flat every eight racks until there are thirteen at rack 81; the glass is
+then blown deeper, five measures at 105 and six at 155. **The ladder stops changing at rack
+169** — `ladder.flattensAt` says so out loud — which is most of a year at a rack a day.
+
+The first version of these numbers stopped colours at nine and left racks 31 to 124 identical,
+ninety-four of them, and the critic caught it from `ladder.png` in one pass while three comments
+in the generator still claimed depth changed at 45. The longest plateau is fifty racks now, at
+105–154, and every rack from 1 to 200 has been generated and checked: solvable, and with a line
+the solver could *prove* is the shortest. That proof is the ceiling on all of this. Every board
+is dealt, solved and thrown away if the solver cannot finish it, and beyond six measures the
+search returns paths it cannot call minimal — so `make` refuses any candidate it could not
+prove, and the rack stops getting deeper rather than letting par quietly stop meaning what the
+app says it means. If the shore ever needs to go further, the next dimension is a second rack on
+the same flat, not a seventh measure.
+
+Deep racks cost one to two seconds to deal, against milliseconds in the shallows; that is the
+price of the verified line, and it is spent behind the dealing animation.
 
 **What comes next.** The rung. Each rack's board is its level number seeded, dealt up to ten
 times, and kept only when the solver both finishes it and finds a line at least as long as the
@@ -74,9 +85,9 @@ bar for that shape. Nothing is random from the player's side: rack 41 is the sam
 phone and after every reinstall.
 
 **Earned.** `AppInfo.earned` — three milestones, all of them free, none of them purchasable.
-The ninth light at rack 31, tall glass at 125, deep glass at 200. Each is the ladder's own next
-opening, named at the win the moment it is crossed; when nothing was crossed, the win names the
-one still coming ("Tall glass at rack 125."). The paywall stays exactly where it was, at rack 60
+The thirteenth light at rack 81, tall glass at 105, deep glass at 155. Each is the ladder's own
+next opening, named at the win the moment it is crossed; when nothing was crossed, the win names
+the one still coming ("Tall glass at rack 105."). The paywall stays exactly where it was, at rack 60
 — it buys *more shore*, and these three arrive whether or not it is ever paid.
 
 **The ending.** The win ends on what opened, or on what is still on its way, above the two

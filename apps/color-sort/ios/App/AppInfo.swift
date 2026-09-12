@@ -54,14 +54,14 @@ enum AppInfo {
     /// deeper twice — which used to happen silently. Now the shore says so when you reach it,
     /// and the win names the next one, so there is always something on the way in.
     static let earned = Earned([
-        Earned.Milestone(id: "ninth-light", title: "The ninth light",
-                         blurb: "A ninth colour comes into the flat. The rack is as wide as the pool gets.",
-                         at: 31),
+        Earned.Milestone(id: "thirteenth-light", title: "The thirteenth light",
+                         blurb: "A thirteenth colour comes into the flat. The rack is as wide as the pool gets.",
+                         at: 81),
         Earned.Milestone(id: "tall-glass", title: "Tall glass",
                          blurb: "The glass is blown deeper — five measures to a vial, and longer lines to walk.",
-                         at: 125),
+                         at: 105),
         Earned.Milestone(id: "deep-glass", title: "Deep glass",
                          blurb: "Six measures. The longest pours in the pool, and the last shape the rack takes.",
-                         at: 200),
+                         at: 155),
     ])
 }

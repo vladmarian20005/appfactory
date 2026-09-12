@@ -59,22 +59,29 @@ enum LevelGenerator {
     /// downstream could see it: a screenshot of level 40 and a screenshot of level 400 are the
     /// same screenshot.
     ///
-    /// Now each dimension opens when the one before it runs out of room. Colours climb to nine
-    /// by level 31; the vials then start getting deeper, five at 50 and six at 125; and the par
-    /// bar tightens within each of those bands. The rack stops changing shape at level 200,
-    /// which `ladder.flattensAt` will tell you and which DESIGN.md's "The play" answers for.
+    /// Now each dimension opens when the one before it runs out of room. Colours climb a light
+    /// every eight racks to thirteen at rack 81; the vials are then blown deeper, five measures
+    /// at 105 and six at 155; and the par bar tightens within each of those bands. The ladder
+    /// stops changing at rack 169, which `ladder.flattensAt` will tell you and which DESIGN.md's
+    /// "The play" answers for.
+    ///
+    /// The first version of these numbers stopped colours at nine and left racks 31 to 124 —
+    /// ninety-four of them — identical, which the critic caught from `ladder.png` and the dials
+    /// while three comments here still claimed depth changed at 45 and 50. Prose drifts off the
+    /// arithmetic; read `flattensAt` and the plateau sweep, not the comment.
     ///
     /// It stops there because this app's own promise stops there, and the first three versions
     /// of this ladder found every wall the hard way. All three were measured, not reasoned:
     ///
-    /// - **Nine colours, six deep is what the solver can still *prove*.** Every board is dealt,
+    /// - **Six measures is as deep as the solver can still *prove*.** Every board is dealt,
     ///   solved, and thrown away if the solver cannot finish it, and par is the solver's own
     ///   optimal move count. At seven deep the search starts hitting its budget and returning a
     ///   path it cannot call optimal — level 260 came out with a par of 93 against a bar of 49 —
-    ///   so `par` quietly stops meaning what the app tells the player it means. At six deep a
-    ///   level verifies in well under a second and par is still exact.
+    ///   so `par` quietly stops meaning what the app tells the player it means. Thirteen colours
+    ///   six deep still verifies, and `make` now refuses any candidate the solver could not
+    ///   prove minimal, so an unprovable deal is discarded rather than served as the line.
     /// - **The last spare cannot be taken away.** A dial that dropped the rack to one spare at
-    ///   level 240 made nine-colour boards effectively unsolvable: every deal failed, `make`
+    ///   level 240 made wide boards effectively unsolvable: every deal failed, `make`
     ///   fell through to `trivial`, and levels 300 and 400 came out as *one-pour* boards. The
     ///   hardest rung in the game was the easiest one in it. Two spares stay.
     /// - **A dial with no ceiling is not the same as a curve that climbs.** The par bar used to
@@ -86,9 +93,9 @@ enum LevelGenerator {
     ///
     /// Rebuilt and measured 12 Sep 2026 — the table is in DESIGN.md's "The play".
     static let ladder = Ladder([
-        Ladder.Dial("colours", from: 3, every: 5, opensAt: 1, ceiling: 9),
-        Ladder.Dial("depth", from: 4, every: 75, opensAt: 50, ceiling: 6),
-        Ladder.Dial("par", from: 9, by: 1, every: 3, opensAt: 1, ceiling: 30),
+        Ladder.Dial("colours", from: 3, every: 8, opensAt: 1, ceiling: 13),
+        Ladder.Dial("depth", from: 4, every: 50, opensAt: 55, ceiling: 6),
+        Ladder.Dial("par", from: 9, by: 1, every: 8, opensAt: 1, ceiling: 30),
     ])
 
     /// Spare tubes. Two is the standard of the genre, and it is not a difficulty dial: taking
@@ -122,7 +129,7 @@ enum LevelGenerator {
     /// board that clears it in an attempt or two, and the shape is what climbs.
     static func parBar(forLevel n: Int, colors: Int) -> Int {
         let units = colors * capacity(forLevel: n)
-        let reach = units * 2 / 3
+        let reach = units * 3 / 5
         let within = min((ladder["par", at: n] ?? 9) - 9, units / 8)
         return reach + within
     }
@@ -192,8 +199,13 @@ enum LevelGenerator {
                                       colorCount: colors, parIsOptimal: optimal)
                 // Relax the bar as the attempts run down rather than dealing forever.
                 let bar = parBar - (attempt / 3)
-                if candidate.par >= bar { return candidate }
-                if candidate.par > (best?.par ?? 0) { best = candidate }
+                // Only a board whose line the solver could *prove* shortest is worth serving:
+                // par is the number this app tells the truth about, and on the biggest racks
+                // the search sometimes returns a path it cannot call minimal — rung 155 once
+                // came out with a line of 95 that way. An unproven board is still kept as a
+                // fallback, because a long line beats no board at all.
+                if candidate.par >= bar && optimal { return candidate }
+                if candidate.par > (best?.par ?? 0), optimal || best == nil { best = candidate }
             }
         }
         if let best { return best }

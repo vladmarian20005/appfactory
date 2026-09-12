@@ -42,22 +42,22 @@
     {
       "name": "rack-3",
       "args": ["-onboarded", "-reset", "-pro", "-level", "3", "-moves", "3"],
-      "note": "The shallow end: three colours, four measures to a vial, a line about ten pours long."
+      "note": "The shallow end: three colours, four measures to a vial, a line eight pours long."
     },
     {
-      "name": "rack-40",
-      "args": ["-onboarded", "-reset", "-pro", "-level", "40", "-moves", "3"],
-      "note": "Nine colours, the widest the flat gets, still four deep. Par has roughly trebled."
+      "name": "rack-45",
+      "args": ["-onboarded", "-reset", "-pro", "-level", "45", "-moves", "3"],
+      "note": "Eight colours, still four deep, the line near thirty. A light has come in every eight racks since the first one."
     },
     {
-      "name": "rack-130",
-      "args": ["-onboarded", "-reset", "-pro", "-level", "130", "-moves", "3"],
-      "note": "Tall glass: five measures to a vial. Earned at rack 125, and visibly a different rack."
+      "name": "rack-110",
+      "args": ["-onboarded", "-reset", "-pro", "-level", "110", "-moves", "3"],
+      "note": "Tall glass: thirteen colours and five measures to a vial, earned at rack 105. A visibly taller, wider rack."
     },
     {
-      "name": "rack-210",
-      "args": ["-onboarded", "-reset", "-pro", "-level", "210", "-moves", "3"],
-      "note": "Deep glass, six measures — the last shape the rack takes, at rung 200. Par is five times the opening board's."
+      "name": "rack-170",
+      "args": ["-onboarded", "-reset", "-pro", "-level", "170", "-moves", "3"],
+      "note": "Deep glass, six measures — the last shape the rack takes, at rack 155. The line is near seventy, eight times the opening board's."
     }
   ],
   "moments": [
