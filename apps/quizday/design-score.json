@@ -1,35 +1,25 @@
 {
-  "pass": false,
+  "pass": true,
   "scores": {
     "idea": 5,
     "look": 5,
-    "signature": 4,
+    "signature": 5,
     "reward": 4,
     "voice": 5,
-    "craft": 3,
+    "craft": 4,
     "firstMinute": 4,
-    "escalation": 1,
-    "pull": 1
+    "escalation": 4,
+    "pull": 4
   },
-  "tells": [
-    "content-modulo",
-    "no-second-session",
-    "metadata-difficulty",
-    "ladder-stops-in-week-one",
-    "every-unlock-is-a-purchase",
-    "stats-nothing-consults",
-    "nothing-at-risk",
-    "streak-that-only-counts",
-    "session-ends-on-come-back-tomorrow"
-  ],
-  "summary": "The best-looking app the factory has made — grained newsprint under a lamp, New York throughout, an answer that takes ink under a red stamp that judges nobody, a front page that prints itself at 112pt, and a night editor who never breaks character — and it is over before it starts: all thirty rounds carry the identical 3-easy/4-medium/3-hard shape, nothing reads the difficulty it prints on every sheet, Pack.swift:80 deals round 1's ten back verbatim on day 31, and there is no Ladder, Mastery, Run or Earned anywhere in it.",
+  "tells": [],
+  "summary": "A morning newspaper you would know from one crop, with a real desk behind it: a ladder that climbs to edition 153, a mastery that sets tomorrow's ten from what keeps catching her, and three doors opened by playing rather than paying.",
   "fixes": [
-    "Replace DailyPack.roundIndex's modulo (Pack.swift:76-91) with Mastery over all question ids, day-key seeded so the edition stays shared, so day 31 is ten questions chosen from what got past her — and grow the pack past 300",
-    "Add a Ladder keyed on editions filed that moves the easy/medium/hard mix from 4/4/2 toward 1/3/6 past session 150, and make QuizItem.difficulty the field the selector filters on instead of a caption at QuestionSheet.swift:137",
-    "Adopt Run in TodayView so a clean sheet is at stake during the ten, printed as a mono chain beside the tally that pencils out on a miss, costing this edition's tier and nothing else",
-    "Open one door with play instead of money: an Earned late edition at seven editions filed, five questions built from what got past her, so CategoryStat finally chooses something",
-    "End the edition on earned.next(after:) in the editor's voice — 'Nineteen filed. The late edition opens at twenty-one.' — above the countdown at EditionView.swift:180-193, not on a clock",
-    "Clamp the verdict stamp to maxWidth 190 anchored bottom-trailing (QuestionSheet.swift:181-189) so it stops covering the pressed answer and hitting the screen edge in dark and at AX5, clear the version footer from behind the tab bar, and outline press-body.svg so the hero does not vanish into the dark canvas",
-    "Add a ladder capture to qa.json (there is none, so Escalation had to be read entirely from code), move the demo presses to 6/10/14s with delay 4.0 and the win to 8/12s so the ink sweep and the confetti land mid-frame, and hold the paper canvas at launch so neither strip opens on white"
+    "The win filmstrip never reaches the win: frames 5-20 of moment-win.png are identical on the answered sheet, because the page goes to press at at(12.0) (TodayView.swift:261) after the strip's 20 fast frames have run out - move it to at(9.5) and drop qa.json's moment delay to 7.5",
+    "Largest text breaks the head of the question sheet: GENERAL KNOWLE/DGE splits mid-word and Q4 OF 10 - E... truncates (ax-02-question.png) - cap the sectionMark row at accessibility1 with minimumScaleFactor and whole-word wrapping (QuestionSheet.swift:135-155)",
+    "The printer's fist renders as an emoji in blue, pink and teal on the paywall and the composing room (RootView.swift:30 -> PaywallView.swift:96) - draw it as a SwiftUI Shape or force text presentation so it takes the section ink",
+    "The ladder's first rung is at edition 39, so ladder.png's first two panels are interchangeable - step the hard dial every 26 instead of 38, which still leaves flattensAt at 131 (Desk.swift:28-29)",
+    "Settings is white capsule cards on newsprint under a sans-serif large title, the one screen where the newspaper stops (08-settings.png) - give the rows the ruled-box treatment and name the screen in the paper's words",
+    "Onboarding page one opens on ~380px of dead paper above the masthead and draws the press smaller than mock-3 promised - set artHeight 340 and HandPress(width: 330) (AppInfo.swift:22)",
+    "The paywall subhead duplicates bullet one (RootView.swift:32 vs AppInfo.swift:55) and the promise is led by hand.raised.fill, the only SF Symbol on a page of drawn art (PaywallView.swift:144)"
   ]
 }
