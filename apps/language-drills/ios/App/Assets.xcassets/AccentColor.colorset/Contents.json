@@ -1,9 +1,20 @@
 {
+  "_comment" : "Cobalto, the signature glaze, in both modes. The asset catalog's accent is what tints system chrome that never sees the brand environment — a Label's icon inside the kit's Settings List, for one — so leaving the template's teal here shows up as teal glyphs in a cobalt app.",
   "colors" : [
     {
       "color" : {
         "color-space" : "srgb",
-        "components" : { "alpha" : "1.000", "blue" : "0.560", "green" : "0.520", "red" : "0.090" }
+        "components" : { "alpha" : "1.000", "red" : "0.110", "green" : "0.353", "blue" : "0.651" }
+      },
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        { "appearance" : "luminosity", "value" : "dark" }
+      ],
+      "color" : {
+        "color-space" : "srgb",
+        "components" : { "alpha" : "1.000", "red" : "0.361", "green" : "0.608", "blue" : "0.910" }
       },
       "idiom" : "universal"
     }

@@ -391,7 +391,12 @@ struct BenchView: View {
         }
         rising = true
         queue = rest
-        withMotion(Motion.gentle) { rising = false }
+        // On the next turn of the run loop, not this one: setting it true and false inside a
+        // single update means the tile is never drawn low, and the rise never happens.
+        Task { @MainActor in
+            await Task.yield()
+            withMotion(Motion.gentle) { rising = false }
+        }
     }
 
     // MARK: - Sessions
@@ -405,11 +410,13 @@ struct BenchView: View {
         flying = false
         leaving = false
         angle = LaunchOptions.turned ? 180 : 0
-        finished = LaunchOptions.won
+        // `-demo win` is the reward, filmed. Landing on it and playing it slowly is the whole
+        // moment; playing two turns first only guarantees the camera arrives after it.
+        finished = LaunchOptions.won || LaunchOptions.demo == "win"
         queue = LaunchOptions.swept ? [] : planned
         plannedCount = queue.count
 
-        if LaunchOptions.won {
+        if finished {
             // A capture of the win needs a session to have happened. Take the day's tiles from
             // what is already in the wall, two from each panel, so the course and the fresh
             // mortar read the way a real session's would.
@@ -422,17 +429,6 @@ struct BenchView: View {
             startedKnown = max(0, library.setCount - setWords.count)
         }
 
-        if LaunchOptions.demo == "win" {
-            // A session all but finished: the course nearly full, two tiles left on the bench.
-            var day: [Word] = []
-            for theme in 0..<Deck.themes.count {
-                day += Deck.panel(theme).filter { library.firing($0) == .set }.prefix(2)
-            }
-            setWords = Array(day.prefix(21))
-            queue = Array(planned.prefix(2))
-            plannedCount = setWords.count + queue.count
-            startedKnown = max(0, library.setCount - setWords.count)
-        }
         teachTheFirstTile()
     }
 
@@ -474,16 +470,9 @@ struct BenchView: View {
                     grade(word, .good)
                     try? await Task.sleep(nanoseconds: 600_000_000)
                 }
-            case "win":
-                // `startSession` left two tiles on the bench, so the win arrives inside the
-                // few seconds the critic films rather than forty turns later.
-                while let word = current, !finished {
-                    turn(word)
-                    try? await Task.sleep(nanoseconds: 2_200_000_000)
-                    grade(word, .easy)
-                    try? await Task.sleep(nanoseconds: 800_000_000)
-                }
             default:
+                // "win" needs nothing here: `startSession` lands on the reward, and WinView
+                // plays its own choreography four times slower under a -demo launch.
                 break
             }
         }

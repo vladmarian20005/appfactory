@@ -50,10 +50,10 @@
     {
       "name": "win",
       "args": ["-onboarded", "-sampleData", "-reset", "-demo", "win"],
-      "delay": 3.5,
+      "delay": 2,
       "frames": 8,
       "interval": 0.1,
-      "note": "The last two tiles of a clean session and then the reward: the bench empties, the course expands into the whole wall, the day's tiles press in one at a time with the tone climbing, the count runs, and the glaze-chip burst fires."
+      "note": "The reward, played four times slower than it runs in the hand because simctl cannot take frames any faster: the day's tiles press into the wall one at a time in their own glazes, the hero count runs, and once the last one is in, the tier fires — here a new hundred, so the number holds in amber and a lustre sweep crosses the wall behind the glaze-chip burst."
     }
   ]
 }

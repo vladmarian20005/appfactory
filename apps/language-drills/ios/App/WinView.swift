@@ -94,7 +94,7 @@ struct WinView: View {
 
     private var hero: some View {
         VStack(spacing: 2) {
-            CountUp(to: known, from: startedKnown, duration: 0.6) { _ in
+            CountUp(to: known, from: startedKnown, duration: 0.6 * pace) { _ in
                 Haptics.impact(0.35)
             }
             .brandDisplay(size: 100)
@@ -103,13 +103,18 @@ struct WinView: View {
             Mark(Deck.totalMark)
                 .foregroundStyle(brand.palette.inkSoft)
 
-            Mark("+\(freshRanks.count) SET TODAY")
+            Mark("+\(setWords.count) SET TODAY")
                 .foregroundStyle(brand.palette.highlight)
                 .padding(.top, 5)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(known) of \(Deck.total) set. \(freshRanks.count) went in today.")
+        .accessibilityLabel("\(known) of \(Deck.total) set. \(setWords.count) went in today.")
     }
+
+    /// The reward is choreographed over about 1500 ms in the hand. On a `-demo` launch it is
+    /// played four times slower, because `simctl` takes a frame about every two seconds and
+    /// the whole of it would otherwise happen between two of them.
+    private var pace: Double { LaunchOptions.demo == nil ? 1 : 4 }
 
     private var isHundred: Bool {
         if case .hundred = tier { return true }
@@ -216,20 +221,27 @@ struct WinView: View {
             return
         }
 
+        let step = UInt64(50_000_000 * pace)
         Task { @MainActor in
             // 0–260: the pull-back, then the tiles press in, in order, climbing the scale.
-            try? await Task.sleep(nanoseconds: 180_000_000)
+            try? await Task.sleep(nanoseconds: UInt64(180_000_000 * pace))
             withMotion(Motion.gentle) { landed = 0 }
             for i in 0..<freshRanks.count {
-                try? await Task.sleep(nanoseconds: 50_000_000)
+                try? await Task.sleep(nanoseconds: step)
                 withMotion(Motion.snappy) { landed = i + 1 }
                 Haptics.impact(0.3)
                 Tones.shared.play(.step(i))
             }
         }
 
+        // 900 ms in the hand, with the last tiles still landing under it. Played slowly for a
+        // camera it comes later, but not after everything has settled: a burst that fires once
+        // the wall is finished is a burst no filmstrip contains.
+        let tierDelay = pace == 1
+            ? UInt64(900_000_000)
+            : UInt64(900_000_000 * pace) + step * UInt64(Double(freshRanks.count) * 0.6)
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 900_000_000)
+            try? await Task.sleep(nanoseconds: tierDelay)
             switch tier {
             case .set:
                 withMotion(Motion.gentle) { glow = 1 }
@@ -246,8 +258,8 @@ struct WinView: View {
                 Haptics.celebrate()
                 Tones.shared.play(.fanfare)
                 lustreT = 0
-                withAnimation(.easeInOut(duration: 0.7)) { lustreT = 1 }
-                try? await Task.sleep(nanoseconds: 750_000_000)
+                withAnimation(.easeInOut(duration: 0.7 * pace)) { lustreT = 1 }
+                try? await Task.sleep(nanoseconds: UInt64(750_000_000 * pace))
                 lustreT = -1
             }
         }
