@@ -1,0 +1,73 @@
+name: app-monitor
+
+# The stage after the last stage. Everything else in the factory pushes an app towards App
+# Review; nothing watched what happened once it got there. A rejection, a build expiring off
+# TestFlight, or the first one-star review about a bug the critic could not see are all things
+# the factory could only learn by someone opening App Store Connect and looking.
+#
+# It reads and never writes: no agent, no credentials beyond the read it already has, and
+# nothing here can change an app's state. A red tick means something needs a person, which is
+# the only signal worth sending daily.
+
+on:
+  schedule:
+    # 07:10 UTC, after the overnight runs have settled and before the owner's morning.
+    - cron: "10 7 * * *"
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: One app, or blank for every app with a record
+        required: false
+        type: string
+        default: ""
+      days:
+        description: How far back to call out reviews at three stars or under
+        required: false
+        type: string
+        default: "3"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: What happened to the shipped apps
+        run: |
+          set -euo pipefail
+          args=""
+          [ -n "${{ inputs.slug }}" ] && args="${{ inputs.slug }}"
+          # Capture the report either way: the interesting runs are the failing ones, and a
+          # summary nobody can read without opening the log defeats the point.
+          set +e
+          node tools/asc/monitor.mjs $args --days "${{ inputs.days || '3' }}" > "$RUNNER_TEMP/report.txt" 2>&1
+          status=$?
+          set -e
+          {
+            echo "## app-monitor"
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/report.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          cat "$RUNNER_TEMP/report.txt"
+          if [ "$status" -ne 0 ]; then
+            echo "::error::something needs a person — see the summary."
+          fi
+          exit "$status"
