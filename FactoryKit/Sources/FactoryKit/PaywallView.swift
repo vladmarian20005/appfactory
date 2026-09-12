@@ -12,6 +12,8 @@ public struct PaywallView: View {
     let headline: String
     let bullets: [String]
     let promise: String?
+    let subhead: String?
+    let cta: String?
     let hero: AnyView?
     let onDone: () -> Void
 
@@ -20,23 +22,29 @@ public struct PaywallView: View {
     @State private var busy = false
     @State private var message: String?
 
-    public init(store: Store, config: AppConfig, headline: String, bullets: [String], promise: String? = nil, onDone: @escaping () -> Void) {
+    public init(store: Store, config: AppConfig, headline: String, bullets: [String], promise: String? = nil,
+                subhead: String? = nil, cta: String? = nil, onDone: @escaping () -> Void) {
         self.store = store
         self.config = config
         self.headline = headline
         self.bullets = bullets
         self.promise = promise
+        self.subhead = subhead
+        self.cta = cta
         self.hero = nil
         self.onDone = onDone
     }
 
     public init<Hero: View>(store: Store, config: AppConfig, headline: String, bullets: [String], promise: String? = nil,
+                            subhead: String? = nil, cta: String? = nil,
                             @ViewBuilder hero: () -> Hero, onDone: @escaping () -> Void) {
         self.store = store
         self.config = config
         self.headline = headline
         self.bullets = bullets
         self.promise = promise
+        self.subhead = subhead
+        self.cta = cta
         self.hero = AnyView(hero())
         self.onDone = onDone
     }
@@ -58,7 +66,7 @@ public struct PaywallView: View {
                             .brandFont(.largeTitle)
                             .foregroundStyle(brand.palette.ink)
                             .fixedSize(horizontal: false, vertical: true)
-                        Text("Unlock everything in \(config.name).")
+                        Text(subhead ?? "Unlock everything in \(config.name).")
                             .foregroundStyle(brand.palette.inkSoft)
                     }
 
@@ -156,9 +164,13 @@ public struct PaywallView: View {
         }
     }
 
+    /// A trial always wins: "Start 7 days free" says what happens, and App Review wants the
+    /// trial named on the button. Otherwise the app's own `cta` — "Keep the press running",
+    /// "Take the whole shelf" — and "Continue" only when an app has not said anything, which
+    /// TASTE.md counts as a slop tell rather than a default worth keeping.
     private var ctaTitle: String {
         if let selected, let trial = selected.trialText { return "Start \(trial)" }
-        return "Continue"
+        return cta ?? "Continue"
     }
 
     /// Where iOS sends a customer to cancel. Opens the App Store's subscription settings.

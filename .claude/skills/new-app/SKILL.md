@@ -43,8 +43,12 @@ no Xcode window. Everything below works there. Nothing below needs a human.
 - **Looping motion through FactoryKit** (`ambientFloat`, `breathing`, `confetti`,
   `brandBackground(drift:)`), or check `Motion.isStill` in your own — so captures settle.
 - **No third-party dependencies.** SwiftUI, SwiftData, StoreKit 2, AVFoundation and
-  FactoryKit only.
-- **No placeholder text anywhere.** No `TBD`, no lorem ipsum, no `example.com`.
+  FactoryKit only. Decided and reasoned in `CLAUDE.md`; if an effect is genuinely missing,
+  it goes into FactoryKit on a first-party engine, not into the app on a package.
+- **No placeholder text anywhere.** No `TBD`, no lorem ipsum, no `example.com`. That includes
+  the kit's defaults: pass `OnboardingView(nextTitle:finishTitle:)` and
+  `PaywallView(subhead:cta:)` so the app's first and last screens are in its own voice rather
+  than "Continue".
 
 ## Steps
 

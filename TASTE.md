@@ -100,6 +100,10 @@ Any one of these fails the critique. They are what the first two apps shipped wi
 - The icon is text on a gradient.
 - Nothing on any screen bigger than `.largeTitle`.
 - Praise that never changes.
+- The kit's own words on the app's first and last screens: onboarding ending in "Continue" /
+  "Get started", a paywall button reading "Continue". Name them —
+  `OnboardingView(nextTitle:finishTitle:)`, `PaywallView(subhead:cta:)` — in the app's voice.
+  A trial still wins the paywall button, because App Review wants the trial named on it.
 - Type frozen at a point size: `.font(.system(size: 44))` on screen, or a `-> Font` helper that
   returns one. It looks identical at the largest accessibility setting as at the default, so
   the design quietly stops working for the people who need it most. Say the same size with

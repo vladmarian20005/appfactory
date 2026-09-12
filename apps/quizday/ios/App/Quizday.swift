@@ -35,7 +35,9 @@ struct Quizday: App {
                     RootView()
                         .environmentObject(store)
                 } else {
-                    OnboardingView(pages: AppInfo.onboarding) { onboarded = true }
+                    OnboardingView(pages: AppInfo.onboarding,
+                                   nextTitle: "Turn the page",
+                                   finishTitle: "Read today's edition") { onboarded = true }
                 }
             }
             // On both, so the very first screen is already the paper.

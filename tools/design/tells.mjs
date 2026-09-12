@@ -164,6 +164,21 @@ if (info && /OnboardingPage\(symbol:/.test(info.lines.join("\n")) && !/art:/.tes
   tell("WARN", "symbol-onboarding", "onboarding pages are SF Symbols: give them art with OnboardingPage(title:subtitle:art:)");
 }
 if (has(/PaywallView\(/) && !has(/hero:/)) tell("WARN", "paywall-no-hero", "the paywall has no hero art");
+// The kit's own placeholder voice, which TASTE.md counts as a slop tell wherever it appears.
+// Both critics asked for this independently on the first two apps: "Continue" and "Get
+// started" are the first and last words an app says, and they are the template's words.
+each(/OnboardingView\(/, (where, line, f) => {
+  const text = f.lines.join("\n");
+  if (!/nextTitle:|finishTitle:/.test(text)) {
+    tell("WARN", "kit-voice-onboarding", "onboarding uses the kit's \"Continue\"/\"Get started\"; name the buttons in the app's voice with OnboardingView(nextTitle:finishTitle:)", where);
+  }
+});
+each(/PaywallView\(/, (where, line, f) => {
+  const text = f.lines.join("\n");
+  if (!/\bcta:/.test(text)) {
+    tell("WARN", "kit-voice-paywall", "the paywall button falls back to the kit's \"Continue\"; say what the purchase does with PaywallView(cta:)", where);
+  }
+});
 if (has(/ShareLink\(/) && !has(/ShareImage/)) tell("WARN", "text-share", "the result shares as text, not as an image (ShareImage)");
 const release = path.join(app, "store", "release.json");
 if (fs.existsSync(release) && /"GAMES"/.test(fs.readFileSync(release, "utf8")) && !has(/Tones\.shared/)) {

@@ -30,11 +30,23 @@ public struct OnboardingPage: Identifiable, @unchecked Sendable {
 /// `@AppStorage("factory.onboarded")` in the app.
 public struct OnboardingView: View {
     let pages: [OnboardingPage]
+    let nextTitle: String
+    let finishTitle: String
     let onFinish: () -> Void
     @State private var index = 0
 
-    public init(pages: [OnboardingPage], onFinish: @escaping () -> Void) {
+    /// - Parameters:
+    ///   - nextTitle: the button between pages. "Continue" is a placeholder, not an answer:
+    ///     TASTE.md asks a button to say what happens, and this one is the app's first
+    ///     sentence. Say it in the app's voice — "Deal me in", "Set the press running".
+    ///   - finishTitle: the button on the last page, which is the moment the app begins.
+    public init(pages: [OnboardingPage],
+                nextTitle: String = "Continue",
+                finishTitle: String = "Get started",
+                onFinish: @escaping () -> Void) {
         self.pages = pages
+        self.nextTitle = nextTitle
+        self.finishTitle = finishTitle
         self.onFinish = onFinish
     }
 
@@ -58,7 +70,7 @@ public struct OnboardingView: View {
                     onFinish()
                 }
             } label: {
-                Text(index == pages.count - 1 ? "Get started" : "Continue")
+                Text(index == pages.count - 1 ? finishTitle : nextTitle)
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 4)

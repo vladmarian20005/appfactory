@@ -36,7 +36,9 @@ struct Tidepour: App {
                         .environmentObject(store)
                         .factoryReviewPrompt(afterSessions: 3)
                 } else {
-                    OnboardingView(pages: AppInfo.onboarding) { onboarded = true }
+                    OnboardingView(pages: AppInfo.onboarding,
+                                   nextTitle: "Go on",
+                                   finishTitle: "Start pouring") { onboarded = true }
                 }
             }
             // The shore, from the very first screen: onboarding is already on it.

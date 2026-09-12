@@ -25,6 +25,8 @@ struct RootView: View {
                         headline: AppInfo.paywallHeadline,
                         bullets: AppInfo.paywallBullets,
                         promise: AppInfo.paywallPromise,
+                        subhead: "Set your own rounds, any night of the week.",
+                        cta: "Open the composing room",
                         hero: {
                             Image("Desk")
                                 .resizable()

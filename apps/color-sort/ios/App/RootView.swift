@@ -53,6 +53,8 @@ struct RootView: View {
                         headline: AppInfo.paywallHeadline,
                         bullets: AppInfo.paywallBullets,
                         promise: AppInfo.paywallPromise,
+                        subhead: "The whole shore, once, and it stays yours.",
+                        cta: "Take the whole shore",
                         hero: {
                             Image("HighTide")
                                 .resizable()
