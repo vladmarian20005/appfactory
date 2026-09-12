@@ -10,6 +10,10 @@ struct ReviewPromptModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.onAppear {
+            // Never over a capture. The tooling launches an app many times in a row, so the
+            // third launch puts App Store's rating sheet over whatever screen was being
+            // photographed — a win, a paywall — and the run produces a picture of that sheet.
+            guard !Motion.isStill else { return }
             sessions += 1
             let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
             guard sessions >= afterSessions, reviewedVersion != version else { return }
