@@ -2,8 +2,8 @@
   "pass": false,
   "scores": {
     "idea": 5,
-    "look": 4,
-    "signature": 3,
+    "look": 5,
+    "signature": 4,
     "reward": 4,
     "voice": 5,
     "craft": 3,
@@ -19,16 +19,17 @@
     "every-unlock-is-a-purchase",
     "stats-nothing-consults",
     "nothing-at-risk",
-    "streak-that-only-counts"
+    "streak-that-only-counts",
+    "session-ends-on-come-back-tomorrow"
   ],
-  "summary": "The best-looking app the factory has made — grained newsprint under a lamp, New York throughout, answers that take ink under a red stamp that judges nobody, a front page that prints itself at 112pt, and a night editor who never breaks character — and it is over on day 31, because Pack.swift:80 deals round 1's ten questions back in the same order forever, nothing reads the difficulty it prints on every sheet, and there is no Ladder, Mastery, Run or Earned in it.",
+  "summary": "The best-looking app the factory has made — grained newsprint under a lamp, New York throughout, an answer that takes ink under a red stamp that judges nobody, a front page that prints itself at 112pt, and a night editor who never breaks character — and it is over before it starts: all thirty rounds carry the identical 3-easy/4-medium/3-hard shape, nothing reads the difficulty it prints on every sheet, Pack.swift:80 deals round 1's ten back verbatim on day 31, and there is no Ladder, Mastery, Run or Earned anywhere in it.",
   "fixes": [
-    "Replace DailyPack.roundIndex's modulo (Pack.swift:80) with Mastery over all question ids so day 31 is ten questions chosen from what got past you, and grow the pack past 300",
-    "Add a Ladder keyed on editions filed that climbs the hard/medium mix to session ~150, and make QuizItem.difficulty the field the selector filters on instead of a caption",
-    "Adopt Run in TodayView so a clean sheet is at stake during the round, printed as a mono chain beside the tally that pencils out on a miss, costing the run and nothing else",
-    "Open one door with play instead of money: an Earned milestone at seven editions for a free adaptive 'late edition' built from what you missed, so CategoryStat finally chooses something",
-    "End the edition on earned.next(after:) in the editor's voice — 'Nineteen filed. The morgue opens at twenty-one.' — above the countdown, and print 'Day one on the desk.' on a ribbon sized to its type",
-    "Cap the verdict stamp to maxWidth 190 anchored bottom-trailing (QuestionSheet.swift:181-189) so long pool lines stop covering the answer in dark and at AX5, clamp the Today section line, and clear the version footer from behind the tab bar",
-    "Fix the moments: moment-answer.png is 18 blank frames and moment-win.png is 17 identical ones — move the demo presses to 6/10/14s and the win to 8/12s, delay 4.0s, 24 frames"
+    "Replace DailyPack.roundIndex's modulo (Pack.swift:76-91) with Mastery over all question ids, day-key seeded so the edition stays shared, so day 31 is ten questions chosen from what got past her — and grow the pack past 300",
+    "Add a Ladder keyed on editions filed that moves the easy/medium/hard mix from 4/4/2 toward 1/3/6 past session 150, and make QuizItem.difficulty the field the selector filters on instead of a caption at QuestionSheet.swift:137",
+    "Adopt Run in TodayView so a clean sheet is at stake during the ten, printed as a mono chain beside the tally that pencils out on a miss, costing this edition's tier and nothing else",
+    "Open one door with play instead of money: an Earned late edition at seven editions filed, five questions built from what got past her, so CategoryStat finally chooses something",
+    "End the edition on earned.next(after:) in the editor's voice — 'Nineteen filed. The late edition opens at twenty-one.' — above the countdown at EditionView.swift:180-193, not on a clock",
+    "Clamp the verdict stamp to maxWidth 190 anchored bottom-trailing (QuestionSheet.swift:181-189) so it stops covering the pressed answer and hitting the screen edge in dark and at AX5, clear the version footer from behind the tab bar, and outline press-body.svg so the hero does not vanish into the dark canvas",
+    "Add a ladder capture to qa.json (there is none, so Escalation had to be read entirely from code), move the demo presses to 6/10/14s with delay 4.0 and the win to 8/12s so the ink sweep and the confetti land mid-frame, and hold the paper canvas at launch so neither strip opens on white"
   ]
 }
