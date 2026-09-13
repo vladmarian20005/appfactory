@@ -1,29 +1,29 @@
-Ten trivia questions a day, dated and set like an edition of a paper. Play them in a couple of minutes, then you're done until tomorrow.
+Quizday gives you ten trivia questions a day, dated and set like the day's edition of a paper. A round takes a couple of minutes, and then you're done until tomorrow.
 
-No ads. Not between questions, not after a wrong answer, not anywhere. No lives to wait for, no coins to buy, nothing that runs out and asks you for money to keep going.
+There are no ads anywhere, including between questions and after a wrong answer. You never wait for lives or buy coins, and nothing runs out and then asks you to pay to keep going.
 
-EVERY ANSWER EXPLAINED
-Miss one and you find out why, with a short explanation and the source it came from. You learn something even on the questions you get wrong. Think an answer is wrong? Report it from the same screen.
+Every answer explained
+When you miss a question, a short explanation tells you why and names the source it came from, so the ones you get wrong still teach you something. If you think an answer is wrong, you can report it from the same screen.
 
-ONE EDITION A DAY
-Today's edition arrives at midnight, dated, and is filed when you finish. Share your score as coloured squares — the numbers, not the answers.
+One edition a day
+Each edition arrives at midnight with the date on it and is filed when you finish. You can share your score as a printed front page or as a row of red and white squares, and neither gives away the answers.
 
-THE DESK REMEMBERS
-Quizday keeps track of what got past you and sets the next edition from it, so the same questions never come back in the same order. The sheet gets harder as you file editions too: four easy questions on your first, one by your hundredth. No two months of reading it are alike.
+The desk remembers
+Quizday keeps track of the questions that got past you and sets your next edition from them, so the same questions never come back in the same order. The sheet also gets harder as you file editions. Your first has four easy questions, and from edition 151 on there is one.
 
-EARNED, NOT BOUGHT
-File seven editions and the late edition opens: five more questions built from the ones that caught you. It costs nothing, it is not for sale, and nothing about it expires.
+The late edition
+After you file seven editions, the late edition opens: five more questions built from the ones that caught you. You earn it by playing. It can't be bought, and it doesn't expire.
 
-KEEP A STREAK
-A calendar shows every day you played, shaded by how well you did. Current streak, best streak, days played. Set one gentle reminder if you want it, or none at all.
+Your streak
+A calendar marks every day you played, shaded by how well you did, with your current streak, your best streak and the number of days you've played. You can set one daily reminder or leave it off.
 
-450 ORIGINAL QUESTIONS
-Four hundred and fifty questions across nature, history, science, geography, film and TV, music, sport, food and technology, each with an explanation and a source. Written for Quizday, not scraped.
+450 original questions
+The questions cover nature, history, science, geography, film and TV, music, sport, food and technology. Each one has an explanation and a source, and every one was written for Quizday, not scraped.
 
-QUIZDAY PRO — OPTIONAL
-The daily edition is free forever. Pro adds practice: unlimited rounds in any category, at easy, medium or hard, plus your accuracy broken down by category so you can see what you're weakest at. Pro adds practice, not access.
+Quizday Pro (optional)
+The daily edition is free and will stay free. Pro is for practice: unlimited rounds in any category at easy, medium or hard, plus your accuracy by category so you can see where you're weakest. Nothing in the daily edition is locked behind it.
 
-PRIVATE BY DEFAULT
-No account. No sign-up. No analytics, no trackers, no advertising SDK. Your scores stay on your device. The only time Quizday uses the network is when you start a practice round.
+Privacy
+There's no account and no sign-up. Quizday has no analytics, no trackers and no advertising SDK, and your scores stay on your device. The app only uses the network when you start a practice round.
 
-Questions in practice mode come from the Open Trivia Database.
+Practice questions come from the Open Trivia Database.

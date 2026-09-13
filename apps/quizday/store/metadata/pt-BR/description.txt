@@ -1,23 +1,29 @@
-Dez perguntas de trivia por dia. As mesmas dez para todo mundo, em qualquer lugar. Dá para jogar em dois minutos e pronto: só amanhã de novo.
+O Quizday traz dez perguntas de conhecimentos gerais por dia, datadas e montadas como a edição do dia de um jornal. Uma rodada leva uns dois minutos, e aí você terminou até amanhã.
 
-Sem anúncios. Nem entre as perguntas, nem depois de errar, em lugar nenhum. Sem vidas para esperar, sem moedas para comprar, sem nada que acabe e peça dinheiro para você continuar.
+Não há anúncios em lugar nenhum, nem entre as perguntas nem depois de uma resposta errada. Você nunca espera por vidas nem compra moedas, e nada acaba para depois pedir dinheiro para você continuar.
 
-TODA RESPOSTA EXPLICADA
-Errou? Você descobre por quê, com uma explicação curta e a fonte de onde ela veio. Você aprende algo até nas que erra. Achou que a resposta está errada? Denuncie na mesma tela.
+Cada resposta explicada
+Quando você erra uma pergunta, uma explicação curta diz o porquê e cita a fonte, então até as que você erra ensinam alguma coisa. Se achar que uma resposta está errada, dá para reportar na mesma tela.
 
-UMA RODADA POR DIA
-As dez de hoje chegam à meia-noite e são iguais para todo mundo, então dá para comparar com um amigo sem estragar a surpresa. Compartilhe seu resultado em quadradinhos coloridos — os números, não as respostas.
+Uma edição por dia
+Cada edição chega à meia-noite com a data e é arquivada quando você termina. Você pode compartilhar sua pontuação como uma primeira página impressa ou como uma fileira de quadrados vermelhos e brancos, e nenhuma das duas revela as respostas.
 
-MANTENHA A SEQUÊNCIA
-Um calendário mostra cada dia que você jogou, com tom mais forte conforme o acerto. Sequência atual, melhor sequência, dias jogados. Ative um lembrete discreto se quiser, ou nenhum.
+A redação lembra
+O Quizday acompanha as perguntas que passaram por você e monta a sua próxima edição com elas, então as mesmas perguntas nunca voltam na mesma ordem. A folha também fica mais difícil conforme você arquiva edições. A primeira tem quatro perguntas fáceis, e a partir da edição 151 tem uma.
 
-TRINTA RODADAS DE PERGUNTAS ORIGINAIS
-Trezentas perguntas de natureza, história, ciência, geografia, cinema e TV, música, esporte, comida e tecnologia. Cada rodada vai do fácil ao difícil.
+A edição da noite
+Depois de arquivar sete edições, a edição da noite abre: mais cinco perguntas montadas com as que te pegaram. Ela se conquista jogando. Não pode ser comprada e não expira.
 
-QUIZDAY PRO — OPCIONAL
-As dez do dia são grátis para sempre. O Pro adiciona treino: rodadas ilimitadas em qualquer categoria, no fácil, médio ou difícil, além da sua taxa de acerto por categoria para ver onde você está mais fraco. O Pro adiciona treino, não acesso.
+Sua sequência
+Um calendário marca cada dia que você jogou, sombreado conforme o seu desempenho, com a sequência atual, a melhor sequência e o número de dias jogados. Você pode ativar um lembrete diário ou deixar desligado.
 
-PRIVADO POR PADRÃO
-Sem conta. Sem cadastro. Sem análises, sem rastreadores, sem SDK de publicidade. Seus resultados ficam no seu aparelho. O Quizday só usa a rede quando você começa uma rodada de treino.
+450 perguntas originais
+As perguntas cobrem natureza, história, ciência, geografia, cinema e TV, música, esporte, comida e tecnologia. Cada uma tem explicação e fonte, e todas foram escritas para o Quizday, não copiadas de outro lugar.
 
-As perguntas do modo treino vêm do Open Trivia Database.
+Quizday Pro (opcional)
+A edição diária é grátis e vai continuar grátis. O Pro é para praticar: rodadas ilimitadas em qualquer categoria, no fácil, médio ou difícil, e sua precisão por categoria para você ver onde está mais fraco. Nada da edição diária fica bloqueado pelo Pro.
+
+Privacidade
+Não há conta nem cadastro. O Quizday não tem análise de uso, rastreadores nem SDK de publicidade, e suas pontuações ficam no seu aparelho. O app só usa a internet quando você começa uma rodada de prática.
+
+As perguntas de prática vêm do Open Trivia Database.

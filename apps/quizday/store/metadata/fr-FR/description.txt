@@ -1,23 +1,29 @@
-Dix questions par jour. Les mêmes dix pour tout le monde, partout. Deux minutes suffisent, et c'est fini jusqu'à demain.
+Quizday vous propose dix questions de culture générale par jour, datées et composées comme l'édition du jour d'un journal. Une manche prend deux minutes, puis c'est fini jusqu'à demain.
 
-Aucune publicité. Ni entre les questions, ni après une mauvaise réponse, nulle part. Pas de vies à attendre, pas de pièces à acheter, rien qui s'épuise et vous réclame de l'argent pour continuer.
+Il n'y a aucune publicité, ni entre les questions ni après une mauvaise réponse. Vous n'attendez jamais de vies et n'achetez jamais de pièces, et rien ne s'épuise pour ensuite vous demander de payer pour continuer.
 
-CHAQUE RÉPONSE EXPLIQUÉE
-Quand vous vous trompez, vous savez pourquoi : une explication courte et la source d'où elle vient. Vous apprenez quelque chose même sur les questions ratées. Une réponse vous semble fausse ? Signalez-la depuis le même écran.
+Chaque réponse expliquée
+Quand vous ratez une question, une courte explication vous dit pourquoi et cite sa source, si bien que les questions ratées vous apprennent quand même quelque chose. Si une réponse vous semble fausse, vous pouvez la signaler depuis le même écran.
 
-UNE MANCHE PAR JOUR
-Les dix questions du jour arrivent à minuit et sont les mêmes pour tous : vous pouvez comparer avec un ami sans rien lui dévoiler. Partagez votre score en carrés de couleur — les chiffres, pas les réponses.
+Une édition par jour
+Chaque édition arrive à minuit, datée, et elle est classée quand vous terminez. Vous pouvez partager votre score sous forme de une imprimée ou de rangée de carrés rouges et blancs, et aucune des deux ne dévoile les réponses.
 
-GARDEZ VOTRE SÉRIE
-Un calendrier montre chaque jour joué, nuancé selon votre résultat. Série en cours, meilleure série, jours joués. Activez un rappel discret si vous le souhaitez, ou aucun.
+La rédaction se souvient
+Quizday garde la trace des questions qui vous ont échappé et compose votre prochaine édition à partir d'elles, si bien que les mêmes questions ne reviennent jamais dans le même ordre. La feuille devient aussi plus difficile à mesure que vous classez des éditions. La première compte quatre questions faciles, et à partir de l'édition 151 il n'y en a plus qu'une.
 
-TRENTE MANCHES DE QUESTIONS ORIGINALES
-Trois cents questions : nature, histoire, sciences, géographie, cinéma et séries, musique, sport, cuisine et technologie. Chaque manche va du plus facile au plus difficile.
+L'édition du soir
+Au bout de sept éditions classées, l'édition du soir s'ouvre : cinq questions de plus, tirées de celles qui vous ont piégé. Elle se gagne en jouant. Elle ne s'achète pas et n'expire pas.
 
-QUIZDAY PRO — EN OPTION
-Les dix questions quotidiennes restent gratuites pour toujours. Pro ajoute l'entraînement : des manches illimitées dans n'importe quelle catégorie, en facile, moyen ou difficile, et votre précision détaillée par catégorie pour voir où vous êtes le plus faible. Pro ajoute de l'entraînement, pas l'accès.
+Votre série
+Un calendrier marque chaque jour joué, nuancé selon votre résultat, avec votre série en cours, votre meilleure série et le nombre de jours joués. Vous pouvez activer un rappel quotidien ou le laisser désactivé.
 
-PRIVÉ PAR DÉFAUT
-Pas de compte. Pas d'inscription. Aucune analyse, aucun traqueur, aucun SDK publicitaire. Vos scores restent sur votre appareil. Quizday n'utilise le réseau que lorsque vous lancez une manche d'entraînement.
+450 questions originales
+Les questions couvrent la nature, l'histoire, les sciences, la géographie, le cinéma et les séries, la musique, le sport, la cuisine et la technologie. Chacune a une explication et une source, et toutes ont été écrites pour Quizday, pas copiées d'ailleurs.
 
-Les questions du mode entraînement proviennent de l'Open Trivia Database.
+Quizday Pro (en option)
+L'édition du jour est gratuite et le restera. Pro sert à s'entraîner : des manches illimitées dans n'importe quelle catégorie, en facile, moyen ou difficile, et votre précision par catégorie pour voir où vous êtes le plus faible. Rien dans l'édition du jour n'est réservé à Pro.
+
+Confidentialité
+Pas de compte, pas d'inscription. Quizday n'a ni outil d'analyse, ni traqueur, ni SDK publicitaire, et vos scores restent sur votre appareil. L'app n'utilise le réseau que lorsque vous lancez une manche d'entraînement.
+
+Les questions d'entraînement proviennent de l'Open Trivia Database.

@@ -8,7 +8,7 @@
     {
       "src": "raw/03-result.png",
       "title": "Finish and it prints",
-      "subtitle": "A front page worth sending on."
+      "subtitle": "A front page you can share."
     },
     {
       "src": "raw/02-question.png",
@@ -22,18 +22,18 @@
     },
     {
       "src": "raw/10-late-edition.png",
-      "title": "Earned by playing, not paying",
-      "subtitle": "The questions that caught you, back."
+      "title": "File seven editions, earn the late one",
+      "subtitle": "Five more, from the ones you missed."
     },
     {
       "src": "raw/04-scorecard.png",
-      "title": "No ad. Not even here.",
-      "subtitle": "No lives. No coins. Nothing to buy."
+      "title": "There are no ads in Quizday",
+      "subtitle": "And no lives or coins to buy."
     },
     {
       "src": "raw/05-paywall.png",
       "title": "The daily edition stays free",
-      "subtitle": "Pro adds practice, not access."
+      "subtitle": "Pro adds unlimited practice."
     }
   ]
 }

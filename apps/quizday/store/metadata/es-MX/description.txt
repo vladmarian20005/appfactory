@@ -1,23 +1,29 @@
-Diez preguntas de trivia al día. Las mismas diez para todos, en todas partes. Se juegan en un par de minutos y ya está: hasta mañana.
+Quizday te da diez preguntas de trivia al día, fechadas y armadas como la edición del día de un periódico. Una ronda toma un par de minutos y ya terminaste hasta mañana.
 
-Sin anuncios. Ni entre preguntas, ni después de fallar, ni en ningún lado. Sin vidas que esperar, sin monedas que comprar, sin nada que se acabe y te pida dinero para seguir.
+No hay anuncios en ningún lado, tampoco entre preguntas ni después de una respuesta equivocada. Nunca esperas vidas ni compras monedas, y nada se agota para luego pedirte dinero para seguir jugando.
 
-CADA RESPUESTA, EXPLICADA
-Si fallas una, descubres por qué, con una explicación corta y la fuente de donde salió. Aprendes algo incluso en las que fallas. ¿Crees que una respuesta está mal? Repórtala desde la misma pantalla.
+Cada respuesta explicada
+Cuando fallas una pregunta, una explicación breve te dice por qué y cita la fuente de donde viene, así que también aprendes de las que fallas. Si crees que una respuesta está mal, puedes reportarla desde la misma pantalla.
 
-UNA RONDA AL DÍA
-Las diez de hoy llegan a medianoche y son las mismas para todos, así que puedes compararte con un amigo sin arruinarle nada. Comparte tu resultado en cuadros de colores: los números, no las respuestas.
+Una edición al día
+Cada edición llega a medianoche con su fecha y se archiva cuando terminas. Puedes compartir tu puntaje como una portada impresa o como una fila de cuadros rojos y blancos, y ninguna de las dos revela las respuestas.
 
-MANTÉN TU RACHA
-Un calendario muestra cada día que jugaste, sombreado según qué tan bien te fue. Racha actual, mejor racha, días jugados. Activa un recordatorio suave si quieres, o ninguno.
+La redacción recuerda
+Quizday lleva la cuenta de las preguntas que se te escaparon y arma tu siguiente edición con ellas, así que las mismas preguntas nunca vuelven en el mismo orden. Además, la hoja se vuelve más difícil a medida que archivas ediciones. La primera tiene cuatro preguntas fáciles, y a partir de la edición 151 tiene una.
 
-TREINTA RONDAS DE PREGUNTAS ORIGINALES
-Trescientas preguntas de naturaleza, historia, ciencia, geografía, cine y TV, música, deporte, comida y tecnología. Cada ronda sube de fácil a difícil.
+La edición tardía
+Cuando archivas siete ediciones se abre la edición tardía: cinco preguntas más, armadas con las que te atraparon. Se gana jugando. No se puede comprar y no caduca.
 
-QUIZDAY PRO — OPCIONAL
-Las diez del día son gratis para siempre. Pro añade práctica: rondas ilimitadas en cualquier categoría, en fácil, medio o difícil, y tu precisión desglosada por categoría para ver dónde flojeas. Pro añade práctica, no acceso.
+Tu racha
+Un calendario marca cada día que jugaste, sombreado según qué tan bien te fue, junto con tu racha actual, tu mejor racha y el número de días jugados. Puedes poner un recordatorio diario o dejarlo apagado.
 
-PRIVADO POR DEFECTO
-Sin cuenta. Sin registro. Sin analíticas, sin rastreadores, sin SDK de publicidad. Tus resultados se quedan en tu dispositivo. Quizday solo usa la red cuando empiezas una ronda de práctica.
+450 preguntas originales
+Las preguntas abarcan naturaleza, historia, ciencia, geografía, cine y TV, música, deporte, comida y tecnología. Cada una tiene explicación y fuente, y todas se escribieron para Quizday, no se copiaron de otro lado.
 
-Las preguntas del modo práctica vienen de la Open Trivia Database.
+Quizday Pro (opcional)
+La edición diaria es gratis y lo seguirá siendo. Pro es para practicar: rondas ilimitadas en cualquier categoría, en fácil, medio o difícil, y tu precisión por categoría para que veas dónde estás más flojo. Nada de la edición diaria queda bloqueado detrás de Pro.
+
+Privacidad
+No hay cuenta ni registro. Quizday no tiene analíticas, rastreadores ni SDK de publicidad, y tus puntajes se quedan en tu dispositivo. La app solo usa la red cuando empiezas una ronda de práctica.
+
+Las preguntas de práctica vienen de Open Trivia Database.
