@@ -43,7 +43,14 @@ struct CounterFaceView: View {
     // MARK: Derived record
 
     private var record: Record { counter.record }
-    private var marks: [Mark] { record.currentStave }
+
+    /// What is lying on the bench. The fiftieth cut empties `currentStave` the instant it
+    /// lands, so while the stave is being scored it is still the full fifty that is on the
+    /// bench; the bare one arrives when this one goes into the rack.
+    private var marks: [Mark] {
+        if let win, !win.lifted { return Array(record.marks.suffix(notchesPerStave)) }
+        return record.currentStave
+    }
     private var daysKept: Int { record.daysKept }
     private var rung: Int { max(1, daysKept) }
     private var grain: Int { Bench.ladder["grain", at: rung] ?? 1 }
@@ -78,6 +85,18 @@ struct CounterFaceView: View {
                              glowing: win?.lifted == true)
                         .padding(.top, 4)
                         .padding(.bottom, 26)
+                        .overlay(alignment: .bottomLeading) {
+                            // The scored stave arriving. Same `matchedGeometryEffect` id as
+                            // the one that was on the bench a moment ago, so it is one object
+                            // travelling rather than a card dismissing and a tile appearing.
+                            if win?.lifted == true {
+                                RoundedRectangle(cornerRadius: 2, style: .continuous)
+                                    .fill(counter.pigment.color.opacity(0.001))
+                                    .frame(width: 18, height: 70)
+                                    .offset(x: CGFloat(min(13, record.stavesScored - 1)) * 24, y: -26)
+                                    .matchedGeometryEffect(id: "scored", in: staveSpace)
+                            }
+                        }
                 }
             }
             .padding(.horizontal, 20)
@@ -128,7 +147,7 @@ struct CounterFaceView: View {
                     Tones.shared.play(.step(n % 8), volume: 0.5)
                 }
                 .brandDisplay(size: 132)
-                .foregroundStyle(.brandHighlight.opacity(0.22))
+                .foregroundStyle(.brandHighlight.opacity(0.30))
             } else {
                 Text("\(record.total)")
                     .brandDisplay(size: 116)
@@ -172,6 +191,9 @@ struct CounterFaceView: View {
             .accessibilityHint("Cuts a notch into \(counter.name)")
 
             HStack(alignment: .top, spacing: 14) {
+                // The wax stick steps back while a stave is being scored: nothing about that
+                // second and a half is a moment to take a cut off.
+                if win == nil {
                 Button(action: wax) {
                     HStack(spacing: 7) {
                         WaxStickGlyph(height: 38)
@@ -186,13 +208,14 @@ struct CounterFaceView: View {
                 .disabled(record.total == 0 || win != nil)
                 .accessibilityLabel("Fill the last notch with wax")
                 .accessibilityHint("Takes one back off \(counter.name). The mark stays.")
+                }
 
                 if let note {
                     Text(note)
-                        .brandFont(.footnote, weight: .regular)
-                        .foregroundStyle(.brandInkSoft)
+                        .brandFont(win == nil ? .footnote : .callout, weight: .regular)
+                        .foregroundStyle(win == nil ? .brandInkSoft : .brandInk)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 16)
+                        .padding(.top, win == nil ? 16 : 0)
                         .transition(.opacity)
                 }
                 Spacer(minLength: 0)
@@ -202,9 +225,12 @@ struct CounterFaceView: View {
 
     private var staveBody: some View {
         ZStack(alignment: .topLeading) {
-            if win?.lifted != true {
-                stave
-                    .matchedGeometryEffect(id: "stave", in: staveSpace)
+            if win?.lifted == true {
+                // A fresh stave slides onto the bench from the left, shoulder bare, the blade
+                // resting at the first position.
+                stave.transition(.move(edge: .leading).combined(with: .opacity))
+            } else {
+                stave.matchedGeometryEffect(id: "scored", in: staveSpace)
             }
         }
         .frame(height: 128)
@@ -254,7 +280,11 @@ struct CounterFaceView: View {
             .overlay(alignment: .trailing) {
                 if let win, win.dated { endGrain }
             }
-            .rotationEffect(.degrees(-2.5), anchor: .center)
+            // Scaled as it turns, or a full-width board at −13° runs off both edges and the
+            // name and the painted end go with it.
+            .scaleEffect(1 - 0.15 * (win?.rise ?? 0))
+            .offset(y: -26 * (win?.rise ?? 0))
+            .rotationEffect(.degrees(-2.5 - 10.5 * Double(win?.rise ?? 0)), anchor: .center)
         }
         .frame(height: 116)
     }
@@ -282,8 +312,9 @@ struct CounterFaceView: View {
 
     private func blade(width: CGFloat) -> some View {
         ChiselGlyph(height: 76)
-            .offset(x: bladeX(width: width) - 13, y: win?.lifted == true ? -58 : -50)
-            .opacity(win?.lifted == true ? 0 : 1)
+            .offset(x: bladeX(width: width) - 13, y: -50)
+            // The blade stops mid-lift and stays out of it while the stave is being scored.
+            .opacity(win == nil ? 1 : 0)
             .modifier(BladeBreath(active: marks.isEmpty && win == nil))
             .animation(Motion.resolved(Motion.pop), value: marks.count)
             .accessibilityHidden(true)
@@ -472,8 +503,10 @@ struct CounterFaceView: View {
             withMotion(Motion.snappy) { note = AppInfo.line(from: AppInfo.goalReached, avoiding: note) }
         }
 
-        if now % notchesPerStave == 0 { score() }
+        // The watcher first: it clears the panel for the reading, and the win has to be the
+        // last word on it or the card it sets is wiped out in the same breath.
         armSittingEnd()
+        if now % notchesPerStave == 0 { score() }
     }
 
     private func wax() {
@@ -505,14 +538,19 @@ struct CounterFaceView: View {
 
         guard !Motion.isStill else {
             // A still capture has to show the win, not the frame before it: everything lands
-            // at once and the confetti freezes at its peak.
-            state.gatesLit = notchesPerStave / notchesPerGate
+            // at once, held at the moment the stave is in the air rather than after it has
+            // gone into the rack and left an empty bench behind.
+            // The gates have already lit and gone by this point in the second and a half —
+            // holding them lit turns fifty cuts into fifty painted marks.
             state.scoreTrim = 1
-            state.lifted = true
+            state.rise = 1
             state.dated = true
-            state.burst = 1
             win = state
             sittingCard = sittingLine(ending: true)
+            // A frame later, so the confetti sees its trigger change and fires. Set in the
+            // same breath it is created in, the burst never happens: the view is built with
+            // the trigger already at its new value and `onChange` has nothing to notice.
+            Task { @MainActor in win?.burst = 1 }
             return
         }
 
@@ -524,11 +562,14 @@ struct CounterFaceView: View {
                 withAnimation(.linear(duration: 0.02)) { win?.gatesLit = gate }
                 try? await Task.sleep(nanoseconds: 26_000_000)
             }
-            withAnimation(.easeInOut(duration: 0.34)) { win?.scoreTrim = 1 }
+            withAnimation(.easeInOut(duration: 0.34)) {
+                win?.scoreTrim = 1
+                win?.gatesLit = 0
+            }
             try? await Task.sleep(nanoseconds: 340_000_000)
             Haptics.thud()
             try? await Task.sleep(nanoseconds: 40_000_000)
-            withMotion(Motion.bouncy) { win?.lifted = true }
+            withMotion(Motion.bouncy) { win?.rise = 1 }
             try? await Task.sleep(nanoseconds: 160_000_000)
             win?.burst += 1
             try? await Task.sleep(nanoseconds: 100_000_000)
@@ -540,7 +581,12 @@ struct CounterFaceView: View {
                 Haptics.celebrate()
                 Tones.shared.play(.step(7))
             }
-            try? await Task.sleep(nanoseconds: 280_000_000)
+            try? await Task.sleep(nanoseconds: 160_000_000)
+            // The same object arriving somewhere, not a card dismissing: one
+            // matchedGeometryEffect carries it from the bench into the rack, and a fresh
+            // stave slides onto the bench behind it.
+            withMotion(Motion.gentle) { win?.lifted = true }
+            try? await Task.sleep(nanoseconds: 120_000_000)
             withMotion(Motion.gentle) { sittingCard = sittingLine(ending: true) }
             try? await Task.sleep(nanoseconds: 400_000_000)
             withMotion(Motion.gentle) { win = nil }
@@ -613,7 +659,10 @@ struct CounterFaceView: View {
         case "score": await demoScore()
         default: break
         }
-        if LaunchOptions.screen == "win" { score() }
+        if LaunchOptions.screen == "win" {
+            lastCutAt = .distantPast
+            cut()
+        }
     }
 
     /// Nothing on a runner can touch the screen, so the app plays its own signature
@@ -646,6 +695,11 @@ struct WinState: Equatable {
     let praise: String
     var gatesLit = 0
     var scoreTrim: CGFloat = 0
+    /// The stave coming off the bench and turning upright, 0…1. A still capture is held here,
+    /// mid-flight, because that is the frame mock 2 draws — the scored stave in the air with
+    /// its dated end and the swarf still falling.
+    var rise: CGFloat = 0
+    /// It has arrived in the rack, and the bench is clear for the next one.
     var lifted = false
     var dated = false
     var burst = 0

@@ -3,29 +3,69 @@
   "bundleId": "com.starhiveconcept.tallies",
   "screens": [
     {
-      "name": "01-counters",
+      "name": "01-face",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-screen", "face"],
+      "note": "The face: the running total at 116 pt, the stave with its gates cut and the chisel resting at the next position, the brass gauge, the strip, the reading the rota chose for this sitting, and the rack. -pro so the strip shows the span the ladder has opened rather than the free week."
+    },
+    {
+      "name": "02-win",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-screen", "win"],
+      "note": "The stave scored: the tier headline, the ghost count-up, the scoring stroke, the swarf, the dated end-grain and the sitting card. Frozen at its peak by -stillFrames."
+    },
+    {
+      "name": "03-bench",
       "args": ["-onboarded", "-reset", "-sampleData"],
-      "note": "The counters list: name, running total and the + that increments without leaving the screen. The promise."
+      "note": "The bench: every stave laid across the screen at its own seeded tilt, each with its pigment band, its name burned in, its last two gates live and the chisel at its end. Free tier, so the fourth position is the uncut blank."
     },
     {
-      "name": "02-detail",
-      "args": ["-onboarded", "-reset", "-sampleData", "-screen", "detail"],
-      "note": "One counter: the number big, + and -, the goal ring, and the last 7 days as bars. Free tier, so 7 rather than 14."
-    },
-    {
-      "name": "03-history",
-      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-screen", "history"],
-      "note": "The Pro history: every tap across every counter, newest first, grouped by day, over the week and month totals. Needs -pro because no runner can complete a purchase."
-    },
-    {
-      "name": "04-settings",
-      "args": ["-onboarded", "-reset", "-sampleData", "-screen", "settings"],
-      "note": "The kit's settings with the Tallies rows: what is on the device, and the erase-everything control."
+      "name": "04-ledger",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-screen", "ledger"],
+      "note": "The ledger: the week and the month per stave as small staves, then each day as a gate with that day's cuts placed on an ash rule by the time they happened. Needs -pro because no runner can complete a purchase."
     },
     {
       "name": "05-paywall",
       "args": ["-onboarded", "-reset", "-sampleData", "-fakeProducts", "-screen", "paywall"],
       "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch, so real products are unavailable and the CTA would sit disabled."
+    },
+    {
+      "name": "06-settings",
+      "args": ["-onboarded", "-reset", "-sampleData", "-screen", "settings"],
+      "note": "The kit's settings with the bench rows: staves, notches cut, days kept, the sounds toggle, and clearing the bench behind its confirmation."
+    }
+  ],
+  "moments": [
+    {
+      "name": "cut",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-demo", "cut"],
+      "delay": 0.8,
+      "frames": 10,
+      "interval": 0.22,
+      "note": "The signature interaction, played by the app: five cuts, the notch opening past its width and settling, the swarf thrown up and to the right, the blade walking on, and the fifth closing a gate with its diagonal."
+    },
+    {
+      "name": "score",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-demo", "score"],
+      "delay": 1.0,
+      "frames": 12,
+      "interval": 0.22,
+      "note": "The forty-eighth to the fiftieth: the gates light left to right, the scoring stroke is drawn corner to corner, the total counts up behind, the stave lifts into the rack and the end-grain is dated."
+    }
+  ],
+  "ladder": [
+    {
+      "name": "day-5",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-days", "5", "-screen", "face"],
+      "note": "A first week: one reading in the rota, a fortnight of strip most of which is empty, no rack behind the bench and the first stave still short of scored."
+    },
+    {
+      "name": "day-50",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-days", "50", "-screen", "face"],
+      "note": "Seven weeks of strip, five readings to draw from, the brass gauge fitted, and staves standing in the rack with their dates."
+    },
+    {
+      "name": "day-500",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-days", "500", "-screen", "face"],
+      "note": "Half a year of strip cut to the hour with the hour band under it, all twelve readings open, the bench oiled dark and a rack too long to hold them all."
     }
   ]
 }

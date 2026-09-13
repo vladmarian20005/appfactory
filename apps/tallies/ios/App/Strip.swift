@@ -15,7 +15,15 @@ struct StripView: View {
     @Environment(\.brand) private var brand
     @Environment(\.colorScheme) private var scheme
 
-    private var peak: Int { max(4, days.map(\.count).max() ?? 1) }
+    /// The ninetieth percentile, not the maximum. One outsized day against half a year of
+    /// ordinary ones flattened every other cut to a stub; a scale a typical day fills is the
+    /// one you can read a week off. The handful above it clip, which is what an outlier
+    /// looks like on a ruled gauge.
+    private var peak: Int {
+        let counted = days.map(\.count).filter { $0 > 0 }.sorted()
+        guard !counted.isEmpty else { return 4 }
+        return max(4, counted[min(counted.count - 1, Int(Double(counted.count) * 0.9))])
+    }
 
     var body: some View {
         ZStack(alignment: .top) {

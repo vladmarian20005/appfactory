@@ -66,6 +66,10 @@ struct Tallies: App {
         // Where the leading stave should end up, so a `-demo` flag has somewhere to go: three
         // short of scored for the win, and mid-gate for the cut.
         let landOn: Int = {
+            // `-screen win` takes the fiftieth cut itself rather than being posed as one, so
+            // the headline, the count, the rack and the sitting card in that capture are all
+            // true of the same record.
+            if LaunchOptions.screen == "win" { return notchesPerStave - 1 }
             switch LaunchOptions.demo {
             case "score": return notchesPerStave - 3
             case "cut": return 36
