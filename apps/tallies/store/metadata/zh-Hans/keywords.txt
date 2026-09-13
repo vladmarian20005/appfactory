@@ -1,1 +1,1 @@
-click counter,multi counter,counter app,tap counter,number counter,记数器,数数,记次,打点器
+click counter,multi counter,counter app,tap counter,number counter,记数器,数数,记次,打点器,点数,记录次数,手动计数

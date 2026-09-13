@@ -1,1 +1,1 @@
-offline counter,private counter,counter with history,считалка,подсчёт кликов,кликер
+offline counter,private counter,counter with history,считалка,подсчёт кликов,кликер,подсчёт людей
