@@ -288,7 +288,17 @@ const add = async (relName, type, id) => {
   return "added";
 };
 
-console.log(`  version ${version.attributes.versionString}: ${await add("appStoreVersion", "appStoreVersions", version.id)}`);
+try {
+  console.log(`  version ${version.attributes.versionString}: ${await add("appStoreVersion", "appStoreVersions", version.id)}`);
+} catch (e) {
+  // Apple answers 409 "not in valid state" here when something outside the version blocks
+  // review. `/v1/appDataUsages/` among the associated errors is App Privacy, which the API
+  // cannot set; the owner answers it once in the browser. The submission stays open and
+  // empty, and a re-run reuses it.
+  console.error(`\nThe version could not join the review, so nothing was submitted:\n  ${e.message}`);
+  if (/appDataUsages|privacy/i.test(e.message)) console.error(`\n${privacyInstructions(slug)}`);
+  process.exit(1);
+}
 for (const i of items) {
   try {
     console.log(`  ${i.label}: ${await add(i.rel, i.type, i.id)}`);

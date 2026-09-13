@@ -61,9 +61,18 @@ export async function asc(method, url, body, { retries = 4 } = {}) {
     const text = await res.text();
     const json = text ? JSON.parse(text) : {};
     if (!res.ok) {
+      // A 409 on a review submission carries the real reason under meta.associatedErrors,
+      // keyed by the resource at fault (`/v1/appDataUsages/` means App Privacy was never
+      // answered). Fold them into the message so the log states the cause.
+      const describe = (e) => {
+        const assoc = Object.entries(e.meta?.associatedErrors ?? {}).flatMap(([path, list]) =>
+          (list ?? []).map((a) => `${path}: ${a.title ?? a.code ?? ""}${a.detail ? ` (${a.detail})` : ""}`)
+        );
+        return `${e.title}: ${e.detail}${assoc.length ? `\n    ${assoc.join("\n    ")}` : ""}`;
+      };
       const err = new Error(
         `${method} ${full.replace(HOST, "")} -> ${res.status}  ` +
-        ((json.errors ?? []).map((e) => `${e.title}: ${e.detail}`).join("; ") || text)
+        ((json.errors ?? []).map(describe).join("; ") || text)
       );
       err.status = res.status;
       err.errors = json.errors ?? [];
