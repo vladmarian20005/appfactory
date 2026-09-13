@@ -114,7 +114,7 @@ function frameHTML(shot) {
     -webkit-font-smoothing:antialiased;
   }
   .copy{position:absolute;top:${Math.round(H * 0.061)}px;left:${Math.round(W * 0.074)}px;right:${Math.round(W * 0.074)}px;text-align:center}
-  h1{font-size:${Math.round(W * 0.084)}px;line-height:1.04;margin:0 0 ${Math.round(H * 0.011)}px;font-weight:${titleWeight};letter-spacing:${titleTracking}}
+  h1{font-size:${Math.round(W * 0.084)}px;line-height:1.04;text-wrap:balance;margin:0 0 ${Math.round(H * 0.011)}px;font-weight:${titleWeight};letter-spacing:${titleTracking}}
   p{font-size:${Math.round(W * 0.042)}px;line-height:1.3;margin:0;color:${spec.accent ?? "rgba(255,255,255,.85)"};font-weight:500}
   .device{
     position:absolute;left:50%;transform:translateX(-50%);top:${top}px;
