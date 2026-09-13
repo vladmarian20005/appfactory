@@ -1,6 +1,23 @@
-stage: polished
-date: 2026-09-12
+stage: uploaded, device pass failed
+date: 2026-09-13
 plan: PLAN.md · spec: SPEC.md · design: DESIGN.md · pack source: pack/build.mjs · pack review: pack/REVIEW.md
+
+## The device pass, 13 September
+
+The owner ran build 202609130850 from TestFlight and the paywall read **"$2.99 per day"**
+for the weekly plan. The App Store reports a one-week period as seven days, and
+`Product.periodDescription` in FactoryKit switched on the unit alone. The renewal terms under
+the buttons said the same thing. A local `.storekit` file reports one week, so no simulator
+capture could ever show it. Fixed in `FactoryKit/Sources/FactoryKit/Store.swift` (`PeriodLength`),
+which also turns the live trial label "3-days free trial" into "3-day free trial". `app-verify`
+is green on the fix for all four apps. **That build is not fit to submit.** A new upload is
+needed before the device pass can be run again.
+
+The listing went through the humanizer the same day, in all ten localizations. Two claims
+were false and are fixed: the sheet reaches one easy question at edition 151, not the
+hundredth, and a caption said "Nothing to buy" beside the paywall shot. The nine other
+localizations are rewritten from the new English, so none of them says "the same ten for
+everyone" any more.
 
 ## The second polish pass, 12 September
 
@@ -38,9 +55,8 @@ fix 1 both require the opposite, so the daily edition is now **set on a date and
 by the desk**: the day fixes the slate, a reader with no history gets exactly the day's ten,
 and from there the desk substitutes what has been catching her.
 
-`store/metadata/en-US/` and `store/screenshots.json` are corrected. **The other nine
-localizations still carry the old claim** and need `/aso` run again before submission — nobody
-should machine-translate a product claim in a polish pass.
+`store/metadata/en-US/` and `store/screenshots.json` are corrected, and since 13 September
+so are the other nine localizations.
 
 ## The polish pass, 11 September
 
@@ -51,12 +67,7 @@ answer, the edition printing itself when the round ends, the file as one number 
 month, the drawn art in place of every SF Symbol hero, the stamp icon, sound, and a front-page
 share image. `tells.mjs` went from 17 hard tells and 5 smells to none.
 
-**One thing to redo before submitting: the App Store screenshots.** `store/screenshots/en-US/`
-was composed from the old purple build, and `store/screenshots.json` now frames the captures
-in the brand's newsprint instead. Re-run `app-shots` (or
-`node tools/screenshots/compose.mjs apps/quizday/store/screenshots.json apps/quizday/store/screenshots/en-US`
-over fresh `store/raw`) so the listing shows the app that ships. `app-compliance` should run
-again after it.
+The screenshots were recomposed from the newspaper build on 13 September.
 
 ## Where it stands
 
@@ -73,13 +84,11 @@ Everything the factory can do without a human has been done, in the cloud, on `m
   the guideline 3.1.2 renewal terms, privacy and support URLs return 200, metadata inside
   every limit, screenshots 1320×2868 with no alpha, no placeholder text, no frozen font
   sizes, and the "no ads / no analytics" claims checked against the binary.
-- **`app-shots` needs re-running.** The five composed screenshots in `store/screenshots/en-US/`
-  are of the pre-polish build; see the note above.
-- **Listing written.** `store/metadata/en-US/` — name 29/30, subtitle 28/30, keywords 84/100,
-  promo 134/170, description 2099/4000. Every claim verified against the source. The nine other
-  localizations need `/aso` re-running: they still say "the same ten for everyone", and
-  `listing-check.sh` also reports duplicate keywords in zh-Hans, zh-Hant, ko, ru and ar-SA that
-  predate this pass.
+- **Screenshots current.** Six in `store/screenshots/en-US/`, composed on 13 September from
+  the current build. Recompose once more to pick up balanced two-line headlines (`3661d7e`).
+- **Listing written, in ten localizations.** `store/metadata/en-US/`: name 29/30, subtitle
+  28/30, keywords 84/100, promo 167/170, description 2270/4000. Every claim checked against
+  the source, and `listing-check.sh` is clean in all ten.
 - **Privacy published.** `privacy.json` is the source of truth; the manifest, the App Store
   privacy answers and the policy page all generate from it, and drift fails the build. Live
   at https://starhiveconcept.com/quizday-privacy-policy-terms/
@@ -90,20 +99,16 @@ Everything the factory can do without a human has been done, in the cloud, on `m
 
 ## Blocked on the owner
 
-1. **Create the app record.** Apple's API does not allow it — verified against the live
-   endpoint: *"The resource 'apps' does not allow 'CREATE'"*. One form, once:
-   appstoreconnect.apple.com/apps → + → New App, iOS,
-   name `Quizday: Daily Trivia, No Ads`, English (U.S.), bundle id and SKU
-   `com.starhiveconcept.quizday`.
-2. **Create the subscriptions**: `node tools/asc/iap.mjs quizday --apply` once the record
-   exists. Then set the two prices ($2.99/week, $19.99/year), the 3-day introductory offer
-   and the subscription review screenshot in App Store Connect — the API takes an opaque
-   price-point id per territory and the wrong one silently misprices 175 countries.
-3. **Upload**: `gh workflow run app-submit.yml -f slug=quizday -f confirm=SUBMIT`.
-4. **Device pass** from TestFlight, on a phone: the daily reminder fires, haptics, the share
-   sheet, and **a real sandbox purchase**. None of these can be checked on CI — a scheme's
-   StoreKit configuration is never honoured by a `simctl launch`.
-5. **Submit**: `gh workflow run app-release.yml -f slug=quizday -f confirm=SUBMIT`.
+The app record (6810429464) and all subscription records exist. Build 202609130850 is on
+TestFlight and failed the device pass (see 13 September above).
+
+1. **Upload the fixed build**: `gh workflow run app-submit.yml -f slug=quizday -f confirm=SUBMIT`.
+2. **Recompose the screenshots** (optional, headlines only): `gh workflow run app-shots.yml -f slug=quizday`.
+3. **Device pass** on the new build, on a phone: the weekly plan reads "per week", the daily
+   reminder fires, haptics, the share sheet, and **a real sandbox purchase**. None of these can
+   be checked on CI, because a scheme's StoreKit configuration is never honoured by a `simctl launch`.
+4. **Submit**: set `device_tested` and `storekit_verified` in `state.json`, then
+   `gh workflow run app-release.yml -f slug=quizday -f confirm=SUBMIT`.
 
 ## What the app is
 
