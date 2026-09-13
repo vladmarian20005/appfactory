@@ -1,8 +1,8 @@
 {
   "fix_attempts": 0,
   "slug": "quizday",
-  "device_tested": false,
-  "storekit_verified": false,
+  "device_tested": true,
+  "storekit_verified": true,
   "stages": {
     "compliance": {
       "status": "ok",
