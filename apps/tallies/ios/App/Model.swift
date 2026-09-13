@@ -7,23 +7,23 @@ import SwiftUI
 @Model
 final class Counter {
     var name: String = ""
-    /// A `CounterPalette` id. A name rather than a colour so the store stays portable.
-    var colorID: String = CounterPalette.default.id
-    /// Taps wanted per day. Zero means no goal, which is the default.
+    /// A `Pigment` id. A name rather than a colour so the store stays portable.
+    var colorID: String = Pigment.default.id
+    /// Cuts wanted in a day. Zero means no chalk line on the gauge, which is the default.
     var dailyGoal: Int = 0
     var createdAt: Date = Date.now
 
     @Relationship(deleteRule: .cascade, inverse: \Tap.counter)
     var entries: [Tap] = []
 
-    init(name: String, colorID: String = CounterPalette.default.id, dailyGoal: Int = 0, createdAt: Date = .now) {
+    init(name: String, colorID: String = Pigment.default.id, dailyGoal: Int = 0, createdAt: Date = .now) {
         self.name = name
         self.colorID = colorID
         self.dailyGoal = dailyGoal
         self.createdAt = createdAt
     }
 
-    var swatch: CounterPalette { CounterPalette.named(colorID) }
+    var pigment: Pigment { Pigment.named(colorID) }
 
     var total: Int { entries.reduce(0) { $0 + $1.delta } }
 
@@ -33,20 +33,9 @@ final class Counter {
 
     var todayTotal: Int { total(since: Calendar.current.startOfDay(for: .now)) }
 
-    /// Daily sums for the last `days` days, oldest first. Days with no entries are kept as
-    /// zeroes so the chart shows a gap rather than silently closing it up.
-    func dailyTotals(days: Int, calendar: Calendar = .current) -> [DayTotal] {
-        let today = calendar.startOfDay(for: .now)
-        var buckets: [Date: Int] = [:]
-        for entry in entries {
-            let day = calendar.startOfDay(for: entry.at)
-            buckets[day, default: 0] += entry.delta
-        }
-        return (0..<days).reversed().compactMap { offset in
-            guard let day = calendar.date(byAdding: .day, value: -offset, to: today) else { return nil }
-            return DayTotal(day: day, count: max(0, buckets[day] ?? 0))
-        }
-    }
+    /// The whole record, replayed from the rows. Cheap enough to ask for per redraw on the
+    /// face; the bench asks only for what it draws.
+    var record: Record { Record(taps: entries) }
 }
 
 /// One tap. Kept individually rather than as a running number because the history screen and
@@ -68,31 +57,26 @@ final class Tap {
     }
 }
 
-struct DayTotal: Identifiable, Hashable {
-    let day: Date
-    let count: Int
-    var id: Date { day }
-}
-
-/// The fixed palette a new counter picks from. Fixed rather than a colour well so every
-/// counter stays legible on both appearances and in a screenshot.
-struct CounterPalette: Identifiable, Hashable {
+/// The six pots on the bench, which are the spec's "fixed palette of six": the band painted
+/// on a stave's end, that stave's bars on the strip, and its mark in the ledger. Pigment 0 is
+/// the same keel red as the brand's `highlight` — it is the same pot.
+struct Pigment: Identifiable, Hashable {
     let id: String
     let label: String
     let color: Color
 
-    static let all: [CounterPalette] = [
-        CounterPalette(id: "tangerine", label: "Tangerine", color: Color(red: 0.90, green: 0.45, blue: 0.13)),
-        CounterPalette(id: "ocean", label: "Ocean", color: Color(red: 0.13, green: 0.47, blue: 0.83)),
-        CounterPalette(id: "forest", label: "Forest", color: Color(red: 0.13, green: 0.58, blue: 0.40)),
-        CounterPalette(id: "grape", label: "Grape", color: Color(red: 0.49, green: 0.33, blue: 0.83)),
-        CounterPalette(id: "rose", label: "Rose", color: Color(red: 0.85, green: 0.27, blue: 0.44)),
-        CounterPalette(id: "slate", label: "Slate", color: Color(red: 0.35, green: 0.40, blue: 0.48)),
+    static let all: [Pigment] = [
+        Pigment(id: "keel", label: "Keel red", color: Color(light: 0xA2361B, dark: 0xF0885F)),
+        Pigment(id: "chalk", label: "Chalk blue", color: Color(light: 0x17506A, dark: 0x6FBADD)),
+        Pigment(id: "verdigris", label: "Verdigris", color: Color(light: 0x2C6650, dark: 0x6FC0A0)),
+        Pigment(id: "ochre", label: "Ochre", color: Color(light: 0x7E5C12, dark: 0xE0B455)),
+        Pigment(id: "logwood", label: "Logwood", color: Color(light: 0x5C3A6B, dark: 0xB491C6)),
+        Pigment(id: "graphite", label: "Graphite", color: Color(light: 0x3E4247, dark: 0xA8AEB5)),
     ]
 
-    static var `default`: CounterPalette { all[0] }
+    static var `default`: Pigment { all[0] }
 
-    static func named(_ id: String) -> CounterPalette {
+    static func named(_ id: String) -> Pigment {
         all.first { $0.id == id } ?? .default
     }
 }

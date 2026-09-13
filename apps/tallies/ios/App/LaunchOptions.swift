@@ -11,8 +11,16 @@ enum LaunchOptions {
     static var fakeProducts: Bool { args.contains("-fakeProducts") }
     static var resetData: Bool { args.contains("-reset") }
 
-    /// `-screen counters|detail|history|settings|paywall|add`
+    /// `-screen bench|face|ledger|settings|paywall|lay|win`
     static var screen: String? { value(for: "-screen") }
+
+    /// `-demo cut|score`. Nothing on a runner can touch the screen, so the app performs its
+    /// own signature interaction and its own win shortly after launch and the critic films it.
+    static var demo: String? { value(for: "-demo") }
+
+    /// `-days 5|50|500`: how deep a record to seed. This is what lets the ladder strip show
+    /// the same screen at a first sitting and at one half a year in.
+    static var days: Int? { value(for: "-days").flatMap(Int.init) }
 
     private static func value(for flag: String) -> String? {
         guard let i = args.firstIndex(of: flag), args.index(after: i) < args.endIndex else { return nil }
