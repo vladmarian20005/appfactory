@@ -1,0 +1,43 @@
+{
+  "pass": false,
+  "scores": {
+    "idea": 1,
+    "look": 1,
+    "signature": 1,
+    "reward": 1,
+    "voice": 1,
+    "craft": 2,
+    "firstMinute": 1,
+    "escalation": 1,
+    "pull": 1
+  },
+  "tells": [
+    "kit-default-brand",
+    "gray-canvas",
+    "pitch-in-product",
+    "no-reward",
+    "no-second-session",
+    "paid-unlocks-only",
+    "symbol-onboarding",
+    "paywall-no-hero",
+    "kit-voice-onboarding",
+    "kit-voice-paywall",
+    "ui-explained",
+    "icon-glyph-on-gradient",
+    "list-of-labels",
+    "result-is-a-number",
+    "praise-never-changes",
+    "stats-nothing-reads",
+    "dark-mode-inverted"
+  ],
+  "summary": "The carver's bench in DESIGN.md was never built: the app ships the pre-direction smoke test — system-gray canvas, white cards, an SF Symbol plus, a Swift Charts bar chart and the kit's orange — with no brand, no notch, no win, no Ladder, no Mastery, no Run and no Earned anywhere in its 999 lines.",
+  "fixes": [
+    "Paste DESIGN.md's tokens into AppBrand.swift, apply .brand and .brandBackground(), delete the four systemGroupedBackground backgrounds, add the limewash Canvas and bench edge, and ship design/icon-1024.png and the four SVGs into the asset catalog.",
+    "Build the cut: the V notch on .spring(response: 0.16, dampingFraction: 0.74) with its overshoot, .pressable, swarf confetti, Tones.step(chain % 5), Haptics.rigid then tap, and the gate's diagonal every fifth cut — plus a -demo cut flag and a moments block in qa.json.",
+    "Build the score at fifty: gates lighting, the scoring stroke trimmed over 0.34s, CountUp behind the stave, the stave rising into the rack on matchedGeometryEffect, heavy chips, Haptics.celebrate, .fanfare and the three tiers off run.tier(score:beating:).",
+    "Add the Ladder (readings/span/grain, flattensAt 217) and Readings.next over a Mastery of the twelve reading ids, so what the bench says is chosen from what the record has done.",
+    "Scope a Run to a sitting — hit on every cut, miss on the wax stick that leaves a permanent paler scar — and end it on the sitting card, deleting summaryLine's '6.9 a day on average'.",
+    "Add Earned on staves scored (rack 1, chalk 3, gauge 8, oil 20, mark 50, wall 120) so at least one door in the app opens by counting rather than paying.",
+    "Delete the store pitch at RootView.swift:84, give onboarding its art and 'Go on'/'Take the blade', give the paywall its headline, cta and rack hero, wire the praise and near-miss pools, and add SoundsToggle and a ShareLink over ShareImage.render."
+  ]
+}
