@@ -27,5 +27,10 @@ for (const slug of only ? [only] : fs.readdirSync("apps")) {
   const st = JSON.parse(fs.readFileSync(statePath, "utf8")).stages ?? {};
   if (st.design?.status !== "ok") continue;
   if (st.compliance?.status !== "ok" || st.register?.status !== "ok" || st.submit) continue;
+  // The chain after a taste pass has finished, not just started. An app polished after its
+  // first chain still holds that chain's compliance and register, so `design ok` alone would
+  // upload the polished code the moment the critic passes it — before compliance has read it,
+  // and into the concurrency group where app-aso, app-shots and app-pages are still queueing.
+  if (!(st.compliance.at > st.design.at && st.register.at > st.design.at)) continue;
   if (await findApp(appFacts(slug).bundleId)) console.log(slug);
 }
