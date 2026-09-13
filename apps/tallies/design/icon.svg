@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- the limewashed wall, lit from the upper left -->
+    <radialGradient id="wall" cx="24%" cy="4%" r="92%">
+      <stop offset="0" stop-color="#DBD2BD"/>
+      <stop offset=".58" stop-color="#C3B9A3"/>
+      <stop offset="1" stop-color="#A99E86"/>
+    </radialGradient>
+    <!-- ash, planed: bright along the shoulder, honey at the foot -->
+    <linearGradient id="ash" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FCF7EA"/>
+      <stop offset=".34" stop-color="#F2E8D0"/>
+      <stop offset="1" stop-color="#DFC99B"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B99A66"/>
+      <stop offset="1" stop-color="#7E6338"/>
+    </linearGradient>
+    <linearGradient id="keel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C4462A"/>
+      <stop offset="1" stop-color="#8A2A11"/>
+    </linearGradient>
+    <!-- a cut: the near facet catches the window, the far one is the depth -->
+    <linearGradient id="vee" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#D8BC8A"/>
+      <stop offset=".38" stop-color="#8A6A3C"/>
+      <stop offset=".47" stop-color="#3E2C14"/>
+      <stop offset="1" stop-color="#1A1207"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#wall)"/>
+  <g stroke="#221A0F" stroke-opacity=".05" stroke-width="5" stroke-linecap="round">
+    <path d="M40 72h210M330 104h250M660 60h300M60 148h150M300 176h180
+             M80 900h220M420 942h200M700 886h260"/>
+  </g>
+
+  <!-- the stave, lying on the bench, seen close up -->
+  <g transform="rotate(-3 512 540)">
+    <!-- the thickness of the board along its lower edge -->
+    <rect x="-70" y="768" width="1164" height="72" rx="16" fill="url(#edge)"/>
+    <!-- the face -->
+    <rect x="-70" y="256" width="1164" height="530" rx="12" fill="url(#ash)"/>
+
+    <!-- grain, running the length, irregular -->
+    <g stroke="#9A7542" stroke-opacity=".14" stroke-width="7" stroke-linecap="round">
+      <path d="M120 690h820M60 736h700"/>
+    </g>
+    <g stroke="#9A7542" stroke-opacity=".08" stroke-width="5" stroke-linecap="round">
+      <path d="M200 664h700M300 714h640M140 758h620"/>
+    </g>
+
+    <!-- the shoulder's lip, drawn before the cuts so every cut breaks it -->
+    <rect x="-70" y="256" width="1164" height="13" fill="#221A0F" fill-opacity=".26"/>
+    <rect x="-70" y="269" width="1164" height="7" fill="#FFFFFF" fill-opacity=".38"/>
+
+    <!-- the painted keel band on the near end -->
+    <rect x="-70" y="256" width="196" height="530" fill="url(#keel)"/>
+    <rect x="-70" y="256" width="196" height="15" fill="#FFFFFF" fill-opacity=".26"/>
+    <rect x="118" y="256" width="15" height="530" fill="#221A0F" fill-opacity=".24"/>
+
+    <!-- four uprights, cut in from the shoulder -->
+    <g fill="url(#vee)">
+      <path d="M262 256h124l-62 358z"/>
+      <path d="M432 256h124l-62 358z"/>
+      <path d="M602 256h124l-62 358z"/>
+      <path d="M772 256h124l-62 358z"/>
+    </g>
+
+    <!-- the stroke across them: the gate is closed, and this is the fifth.
+         Cut like the others — a lit upper lip over a dark trough. -->
+    <g transform="rotate(7.6 512 452)">
+      <rect x="228" y="416" width="614" height="15" fill="#FFFFFF" fill-opacity=".44"/>
+      <rect x="228" y="428" width="614" height="50" fill="#3A2A12"/>
+      <rect x="228" y="449" width="614" height="29" fill="#170F05"/>
+    </g>
+  </g>
+</svg>

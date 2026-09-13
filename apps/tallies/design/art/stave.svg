@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 190" width="400" height="190">
+  <!-- One stave along its length: four gates cut and closed, the fifth open, the
+       painted end-grain band. Onboarding 1, and the add sheet's header, where it
+       takes the name as it is typed and the pigment as it is picked. -->
+  <defs>
+    <linearGradient id="s-ash" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FCF7EA"/><stop offset=".38" stop-color="#F0E5CC"/>
+      <stop offset="1" stop-color="#DCC69C"/>
+    </linearGradient>
+    <linearGradient id="s-edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B99A66"/><stop offset="1" stop-color="#7E6338"/>
+    </linearGradient>
+    <linearGradient id="s-vee" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#D8BC8A"/><stop offset=".38" stop-color="#8A6A3C"/>
+      <stop offset=".47" stop-color="#3E2C14"/><stop offset="1" stop-color="#1A1207"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="rotate(-2.6 200 96)">
+    <rect x="8" y="132" width="384" height="18" rx="7" fill="url(#s-edge)"/>
+    <rect x="8" y="38" width="384" height="100" rx="5" fill="url(#s-ash)"/>
+
+    <g stroke="#9A7542" stroke-opacity=".14" stroke-width="2" stroke-linecap="round">
+      <path d="M44 108h320M30 122h260"/>
+    </g>
+    <g stroke="#9A7542" stroke-opacity=".08" stroke-width="1.6" stroke-linecap="round">
+      <path d="M70 98h300M110 118h250"/>
+    </g>
+
+    <!-- the shoulder's lip, before the cuts -->
+    <rect x="8" y="38" width="384" height="3.6" fill="#221A0F" fill-opacity=".26"/>
+    <rect x="8" y="41" width="384" height="2" fill="#FFFFFF" fill-opacity=".38"/>
+
+    <!-- the painted end-grain band -->
+    <rect x="8" y="38" width="24" height="100" rx="4" fill="#A2361B"/>
+    <rect x="8" y="38" width="24" height="3.5" fill="#FFFFFF" fill-opacity=".24"/>
+    <rect x="30" y="38" width="4" height="100" fill="#221A0F" fill-opacity=".22"/>
+
+    <!-- four closed gates, then the fifth in progress -->
+    <g>
+      <g fill="url(#s-vee)">
+        <path d="M48 38h9l-4.5 46z"/><path d="M62 38h9l-4.5 46z"/>
+        <path d="M76 38h9l-4.5 46z"/><path d="M90 38h9l-4.5 46z"/>
+      </g>
+      <rect x="44" y="48" width="60" height="3.4" rx="1.6" fill="#221A0F" fill-opacity=".62" transform="rotate(16 74 50)"/>
+
+      <g fill="url(#s-vee)">
+        <path d="M118 38h9l-4.5 46z"/><path d="M132 38h9l-4.5 46z"/>
+        <path d="M146 38h9l-4.5 46z"/><path d="M160 38h9l-4.5 46z"/>
+      </g>
+      <rect x="114" y="48" width="60" height="3.4" rx="1.6" fill="#221A0F" fill-opacity=".62" transform="rotate(16 144 50)"/>
+
+      <g fill="url(#s-vee)">
+        <path d="M188 38h9l-4.5 46z"/><path d="M202 38h9l-4.5 46z"/>
+        <path d="M216 38h9l-4.5 46z"/><path d="M230 38h9l-4.5 46z"/>
+      </g>
+      <rect x="184" y="48" width="60" height="3.4" rx="1.6" fill="#221A0F" fill-opacity=".62" transform="rotate(16 214 50)"/>
+
+      <g fill="url(#s-vee)">
+        <path d="M258 38h9l-4.5 46z"/><path d="M272 38h9l-4.5 46z"/>
+        <path d="M286 38h9l-4.5 46z"/><path d="M300 38h9l-4.5 46z"/>
+      </g>
+      <rect x="254" y="48" width="60" height="3.4" rx="1.6" fill="#221A0F" fill-opacity=".62" transform="rotate(16 284 50)"/>
+
+      <!-- the fifth gate, two cut -->
+      <g fill="url(#s-vee)">
+        <path d="M328 38h9l-4.5 46z"/><path d="M342 38h9l-4.5 46z"/>
+      </g>
+      <!-- and the ghost of the next, where the blade will land -->
+      <path d="M356 38h9l-4.5 46z" fill="#221A0F" fill-opacity=".16"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320" width="400" height="320">
+  <!-- Six scored staves standing in the rack, each with its own pigment band and
+       a dated end. The paywall hero, and the ledger's locked state. -->
+  <defs>
+    <linearGradient id="r-wood" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FBF5E8"/><stop offset=".42" stop-color="#F0E5CC"/>
+      <stop offset="1" stop-color="#CFB584"/>
+    </linearGradient>
+    <linearGradient id="r-brass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F0CE84"/><stop offset=".5" stop-color="#C79B2E"/>
+      <stop offset="1" stop-color="#7E6014"/>
+    </linearGradient>
+  </defs>
+
+  <!-- the rail the staves stand on -->
+  <rect x="18" y="272" width="364" height="12" rx="6" fill="url(#r-brass)"/>
+  <rect x="18" y="272" width="364" height="2.5" rx="1" fill="#FFFFFF" fill-opacity=".45"/>
+  <!-- the upper rail they lean against -->
+  <rect x="18" y="34" width="364" height="9" rx="4.5" fill="url(#r-brass)" opacity=".8"/>
+
+  <!-- six staves. Each: the painted end-grain, the gates cut down its length,
+       the scoring stroke across, and the date struck into the foot. -->
+  <g>
+    <!-- 1 -->
+    <g transform="translate(40 58)">
+      <rect x="0" y="0" width="44" height="214" rx="5" fill="url(#r-wood)"/>
+      <rect x="0" y="0" width="44" height="18" rx="5" fill="#A2361B"/>
+      <rect x="0" y="0" width="44" height="4" fill="#FFFFFF" fill-opacity=".26"/>
+      <g fill="#221A0F" fill-opacity=".42">
+        <rect x="7" y="30" width="30" height="3.4" rx="1.4"/><rect x="7" y="44" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="58" width="30" height="3.4" rx="1.4"/><rect x="7" y="72" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="100" width="30" height="3.4" rx="1.4"/><rect x="7" y="114" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="128" width="30" height="3.4" rx="1.4"/><rect x="7" y="142" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="170" width="30" height="3.4" rx="1.4"/><rect x="7" y="184" width="30" height="3.4" rx="1.4"/>
+      </g>
+      <rect x="-4" y="86" width="52" height="3.6" rx="1.8" fill="#221A0F" fill-opacity=".55" transform="rotate(-62 22 88)"/>
+      <rect x="8" y="198" width="28" height="8" rx="2" fill="#221A0F" fill-opacity=".16"/>
+    </g>
+    <!-- 2 -->
+    <g transform="translate(98 50)">
+      <rect x="0" y="0" width="44" height="222" rx="5" fill="url(#r-wood)"/>
+      <rect x="0" y="0" width="44" height="18" rx="5" fill="#17506A"/>
+      <rect x="0" y="0" width="44" height="4" fill="#FFFFFF" fill-opacity=".26"/>
+      <g fill="#221A0F" fill-opacity=".42">
+        <rect x="7" y="32" width="30" height="3.4" rx="1.4"/><rect x="7" y="46" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="60" width="30" height="3.4" rx="1.4"/><rect x="7" y="74" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="104" width="30" height="3.4" rx="1.4"/><rect x="7" y="118" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="132" width="30" height="3.4" rx="1.4"/><rect x="7" y="146" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="176" width="30" height="3.4" rx="1.4"/><rect x="7" y="190" width="30" height="3.4" rx="1.4"/>
+      </g>
+      <rect x="-4" y="90" width="52" height="3.6" rx="1.8" fill="#221A0F" fill-opacity=".55" transform="rotate(-62 22 92)"/>
+      <rect x="8" y="204" width="28" height="8" rx="2" fill="#221A0F" fill-opacity=".16"/>
+    </g>
+    <!-- 3 -->
+    <g transform="translate(156 66)">
+      <rect x="0" y="0" width="44" height="206" rx="5" fill="url(#r-wood)"/>
+      <rect x="0" y="0" width="44" height="18" rx="5" fill="#2C6650"/>
+      <rect x="0" y="0" width="44" height="4" fill="#FFFFFF" fill-opacity=".26"/>
+      <g fill="#221A0F" fill-opacity=".42">
+        <rect x="7" y="30" width="30" height="3.4" rx="1.4"/><rect x="7" y="44" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="58" width="30" height="3.4" rx="1.4"/><rect x="7" y="72" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="100" width="30" height="3.4" rx="1.4"/><rect x="7" y="114" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="128" width="30" height="3.4" rx="1.4"/><rect x="7" y="142" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="168" width="30" height="3.4" rx="1.4"/>
+      </g>
+      <rect x="-4" y="86" width="52" height="3.6" rx="1.8" fill="#221A0F" fill-opacity=".55" transform="rotate(-62 22 88)"/>
+      <rect x="8" y="190" width="28" height="8" rx="2" fill="#221A0F" fill-opacity=".16"/>
+    </g>
+    <!-- 4 -->
+    <g transform="translate(214 44)">
+      <rect x="0" y="0" width="44" height="228" rx="5" fill="url(#r-wood)"/>
+      <rect x="0" y="0" width="44" height="18" rx="5" fill="#7E5C12"/>
+      <rect x="0" y="0" width="44" height="4" fill="#FFFFFF" fill-opacity=".26"/>
+      <g fill="#221A0F" fill-opacity=".42">
+        <rect x="7" y="34" width="30" height="3.4" rx="1.4"/><rect x="7" y="48" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="62" width="30" height="3.4" rx="1.4"/><rect x="7" y="76" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="106" width="30" height="3.4" rx="1.4"/><rect x="7" y="120" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="134" width="30" height="3.4" rx="1.4"/><rect x="7" y="148" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="180" width="30" height="3.4" rx="1.4"/><rect x="7" y="194" width="30" height="3.4" rx="1.4"/>
+      </g>
+      <rect x="-4" y="92" width="52" height="3.6" rx="1.8" fill="#221A0F" fill-opacity=".55" transform="rotate(-62 22 94)"/>
+      <rect x="8" y="210" width="28" height="8" rx="2" fill="#221A0F" fill-opacity=".16"/>
+    </g>
+    <!-- 5 -->
+    <g transform="translate(272 60)">
+      <rect x="0" y="0" width="44" height="212" rx="5" fill="url(#r-wood)"/>
+      <rect x="0" y="0" width="44" height="18" rx="5" fill="#5C3A6B"/>
+      <rect x="0" y="0" width="44" height="4" fill="#FFFFFF" fill-opacity=".26"/>
+      <g fill="#221A0F" fill-opacity=".42">
+        <rect x="7" y="30" width="30" height="3.4" rx="1.4"/><rect x="7" y="44" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="58" width="30" height="3.4" rx="1.4"/><rect x="7" y="72" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="102" width="30" height="3.4" rx="1.4"/><rect x="7" y="116" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="130" width="30" height="3.4" rx="1.4"/><rect x="7" y="144" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="174" width="30" height="3.4" rx="1.4"/>
+      </g>
+      <rect x="-4" y="88" width="52" height="3.6" rx="1.8" fill="#221A0F" fill-opacity=".55" transform="rotate(-62 22 90)"/>
+      <rect x="8" y="196" width="28" height="8" rx="2" fill="#221A0F" fill-opacity=".16"/>
+    </g>
+    <!-- 6 -->
+    <g transform="translate(330 72)">
+      <rect x="0" y="0" width="44" height="200" rx="5" fill="url(#r-wood)"/>
+      <rect x="0" y="0" width="44" height="18" rx="5" fill="#3E4247"/>
+      <rect x="0" y="0" width="44" height="4" fill="#FFFFFF" fill-opacity=".26"/>
+      <g fill="#221A0F" fill-opacity=".42">
+        <rect x="7" y="30" width="30" height="3.4" rx="1.4"/><rect x="7" y="44" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="58" width="30" height="3.4" rx="1.4"/><rect x="7" y="72" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="100" width="30" height="3.4" rx="1.4"/><rect x="7" y="114" width="30" height="3.4" rx="1.4"/>
+        <rect x="7" y="128" width="30" height="3.4" rx="1.4"/>
+      </g>
+      <rect x="-4" y="86" width="52" height="3.6" rx="1.8" fill="#221A0F" fill-opacity=".55" transform="rotate(-62 22 88)"/>
+      <rect x="8" y="184" width="28" height="8" rx="2" fill="#221A0F" fill-opacity=".16"/>
+    </g>
+  </g>
+
+  <!-- the rail's front lip, so the staves sit in it rather than on it -->
+  <rect x="18" y="278" width="364" height="6" rx="3" fill="#221A0F" fill-opacity=".22"/>
+</svg>

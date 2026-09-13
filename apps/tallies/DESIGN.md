@@ -280,10 +280,10 @@ it is the only light in the room.
 
 | Role | Light | Dark | Job |
 | --- | --- | --- | --- |
-| `canvas` | `#CFC7B8` | `#13161A` | **Limewash.** The workshop wall behind the bench, warm-grey by day and blue-black at night. |
-| `surface` | `#EDE1C6` | `#262117` | **Ash.** The stave, the sitting card, the reading panel, the ledger's day strips. |
+| `canvas` | `#C3B9A3` | `#13161A` | **Limewash.** The workshop wall behind the bench, warm-grey by day and blue-black at night. |
+| `surface` | `#F0E5CC` | `#262117` | **Ash.** The stave, the sitting card, the reading panel, the ledger's day strips. |
 | `ink` | `#221A0F` | `#F1E7D3` | **Walnut / lamplight.** Notches, headings, the hero numbers. |
-| `inkSoft` | `#554B3B` | `#A79C87` | Dates, the stencil caps, the strip's scale. |
+| `inkSoft` | `#4C4334` | `#A79C87` | Dates, the stencil caps, the strip's scale. |
 | `accent` | `#17506A` | `#6FBADD` | **Chalk-line blue.** The primary action, today's mark, selection, the goal line. |
 | `onAccent` | `#FFF3E8` | `#1E0B05` | Type on the chalk blue. |
 | `highlight` | `#A2361B` | `#F0885F` | **Keel red** — the marking raddle a finished stave is scored with. The second voice: the win headline, a scored stave's date, a best, the rack rail. |
@@ -307,32 +307,40 @@ the same pot.
 Checked with `node tools/design/contrast.mjs`:
 
 ```
-ink      #221A0F on #CFC7B8  10.24 AAA    #F1E7D3 on #13161A  14.78 AAA
-ink      #221A0F on #EDE1C6  13.24 AAA    #F1E7D3 on #262117  13.04 AAA
-inkSoft  #554B3B on #CFC7B8   5.10 AA     #A79C87 on #13161A   6.69 AA
-inkSoft  #554B3B on #EDE1C6   6.59 AA     #A79C87 on #262117   5.90 AA
+ink      #221A0F on #C3B9A3   8.82 AAA    #F1E7D3 on #13161A  14.78 AAA
+ink      #221A0F on #F0E5CC  13.73 AAA    #F1E7D3 on #262117  13.04 AAA
+inkSoft  #4C4334 on #C3B9A3   5.00 AA     #A79C87 on #13161A   6.69 AA
+inkSoft  #4C4334 on #F0E5CC   7.77 AAA    #A79C87 on #262117   5.90 AA
 onAccent #FFF3E8 on #17506A   8.04 AAA    #1E0B05 on #6FBADD   8.82 AAA
-accent   #17506A on #CFC7B8   5.23 AA     #6FBADD on #13161A   8.42 AAA
-accent   #17506A on #EDE1C6   6.77 AA     #6FBADD on #262117   7.42 AAA
-highlight#A2361B on #EDE1C6   5.26 AA     #F0885F on #262117   6.39 AA
-success  #2C6650 on #EDE1C6   5.18 AA     #6FC0A0 on #262117   7.41 AAA
-miss     #6B5C43 on #EDE1C6   5.00 AA     #9B8E76 on #262117   4.97 AA
+accent   #17506A on #C3B9A3   4.51 AA     #6FBADD on #13161A   8.42 AAA
+accent   #17506A on #F0E5CC   7.02 AAA    #6FBADD on #262117   7.42 AAA
+highlight#A2361B on #F0E5CC   5.45 AA     #F0885F on #262117   6.39 AA
+success  #2C6650 on #F0E5CC   5.37 AA     #6FC0A0 on #262117   7.41 AAA
+miss     #6B5C43 on #F0E5CC   5.19 AA     #9B8E76 on #262117   4.97 AA
 ```
 
-The pigments run 3.65–7.80 on canvas and 4.72–7.80 on surface in light, and 5.95–9.36 in dark.
-The three weakest on canvas — keel 4.06, verdigris 4.01, ochre 3.65 — are only ever painted
-bands and bars there, never type, so 3:1 is their bar and they clear it; every pigment is AA or
-better on `surface`, which is where any text in a pigment sits. `inkSoft` was `#5F5544` and came
-back at 4.36 on canvas, under AA for body; it was darkened to `#554B3B`. `accent` was `#1D5C78`
-at 4.38 and was darkened to `#17506A`. `miss` was `#8A7B63` at 3.18 and was darkened to
-`#6B5C43`.
+The pigments run 3.15–5.20 on canvas and 4.90–8.09 on surface in light, and 5.95–9.36 in dark.
+On canvas they are only ever painted bands and bars, never type, so 3:1 is their bar and the
+weakest — ochre at 3.15 — clears it; every pigment is AA or better on `surface`, which is where
+any text in a pigment sits. `highlight` at 3.50 on canvas is likewise only the win headline at
+30 pt and the rack rail, both well past the large-text threshold.
+
+Three roles moved after the mocks were rendered and read. `inkSoft` was `#5F5544`, which came
+back at 4.36 on the canvas — under AA for a 10.5 pt stencil cap — and `accent` was `#1D5C78` at
+4.38; both were darkened. `miss` was `#8A7B63` at 3.18 and went to `#6B5C43`. Then the first
+render of mock 3 showed the real problem: at `#CFC7B8` the wall and the ash were too close in
+value, and the screen read as exactly the beige the spec complains about. The wall went down to
+`#C3B9A3` and the ash up to `#F0E5CC` — 8.82 against 13.73 for `ink`, a step you can see — and
+`inkSoft` came down again to `#4C4334` to hold AA on the darker wall.
 
 ### Canvas
 
-`BrandCanvas.glow(Color(light: 0xE6DFD2, dark: 0x232A30), at: UnitPoint(x: 0.28, y: 0.06))` —
+`BrandCanvas.glow(Color(light: 0xD8CFBC, dark: 0x232A30), at: UnitPoint(x: 0.24, y: 0.02))` —
 the north window over the left shoulder by day, the clipped lamp by night. Off-centre on
 purpose: a centred glow reads as a vignette, an off-centre one reads as a light source in a
-room.
+room. The lift is deliberately small. The first mocks used `0xE6DFD2` and it washed the wall
+out to beige across the top two-thirds, which cost exactly the value step the darker canvas
+had just bought; a window you can find is better than one that floods the room.
 
 Over it the app draws **the limewash** in a single `Canvas`: 900 short horizontal brush
 strokes, 8–22 pt long, 1 pt wide, angled ±3°, seeded from a fixed constant so every launch and
@@ -541,7 +549,7 @@ No count of days missed, no question, no request.
 | Action | Label |
 | --- | --- |
 | Create the first counter | "Lay a stave on the bench" |
-| Toolbar add | the chisel glyph, `accessibilityLabel: "Lay a new stave"` |
+| Toolbar add | the bare-stave glyph, `accessibilityLabel: "Lay a new stave"` |
 | Add sheet, confirm | "Lay it on the bench" |
 | Add sheet, cancel | "Leave it" |
 | Onboarding next / finish | "Go on" / "Take the blade" |
@@ -577,6 +585,11 @@ drawn as the blade, never an SF Symbol plus.
 
 **What moves:** a cut plays its whole interaction in place on the stave — the notch opens, the
 chip flies, the total ticks. Staves `.popIn(delay: index × 0.05)` on appear. Nothing else.
+
+**The toolbar add** is a **bare stave with the first notch cut into it**, drawn as a `Shape` —
+a rounded rectangle at radius 5 with a V taken out of its top edge. Not a chisel: a chisel was
+tried at toolbar size in mock 3 and at 22 pt it reads as a blob. The stave glyph is the app's
+own shape language and still resolves at that size.
 
 **System controls:** `NavigationStack` and its toolbar; a `List` underneath with
 `.listRowBackground(Color.clear)`, `.listRowSeparator(.hidden)` and `.brandBackground()`, kept
@@ -684,21 +697,26 @@ seed is deterministic, which keeps the spec's promise that every screen is repro
 
 ## Icon
 
-**The concept:** one stave, angled across the square, with gates cut into it. Not the machine —
-the mark.
+**The concept:** one five-bar gate, cut into a stave, seen close up. Not the machine — the mark.
 
-**The composition:** the stave runs lower-left to upper-right at about 28°, filling the middle
-80 % of the 1024 canvas, with square corners and full bleed behind it. Two gates are cut and
-closed, and the third is three uprights in — so it reads as a thing in use. The painted keel-red
-band sits at the lower-left end. A single shaving curls off the top edge. The ground is limewash
-with the north-window glow at the upper left.
+**The composition:** the stave lies across the square at −3°, full bleed left and right, with
+limewash above and below so it reads as a board on a bench rather than as a page. Its shoulder
+is at the top of the board and **four uprights are cut down from it**, each 124 units wide and
+412 deep, so every cut breaks the shoulder's lip. The stroke is struck across them at +7.6°,
+cut the same way the uprights are — a lit upper lip over a dark trough — so the gate is closed
+and this is the fifth. The painted keel-red band caps the near end. The board's lower edge
+shows its thickness.
 
-**The colours:** ash `#EDE1C6` body with `#D8C9A6` in the shadowed facet, walnut `#221A0F`
-notches, keel red `#A2361B` band, limewash `#CFC7B8` ground.
+**The colours:** ash `#FCF7EA` → `#DFC99B` down the face, the cut running `#D8BC8A` on the near
+facet to `#1A1207` at depth, keel red `#C4462A` → `#8A2A11`, limewash `#DBD2BD` → `#A99E86` with
+the window at the upper left.
 
-At home-screen size the read is a pale diagonal bar with dark marks cut into it on a warm
-ground, which is a tally — legible at 60 pt, and nothing like the chrome drums it sits next to.
-No letter, no numeral, no glyph on a gradient. Rendered to `design/icon-1024.png`.
+Read at 120 px next to the leaders' icons: a pale board with four deep marks and a stroke
+through them — a tally, and nothing like the chrome drums it sits beside. Three earlier
+versions failed that test and were redrawn: a thin stave at −28° whose marks vanished; a
+close crop that read as a lined notepad with a red margin; and a version whose shoulder lip was
+drawn *over* the cuts instead of under them, so each notch appeared to be crossed out. No
+letter, no numeral, no glyph on a gradient. Rendered to `design/icon-1024.png`.
 
 ## Share card
 
@@ -724,10 +742,10 @@ import SwiftUI
 enum AppBrand {
     static let brand = Brand(
         palette: BrandPalette(
-            canvas: Color(light: 0xCFC7B8, dark: 0x13161A),
-            surface: Color(light: 0xEDE1C6, dark: 0x262117),
+            canvas: Color(light: 0xC3B9A3, dark: 0x13161A),
+            surface: Color(light: 0xF0E5CC, dark: 0x262117),
             ink: Color(light: 0x221A0F, dark: 0xF1E7D3),
-            inkSoft: Color(light: 0x554B3B, dark: 0xA79C87),
+            inkSoft: Color(light: 0x4C4334, dark: 0xA79C87),
             accent: Color(light: 0x17506A, dark: 0x6FBADD),
             onAccent: Color(light: 0xFFF3E8, dark: 0x1E0B05),
             highlight: Color(light: 0xA2361B, dark: 0xF0885F),
@@ -747,8 +765,8 @@ enum AppBrand {
                         displayWeight: .heavy,
                         body: .default),
         corner: 5,
-        canvas: .glow(Color(light: 0xE6DFD2, dark: 0x232A30),
-                      at: UnitPoint(x: 0.28, y: 0.06))
+        canvas: .glow(Color(light: 0xD8CFBC, dark: 0x232A30),
+                      at: UnitPoint(x: 0.24, y: 0.02))
     )
 }
 ```
