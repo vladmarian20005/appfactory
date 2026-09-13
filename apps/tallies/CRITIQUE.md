@@ -1,160 +1,162 @@
 # Tallies · critique
 
-**Verdict: fail.** This is the pipeline smoke test with a beautiful design document sitting
-next to it, unread by the compiler: `Color(.systemGroupedBackground)` with white cards, an SF
-Symbol `+`, a Swift Charts bar chart and the kit's orange, on all five screens. The one thing
-that decides it: **none of DESIGN.md was built** — no `AppBrand.swift`, no stave, no notch, no
-`Ladder`, no `Mastery`, no `Run`, no `Earned`, no `Tones`, no `confetti`, no `ShareImage`, no
-art, and not one of the twelve readings — so this is not a build that fell short of its
-direction, it is the pre-direction app with the direction still in a file beside it.
+**Verdict: pass.** It is a tally-stick carver's bench — limewashed wall, ash boards at radius 5,
+a V cut under your thumb, five to a gate, fifty to a stave, and the finished ones standing dated
+in a rack — and it is unmistakable from one crop in a way no counter app on the store is. What
+decides it is that the depth is real and not decoration: the ladder is keyed on days kept and
+`flattensAt` 217, the sentence under the stave is chosen by a rule that reads what it already
+said, three doors open by counting rather than paying, and `ladder.png`'s three panels are three
+different screens.
 
 | | Score | Evidence |
-| --- | --- | --- |
-| Idea | 1 | Nothing of "a tally-stick carver's bench" reaches the screen: `qa/01-counters.png` is three white rounded rows with a coloured capsule and a `+`, which is the generic counter app DESIGN.md §2 says it must not be. |
-| Look | 1 | `tells.mjs` reports `kit-default-brand` and four `gray-canvas` FAILs — `CountersView.swift:47`, `:50`, `:144`, `CounterDetailView.swift:30` — and the app wears the kit's default orange; a grep of all 999 lines of `ios/App` for `AppBrand`, `brandBackground`, `brandDisplay` or `brandFont` returns nothing. |
-| Signature interaction | 1 | `increment()` at `CounterDetailView.swift:171` is `Haptics.tap()` plus an inserted row; the only motion is `.contentTransition(.numericText())` at `:39`. No blade, no notch, no overshoot, no spring, no tone — `Motion.`, `pressable`, `popIn` and `Tones` appear nowhere in the app. |
-| Reward | 1 | `tells.mjs` FAIL `no-reward`: there is no win in the app at all. Nothing happens at the fiftieth tap, or the hundredth; `confetti`, `CountUp` and `Haptics.celebrate` are absent from every file. |
-| Voice | 1 | Labels only — "Nothing counted yet" (`CountersView.swift:20`), "Tallies Pro" / "Unlock everything in Tallies" (`qa/05-paywall.png`) — and the store pitch recited inside the product at `RootView.swift:84`, which is a hard FAIL. The carver does not speak once. |
-| Craft | 2 | Tidy and well-commented, but large text breaks the hierarchy: in `qa/design/ax-01-counters.png` the hero total `98` renders *smaller* than the counter's name, because `CounterRow.total` is `lineLimit(1).minimumScaleFactor(0.5)` (`CountersView.swift:215–216`) while the name grows; in `ax-02-detail.png` the goal ring's own `6` stays tiny while its caption becomes huge. Dark mode is the system's inversion to pure black (`dark-01-counters.png`), not a designed appearance. |
-| First minute | 1 | Onboarding is three SF Symbols — `plus.circle.fill`, `chart.bar.fill`, `lock.shield.fill` (`AppInfo.swift:17`, `:20`, `:23`) — ending on the kit's "Continue" (`Tallies.swift:38` passes no `nextTitle:`/`finishTitle:`), and page 1's subtitle explains the controls: "Tap to add, tap to take away." |
-| Escalation | 1 | No `Ladder` exists. The only thing that differs between session 5 and session 500 is `chartDays` at `CounterDetailView.swift:17–19`, which takes exactly two values, 7 and 14, and switches on a *purchase*. The screen at 5 entries and at 500 is the same screen with taller bars. |
-| Pull | 1 | Nothing waits. A session has no boundary in the code and ends on `summaryLine` — "48 in 7 days, 6.9 a day on average." (`CounterDetailView.swift:137`, visible in `qa/02-detail.png`) — a number under a bar chart. |
-
-**Missing captures.** There are no `qa/design/moment-*.png` filmstrips and no `qa/design/ladder.png`;
-`qa.json` has no `moments` block and `LaunchOptions.swift:10–22` has no `-demo` flag, so
-DESIGN.md's `-demo cut` and `-demo score` cannot be filmed — the app has nothing to film. There
-are also no `ax-03/04/05`. I scored Signature interaction, Reward, Escalation and Pull from the
-code, which is unambiguous: the mechanisms are absent, not merely unphotographed.
+| --- | --- | --- | 
+| Idea | 5 | `qa/01-face.png` — notches, a closed gate, wax, a chisel resting at the next position, a rack of dated end-grain. Nobody would mistake it for a counter app, or for any other app in this repo. |
+| Look | 4 | Limewash canvas with 900 drawn strokes (`Bench.swift:9`), corner-5 ash with a lit top edge and a dark bottom, 116 pt compressed heavy, keel red as a real second voice, and a dark bench that is warm wood on blue-black rather than an inversion (`dark-01-face.png`). Held back by ~40 % dead canvas on `03-bench.png` and `07-lay.png`, and by the chisel glyph. |
+| Signature interaction | 4 | `moment-cut.png` frames 1–3: the notch opens, swarf flies, the blade walks to the next position, the gate's diagonal lands, the total ticks 534 → 537 → 538. The two springs, `Haptics.rigid` then `tap` 130 ms later, and `.step(chain % 5)` are all in `CounterFaceView.swift:469–515`. The swarf is seven tiny squares where mock 1 has shavings, and frames 4–10 are identical. |
+| Reward | 4 | `02-win.png` is not a sheet: the tier headline in keel red, a 132 pt ghost numeral counting up behind, the scoring stroke drawn corner to corner, the dated end-grain, swarf, and a sitting card that names what is waiting. Three tiers with different burst counts and a second `Haptics.celebrate` on a best (`CounterFaceView.swift:532–599`). Costs a point: the rack the stave flies into is behind the tab bar, and the praise line renders as a caption on the wax stick. |
+| Voice | 4 | The carver is consistent and specific — "Stood up in the rack. It will be there in a year." (`02-win.png`), ten praise lines, eight near-miss, five goal (`AppInfo.swift:60–91`), buttons that say "Lay it on the bench" / "Plane today off" / "Take the blade". Two places he says something untrue: the `.best` headline (see Fix 3) and "the chalk comes out at three" for a chalk that does not exist (Fix 4). |
+| Craft | 3 | Hierarchy on the face is exact and dark mode is designed, not inverted. Against it: three system disclosure chevrons on a screen whose whole claim is "not a list of cards" (`03-bench.png`), the dead half of the bench and the lay sheet, the rack under the tab bar on the win, and the date stamp covering the stave at the largest text size (`ax-02-win.png`). |
+| First minute | 3 | **No capture of onboarding or the empty bench exists** — scored from the code, the art and mock 3. Three pages with drawn art ending in "Take the blade" (`AppInfo.swift:20–39`), a bare bench with `bench.svg` and "Lay a stave on the bench" (`BenchView.swift:50`), and the first cut taught with no text at all — a breathing blade and a pulsing ghost notch that stop for good at the first cut (`CounterFaceView.swift:318–338`). But the second screen a new person meets is the lay sheet, and it is half empty. |
+| Escalation | 4 | `ladder.png`'s panels are not interchangeable: 14 → 49 → 182 days of strip, an hour band that only exists at 500, one stave in the rack → eight → a full rail, the bench oiled dark, and a different reading under each. `Ladder.flattensAt` is 217 and `climbs(through: 150)` is true (`Record.swift:319–323`). Two deductions in "The second session". |
+| Pull | 4 | The reason to open it on Thursday is in the app's own terms and is not a streak: a sentence about your own record you have not heard yet, chosen by `Readings.next` (`Readings.swift:184–218`), a stave 43 into 50, and a rack one short of the gauge. |
 
 ## Slop tells present
 
-- **Gray canvas with white cards.** `CountersView.swift:47`, `:50`, `:144`; `CounterDetailView.swift:30`. `qa/01-counters.png`, `qa/02-detail.png`.
-- **One accent colour on gray.** The kit's system orange is the only voice on every screen; the six counter colours are `CounterPalette` defaults (`Model.swift:84–91`), not DESIGN.md's pigments.
-- **An SF Symbol as the hero of onboarding.** `AppInfo.swift:17`, `:20`, `:23`.
-- **A screen that is a `List` of `Label`s.** `HistoryView.swift:41–70`; `qa/03-history.png` is 40 identical rows of circle-plus-name-plus-time.
-- **A result that is a number.** "48 in 7 days, 6.9 a day on average." — `CounterDetailView.swift:133–138`.
-- **Copy that explains the business model in the product.** "Tallies has no ads and no account. Everything you count stays on this phone." — `RootView.swift:84`.
-- **Copy that explains the controls.** "Tap to add, tap to take away." — `AppInfo.swift:18`.
-- **The icon is a glyph on a gradient.** `ios/App/Assets.xcassets/AppIcon.appiconset/icon-1024.png` is three white bars on an orange gradient. The drawn icon DESIGN.md specifies exists and is good — `design/icon-1024.png`, a notched ash board with the fifth stroke struck through — and was never copied into the asset catalog.
-- **The kit's own words on the first and last screens.** Onboarding "Continue" (`Tallies.swift:38`); the paywall passes no `cta:` (`RootView.swift:33–38`) and has no `hero:`.
-- **Praise that never changes.** There is no praise pool because there is no praise.
-- **Every unlock is a purchase.** `Model.swift:103`, consumed at `CountersView.swift:37`, `:90`, `HistoryView.swift:16`, `CounterDetailView.swift:18`.
-- **Stats that accumulate where nothing consults them.** "Taps recorded 469" (`RootView.swift:71`) and History's week/month totals (`HistoryView.swift:80–92`) are computed, displayed, and read by no decision in the app.
+None.
+
+Two near-misses worth naming so the polish does not drift into them:
+
+- `04-ledger.png` is eight ash cards of the same frame, radius and trailing number in a scroll.
+  It stays the right side of "a `ScrollView` of identical cards" only because each day's notch
+  run is a different shape, which is the screen's actual idea. Do not let the shapes get quieter.
+- `04-ledger.png`'s header row — `PULL-UPS / 10 120` — is one step from stat tiles. It is
+  rescued by the pigment band and the stave shape, but the two numbers carry no label at all and
+  a stranger cannot tell which is the week.
 
 ## The second session
 
-- **Where the curve stops.** It never starts: `Ladder` appears nowhere in `ios/App`. The single
-  cross-session variable is `chartDays` — `CounterDetailView.swift:17–19` — with two values, 7
-  and 14, and the dial is money, not days kept. Effective `flattensAt` is **1**.
-- **What chooses the next unit.** Nothing chooses anything. `Model.swift:38–49`
-  (`dailyTotals(days:)`) is a fixed trailing window, and there is no "next unit" in the app to
-  choose — no reading, no rota, no `Mastery`. This is not `%` over an array; it is one screen
-  redrawn with a larger number.
-- **What is at risk.** Nothing, and there is no sitting: `increment()`
-  (`CounterDetailView.swift:171`) and `decrement()` (`:177`) each insert one `Tap` and save. No
-  `Run`, no chain, no clean, no session boundary anywhere in 999 lines. DESIGN.md's wax — the
-  one idea that would make `−` mean something — is unbuilt; `−` silently subtracts.
-- **What can be earned without paying.** Nothing. Every door in the app is `store.isProUnlocked`
-  (`Model.swift:103`). The rack, the chalk, the gauge, the oil, the mark and the wall — all six
-  of DESIGN.md's earned unlocks — do not exist.
+- **Where the curve stops.** `Record.swift:319–323`. Three dials — `readings` (last change rung
+  133), `grain` (opens at 64, last change 178), `span` (last change 217). `flattensAt` is **217
+  days kept**, which is at least seven months of counting, not 217 sessions. Past it the
+  instrument is finished and the record is the thing that keeps changing. It does not flatten
+  inside the first week and it does not lie about being infinite. One honest weakness: from rung
+  133 to 217 the only thing that moves is seven more days of strip every nine days.
+- **What chooses the next unit.** `Readings.swift:184–218`. Readings the ladder has not opened
+  are dropped, then any whose precondition the record cannot meet, then the last three shown,
+  then what is left is ordered by how far its number has moved since it was last said
+  (`movement`, :192) and handed to `Mastery`. `next.mastery.record(chosen, correct: movement >
+  0.15)` at :214 means a reading that keeps coming up unchanged loses strength and falls out of
+  the rota — the strength is read to decide, not written and displayed. No `%`, no uniform
+  random, no field that nothing consults.
+- **What is at risk, and what it costs.** `Record.swift:265–277` replays the open sitting as a
+  `Run`; every cut is `hit()`, every press of the wax stick is `miss()`
+  (`CounterFaceView.swift:477, 521`). A wax breaks the chain, spoils `isClean`, and leaves a
+  paler fill on the stave for good (`Bench.swift:137–140`) — which is the honest thing a real
+  tally stick does. It costs this sitting's cleanliness and one visible mark. It does not cost a
+  count, a day, a stave already scored, or money.
+- **What is earned without paying.** `Record.swift:326–339` — six milestones on staves scored.
+  Three are built and visible: the rack at 1 (`CounterFaceView.swift:62`), the brass gauge at 8
+  (:63), the bench oiling at 20 (:64, `BenchView.swift:123`). **Three are not**: `chalk` (3),
+  `mark` (50) and `wall` (120) appear in no `isUnlocked` call anywhere in the app, and the
+  sitting card promises all three by name (`Record.swift:349–357`).
 
-**Why someone opens this on Thursday:** there is no answer in the app's own terms. It is a
-number they typed, a bar chart of the number, and a list of the times they typed it.
+Why someone opens this on Thursday: because the bench is as they left it — forty-three into a
+stave, a rack one short of the gauge — and because the carver has a sentence about their own
+Tuesdays that they have not heard yet and that could not have been said in week one.
 
 ## Keep
 
-- **The data model.** `Tap(delta:at:counter:)` at `Model.swift:57–69` stores every tap with its
-  timestamp, and the comment at `:52` gives the right reason. All twelve of DESIGN.md's readings
-  and the hour-grain strip are computable from these rows with no schema change — the play can
-  be built on top of what is already persisted.
-- **The deterministic seed.** `Tallies.swift:66–95`, including the `window(for:today:)` reasoning
-  at `:98`. Extend it to 61 days kept and 9 scored staves rather than replacing it.
-- **Dynamic Type is honest.** Every size goes through `scaledFont(size:)` (`CountersView.swift:210`,
-  `CounterDetailView.swift:38`); there is not one `.font(.system(size:))` in the app.
-- **The accessibility-size row swap.** `CountersView.swift:132–146` and the comment at `:134`.
-  The same instinct is needed on the stave.
-- **The direction itself, and the mocks.** `design/mock-1-play.png`, `mock-2-win.png`,
-  `mock-3-first.png` and `design/icon-1024.png` are the target and they are good. Nothing in
-  DESIGN.md needs rethinking; it needs building.
+- The idea and its whole vocabulary — stave, gate, notch, wax, plane, rack, sitting, reading.
+  Every word in the app is in it and none of it is theme paint.
+- The win's second and a half: the gates lighting left to right, the scoring stroke trimmed over
+  0.34 s, the ghost `CountUp` with a haptic and a tone per tick, the stave carried into the rack
+  on one `matchedGeometryEffect`, the three tiers. `CounterFaceView.swift:532–599`.
+- The carver. The pools, the spelled numbers ("Forty-three into this stave"), the spoken dates,
+  the sitting card, and the fact that "come back tomorrow" is nowhere in the app.
+- The readings rota and the twelve preconditions. A reading that would have to invent something
+  is never shown, and that is the app being honest rather than being clever.
+- The ladder as stated: bounded at 217, keyed on days kept, said out loud in DESIGN.md.
+- The dark bench — the wall goes cold and the wood stays warm because the lamp is tungsten.
+- `KEPT 59 DAYS · LONGEST RUN 44` instead of a streak. It never resets and it never accuses.
+- The icon, the rack of dated staves, the share card, and `Run`'s wax as the model for undo.
 
 ## Fix, in this order
 
-1. **Wear the brand.** Paste DESIGN.md §Tokens into `ios/App/AppBrand.swift`, apply
-   `.brand(AppBrand.brand)` at the root in `Tallies.swift:35` and `.brandBackground()` on each
-   screen, and delete all four `Color(.systemGroupedBackground)` / `secondarySystemGroupedBackground`
-   at `CountersView.swift:47`, `:50`, `:144` and `CounterDetailView.swift:30`. Add the limewash
-   `Canvas` (900 seeded strokes at `ink.opacity(0.028)`) and the bench-edge rule. Copy
-   `design/icon-1024.png` over the asset catalog's icon and run `node tools/design/art.mjs` so
-   `bench`, `stave`, `rack` and `gate` exist as `Image("…")`. Next capture: `01-counters.png` is
-   limewash and ash at corner radius 5, `tells.mjs` loses `kit-default-brand` and all four
-   `gray-canvas` FAILs, and the home screen icon is the notched board.
-2. **Build the cut.** Replace `stepButton` (`CounterDetailView.swift:83`) and `plusButton`
-   (`CountersView.swift:219`) with the stave and the chisel from DESIGN.md §The signature
-   interaction: the V notch opening on `.spring(response: 0.16, dampingFraction: 0.74)` with its
-   1 pt overshoot, `.buttonStyle(.pressable(scale: 0.98))`, `.confetti(trigger: cuts, count: 7, power: 0.22)`
-   for the swarf, `Tones.shared.play(.step(run.chain % 5))`, `Haptics.rigid()` down and
-   `Haptics.tap()` on the blade's lift, and the gate's diagonal every fifth cut on `Motion.gentle`.
-   Add `-demo cut` to `LaunchOptions.swift` and a `moments` block to `qa.json`. Next capture:
-   `moment-cut.png` shows five frames in which the notch grows and the blade walks.
-3. **Build the score at fifty.** The reward from DESIGN.md, in place, not in a sheet: gates
-   lighting 26 ms apart, the scoring stroke as `.trim(to:)` over 0.34 s, `CountUp(to:onTick:)`
-   behind the stave at `brandDisplay(size: 132)`, the stave rising into the rack on one
-   `matchedGeometryEffect`, `.confetti(power: 0.9, count: 64)`, `Haptics.celebrate()`,
-   `Tones.shared.play(.fanfare)`, and the three tiers off `run.tier(score:beating:)` with their
-   headlines. Next capture: `moment-score.png` ends on `FIFTY, AND NOT A WAXED ONE` and
-   `tells.mjs` loses `no-reward`.
-4. **Put the ladder and the readings in.** `Ladder([...])` exactly as DESIGN.md §The ladder
-   writes it (`flattensAt` 217, `climbs(through: 150)` true), keyed on distinct days kept, and
-   `ios/App/Readings.swift` implementing `Readings.next(...)` over a `Mastery<String>` of the
-   twelve ids — precondition filter, `avoiding: recent`, then "moved most since last shown",
-   with `mastery.record(id, correct: moved > 0.15)`. Render it on the face as the `READING`
-   panel. Next capture: `ladder.png` shows day 5, day 50 and day 500 as three different screens
-   — one reading and a fortnight of strip, five readings and a gauge, twelve readings and an
-   hour-grain half-year.
-5. **Make a sitting mean something.** A `Run` scoped to a sitting: `run.hit()` on every cut,
-   `run.miss()` on the wax stick, which fills the last notch with a paler scar that stays on the
-   stave. End a sitting on the sitting card in place of the reading, with DESIGN.md's exact
-   shape — "Seven cut, none waxed. Forty-three notches into this stave. Nine in the rack — the
-   gauge goes on the bench at eight." Delete `summaryLine` (`CounterDetailView.swift:133`). Next
-   capture: `02-detail.png` ends on the carver's sentence, not "6.9 a day on average."
-6. **Give the player a door that money cannot open.** `Earned` on staves scored, with the six
-   rungs from DESIGN.md §Earned — `rack` at 1, `chalk` at 3, `gauge` at 8, `oil` at 20, `mark` at
-   50, `wall` at 120 — and `earned.next(after:)` as the sitting card's tail. Next run:
-   `tells.mjs` loses `paid-unlocks-only`, and `02-detail.png` shows the rack rail under the strip.
-7. **Let the carver talk, and stop reciting the pitch.** Delete the store pitch at
-   `RootView.swift:84`. Replace `AppInfo.onboarding` (`:16–25`) with DESIGN.md's three
-   `OnboardingPage(title:subtitle:art:)` pages on `bench`, `gate` and `rack`, and pass
-   `nextTitle: "Go on", finishTitle: "Take the blade"` at `Tallies.swift:38`. Pass the paywall
-   its headline "The rack and the ledger", its three bullets, `cta: "Start the 3-day trial"` and
-   `hero: { Image("Rack") }` at `RootView.swift:33`. Wire the praise, near-miss and goal pools.
-   Add `SoundsToggle()` to `TalliesSettings` and a `ShareLink` over `ShareImage.render` to the
-   face's toolbar. Next capture: `05-paywall.png` has the rack drawn on it, and the first and
-   last screens are in the app's voice.
+1. **The win arrives somewhere you cannot see, and its best line is a caption on the undo
+   button.** `02-win.png` and `dark-02-win.png`: the rack rail — the destination of the whole
+   1.5 s — is cut in half by the tab bar, and in `moment-score.png` frames 3–8 the praise line
+   "Done and dated. Nothing on it to explain." renders to the right of the wax stick and the word
+   `WAX`, because `note` sits inside that `HStack` (`CounterFaceView.swift:198–227`). Lift `note`
+   out into its own row directly under the stave, at `.callout` in `brandInk`, full width; and
+   give the face `.padding(.bottom, 96)` under the rack (`CounterFaceView.swift:90`) so the rail
+   clears the tab bar. The next `02-win.png` shows the praise on its own line and every stave in
+   the rack, including the one that just landed.
+
+2. **The chisel is the app's tool and it reads as a lipstick.** `Bench.swift:349–384` builds it
+   from three rounded rectangles; at 46 pt it appears four times on `03-bench.png` and once on
+   every face. Mock 1 has a tapered ash handle, a brass ferrule with two highlights, and a steel
+   blade with a visible bevel and a lit cutting edge. Draw it: `design/art/chisel.svg` through
+   `node tools/design/art.mjs`, used as `Image("Chisel")` at the stave's end and in the blade
+   overlay. The next `03-bench.png` has a recognisable chisel on each board.
+
+3. **"NOT ONE WAX, AND YOUR BEST" can print over a stave with wax in it.**
+   `CounterFaceView.swift:534` calls `run.tier(score: run.longestChain, beating: bestCleanRun)`,
+   and `Run.tier` returns `.best` on score alone (`Run.swift:55–60`) — so a sitting that waxed
+   once and then beat the longest clean run gets the clean headline while the paler fill is on
+   screen. Gate it: `let tier = run.isClean ? run.tier(score:beating:) : .good`, so a waxed
+   sitting falls to "SCORED. THE WAX SHOWS, AND THAT IS FINE". While there, `bestCleanRun`
+   (:601) is one `@AppStorage` key shared by every counter, so a new stave inherits another
+   stave's record — key it on the counter. Capture a `-demo score-waxed` moment to show it.
+
+4. **The carver promises three things the app does not have.** `Record.swift:326–339` declares
+   `chalk` at 3 staves, `mark` at 50 and `wall` at 120; `grep isUnlocked` finds only `rack`,
+   `gauge` and `oil`. At three staves the sitting card says "There is chalk on the bench if you
+   want to name them" and there is no chalk. Build `chalk` — it is the nearest rung and the
+   cheapest: a stave in the rack can be tapped and given a name, written on its end-grain in the
+   stencil caps, so the rack becomes readable. Then either build `mark` and `wall` or delete them
+   from `Bench.earned`, because a horizon that never arrives is worse than a shorter one.
+
+5. **The bench is 40 % empty and wears three list chevrons.** `03-bench.png`: three staves and a
+   dashed blank, then nothing at all until the rack rail at the foot, because `BenchView.swift:79–104`
+   pins the rack under a `List` in a `VStack`. And `NavigationLink(value: counter)` inside that
+   `List` (:252) draws a system disclosure chevron on every board — the one thing on the screen
+   that says "row". Put the rack inside the scroll under the last stave, and replace the
+   `NavigationLink` with a `Button` that appends to `path` so the chevron goes. The next
+   `03-bench.png` has no chevrons and no gap between the staves and the rack.
+
+6. **The strip lost the mock's brass rule and came back a bar chart.** `01-face.png` against
+   `design/mock-1-play.png`: the mock cuts tapered notches down from a brass scale, two facets,
+   the near one in shadow — the same shape as the stave's cuts at a different size. The build
+   draws plain rectangles. Reuse `NotchShape(near:)` for each day's mark in `StripView` at the
+   strip's pitch, keep the brass ticks `ruled:` already draws, and keep today in chalk blue. The
+   test: crop the strip alone out of the next `01-face.png` and it is still obviously this app.
+
+7. **The largest text size breaks the win, and the ledger's two numbers carry no label.**
+   `ax-02-win.png`: the end-grain stamp grows past the stave and covers `PULL-UPS` and half the
+   notches, because it is a fixed `.offset(x: 10)` overlay on a fixed-height board
+   (`CounterFaceView.swift:352–366`). At `typeSize.isAccessibilitySize` put the stamp under the
+   stave rather than over its end — `hero` (:127–142) already does exactly this swap. And on
+   `04-ledger.png`, `PULL-UPS / 10 120` needs `WEEK` and `MONTH` in the stencil caps under the
+   two figures, or the header row is a pair of orphan numbers.
 
 ## Against the mocks
 
-- **The face vs `mock-1-play.png`.** The mock is a 116 pt compressed-heavy `247` burned into the
-  bench, an ash stave at 2.5° with its gates cut and the chisel resting at the next position, a
-  brass-ruled strip of fourteen days as cut gates, a `READING` panel saying "Thursdays run a
-  third above the rest.", `KEPT 61 DAYS · LONGEST RUN 19`, and nine dated staves standing in the
-  rack. The build (`qa/02-detail.png`) is a white card with a blue `98` in SF Rounded, a system
-  `accessoryCircularCapacity` gauge, two bordered circles, a second white card with a Swift
-  Charts bar chart, and a third white card of two destructive `Label`s that the tab bar clips.
-  Nine elements in the mock; three of them exist in any form.
-- **The win vs `mock-2-win.png`.** The mock is `FIFTY, AND NOT A WAXED ONE` in keel red over a
-  ghost `300`, the scored stave lifting with its dated end-grain, swarf in the air, and a sitting
-  card reading "Twelve cut, none waxed. Fifty into this stave, and it is scored. Ten in the rack
-  — the bench takes its colour at twenty." The build has no win state of any kind and no capture
-  to compare against.
-- **The bench vs `mock-3-first.png`.** The mock's empty state is the drawn bench — chisel, rack
-  rail, a curl of shavings, cut ash — under **A bare bench** and "Lay a stave on the bench". The
-  build's is `ContentUnavailableView` with `systemImage: "list.bullet"` and "Create the first
-  one" (`CountersView.swift:19–26`). The populated bench in `qa/01-counters.png` is three white
-  rows where the mock promised overlapping tilted staves with painted end-grain and live gates.
-- **Dark.** The mock's dark is a blue-black wall with the wood still warm under a tungsten lamp.
-  `dark-01-counters.png` is pure black with `secondarySystemGroupedBackground` rows — the
-  system's inversion, which DESIGN.md explicitly rejected.
-- **The ledger vs §Screens 3.** Promised: small staves with pigment bands and a 34 pt week
-  figure, then each day a gate cut into a rule with its notches placed by the time they happened.
-  Built: an inset-grouped `List` whose day sections are `+1` rows (`qa/03-history.png`) — the
-  "row of identical tiles" shape §Slop we are avoiding named as the thing to beat.
+- **The face (mock 1 → `01-face.png`).** The composition survives: hero, gauge, stave, strip,
+  reading, kept-days, rack. What thinned out is the material. The mock's board has real grain,
+  thickness and a cast shadow on the bench; the build's is a pale rounded rectangle with seven
+  hairlines, and its lower two-thirds is blank ash with the name floating in it. The mock's
+  notches are deep brown wedges you could put a thumb in; the build's are thin grey ticks
+  crowded into the top 15 pt. The mock's strip is the best drawn thing in the direction and the
+  build's is a bar chart (Fix 6). The wax stick, which the mock does not show, arrived as a small
+  grey lozenge with the word `WAX` beside it — a text label doing an affordance's job.
+- **The win (mock 2 → `02-win.png`).** Closest of the three. Everything the mock promises is
+  present — headline, ghost numeral, scoring stroke, dated end-grain, swarf, sitting card — and
+  the light version reads well. Two losses: the mock throws about eighteen shavings of varied
+  size and rotation across the whole frame, the build throws a dozen small squares; and the
+  mock's rack rail sits clear below the card with the newest stave glowing, where the build's is
+  under the tab bar (Fix 1). The mock also tints "none waxed" verdigris inside the sitting card,
+  which is a free piece of hierarchy the build did not take.
+- **The bare bench (mock 3).** Cannot be compared — there is no capture of the empty bench or of
+  onboarding in this run. From the code the art, the headline and the button are all as drawn.
+  The next run should capture the first launch: it is the screen the store's third screenshot
+  will come from, and it is the only part of "First minute" nobody has looked at.

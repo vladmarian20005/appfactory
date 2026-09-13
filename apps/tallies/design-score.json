@@ -1,43 +1,25 @@
 {
-  "pass": false,
+  "pass": true,
   "scores": {
-    "idea": 1,
-    "look": 1,
-    "signature": 1,
-    "reward": 1,
-    "voice": 1,
-    "craft": 2,
-    "firstMinute": 1,
-    "escalation": 1,
-    "pull": 1
+    "idea": 5,
+    "look": 4,
+    "signature": 4,
+    "reward": 4,
+    "voice": 4,
+    "craft": 3,
+    "firstMinute": 3,
+    "escalation": 4,
+    "pull": 4
   },
-  "tells": [
-    "kit-default-brand",
-    "gray-canvas",
-    "pitch-in-product",
-    "no-reward",
-    "no-second-session",
-    "paid-unlocks-only",
-    "symbol-onboarding",
-    "paywall-no-hero",
-    "kit-voice-onboarding",
-    "kit-voice-paywall",
-    "ui-explained",
-    "icon-glyph-on-gradient",
-    "list-of-labels",
-    "result-is-a-number",
-    "praise-never-changes",
-    "stats-nothing-reads",
-    "dark-mode-inverted"
-  ],
-  "summary": "The carver's bench in DESIGN.md was never built: the app ships the pre-direction smoke test — system-gray canvas, white cards, an SF Symbol plus, a Swift Charts bar chart and the kit's orange — with no brand, no notch, no win, no Ladder, no Mastery, no Run and no Earned anywhere in its 999 lines.",
+  "tells": [],
+  "summary": "A tally-stick carver's bench that is unmistakable from one crop and has real depth under it — a ladder keyed on days kept that flattens at 217, a reading chosen by a rota that reads its own strengths, a wax that costs only the sitting, and three doors opened by counting — held back by a win that lands under the tab bar, a chisel drawn from rounded rectangles, and three earned rungs the carver promises and the app never delivers.",
   "fixes": [
-    "Paste DESIGN.md's tokens into AppBrand.swift, apply .brand and .brandBackground(), delete the four systemGroupedBackground backgrounds, add the limewash Canvas and bench edge, and ship design/icon-1024.png and the four SVGs into the asset catalog.",
-    "Build the cut: the V notch on .spring(response: 0.16, dampingFraction: 0.74) with its overshoot, .pressable, swarf confetti, Tones.step(chain % 5), Haptics.rigid then tap, and the gate's diagonal every fifth cut — plus a -demo cut flag and a moments block in qa.json.",
-    "Build the score at fifty: gates lighting, the scoring stroke trimmed over 0.34s, CountUp behind the stave, the stave rising into the rack on matchedGeometryEffect, heavy chips, Haptics.celebrate, .fanfare and the three tiers off run.tier(score:beating:).",
-    "Add the Ladder (readings/span/grain, flattensAt 217) and Readings.next over a Mastery of the twelve reading ids, so what the bench says is chosen from what the record has done.",
-    "Scope a Run to a sitting — hit on every cut, miss on the wax stick that leaves a permanent paler scar — and end it on the sitting card, deleting summaryLine's '6.9 a day on average'.",
-    "Add Earned on staves scored (rack 1, chalk 3, gauge 8, oil 20, mark 50, wall 120) so at least one door in the app opens by counting rather than paying.",
-    "Delete the store pitch at RootView.swift:84, give onboarding its art and 'Go on'/'Take the blade', give the paywall its headline, cta and rack hero, wire the praise and near-miss pools, and add SoundsToggle and a ShareLink over ShareImage.render."
+    "Lift the praise line out of the wax stick's HStack onto its own row under the stave, and pad the face's bottom so the rack the scored stave flies into is not cut in half by the tab bar.",
+    "Draw design/art/chisel.svg as mock 1 draws it — tapered ash handle, brass ferrule, bevelled lit blade — and use Image(\"Chisel\") instead of the three stacked rounded rectangles in ChiselGlyph.",
+    "Gate the .best tier on run.isClean so \"NOT ONE WAX, AND YOUR BEST\" can never print over a waxed stave, and key bestCleanRun per counter rather than one shared AppStorage key.",
+    "Build the chalk at three staves — a stave in the rack can be tapped and named on its end-grain — and either build mark and wall or drop them from Bench.earned, so the sitting card never promises a thing that does not exist.",
+    "Move the rack into the bench's scroll so there is no dead 40% between the staves and the rail, and replace the NavigationLink inside the List with a path Button so the three system disclosure chevrons go.",
+    "Redraw the strip's days with NotchShape's two facets on the brass rule, as mock 1 has them, instead of plain rectangles.",
+    "At accessibility text sizes put the end-grain date stamp under the stave rather than over its end, and label the ledger header's week and month figures in the stencil caps."
   ]
 }
