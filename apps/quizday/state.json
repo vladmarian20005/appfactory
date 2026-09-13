@@ -54,9 +54,9 @@
     },
     "register": {
       "status": "ok",
-      "sha": "b020489ca218fee6ecf9b295ee798d6167868c62",
-      "at": "2026-09-13T11:37:16.043Z",
-      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34754902939"
+      "sha": "b7e34723533d0878e3c46af849f874612d080c22",
+      "at": "2026-09-13T18:28:38.988Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34774720246"
     }
   },
   "polish_attempts": 2
