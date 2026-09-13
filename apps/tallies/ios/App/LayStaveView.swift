@@ -28,12 +28,14 @@ struct LayStaveView: View {
                         TextField("What is this stave for?", text: $name)
                             .textInputAutocapitalization(.sentences)
                     }
+                    .listRowBackground(Color.brandSurface)
 
                     Section {
                         pigments
                     } header: {
                         Text("Pigment")
                     }
+                    .listRowBackground(Color.brandSurface)
 
                     Section {
                         Toggle("A chalk line", isOn: $hasGoal)
@@ -43,6 +45,7 @@ struct LayStaveView: View {
                     } footer: {
                         Text("A goal puts a chalk line on the gauge. Leave it off and the stave just fills.")
                     }
+                    .listRowBackground(Color.brandSurface)
                 }
                 .benchBackground()
             }
@@ -67,8 +70,10 @@ struct LayStaveView: View {
 
     private var preview: some View {
         StaveBoard(pigment: Pigment.named(colorID).color) {
+            // Fixed, not `maxHeight: .infinity`: the name label inside wants all the room the
+            // sheet has, and the board grew to eight hundred points of blank ash.
             ZStack(alignment: .topLeading) {
-                Color.clear.frame(height: 78)
+                Color.clear
                 StaveMarks(marks: [.cut, .cut, .cut], capacity: notchesPerGate * 2, notchDepth: 13)
                     .padding(.leading, 22)
                     .padding(.trailing, 14)
@@ -82,6 +87,7 @@ struct LayStaveView: View {
                     .padding(.bottom, 12)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
             }
+            .frame(height: 84)
         }
         .rotationEffect(.degrees(-1.6))
         .padding(.horizontal, 20)

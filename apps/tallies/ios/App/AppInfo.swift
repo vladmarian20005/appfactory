@@ -39,6 +39,9 @@ enum AppInfo {
     static let onboardingFinish = "Take the blade"
 
     static let paywallHeadline = "The rack and the ledger"
+    /// The kit's default here is "Unlock everything in Tallies", which is the template
+    /// talking on the last screen anyone sees.
+    static let paywallSubhead = "Room on the bench, and the whole record to read back."
     static let paywallBullets = [
         "As many staves on the bench as you want, not three.",
         "The ledger: every cut you have made, by the day, with the week and the month beside it.",

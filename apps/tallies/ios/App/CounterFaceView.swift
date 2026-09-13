@@ -42,7 +42,9 @@ struct CounterFaceView: View {
 
     // MARK: Derived record
 
-    private var record: Record { counter.record }
+    @State private var box = RecordBox()
+
+    private var record: Record { box.record(for: counter) }
 
     /// What is lying on the bench. The fiftieth cut empties `currentStave` the instant it
     /// lands, so while the stave is being scored it is still the full fifty that is on the
@@ -79,8 +81,9 @@ struct CounterFaceView: View {
                 panel
                 foot
                 if hasRack {
-                    RackRail(dates: record.scoredStaveDates,
-                             pigment: counter.pigment.color,
+                    RackRail(staves: record.scoredStaveDates.map {
+                                 RackRail.Scored(date: $0, pigment: counter.pigment.color)
+                             },
                              oiled: isOiled,
                              glowing: win?.lifted == true)
                         .padding(.top, 4)
@@ -184,7 +187,9 @@ struct CounterFaceView: View {
         // air above the stave is what keeps it from landing on the gauge.
         VStack(alignment: .leading, spacing: 12) {
             Button(action: cut) {
-                staveBody.padding(.top, 22)
+                // The chisel's handle needs more air above the shoulder once the caps over it
+                // have grown to two lines.
+                staveBody.padding(.top, typeSize.isAccessibilitySize ? 38 : 22)
             }
             .buttonStyle(.pressable(scale: 0.98, haptic: false))
             .accessibilityLabel("Cut a notch")
@@ -195,7 +200,7 @@ struct CounterFaceView: View {
                 // second and a half is a moment to take a cut off.
                 if win == nil {
                 Button(action: wax) {
-                    HStack(spacing: 7) {
+                    HStack(spacing: 12) {
                         WaxStickGlyph(height: 38)
                         Text("Wax")
                             .stencilCaps()
@@ -355,7 +360,7 @@ struct CounterFaceView: View {
         }
         .padding(8)
         .background(RoundedRectangle(cornerRadius: 3, style: .continuous)
-            .fill(.brandSurface.mix(with: .brandInk, amount: 0.18)))
+            .fill(.brandSurface.mix(with: .cutShadow, amount: 0.18)))
         .offset(x: 10)
         .transition(.scale(scale: 1.4).combined(with: .opacity))
     }
@@ -667,22 +672,25 @@ struct CounterFaceView: View {
 
     /// Nothing on a runner can touch the screen, so the app plays its own signature
     /// interaction: five cuts, the fifth closing a gate.
+    /// Paced for the camera, not for a thumb: `sim.sh frames` takes about a third of a second
+    /// to write each screenshot, so cuts land further apart here than anybody would make them,
+    /// and the first one waits for the app to have drawn at all.
     private func demoCut() async {
-        try? await Task.sleep(nanoseconds: 700_000_000)
-        for _ in 0..<5 {
+        try? await Task.sleep(nanoseconds: 1_800_000_000)
+        for _ in 0..<6 {
             lastCutAt = .distantPast
             cut()
-            try? await Task.sleep(nanoseconds: 330_000_000)
+            try? await Task.sleep(nanoseconds: 600_000_000)
         }
     }
 
     /// The forty-eighth to the fiftieth, and the stave is scored.
     private func demoScore() async {
-        try? await Task.sleep(nanoseconds: 700_000_000)
+        try? await Task.sleep(nanoseconds: 1_800_000_000)
         for _ in 0..<3 {
             lastCutAt = .distantPast
             cut()
-            try? await Task.sleep(nanoseconds: 400_000_000)
+            try? await Task.sleep(nanoseconds: 600_000_000)
         }
     }
 }

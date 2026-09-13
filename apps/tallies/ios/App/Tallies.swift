@@ -92,10 +92,14 @@ struct Tallies: App {
             // Only the first stave carries the whole record; the other two are shallower, the
             // way a real bench is.
             let depth = index == 0 ? daysKept : min(daysKept, 24)
+            // The leading stave is always the oldest, so the ladder strip photographs the
+            // same counter at five days, fifty and five hundred rather than whichever one
+            // won a tie on its creation date.
+            let laidOn = calendar.date(byAdding: .day, value: -(depth + (index == 0 ? 2 : 0)), to: today) ?? today
             let counter = Counter(name: spec.name,
                                   colorID: spec.pigment,
                                   dailyGoal: spec.goal,
-                                  createdAt: calendar.date(byAdding: .day, value: -depth, to: today) ?? today)
+                                  createdAt: laidOn)
             context.insert(counter)
 
             var rng = Seeded(seed: spec.seed)

@@ -82,7 +82,7 @@ struct BenchView: View {
             List {
                 ForEach(Array(counters.enumerated()), id: \.element.id) { index, counter in
                     StaveRow(counter: counter, index: index, onCut: { cut(counter) })
-                        .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: -6, trailing: 20))
+                        .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: -8, trailing: 20))
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
                         .popIn(delay: Double(index) * 0.05)
@@ -98,7 +98,41 @@ struct BenchView: View {
             }
             .listStyle(.plain)
             .benchBackground()
+
+            rack
         }
+    }
+
+    /// The rack behind the bench: every stave anybody has scored, whatever it was for, oldest
+    /// at the back. It arrives at one stave and cannot be bought, so on a first bench there is
+    /// nothing here and the boards have the screen to themselves.
+    @ViewBuilder
+    private var rack: some View {
+        let scored = counters.flatMap { counter in
+            Record.scoredDates(for: counter).map {
+                RackRail.Scored(date: $0, pigment: counter.pigment.color)
+            }
+        }.sorted { $0.date < $1.date }
+
+        if !scored.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Kept \(daysKept) days · \(scored.count) in the rack")
+                    .stencilCaps()
+                    .foregroundStyle(.brandInkSoft)
+                RackRail(staves: scored,
+                         oiled: Bench.earned.isUnlocked("oil", at: scored.count))
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 16)
+        }
+    }
+
+    /// Distinct days with a cut on any stave — the rung the whole ladder is keyed on.
+    private var daysKept: Int {
+        let calendar = Calendar.current
+        let days = counters.flatMap { $0.entries }.filter { $0.delta > 0 }
+            .map { calendar.startOfDay(for: $0.at) }
+        return Set(days).count
     }
 
     /// Not a lock row: the fourth position on the bench is an uncut, unpainted blank.
@@ -129,10 +163,13 @@ struct BenchView: View {
 
     private func cut(_ counter: Counter) {
         Haptics.rigid()
-        Tones.shared.play(.step(counter.record.notchesIntoStave % notchesPerGate))
+        let before = counter.entries.reduce(0) { $0 + max(0, $1.delta) }
+        Tones.shared.play(.step(before % notchesPerGate))
         context.insert(Tap(delta: 1, counter: counter))
         try? context.save()
-        if counter.record.cuts % notchesPerGate == 0 {
+        // The gate closes on the fifth: a small reward inside the loop, so a sitting has a
+        // shape you can hear before you see it.
+        if (before + 1) % notchesPerGate == 0 {
             Haptics.soft()
             Tones.shared.play(.pop)
         }
@@ -144,16 +181,13 @@ struct BenchView: View {
     }
 
     private func applyLaunchOptions() {
-        guard let screen = LaunchOptions.screen else { return }
-        switch screen {
-        case "face", "win":
+        // The demo flags come first: a `-demo` launch carries no `-screen`, and guarding on
+        // one meant the app played its signature interaction on a screen it never opened.
+        if LaunchOptions.demo != nil || LaunchOptions.screen == "face" || LaunchOptions.screen == "win" {
             if let first = counters.first, path.isEmpty { path = [first] }
-        case "lay":
-            showLay = true
-        default:
-            break
+            return
         }
-        if LaunchOptions.demo != nil, let first = counters.first, path.isEmpty { path = [first] }
+        if LaunchOptions.screen == "lay" { showLay = true }
     }
 }
 
@@ -171,6 +205,7 @@ struct StaveRow: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var cuts = 0
     @State private var growth: CGFloat = 1
+    @State private var box = RecordBox()
 
     /// Hashed from the counter's name, never random per frame, or the pile would jitter on
     /// every redraw.
@@ -179,7 +214,7 @@ struct StaveRow: View {
         return -1.4 + rng.unit() * 3.0
     }
 
-    private var record: Record { counter.record }
+    private var record: Record { box.record(for: counter) }
 
     /// The last two gates, taken from a gate boundary so the fives still read as fives.
     private var window: [Mark] {
@@ -198,7 +233,8 @@ struct StaveRow: View {
             .frame(maxWidth: .infinity, minHeight: 92, alignment: .leading)
         }
         .rotationEffect(.degrees(tilt))
-        .padding(.vertical, 6)
+        // Overlapping, so they read as a pile of work on a bench rather than as rows.
+        .padding(.vertical, 1)
         .confetti(trigger: cuts,
                   colors: [Color(hex: 0xEDE1C6), Color(hex: 0xF6EFDC), Color(hex: 0x6A4A2A)],
                   from: UnitPoint(x: 0.86, y: 0.3), count: 7, power: 0.22)
@@ -206,7 +242,8 @@ struct StaveRow: View {
 
     private var sideBySide: some View {
         ZStack(alignment: .topLeading) {
-            StaveMarks(marks: window, capacity: notchesPerGate * 2, notchDepth: 14, openingGrowth: growth)
+            StaveMarks(marks: window, capacity: notchesPerGate * 2, notchDepth: 14,
+                       openingGrowth: growth, gateWidth: 36)
                 .padding(.leading, 24)
                 .padding(.trailing, 78)
                 .padding(.top, 8)
@@ -278,8 +315,8 @@ struct StaveRow: View {
             withMotion(.spring(response: 0.16, dampingFraction: 0.74)) { growth = 1 }
             cuts += 1
         } label: {
-            ChiselGlyph(height: 52)
-                .frame(width: 44, height: 56)
+            ChiselGlyph(height: 66)
+                .frame(width: 46, height: 66)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.pressable(scale: 0.98, haptic: false))

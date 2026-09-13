@@ -236,18 +236,35 @@ private struct DayStrip: View {
 
     var body: some View {
         Canvas { context, size in
-            context.fill(Path(CGRect(x: 0, y: 12, width: size.width, height: 1.2)),
-                         with: .color(brand.palette.ink.opacity(0.22)))
+            // The rule, and the day's cuts notched down out of it where they landed. Notches
+            // rather than ticks: the V is this app's one shape and it has to repeat at every
+            // scale, or the ledger is a chart in a wood-coloured card.
+            context.fill(Path(CGRect(x: 0, y: 0, width: size.width, height: 1.4)),
+                         with: .color(brand.palette.ink.opacity(0.26)))
             let calendar = Calendar.current
+            let depth: CGFloat = 15
             for tap in taps {
                 let day = calendar.startOfDay(for: tap.at)
                 let fraction = min(1, max(0, tap.at.timeIntervalSince(day) / 86_400))
-                let x = 2 + (size.width - 6) * fraction
-                let colour = tap.delta > 0 ? brand.palette.ink.opacity(0.55) : brand.palette.miss.opacity(0.55)
-                context.fill(Path(CGRect(x: x, y: 0, width: 2, height: 13)), with: .color(colour))
+                let x = 2 + (size.width - 8) * fraction
+                let wax = tap.delta < 0
+                let near = wax ? brand.palette.miss.opacity(0.55) : brand.palette.ink.opacity(0.58)
+                let far = wax ? brand.palette.miss.opacity(0.34) : brand.palette.ink.opacity(0.24)
+                var left = Path()
+                left.move(to: CGPoint(x: x, y: 1))
+                left.addLine(to: CGPoint(x: x + 2, y: depth))
+                left.addLine(to: CGPoint(x: x + 2, y: 1))
+                left.closeSubpath()
+                var right = Path()
+                right.move(to: CGPoint(x: x + 2, y: 1))
+                right.addLine(to: CGPoint(x: x + 2, y: depth))
+                right.addLine(to: CGPoint(x: x + 4, y: 1))
+                right.closeSubpath()
+                context.fill(left, with: .color(near))
+                context.fill(right, with: .color(far))
             }
         }
-        .frame(height: 14)
+        .frame(height: 16)
         .accessibilityHidden(true)
     }
 }

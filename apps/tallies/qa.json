@@ -31,23 +31,28 @@
       "name": "06-settings",
       "args": ["-onboarded", "-reset", "-sampleData", "-screen", "settings"],
       "note": "The kit's settings with the bench rows: staves, notches cut, days kept, the sounds toggle, and clearing the bench behind its confirmation."
+    },
+    {
+      "name": "07-lay",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-screen", "lay"],
+      "note": "Laying a stave: the bare board across the top takes the name as it is typed and the pigment band as it is picked, and the chosen pot is marked with a cut rather than a checkmark."
     }
   ],
   "moments": [
     {
       "name": "cut",
       "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-demo", "cut"],
-      "delay": 0.8,
+      "delay": 2.0,
       "frames": 10,
-      "interval": 0.22,
+      "interval": 0.02,
       "note": "The signature interaction, played by the app: five cuts, the notch opening past its width and settling, the swarf thrown up and to the right, the blade walking on, and the fifth closing a gate with its diagonal."
     },
     {
       "name": "score",
       "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-demo", "score"],
-      "delay": 1.0,
-      "frames": 12,
-      "interval": 0.22,
+      "delay": 2.6,
+      "frames": 8,
+      "interval": 0.02,
       "note": "The forty-eighth to the fiftieth: the gates light left to right, the scoring stroke is drawn corner to corner, the total counts up behind, the stave lifts into the rack and the end-grain is dated."
     }
   ],

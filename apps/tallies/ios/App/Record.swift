@@ -277,6 +277,39 @@ struct Record {
     }
 }
 
+extension Record {
+    /// Just the dates the staves were closed on. A wax never closes one, so this needs no
+    /// replay — which matters on the bench, where it is asked of every counter at once.
+    static func scoredDates(for counter: Counter) -> [Date] {
+        let cuts = counter.entries.filter { $0.delta > 0 }.map(\.at).sorted()
+        guard cuts.count >= notchesPerStave else { return [] }
+        return stride(from: notchesPerStave - 1, to: cuts.count, by: notchesPerStave).map { cuts[$0] }
+    }
+}
+
+/// One replay of the tap log per change, rather than one per question asked of it.
+///
+/// `Record` is built by sorting and replaying every row, and the face asks it about fifteen
+/// things in a single pass of `body` — the marks, the days kept, the span, the rack, the
+/// strip, the sitting. At five hundred days that is fifteen replays of four thousand rows for
+/// one redraw, which is what made the `-demo cut` filmstrip crawl: the cuts were landing on
+/// time and the screen could not keep up with them.
+@MainActor
+final class RecordBox {
+    private var count = -1
+    private var cached: Record?
+
+    /// Keyed on the number of rows, which is the only way this app's record ever changes: a
+    /// cut and a wax each add one, and planing a stave takes many away.
+    func record(for counter: Counter) -> Record {
+        if counter.entries.count != count || cached == nil {
+            count = counter.entries.count
+            cached = Record(taps: counter.entries)
+        }
+        return cached!
+    }
+}
+
 // MARK: - The ladder
 
 enum Bench {

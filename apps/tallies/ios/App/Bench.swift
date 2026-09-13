@@ -184,7 +184,10 @@ struct StaveBoard<Content: View>: View {
             .background {
                 ZStack {
                     RoundedRectangle(cornerRadius: brand.corner, style: .continuous)
-                        .fill(oiled ? brand.palette.surface.mix(with: brand.palette.ink, amount: 0.16)
+                        // The oil is earned at twenty staves and has to be visible when it
+                        // arrives, or the reward is a line of copy about a colour nobody
+                        // can see.
+                        .fill(oiled ? brand.palette.surface.mix(with: .cutShadow, amount: 0.28)
                                     : brand.palette.surface)
                     grain
                     if let pigment {
@@ -246,6 +249,13 @@ struct StaveBoard<Content: View>: View {
 }
 
 extension Color {
+    /// The dark at the bottom of a cut, and what the oil takes the ash towards.
+    ///
+    /// Not `ink`: that flips with the appearance — by night it is the lamplight — so mixing
+    /// towards it made every cut on the dark bench *lighter* than the wood it was cut into,
+    /// and the strip came out in salmon. Wood in shadow is dark in both appearances.
+    static let cutShadow = Color(light: 0x221A0F, dark: 0x0D0A05)
+
     /// Mixing two brand colours so the oiled bench can darken without a second palette.
     /// `Color.mix(with:by:)` is iOS 18; this works on 17 and gives the same answer.
     func mix(with other: Color, amount: Double) -> Color {
@@ -274,6 +284,10 @@ struct StaveMarks: View {
     var strikeProgress: CGFloat = 1
     /// How many gates are lit, left to right, during the win's hold.
     var gatesLit: Int = 0
+    /// A fixed width per gate, for a window onto a stave — the bench shows the last two gates
+    /// and they have to be cut at the same pitch as the fifty on the face, not stretched to
+    /// fill the row.
+    var gateWidth: CGFloat?
 
     @Environment(\.brand) private var brand
 
@@ -281,7 +295,7 @@ struct StaveMarks: View {
 
     var body: some View {
         GeometryReader { geo in
-            let gateWidth = geo.size.width / CGFloat(gateCount)
+            let gateWidth = gateWidth ?? geo.size.width / CGFloat(gateCount)
             ZStack(alignment: .topLeading) {
                 ForEach(0..<gateCount, id: \.self) { gate in
                     gateView(gate, width: gateWidth, height: geo.size.height)

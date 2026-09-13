@@ -1,33 +1,44 @@
 {
-  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/tallies/store/screenshots.json apps/tallies/store/screenshots/en-US. Raw captures come from app-verify (apps/tallies/qa) and are copied into store/raw. The first title is the Promise from SPEC.md; the fourth is the Wedge said plainly.",
-  "background": "linear-gradient(165deg,#7C2D12 0%,#C2410C 58%,#F2994A 100%)",
-  "textColor": "#FFFFFF",
-  "accent": "rgba(255,255,255,.80)",
+  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/tallies/store/screenshots.json apps/tallies/store/screenshots/en-US. Raw captures come from app-verify (apps/tallies/qa) and are copied into store/raw. Ordered by beauty, not by tab order: the scored stave first. The first title is the Promise from SPEC.md; the fifth is the Wedge said plainly.",
+  "background": "linear-gradient(168deg,#221A0F 0%,#4C4334 46%,#C3B9A3 100%)",
+  "textColor": "#F0E5CC",
+  "accent": "#F0885F",
+  "font": "default",
   "shots": [
     {
-      "src": "raw/01-counters.png",
+      "src": "raw/02-win.png",
+      "title": "Fifty notches, and it is scored",
+      "subtitle": "A full stave is dated and stood in the rack."
+    },
+    {
+      "src": "raw/01-face.png",
       "title": "Count anything, no account",
-      "subtitle": "Tap the plus. That is the whole app."
+      "subtitle": "One stave, one thumb, and the number is right."
     },
     {
-      "src": "raw/02-detail.png",
-      "title": "See what the week looked like",
-      "subtitle": "Every tap is kept with the day it happened."
+      "src": "raw/03-bench.png",
+      "title": "A stave for each thing you keep",
+      "subtitle": "Reps, birds, glasses, cars past the window."
     },
     {
-      "src": "raw/03-history.png",
-      "title": "A history you can read back",
-      "subtitle": "Grouped by day, across every counter."
-    },
-    {
-      "src": "raw/04-settings.png",
-      "title": "No ads. No sign-in. No network.",
-      "subtitle": "Nothing you count ever leaves this phone."
+      "src": "raw/04-ledger.png",
+      "title": "Every cut, by the day you made it",
+      "subtitle": "A day you can read as a shape, not a list."
     },
     {
       "src": "raw/05-paywall.png",
-      "title": "Three counters stay free",
-      "subtitle": "Pro adds room, not access."
+      "title": "Three staves stay free, always",
+      "subtitle": "Nothing already cut is ever taken back down."
+    },
+    {
+      "src": "raw/06-settings.png",
+      "title": "No ads. No sign-in. No network.",
+      "subtitle": "Everything you count stays on this phone."
+    },
+    {
+      "src": "raw/07-lay.png",
+      "title": "Name it, pick its pigment, cut",
+      "subtitle": "A chalk line on the gauge if you want one."
     }
   ]
 }

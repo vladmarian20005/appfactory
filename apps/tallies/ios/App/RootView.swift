@@ -39,6 +39,7 @@ struct RootView: View {
                         bullets: AppInfo.paywallBullets,
                         bulletStyle: .ruled(mark: "⌄"),
                         promise: AppInfo.paywallPromise,
+                        subhead: AppInfo.paywallSubhead,
                         cta: AppInfo.paywallCTA,
                         hero: {
                             Image("Rack")
@@ -82,7 +83,9 @@ struct TalliesSettings: View {
     @Query private var counters: [Counter]
     @State private var confirmingClear = false
 
-    private var notches: Int { counters.reduce(0) { $0 + $1.record.cuts } }
+    private var notches: Int {
+        counters.reduce(0) { $0 + $1.entries.reduce(0) { $0 + max(0, $1.delta) } }
+    }
 
     private var daysKept: Int {
         let calendar = Calendar.current

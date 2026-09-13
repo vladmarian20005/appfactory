@@ -65,7 +65,7 @@ struct StripView: View {
             // trough rather than painted on the wall. Painted at full strength the strip read
             // as a bar chart in the counter's colour, which is the thing this app is not.
             let colour = isToday ? brand.palette.accent
-                                 : (day.waxed ? brand.palette.miss : pigment.mix(with: brand.palette.ink, amount: 0.42))
+                                 : (day.waxed ? brand.palette.miss : pigment.mix(with: .cutShadow, amount: 0.42))
 
             if showCells {
                 for (c, count) in day.cells.enumerated() where count > 0 {
@@ -183,21 +183,26 @@ struct BrassGauge: View {
 /// each with its pigment band and the date it was closed on. It arrives at one stave scored
 /// and it is not for sale.
 struct RackRail: View {
-    let dates: [Date]
-    let pigment: Color
+    struct Scored: Hashable {
+        let date: Date
+        let pigment: Color
+    }
+
+    let staves: [Scored]
     let oiled: Bool
     /// The stave that has just arrived glows for a moment.
     var glowing: Bool = false
 
     @Environment(\.brand) private var brand
 
-    private var shown: [Date] { Array(dates.suffix(14)) }
+    private var shown: [Scored] { Array(staves.suffix(14)) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .bottom, spacing: 6) {
-                ForEach(Array(shown.enumerated()), id: \.offset) { index, date in
-                    staveInRack(index: index, date: date, last: index == shown.count - 1)
+                ForEach(Array(shown.enumerated()), id: \.offset) { index, stave in
+                    staveInRack(index: index, date: stave.date, pigment: stave.pigment,
+                                last: index == shown.count - 1)
                 }
                 Spacer(minLength: 0)
             }
@@ -207,14 +212,14 @@ struct RackRail: View {
                 .frame(height: 3)
         }
         .accessibilityElement()
-        .accessibilityLabel("\(dates.count) scored \(dates.count == 1 ? "stave" : "staves") in the rack")
+        .accessibilityLabel("\(staves.count) scored \(staves.count == 1 ? "stave" : "staves") in the rack")
     }
 
-    private func staveInRack(index: Int, date: Date, last: Bool) -> some View {
+    private func staveInRack(index: Int, date: Date, pigment: Color, last: Bool) -> some View {
         // A seeded height, so the rack reads as a row of real boards rather than a bar chart.
         var rng = Seeded(seed: UInt64(index) &+ 0x5A1E)
         let height = 58 + CGFloat(rng.unit()) * 16
-        let board = oiled ? brand.palette.surface.mix(with: brand.palette.ink, amount: 0.22)
+        let board = oiled ? brand.palette.surface.mix(with: .cutShadow, amount: 0.30)
                           : brand.palette.surface
         return VStack(spacing: 0) {
             RoundedRectangle(cornerRadius: 1.5, style: .continuous)
