@@ -60,9 +60,9 @@
     },
     "release": {
       "status": "fail",
-      "sha": "41a11ba9ef1f418df63d5630695421939c6968e2",
-      "at": "2026-09-13T19:01:47.344Z",
-      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34776354559"
+      "sha": "502ef3a3186bff4dcc6bc9a390ca3477552fec44",
+      "at": "2026-09-13T19:25:18.605Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/34777582425"
     }
   },
   "polish_attempts": 2
