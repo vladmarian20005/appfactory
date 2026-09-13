@@ -96,28 +96,54 @@ public final class Store: ObservableObject {
 public extension Product {
     /// "3-day free trial" when the product carries a free introductory offer.
     var trialDescription: String? {
-        guard let offer = subscription?.introductoryOffer, offer.paymentMode == .freeTrial else { return nil }
-        let p = offer.period
-        let unit: String
-        switch p.unit {
-        case .day: unit = p.value == 1 ? "day" : "days"
-        case .week: unit = p.value == 1 ? "week" : "weeks"
-        case .month: unit = p.value == 1 ? "month" : "months"
-        case .year: unit = p.value == 1 ? "year" : "years"
-        @unknown default: unit = "days"
-        }
-        return "\(p.value)-\(unit) free trial"
+        guard let offer = subscription?.introductoryOffer, offer.paymentMode == .freeTrial,
+              let length = PeriodLength(offer.period) else { return nil }
+        return "\(length.adjective) free trial"
     }
 
     /// "per week", "per year", nil for one-time products.
     var periodDescription: String? {
-        guard let sub = subscription else { return nil }
-        switch sub.subscriptionPeriod.unit {
-        case .day: return "per day"
-        case .week: return "per week"
-        case .month: return sub.subscriptionPeriod.value == 1 ? "per month" : "per \(sub.subscriptionPeriod.value) months"
-        case .year: return "per year"
+        guard let sub = subscription, let length = PeriodLength(sub.subscriptionPeriod) else { return nil }
+        return length.perPeriod
+    }
+}
+
+/// How long a subscription period or trial lasts, in the unit a person would name it.
+///
+/// The App Store reports a weekly subscription as seven days, not one week. A local
+/// `.storekit` file reports one week, so the simulator and every screenshot read "per week"
+/// while Quizday's first TestFlight build read "$2.99 per day", on the paywall and in the
+/// renewal terms under it. Whole weeks of days fold back into weeks here, and every unit
+/// carries its count, so no period can print as a single day, week, month or year it is not.
+struct PeriodLength: Equatable {
+    enum Unit: String { case day, week, month, year }
+
+    let count: Int
+    let unit: Unit
+
+    init(count: Int, unit: Unit) {
+        if unit == .day, count >= 7, count % 7 == 0 {
+            self.count = count / 7
+            self.unit = .week
+        } else {
+            self.count = count
+            self.unit = unit
+        }
+    }
+
+    init?(_ period: Product.SubscriptionPeriod) {
+        switch period.unit {
+        case .day: self.init(count: period.value, unit: .day)
+        case .week: self.init(count: period.value, unit: .week)
+        case .month: self.init(count: period.value, unit: .month)
+        case .year: self.init(count: period.value, unit: .year)
         @unknown default: return nil
         }
     }
+
+    /// "per week", "per 2 months".
+    var perPeriod: String { count == 1 ? "per \(unit.rawValue)" : "per \(count) \(unit.rawValue)s" }
+
+    /// "3-day", "1-week". A compound adjective takes the singular, so never "3-days free trial".
+    var adjective: String { "\(count)-\(unit.rawValue)" }
 }
