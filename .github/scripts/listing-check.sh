@@ -24,6 +24,11 @@ words() { tr '[:upper:]' '[:lower:]' < "$1" | tr -cs '[:alnum:]' '\n' | sort -u;
 locales=$(node -p 'require("./tools/aso/locales.json").locales.map(l=>l.code).join(" ")')
 [ -d "$meta/en-US" ] || { fail "no $meta/en-US; the build agent writes it (new-app skill, step 10)"; exit 1; }
 
+# Non-localized, read from the metadata root. Apple refuses to put a version into a review
+# submission without it: "You must provide a value for the attribute 'copyright'".
+if [ -s "$meta/copyright.txt" ]; then pass "copyright.txt: $(cat "$meta/copyright.txt")"
+else fail "missing $meta/copyright.txt (year and company, e.g. \"2026 Starhive Concept Srl\"); App Review requires it"; fi
+
 all_keywords=""
 for loc in $locales; do
   d="$meta/$loc"

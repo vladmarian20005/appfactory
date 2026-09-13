@@ -162,6 +162,10 @@ no Xcode window. Everything below works there. Nothing below needs a human.
     `promotional_text.txt` (170), `description.txt` (4000), `release_notes.txt`,
     `support_url.txt`, `privacy_url.txt`. Check every one with `wc -c`.
 
+    `apps/<slug>/store/metadata/copyright.txt` — non-localized, next to the locale folders,
+    the year and the company from `privacy.json`: `2026 Starhive Concept Srl`. App Review
+    refuses a version without it, and `listing-check.sh` fails first.
+
     Two rules that cost nothing now and a rejection later: do not repeat a word from the
     name or subtitle in `keywords.txt`, because Apple indexes all three together and a
     repeat spends the characters twice; and every claim in `description.txt` must be true
