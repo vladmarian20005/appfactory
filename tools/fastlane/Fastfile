@@ -267,6 +267,11 @@ platform :ios do
       automatic_release: true,
       force: true,
       app_review_information: (review.size > 1 ? review : nil),
+      # precheck runs by default and, with an API key, refuses outright if it is asked to check
+      # in-app purchases ("Precheck cannot check In-app purchases with the App Store Connect API
+      # Key (yet)"). Keep the text and URL rules, skip the purchases; tools/asc/release.mjs
+      # already verifies every product exists before this lane runs.
+      precheck_include_in_app_purchases: false,
     )
     UI.success("Listing pushed")
   end
