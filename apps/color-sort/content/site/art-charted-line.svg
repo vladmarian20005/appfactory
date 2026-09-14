@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 300" fill="none">
+  <!-- Tidepour · onboarding 2 — "The way out is already drawn."
+       A rack with the solved line already laid over it: dotted arcs, numbered nodes, chart
+       marks behind. The promise as a picture, without the word "verified". -->
+  <defs>
+    <radialGradient id="chartWash" cx="50%" cy="46%" r="56%">
+      <stop offset="0" stop-color="#79E6D8" stop-opacity=".22"/>
+      <stop offset=".6" stop-color="#5FD4C6" stop-opacity=".09"/>
+      <stop offset="1" stop-color="#5FD4C6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="flat2" cx="50%" cy="40%" r="54%">
+      <stop offset="0" stop-color="#E5D6BC" stop-opacity=".9"/>
+      <stop offset=".6" stop-color="#D6C6AA" stop-opacity=".6"/>
+      <stop offset="1" stop-color="#CCBCA2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cEmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A57"/><stop offset="1" stop-color="#D9542A"/></linearGradient>
+    <linearGradient id="cTide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5CB2F0"/><stop offset="1" stop-color="#2276B8"/></linearGradient>
+    <linearGradient id="cKelp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FD8A9"/><stop offset="1" stop-color="#23976F"/></linearGradient>
+    <linearGradient id="cLantern" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD265"/><stop offset="1" stop-color="#D89A20"/></linearGradient>
+    <linearGradient id="glassBody2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#F4FCFB" stop-opacity=".46"/>
+      <stop offset=".42" stop-color="#DCF0EE" stop-opacity=".10"/>
+      <stop offset="1" stop-color="#F4FCFB" stop-opacity=".30"/>
+    </linearGradient>
+    <filter id="lineGlow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="4.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="ca"><path d="M62 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z"/></clipPath>
+    <clipPath id="cb"><path d="M136 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z"/></clipPath>
+    <clipPath id="cc"><path d="M210 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z"/></clipPath>
+    <clipPath id="cd"><path d="M284 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z"/></clipPath>
+  </defs>
+
+  <ellipse cx="190" cy="140" rx="190" ry="110" fill="url(#chartWash)"/>
+
+  <!-- chart marks: depth lines and a bearing, faint, behind everything -->
+  <g stroke="#4FE3D2" stroke-opacity=".22" stroke-width="1">
+    <path d="M24 60h332M24 84h332M24 108h332"/>
+  </g>
+  <g stroke="#4FE3D2" stroke-opacity=".3" stroke-width="1" stroke-linecap="round">
+    <circle cx="330" cy="62" r="17" fill="none"/>
+    <path d="M330 45v34M313 62h34M322 54l16 16M338 54l-16 16"/>
+  </g>
+  <text x="34" y="56" font-family="ui-serif,Georgia,serif" font-style="italic" font-size="12"
+        fill="#2E9E90" fill-opacity=".8">four moves, checked</text>
+
+  <ellipse cx="190" cy="248" rx="178" ry="44" fill="url(#flat2)"/>
+
+  <!-- the four vials -->
+  <g>
+    <path d="M62 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z" stroke="#1E4C55" stroke-opacity=".2" stroke-width="4"/>
+    <g clip-path="url(#ca)"><rect x="62" y="200" width="44" height="64" fill="url(#cTide)"/></g>
+    <path d="M62 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z" fill="url(#glassBody2)" stroke="#EAF7F5" stroke-width="2.2"/>
+    <path d="M69 184v50" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+  <g>
+    <path d="M136 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z" stroke="#1E4C55" stroke-opacity=".2" stroke-width="4"/>
+    <g clip-path="url(#cb)"><rect x="136" y="214" width="44" height="50" fill="url(#cEmber)"/><rect x="136" y="190" width="44" height="24" fill="url(#cLantern)"/></g>
+    <path d="M136 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z" fill="url(#glassBody2)" stroke="#EAF7F5" stroke-width="2.2"/>
+    <path d="M143 184v50" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+  <g>
+    <path d="M210 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z" stroke="#1E4C55" stroke-opacity=".2" stroke-width="4"/>
+    <g clip-path="url(#cc)"><rect x="210" y="222" width="44" height="42" fill="url(#cKelp)"/></g>
+    <path d="M210 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z" fill="url(#glassBody2)" stroke="#EAF7F5" stroke-width="2.2"/>
+    <path d="M217 184v50" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+  <g>
+    <path d="M284 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z" stroke="#1E4C55" stroke-opacity=".2" stroke-width="4"/>
+    <path d="M284 178a9 9 0 0 1 9-9h26a9 9 0 0 1 9 9v62a22 22 0 0 1-44 0z" fill="url(#glassBody2)" stroke="#EAF7F5" stroke-width="2.2"/>
+    <path d="M291 184v50" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+
+  <!-- the charted line: four hops, drawn before anyone played -->
+  <g filter="url(#lineGlow)">
+    <path d="M158 164C168 116 200 116 216 158" stroke="#2E9E90" stroke-opacity=".85" stroke-width="2"
+          stroke-dasharray="3 7" stroke-linecap="round"/>
+    <path d="M232 162C248 122 286 122 300 160" stroke="#2E9E90" stroke-opacity=".7" stroke-width="2"
+          stroke-dasharray="3 7" stroke-linecap="round"/>
+    <path d="M84 162C96 106 140 100 154 150" stroke="#2E9E90" stroke-opacity=".55" stroke-width="2"
+          stroke-dasharray="3 7" stroke-linecap="round"/>
+  </g>
+  <g fill="#2E9E90">
+    <circle cx="187" cy="128" r="8" fill-opacity=".95"/>
+    <circle cx="266" cy="133" r="7" fill-opacity=".72"/>
+    <circle cx="119" cy="119" r="7" fill-opacity=".55"/>
+  </g>
+  <g font-family="-apple-system,system-ui,sans-serif" font-size="9.5" font-weight="700" fill="#F2FBFA" text-anchor="middle">
+    <text x="187" y="131.5">2</text><text x="266" y="136.5">3</text><text x="119" y="122.5">1</text>
+  </g>
+</svg>

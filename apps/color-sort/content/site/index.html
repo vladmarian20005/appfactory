@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tidepour — a color sort puzzle where every level has a solution</title>
+<meta name="description" content="Tidepour is a color sort puzzle that solves every board before it hands it to you. No ads, no coins, no lives, no timer. One shared puzzle a day, fully offline.">
+<meta name="theme-color" content="#071F29">
+<link rel="icon" href="icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tidepour — every rack was solved before it reached you">
+<meta property="og:description" content="A color sort puzzle at the blue hour. Every board is checked winnable before you see it. No ads, no coins, no lives, no timer.">
+<meta property="og:image" content="shots/01.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* Tidepour's own look, from apps/color-sort/DESIGN.md — deep water, glass and light.
+   Canvas, ink, accent and the display face are the values the app and the store frames use.
+   Nothing here is a house style. */
+:root{
+  --deep:#071F29;        /* canvas */
+  --shelf:#0C2C38;       /* surfaces */
+  --sea:#D6EEEA;         /* primary ink */
+  --sounding:#7F9FA8;    /* secondary ink */
+  --mint:#5FEBDA;        /* the signature */
+  --lantern:#F3A748;     /* the second voice */
+  --kelp:#4FC79A;
+  --ember:#E87A4C;
+  --corner:18px;
+  --display:ui-serif,"New York","Iowan Old Style",Georgia,serif;
+  --body:-apple-system,"SF Pro Text",BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:var(--body);
+  color:var(--sea);
+  background-color:var(--deep);
+  /* The nine-point mesh, flattened: dusk sky above, cold water through the middle,
+     and the lantern on the water as the one warm point at the bottom. */
+  background-image:
+    radial-gradient(120% 70% at 50% 108%, #163731 0%, rgba(22,55,49,0) 62%),
+    radial-gradient(80% 46% at 8% 0%, #0A2733 0%, rgba(10,39,51,0) 70%),
+    radial-gradient(90% 50% at 92% 12%, #0B2A37 0%, rgba(11,42,55,0) 72%),
+    linear-gradient(180deg, #08222D 0%, #071F29 46%, #04151C 100%);
+  background-attachment:fixed;
+  line-height:1.55;
+  font-size:17px;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+a{color:var(--mint);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.005em;line-height:1.06;margin:0}
+p{margin:0 0 1em}
+.rule{height:1px;background:linear-gradient(90deg,rgba(95,235,218,0),rgba(95,235,218,.22),rgba(95,235,218,0));border:0;margin:0}
+
+/* Small tracked uppercase labels — the chart marks on the flat. */
+.mark{
+  font-family:var(--body);font-size:11px;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--lantern);
+}
+
+/* Masthead */
+header.top{padding:26px 0 10px}
+.top .wrap{display:flex;align-items:center;gap:14px}
+.top img.mark-icon{width:44px;height:44px;border-radius:23%;display:block;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.wordmark{font-family:var(--display);font-size:23px;font-weight:700;letter-spacing:-.01em}
+.top nav{margin-left:auto;display:flex;gap:22px;font-size:14px;color:var(--sounding)}
+.top nav a{color:var(--sounding)}
+.top nav a:hover{color:var(--mint)}
+
+/* Hero */
+.hero{padding:54px 0 8px}
+.hero .wrap{display:grid;grid-template-columns:1.08fr .92fr;gap:56px;align-items:center}
+.hero h1{font-size:clamp(38px,5.2vw,62px);margin:14px 0 20px;text-wrap:balance}
+.lede{font-size:19px;color:#B9D6D6;max-width:30em}
+.lede strong{color:var(--sea);font-weight:600}
+.cta{margin-top:30px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.badge{
+  display:inline-flex;align-items:center;gap:11px;
+  background:var(--shelf);border:1px solid rgba(95,235,218,.28);
+  color:var(--sea);border-radius:var(--corner);padding:12px 20px;
+  box-shadow:0 10px 26px rgba(0,0,0,.4);
+}
+.badge svg{width:22px;height:22px;fill:var(--sea);opacity:.92}
+.badge .small{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--sounding);line-height:1.4}
+.badge .big{display:block;font-size:16px;font-weight:600;line-height:1.2}
+.price-note{font-size:14px;color:var(--sounding);max-width:20em}
+
+/* The phone. One bezel, the app's own screen inside it — no caption baked on top. */
+.phone{
+  width:100%;max-width:340px;margin:0 auto;
+  background:#05161D;border-radius:13.4%/6.2%;padding:11px;
+  box-shadow:0 40px 90px rgba(0,0,0,.62), 0 0 0 1px rgba(214,238,234,.09) inset;
+}
+.phone img{display:block;width:100%;border-radius:11%/5.2%}
+
+/* Benefits */
+.benefits{padding:78px 0 10px}
+.benefit{display:grid;grid-template-columns:340px 1fr;gap:48px;align-items:center;padding:44px 0}
+/* Alternate which side the art sits on, and move the fixed column with it — otherwise the
+   even rows hand the wide column to the picture and squeeze the prose into 340px. */
+.benefit:nth-child(even){grid-template-columns:1fr 340px}
+.benefit:nth-child(even) .art{order:2}
+.art{
+  background:rgba(12,44,56,.55);border-radius:var(--corner);
+  border:1px solid rgba(214,238,234,.07);padding:10px;
+}
+.art img{display:block;width:100%;height:auto;border-radius:12px}
+.benefit h2{font-size:clamp(27px,3.4vw,38px);margin:10px 0 6px}
+.benefit .sub{font-family:var(--display);font-size:20px;color:var(--mint);margin:0 0 16px}
+.benefit p.body{color:#AECBCC;max-width:34em}
+
+/* Shots */
+.shots{padding:58px 0 30px}
+.shots .head{display:flex;align-items:baseline;gap:16px;margin-bottom:22px}
+.shots h2{font-size:clamp(25px,3vw,34px)}
+.strip{display:flex;gap:18px;overflow-x:auto;padding:6px 2px 20px;scroll-snap-type:x mandatory}
+.strip figure{margin:0;flex:0 0 232px;scroll-snap-align:start}
+.strip img{display:block;width:100%;border-radius:var(--corner);border:1px solid rgba(214,238,234,.08)}
+
+/* Price */
+.deal{padding:54px 0}
+.deal .wrap{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.card{
+  background:rgba(12,44,56,.62);border:1px solid rgba(214,238,234,.09);
+  border-radius:var(--corner);padding:30px 30px 26px;
+}
+.card.lit{border-color:rgba(243,167,72,.35)}
+.card h3{font-size:25px;margin:8px 0 4px}
+.card .cost{font-family:var(--display);font-size:40px;line-height:1;margin:0 0 14px}
+.card.lit .cost{color:var(--lantern)}
+.card ul{list-style:none;margin:0;padding:0;color:#AECBCC;font-size:15.5px}
+.card li{padding:7px 0 7px 26px;position:relative}
+/* The vial: a tight top and a fully round bottom, the app's one shape. */
+.card li::before{
+  content:"";position:absolute;left:2px;top:12px;width:9px;height:15px;
+  border-radius:1.5px 1.5px 4.2px 4.2px;background:var(--mint);opacity:.75;
+}
+.card.lit li::before{background:var(--lantern)}
+.deal .foot{grid-column:1/-1;font-size:14px;color:var(--sounding);text-align:center;margin-top:4px}
+
+/* Questions */
+.faq{padding:54px 0 20px}
+.faq h2{font-size:clamp(25px,3vw,34px);margin-bottom:8px}
+.faq .grid{display:grid;grid-template-columns:1fr 1fr;gap:30px 46px;margin-top:26px}
+.q{font-family:var(--display);font-size:19px;color:var(--sea);margin:0 0 7px}
+.a{color:#A6C4C6;font-size:15.5px;margin:0}
+
+footer{padding:52px 0 64px;color:var(--sounding);font-size:14px}
+footer .wrap{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+footer .spacer{margin-left:auto}
+
+@media (max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;gap:38px}
+  .benefit,.benefit:nth-child(even){grid-template-columns:1fr;gap:26px;padding:34px 0}
+  .benefit:nth-child(even) .art{order:0}
+  .art{max-width:420px}
+  .deal .wrap,.faq .grid{grid-template-columns:1fr}
+  .top nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <img class="mark-icon" src="icon.png" alt="Tidepour app icon: a lit vial standing in a tide pool">
+    <span class="wordmark">Tidepour</span>
+    <nav>
+      <a href="#promise">The promise</a>
+      <a href="#shots">Screens</a>
+      <a href="#questions">Questions</a>
+      <a href="https://starhiveconcept.com/color-sort-privacy-policy-terms/">Privacy</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="mark">A color sort puzzle at the blue hour</span>
+      <h1>Every rack was solved before it reached you.</h1>
+      <p class="lede">Pour the light from one glass to the next until every colour stands on its own.
+        Tidepour deals a board, walks it to the end, and <strong>throws the board away if there is no
+        way out</strong>. What is left is the shortest line there is — and that is what you play against.</p>
+      <p class="lede">No ads. No coins. No lives. No timer. Nothing here runs out.</p>
+      <div class="cta">
+        <span class="badge">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 12.54c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.7-3.19-1.72-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.18-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.74 2.21 1.1-.05 1.52-.71 2.85-.71 1.33 0 1.71.71 2.88.69 1.19-.02 1.94-1.08 2.66-2.15.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.32-.89-2.34-3.54zM14.9 5.9c.6-.74 1.01-1.76.9-2.78-.87.04-1.93.58-2.56 1.31-.56.65-1.05 1.69-.92 2.68.97.08 1.96-.49 2.58-1.21z"/></svg>
+          <span>
+            <span class="small">Coming soon to the</span>
+            <span class="big">App Store</span>
+          </span>
+        </span>
+        <span class="price-note">Free to play, forever. One optional $4.99 unlock — a single payment,
+          not a subscription.</span>
+      </div>
+    </div>
+    <div class="phone">
+      <img src="hero.jpg" width="440" height="956" alt="Tidepour on an iPhone: six glass vials of coloured light standing in a dark tide pool, with the pour count in serif above a rail marked POURED and THE LINE · 13">
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><hr class="rule"></div>
+
+<section class="benefits" id="promise">
+  <div class="wrap">
+
+    <article class="benefit">
+      <div class="art">
+        <img src="art-charted-line.svg" alt="A rack of four vials with a dotted, numbered line already drawn over it">
+      </div>
+      <div>
+        <span class="mark">The wedge</span>
+        <h2>Every level has a solution</h2>
+        <p class="sub">We check before you ever see it.</p>
+        <p class="body">Boards are generated, not hand-made — and every one of them is solved before it
+          is handed to you. Tidepour deals a board, searches it for a way to finish, and discards the
+          board if there isn't one. Nothing you are given can be a dead end.</p>
+        <p class="body">The length of that solution is par: the charted line, drawn as a rail you fill
+          as you pour. Ask for a hint and the app points at the next move of a line it has already
+          proved. Take your own route and it re-solves from the board in front of you, so the hint is
+          right even once you have left the original line behind.</p>
+      </div>
+    </article>
+
+    <article class="benefit">
+      <div class="art">
+        <img src="art-open-water.svg" alt="The wet flat running out to the horizon with a line of lit vials receding, no end drawn">
+      </div>
+      <div>
+        <span class="mark">The deal</span>
+        <h2>No ads. No coins. No lives.</h2>
+        <p class="sub">Nothing here runs out.</p>
+        <p class="body">There is no advertising SDK in this app at all — so there is nothing to skip,
+          nothing to watch for a reward, and nothing to pay to switch off. No currency, no gems, no
+          energy, no timer. You cannot get stuck behind a wall that a payment removes, because there
+          is no wall.</p>
+        <p class="body">Every move is written to disk the moment you make it. Closing the app,
+          switching away or running out of battery never costs you a level — the rack is exactly where
+          you left it.</p>
+      </div>
+    </article>
+
+    <article class="benefit">
+      <div class="art">
+        <img src="art-rack-at-dusk.svg" alt="A rack of vials standing in the wet flat at dusk, one tipped and pouring">
+      </div>
+      <div>
+        <span class="mark">Every evening</span>
+        <h2>The same pool for everyone</h2>
+        <p class="sub">A new one every day, offline.</p>
+        <p class="body">One board a day, seeded from the date, so the puzzle you are working on is the
+          puzzle everyone else opening Tidepour today is working on. Clear it and your streak grows;
+          the month calendar lights the evenings you played.</p>
+        <p class="body">Tidepour makes no network request at all — not for levels, not for scores, not
+          for anything. It works the same on a plane, in the car and underground as it does at home.</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="shots" id="shots">
+  <div class="wrap">
+    <div class="head">
+      <h2>What it looks like</h2>
+      <span class="mark">Seven screens</span>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="strip">
+      <figure><img src="shots/01.jpg" alt="The win: a lantern-coloured sun over the horizon, the pour count as a large serif number, and the cleared rack standing lit"></figure>
+      <figure><img src="shots/02.jpg" alt="The board part-way through with the charted line armed and the next move marked"></figure>
+      <figure><img src="shots/03.jpg" alt="The chart: the streak as one hero number, today's shared rack, and the month as lit pools"></figure>
+      <figure><img src="shots/04.jpg" alt="The shore: the level ladder drawn as a shelf of vials, full of light where a rack was cleared"></figure>
+      <figure><img src="shots/05.jpg" alt="The colour-blind palette with a different shape stamped on every unit"></figure>
+      <figure><img src="shots/06.jpg" alt="The unlock: one payment, no subscription"></figure>
+      <figure><img src="shots/07.jpg" alt="The first screen: a drawn rack in the wet flat"></figure>
+    </div>
+  </div>
+</section>
+
+<section class="deal">
+  <div class="wrap">
+    <div class="card">
+      <span class="mark">Free, and it stays free</span>
+      <p class="cost">$0</p>
+      <h3>The shore you start on</h3>
+      <ul>
+        <li>The daily puzzle, every day, forever</li>
+        <li>The first 60 levels</li>
+        <li>Undo, restart and the hint</li>
+        <li>Your streak, your calendar, your cleared racks</li>
+        <li>No account, no sign-up, no ads</li>
+      </ul>
+    </div>
+    <div class="card lit">
+      <span class="mark">One payment, once</span>
+      <p class="cost">$4.99</p>
+      <h3>Open the whole shore</h3>
+      <ul>
+        <li>The rest of the generated ladder</li>
+        <li>Calm mode — no move counter, muted colours, a slower pour</li>
+        <li>A colour-blind palette, with a shape on every colour</li>
+        <li>Restore on any device signed in to the same Apple Account</li>
+      </ul>
+    </div>
+    <p class="foot">It is not a subscription, it does not renew, and there is nothing else to buy
+      afterwards.</p>
+  </div>
+</section>
+
+<div class="wrap"><hr class="rule"></div>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <span class="mark">Questions</span>
+    <h2>The things people ask about this kind of game</h2>
+    <div class="grid">
+
+      <div>
+        <p class="q">Will I ever be handed a level that can't be finished?</p>
+        <p class="a">No. Every board is solved by the app before it is dealt to you, and a board it
+          cannot finish is discarded and re-dealt. That guarantee is the reason this app exists.</p>
+      </div>
+
+      <div>
+        <p class="q">Are there ads between levels?</p>
+        <p class="a">There are no ads anywhere. Not between levels, not on the board, not on launch.
+          There is no advertising SDK in the binary at all.</p>
+      </div>
+
+      <div>
+        <p class="q">Do I have to buy coins to get past a hard level?</p>
+        <p class="a">There is no currency in the app — no coins, no gems, no extra slots to buy, no
+          lives to refill. Progress cannot be purchased, so it cannot be withheld.</p>
+      </div>
+
+      <div>
+        <p class="q">Is the $4.99 unlock a subscription?</p>
+        <p class="a">No. It is a single non-consumable purchase with no renewal and no trial. The 60
+          free levels and the free daily puzzle are the trial.</p>
+      </div>
+
+      <div>
+        <p class="q">Is there a timer?</p>
+        <p class="a">No, and that is deliberate. There is no clock on any board and no deadline beyond
+          the date itself. Take a minute or take an hour.</p>
+      </div>
+
+      <div>
+        <p class="q">Does it work offline?</p>
+        <p class="a">Completely. Tidepour makes no network requests of any kind, so it behaves
+          identically with no signal.</p>
+      </div>
+
+      <div>
+        <p class="q">I can't tell some colours apart. Can I still play?</p>
+        <p class="a">Yes. The unlock adds an Okabe–Ito palette chosen to stay separable for every
+          common kind of colour blindness, plus a distinct shape stamped on every unit so the rack
+          reads without relying on colour at all. Every vial also reads out under VoiceOver as the
+          colours it holds, from the bottom up.</p>
+      </div>
+
+      <div>
+        <p class="q">What happens if the app closes in the middle of a level?</p>
+        <p class="a">Nothing is lost. Every pour is saved to disk as you make it, so a crash, a kill or
+          a flat battery returns you to exactly the rack you left.</p>
+      </div>
+
+      <div>
+        <p class="q">What do you collect about me?</p>
+        <p class="a">Nothing. No account, no sign-up, no analytics SDK, no crash-reporting SDK, no
+          tracking. Your levels, your streak and your settings live on your device and nowhere else.
+          The <a href="https://starhiveconcept.com/color-sort-privacy-policy-terms/">privacy policy</a>
+          says the same thing at greater length.</p>
+      </div>
+
+      <div>
+        <p class="q">When can I get it?</p>
+        <p class="a">Tidepour is with App Review. This page will carry the App Store link the day it is
+          approved.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><hr class="rule"></div>
+
+<footer>
+  <div class="wrap">
+    <span>Tidepour — a Starhive Concept app.</span>
+    <a href="https://starhiveconcept.com/color-sort-privacy-policy-terms/">Privacy policy &amp; terms</a>
+    <a href="https://starhiveconcept.com/color-sort-privacy-policy-terms/#support">Support</a>
+    <span class="spacer">Requires iOS 17 or later.</span>
+  </div>
+</footer>
+
+</body>
+</html>
