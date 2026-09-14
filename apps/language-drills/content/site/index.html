@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thousand — a thousand Spanish words, bought once</title>
+<meta name="description" content="A thousand Spanish words as glazed tiles you press into a wall you keep. A schedule brings each one back as it starts to slip. One payment, fully offline, no streak, no subscription.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://starhiveconcept.com/thousand/">
+<link rel="icon" href="art/icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Thousand — a thousand Spanish words, bought once">
+<meta property="og:description" content="Read the Spanish, turn the tile over, say how it went. The words you keep build a wall. One payment, offline, no streak.">
+<meta property="og:image" content="shots/01.png">
+<style>
+  /* Thousand's own palette, from DESIGN.md. Light is the workshop at eleven in the
+     morning; dark is the same workshop at night with the lamp on. */
+  :root{
+    --cal:#EDE3D6;          /* canvas — lime plaster */
+    --bisque:#E0D2C0;       /* surface — unfired clay */
+    --carbon:#2B211A;       /* ink */
+    --sombra:#63564A;       /* inkSoft */
+    --cobalto:#1C5AA6;      /* accent — the signature glaze */
+    --glaseada:#F4ECDD;     /* onAccent */
+    --azafran:#A8701B;      /* highlight — the lamp */
+    --verde:#2F6B57;
+    --almagre:#9E4630;
+    --grout:rgba(43,33,26,.10);
+    --bevel-light:rgba(255,255,255,.30);
+    --bevel-dark:rgba(0,0,0,.14);
+    --plaster-1:#F5ECE0; --plaster-2:#EADFD0; --plaster-3:#E3D6C3;
+    --display:-apple-system,"SF Pro Display","SF Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --body:-apple-system,"SF Pro Text","SF Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --night:linear-gradient(168deg,#12233D 0%,#1C5AA6 54%,#0E1A2C 100%);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --cal:#131826;
+      --bisque:#1F2536;
+      --carbon:#F1E7D8;
+      --sombra:#9AA3B5;
+      --cobalto:#5C9BE8;
+      --glaseada:#0B1524;
+      --azafran:#F0B450;
+      --verde:#4FA084;
+      --almagre:#D2714F;
+      --grout:rgba(0,0,0,.34);
+      --bevel-light:rgba(255,255,255,.10);
+      --bevel-dark:rgba(0,0,0,.34);
+      --plaster-1:#1A2134; --plaster-2:#161B2B; --plaster-3:#0F1420;
+    }
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    color:var(--carbon);
+    font-family:var(--body);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    /* Troweled plaster: never one flat colour. Warm daylight top-left, cooler
+       shadow bottom-right in light; night indigo with the lamp top-right in dark. */
+    background-color:var(--cal);
+    background-image:
+      radial-gradient(120% 46% at 8% 0%, var(--plaster-1) 0%, transparent 62%),
+      radial-gradient(110% 40% at 96% 4%, var(--plaster-2) 0%, transparent 58%),
+      radial-gradient(140% 50% at 70% 100%, var(--plaster-3) 0%, transparent 60%);
+    background-repeat:no-repeat;
+  }
+  .wrap{max-width:1020px;margin:0 auto;padding:0 22px}
+  a{color:var(--cobalto);text-underline-offset:3px}
+  a:focus-visible{outline:2px solid var(--cobalto);outline-offset:3px;border-radius:2px}
+  img{max-width:100%;display:block}
+
+  /* Every headline is painted tile lettering: wide, generous, flat-footed. */
+  h1,h2,h3,.display{
+    font-family:var(--display);
+    font-weight:600;
+    font-stretch:expanded;
+    letter-spacing:.004em;
+    line-height:1.08;
+    margin:0;
+  }
+  /* The marks written on the bench — the only uppercase on the page. */
+  .mark{
+    font-family:var(--body);
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--sombra);
+  }
+  .mark.amber{color:var(--azafran)}
+
+  /* A tile: square-shouldered, radius 12, pressed bevel, and it never moves. */
+  .tile{
+    border-radius:12px;
+    box-shadow:
+      inset 3px 3px 0 var(--bevel-light),
+      inset -3px -3px 0 var(--bevel-dark),
+      0 10px 26px rgba(43,33,26,.14);
+  }
+
+  /* ── masthead ───────────────────────────────────────────────── */
+  header.masthead{padding:26px 0 8px}
+  .setter{display:flex;align-items:center;gap:14px}
+  .setter img{width:52px;height:52px;border-radius:12px;
+    box-shadow:inset 2px 2px 0 rgba(255,255,255,.22), inset -2px -2px 0 rgba(0,0,0,.16), 0 4px 12px rgba(43,33,26,.18)}
+  .setter .name{font-family:var(--display);font-weight:600;font-stretch:expanded;font-size:22px;line-height:1.1}
+  .setter .kind{margin-top:2px}
+
+  /* ── hero ───────────────────────────────────────────────────── */
+  .hero{padding:34px 0 18px;display:grid;grid-template-columns:1.12fr .88fr;gap:40px;align-items:center}
+  .hero h1{font-size:46px}
+  .hero .lede{font-size:19px;color:var(--sombra);margin:20px 0 0;max-width:34em}
+  .hero .lede strong{color:var(--carbon);font-weight:600}
+  .hero-art{position:relative}
+  .hero-art img{width:100%}
+  .buy{margin-top:30px;display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+  /* The prominent button is the one capsule the app allows itself. */
+  .badge{
+    display:inline-flex;flex-direction:column;justify-content:center;
+    padding:11px 26px;border-radius:999px;
+    background:var(--cobalto);color:var(--glaseada);
+    font-family:var(--display);font-weight:600;font-stretch:expanded;
+    text-decoration:none;
+    box-shadow:0 6px 18px rgba(28,90,166,.32);
+  }
+  .badge .small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.82;font-family:var(--body);font-weight:600}
+  .badge .big{font-size:19px;line-height:1.2}
+  .price{color:var(--sombra);font-size:15px;line-height:1.45}
+  .price b{color:var(--carbon);font-weight:600}
+
+  /* ── the three ──────────────────────────────────────────────── */
+  section{padding:52px 0}
+  .section-mark{margin-bottom:26px}
+  .three{display:grid;gap:56px}
+  .row{display:grid;grid-template-columns:1fr 340px;gap:52px;align-items:center}
+  /* The bench is laid alternately, the way a course of tile is. */
+  .row:nth-child(even){grid-template-columns:340px 1fr}
+  .row:nth-child(even) .shot{order:-1}
+  .row h2{font-size:34px}
+  .row .sub{font-size:19px;color:var(--azafran);margin:10px 0 0;font-family:var(--display);font-weight:600;font-stretch:expanded}
+  .row p.body{margin:16px 0 0;color:var(--sombra)}
+  .row ul{margin:16px 0 0;padding-left:0;list-style:none;color:var(--sombra)}
+  .row li{position:relative;padding-left:20px;margin:7px 0}
+  .row li::before{content:"";position:absolute;left:0;top:.62em;width:9px;height:9px;border-radius:2px;background:var(--cobalto)}
+  .row:nth-child(2) li::before{background:var(--verde)}
+  .row:nth-child(3) li::before{background:var(--azafran)}
+  /* A screenshot is a glazed tile on the wall: same radius, same bevel, same grout. */
+  .shot img{border-radius:12px;width:100%}
+  .shot{border-radius:12px;overflow:hidden;
+    box-shadow:inset 3px 3px 0 rgba(255,255,255,.16), inset -3px -3px 0 rgba(0,0,0,.22), 0 14px 34px rgba(14,26,44,.30)}
+
+  /* ── the bench ──────────────────────────────────────────────── */
+  .bench-band{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;
+    background:var(--bisque);border-radius:12px;padding:34px 38px;
+    box-shadow:inset 3px 3px 0 var(--bevel-light), inset -3px -3px 0 var(--bevel-dark)}
+  .bench-band h2{font-size:30px;margin-top:10px}
+  .bench-band p{margin:14px 0 0;color:var(--sombra)}
+  .bench-band b{color:var(--carbon)}
+  .bench-band img{width:100%}
+
+  /* ── the twelve glazes ──────────────────────────────────────── */
+  .glazes{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;background:var(--grout);padding:3px;border-radius:12px}
+  .glaze{padding:16px 12px 14px;min-height:86px;display:flex;align-items:flex-end;border-radius:2px;
+    box-shadow:inset 2px 2px 0 rgba(255,255,255,.20), inset -2px -2px 0 rgba(0,0,0,.16)}
+  .glaze span{color:#F4ECDD;font-size:12.5px;line-height:1.25;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+
+  /* ── the rest of the wall ───────────────────────────────────── */
+  .wall{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .wall figure{margin:0}
+  /* The frames carry their own titles; the caption says the next thing, not the same thing. */
+  .wall figcaption{margin-top:14px;font-size:14.5px;color:var(--sombra);line-height:1.5}
+
+  /* ── what is not in it ──────────────────────────────────────── */
+  .night{background:var(--night);border-radius:12px;padding:44px 40px;color:#F4ECDD;
+    box-shadow:inset 3px 3px 0 rgba(255,255,255,.10), inset -3px -3px 0 rgba(0,0,0,.28)}
+  .night h2{font-size:32px;color:#F4ECDD}
+  .night .mark{color:rgba(244,236,221,.66)}
+  .absent{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;margin-top:28px}
+  .absent b{display:block;font-family:var(--display);font-weight:600;font-stretch:expanded;font-size:19px;color:#F0B450}
+  .absent p{margin:6px 0 0;color:rgba(244,236,221,.80);font-size:15px}
+
+  /* ── faq ────────────────────────────────────────────────────── */
+  .faq{display:grid;grid-template-columns:1fr 1fr;gap:28px 44px;margin-top:26px}
+  .faq h3{font-size:18px}
+  .faq p{margin:8px 0 0;color:var(--sombra);font-size:16px}
+
+  /* ── footer ─────────────────────────────────────────────────── */
+  footer{border-top:1px solid var(--grout);margin-top:20px;padding:30px 0 70px;color:var(--sombra);font-size:14.5px}
+  footer .links{display:flex;flex-wrap:wrap;gap:20px;margin-bottom:14px}
+  footer a{color:var(--cobalto)}
+
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr;gap:26px;padding-top:22px}
+    .hero h1{font-size:38px}
+    .row{grid-template-columns:1fr;gap:22px}
+    .row:nth-child(even) .shot{order:0}
+    .shot{max-width:400px}
+    .glazes{grid-template-columns:repeat(3,1fr)}
+    .wall{grid-template-columns:repeat(2,1fr)}
+    .absent{grid-template-columns:repeat(2,1fr)}
+    .faq{grid-template-columns:1fr}
+    .night{padding:32px 24px}
+    .bench-band{grid-template-columns:1fr;gap:22px;padding:26px 22px}
+    section{padding:38px 0}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="setter">
+      <img src="art/icon.png" alt="Thousand's icon: a cobalt azulejo tile">
+      <div>
+        <div class="name">Thousand</div>
+        <div class="mark kind">Spanish vocabulary · iPhone</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>A thousand Spanish&nbsp;words, in the order you actually meet&nbsp;them.</h1>
+      <p class="lede">
+        Every word is a glazed tile on the bench. You read the Spanish, turn it over, and say
+        how it went. The ones you knew press into a wall you keep; the ones that slipped go
+        back for another firing. <strong>Bought once. Works in a tunnel. Never counts a day
+        you missed.</strong>
+      </p>
+      <div class="buy">
+        <span class="badge">
+          <span class="small">Coming soon on the</span>
+          <span class="big">App Store</span>
+        </span>
+        <span class="price"><b>$9.99, once.</b> No subscription, no ads, no account.<br>iPhone, iOS 17 or later.</span>
+      </div>
+    </div>
+    <div class="hero-art">
+      <img src="art/kept-wall.svg" alt="A finished tile wall under a hanging lamp, twelve panels of glaze reading as one thing" width="560" height="440">
+    </div>
+  </div>
+
+  <section>
+    <div class="mark section-mark">What it is</div>
+    <div class="three">
+
+      <div class="row">
+        <div>
+          <h2>1,000 words, in order of use</h2>
+          <p class="sub">The ones you actually meet, first.</p>
+          <p class="body">
+            The deck is ordered by how often a word turns up, not alphabetically and not by
+            lesson number, and it is cut into twelve panels — everyday, people and family,
+            food and drink, the house, city and travel, work and school, body and health,
+            time and number, nature and weather, going and coming, feeling and mind,
+            describing.
+          </p>
+          <ul>
+            <li>An example sentence for every single word, with its English translation.</li>
+            <li>Castilian pronunciation on every word, spoken by the phone itself.</li>
+            <li>Search that finds any tile without losing your place in the wall.</li>
+          </ul>
+        </div>
+        <div class="shot"><img src="shots/03.png" alt="The Wall screen: all thousand words as small glazed tiles in twelve panels" loading="lazy"></div>
+      </div>
+
+      <div class="row">
+        <div>
+          <h2>It remembers what you forget</h2>
+          <p class="sub">Each word comes back as it starts to slip.</p>
+          <p class="body">
+            Turn the tile, then say how it went: <b>Not yet</b>, <b>Got it</b>, <b>Easy</b>.
+            A spaced-repetition schedule on the phone decides when each word returns — sooner
+            for the ones that slipped, much later for the ones you found easy. Nothing turns
+            red. A word you missed is a tile going back for another firing.
+          </p>
+          <ul>
+            <li>When nothing is due, the app says so and stops. It never invents work.</li>
+            <li>No network requests at all — the underground, a plane, a bag on a train.</li>
+            <li>Nothing you drill leaves the phone.</li>
+          </ul>
+        </div>
+        <div class="shot"><img src="shots/02.png" alt="The Bench screen: one glazed tile turned over, showing the English, the example sentence and three grade chips" loading="lazy"></div>
+      </div>
+
+      <div class="row">
+        <div>
+          <h2>Buy it once. Keep it.</h2>
+          <p class="sub">No subscription, ever.</p>
+          <p class="body">
+            Every big app in this category rents. Thousand has no server, no AI and no
+            licensed content, so there is nothing to rent: one payment opens all 1,000 words
+            and all twelve panels, on your phone, for good.
+          </p>
+          <ul>
+            <li>Free forever: the drill, the schedule, the pronunciation, the wall and the count.</li>
+            <li>Free forever: the first hundred words and two whole panels.</li>
+            <li>$9.99 once for the other nine hundred. No trial, no tiers, no renewal.</li>
+          </ul>
+        </div>
+        <div class="shot"><img src="shots/04.png" alt="The paywall: the whole wall, one payment, no subscription" loading="lazy"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="bench-band">
+      <img src="art/the-bench.svg" alt="The workbench: three tiles drying in a row, a brush laid across an open jar of cobalt glaze, a rag" width="560" height="360">
+      <div>
+        <div class="mark">The loop</div>
+        <h2>Turn it over. Say how it went.</h2>
+        <p>
+          A session is forty seconds to ten minutes, depending on what is due. Read the
+          Spanish, tap the tile, see the English with a sentence it lives in — then
+          <b>Not yet</b>, <b>Got it</b> or <b>Easy</b>. When the last one is graded the bench
+          is clear and the day's tiles go into the wall. Then the app stops.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="mark section-mark">Twelve panels · twelve glazes</div>
+    <div class="glazes">
+      <div class="glaze" style="background:#1C5AA6"><span>Everyday</span></div>
+      <div class="glaze" style="background:#9E4630"><span>People &amp; family</span></div>
+      <div class="glaze" style="background:#2F6B57"><span>Food &amp; drink</span></div>
+      <div class="glaze" style="background:#A8701B"><span>The house</span></div>
+      <div class="glaze" style="background:#2A7E8E"><span>City &amp; travel</span></div>
+      <div class="glaze" style="background:#35468C"><span>Work &amp; school</span></div>
+      <div class="glaze" style="background:#A55A6A"><span>Body &amp; health</span></div>
+      <div class="glaze" style="background:#6B4E7D"><span>Time &amp; number</span></div>
+      <div class="glaze" style="background:#5E6B2C"><span>Nature &amp; weather</span></div>
+      <div class="glaze" style="background:#5B3550"><span>Going &amp; coming</span></div>
+      <div class="glaze" style="background:#8F5E12"><span>Feeling &amp; mind</span></div>
+      <div class="glaze" style="background:#41505C"><span>Describing</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="mark section-mark">The rest of the wall</div>
+    <div class="wall">
+      <figure>
+        <div class="shot"><img src="shots/01.png" alt="The win: a hero count of 213 words known, the day's tiles pressed into the wall" loading="lazy"></div>
+        <figcaption>The session ends as the day's tiles pressing into the wall, and a count that has never once gone down.</figcaption>
+      </figure>
+      <figure>
+        <div class="shot"><img src="shots/05.png" alt="The Progress screen: words known of a thousand, with the day's work drawn as stacks of tiles" loading="lazy"></div>
+        <figcaption>Due today and tomorrow drawn as real stacks on a kiln shelf, and mastery as twelve mortar bars.</figcaption>
+      </figure>
+      <figure>
+        <div class="shot"><img src="shots/06.png" alt="The empty state: the bench, swept, with the tools laid down" loading="lazy"></div>
+        <figcaption>When nothing is due, the bench is swept and the tools are down. No filler, no nagging.</figcaption>
+      </figure>
+      <figure>
+        <div class="shot"><img src="shots/07.png" alt="The first screen: a lime wall with a mosaic panel half laid" loading="lazy"></div>
+        <figcaption>Three screens, no sign-up. The first tile goes in about twenty seconds after you open it.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="night">
+      <div class="mark">What is not in it</div>
+      <h2 style="margin-top:10px">Nothing here counts the days you were away.</h2>
+      <div class="absent">
+        <div><b>No streak</b><p>Miss a week and the app says nothing about it. The words are simply there when you come back.</p></div>
+        <div><b>No account</b><p>No sign-up, no email, no password. Open it and drill.</p></div>
+        <div><b>No network</b><p>Thousand makes no requests at all. There is nothing to sync and nothing to wait for.</p></div>
+        <div><b>No ads</b><p>None, of any kind, at any tier, ever.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="mark section-mark">Questions</div>
+    <div class="faq">
+      <div>
+        <h3>Is there really no subscription?</h3>
+        <p>No. One payment of $9.99 opens all 1,000 words and all twelve panels for good. There is no trial, no renewal and no second tier to buy later.</p>
+      </div>
+      <div>
+        <h3>How much can I do without paying?</h3>
+        <p>The drill, the schedule, the pronunciation, the wall and the count are free forever, with the first hundred words and two whole panels open from the start.</p>
+      </div>
+      <div>
+        <h3>Does it work offline?</h3>
+        <p>Completely. The whole deck ships inside the app and the pronunciation is spoken by the device, so it works on the underground, on a plane and where the signal drops.</p>
+      </div>
+      <div>
+        <h3>Which Spanish is it?</h3>
+        <p>Common-core vocabulary, useful in Spain and in Latin America. The spoken pronunciation is Castilian, from your iPhone's own Spanish voice.</p>
+      </div>
+      <div>
+        <h3>Where does the pronunciation come from?</h3>
+        <p>Your phone speaks it. That is why there is no bill and no network — and it is a synthesised voice, not a recorded speaker, which is the honest trade for both.</p>
+      </div>
+      <div>
+        <h3>Is there a streak, or hearts, or gems?</h3>
+        <p>None of them. The only number that changes is words known, of a thousand, and it cannot go down.</p>
+      </div>
+      <div>
+        <h3>What data do you collect?</h3>
+        <p>Nothing. There is no analytics SDK, no tracking and no server to send anything to. Your card states never leave the phone.</p>
+      </div>
+      <div>
+        <h3>Which other languages?</h3>
+        <p>Only Spanish for English speakers, on purpose — one language finished beats forty started. A second pair is planned for a later version, at no extra cost.</p>
+      </div>
+      <div>
+        <h3>What if I get a new phone?</h3>
+        <p>Restore the purchase from Settings with the same Apple Account. The deck reinstalls with the app; your card states live in the phone's own backup.</p>
+      </div>
+      <div>
+        <h3>Who makes it?</h3>
+        <p>Starhive Concept Srl. Support is a real inbox, linked below.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="links">
+      <a href="https://starhiveconcept.com/language-drills-privacy-policy-terms/">Privacy policy &amp; terms</a>
+      <a href="https://starhiveconcept.com/language-drills-privacy-policy-terms/#support">Support</a>
+    </div>
+    <div>Thousand · Spanish vocabulary for English speakers · © Starhive Concept Srl.
+      Apple, the Apple logo and App&nbsp;Store are trademarks of Apple&nbsp;Inc.</div>
+  </footer>
+
+</div>
+
+</body>
+</html>
