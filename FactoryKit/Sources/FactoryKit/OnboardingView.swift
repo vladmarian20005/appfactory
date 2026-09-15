@@ -39,8 +39,14 @@ public struct OnboardingView: View {
     let pages: [OnboardingPage]
     let nextTitle: String
     let finishTitle: String
+    /// A character the app sets its own marks with — a lozenge, a stub, a fist. When one is
+    /// given, the page indicator is drawn with it instead of the system's dots: on an app
+    /// whose whole design is printed marks on paper, three grey capsules are the one place the
+    /// first screen stops being that app.
+    let indexMark: String?
     let onFinish: () -> Void
     @State private var index = 0
+    @Environment(\.brand) private var brand
 
     /// - Parameters:
     ///   - nextTitle: the button between pages. "Continue" is a placeholder, not an answer:
@@ -50,10 +56,12 @@ public struct OnboardingView: View {
     public init(pages: [OnboardingPage],
                 nextTitle: String = "Continue",
                 finishTitle: String = "Get started",
+                indexMark: String? = nil,
                 onFinish: @escaping () -> Void) {
         self.pages = pages
         self.nextTitle = nextTitle
         self.finishTitle = finishTitle
+        self.indexMark = indexMark
         self.onFinish = onFinish
     }
 
@@ -65,8 +73,27 @@ public struct OnboardingView: View {
                         .tag(i)
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
+            .tabViewStyle(.page(indexDisplayMode: indexMark == nil ? .always : .never))
             .indexViewStyle(.page(backgroundDisplayMode: .always))
+
+            if let indexMark {
+                HStack(spacing: 12) {
+                    ForEach(pages.indices, id: \.self) { i in
+                        if i == index {
+                            Text(indexMark)
+                                .brandFont(.footnote)
+                                .foregroundStyle(brand.palette.ink)
+                        } else {
+                            Rectangle()
+                                .strokeBorder(brand.palette.inkSoft.opacity(0.45), lineWidth: 1)
+                                .frame(width: 13, height: 13)
+                        }
+                    }
+                }
+                .animation(Motion.resolved(Motion.snappy), value: index)
+                .padding(.bottom, 20)
+                .accessibilityLabel("Page \(index + 1) of \(pages.count)")
+            }
 
             Button {
                 if index < pages.count - 1 {

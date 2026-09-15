@@ -66,6 +66,18 @@ paywall in the engraver's voice with the lozenge for a bullet.
 - **Screenshots.** `store/screenshots.json` is written and the raw captures are in `qa/`;
   composing them is `app-shots`.
 
+## Two changes in FactoryKit
+
+Both are the "capability goes into the kit" pattern rather than app-local hacks, both are
+additive, and every app that does not ask for them is unchanged.
+
+- `PaywallView` put a `checkmark.circle.fill` back on the selected offer row. Where an app has
+  set its bullets with `.ruled(mark:)` — a printed mark, because it has banished the tick on
+  purpose — the offer row now uses that mark.
+- `OnboardingView(indexMark:)` draws the page indicator with the app's own mark: the current
+  page as that character, every other page as an empty ruled cell. Without it the indicator is
+  the system's dots, as before.
+
 ## Checked on the simulator
 
 `verify-app.sh logic-grid` builds, launches and renders all seven screens with no crash report.

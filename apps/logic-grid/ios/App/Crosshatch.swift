@@ -16,7 +16,10 @@ struct Crosshatch: App {
                 } else {
                     OnboardingView(pages: AppInfo.onboarding,
                                    nextTitle: AppInfo.onboardingNext,
-                                   finishTitle: AppInfo.onboardingFinish) { onboarded = true }
+                                   finishTitle: AppInfo.onboardingFinish,
+                                   // The page you are on is a cut lozenge; every page you are
+                                   // not is an empty ruled cell.
+                                   indexMark: "◆") { onboarded = true }
                 }
             }
             .brand(AppBrand.brand)
