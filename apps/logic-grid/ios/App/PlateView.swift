@@ -274,6 +274,35 @@ struct PlateView: View {
         }
         .frame(width: layout.width + 12, height: layout.height + marginHeight)
         .overlay { registration(layout) }
+        // The plate is a fixed piece of metal: its own punched captions grow with Dynamic Type
+        // to a point and then stop, the way the kit treats a drawing or a share card. Every
+        // word *around* it — the legend, the clues, the margin card — scales the whole way.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+        // Swarf: five copper slivers thrown up and out of the cut, gone in four tenths of a
+        // second. Not confetti — filings.
+        .confetti(trigger: bench.cuts,
+                  colors: [AppBrand.Plate.lip, AppBrand.Plate.faceTop, AppBrand.Plate.bevel],
+                  from: swarfOrigin(layout),
+                  count: 5,
+                  power: 0.18)
+    }
+
+    /// Where the burin is: the middle of the last cell she cut, as a fraction of the plate.
+    private func swarfOrigin(_ layout: PlateLayout) -> UnitPoint {
+        let pairing = bench.pending.map { Pairing($0.x, $0.y) }
+            ?? session.actions.last.map { Pairing($0.x, $0.y) }
+        guard let pairing,
+              let rowIndex = layout.rows.firstIndex(where: { $0 == pairing.a.category || $0 == pairing.b.category }),
+              let columnIndex = layout.columns.firstIndex(where: {
+                  $0 == (layout.rows[rowIndex] == pairing.a.category ? pairing.b.category : pairing.a.category)
+              })
+        else { return UnitPoint(x: 0.5, y: 0.45) }
+        let row = layout.rows[rowIndex] == pairing.a.category ? pairing.a.member : pairing.b.member
+        let column = layout.rows[rowIndex] == pairing.a.category ? pairing.b.member : pairing.a.member
+        let origin = layout.origin(columnIndex: columnIndex, rowIndex: rowIndex)
+        let width = layout.width + 12, height = layout.height + marginHeight
+        return UnitPoint(x: (origin.x + (CGFloat(column) + 0.5) * layout.cell) / width,
+                         y: (origin.y + (CGFloat(row) + 0.5) * layout.cell) / height)
     }
 
     private func face(_ layout: PlateLayout) -> some View {

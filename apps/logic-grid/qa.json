@@ -51,9 +51,9 @@
     {
       "name": "pull",
       "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-bed", "run", "-demo", "pull"],
-      "delay": 2.6,
-      "frames": 10,
-      "interval": 0.12,
+      "delay": 2.4,
+      "frames": 12,
+      "interval": 0.08,
       "note": "The last points and the pull: everything stills, the ink wash sweeps the plate and is wiped back off the surface, the paper comes down, the press turns, the print peels off from the left, filings fall, and the margin card rises under the tier headline."
     }
   ],

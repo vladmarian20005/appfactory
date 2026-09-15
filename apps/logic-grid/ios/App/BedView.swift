@@ -118,24 +118,44 @@ struct Legend: View {
     let plate: Plate
     var muted = false
     @Environment(\.brand) private var brand
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: typeSize.isAccessibilitySize ? 12 : 5) {
             ForEach(0..<plate.categories, id: \.self) { category in
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text(plate.block(category).caps)
-                        .plateCaps(size: 9.5)
-                        .foregroundStyle(ink(category))
-                        .frame(width: 66, alignment: .leading)
-                    Text((0..<plate.members).map { plate.block(category).members[$0].short }.joined(separator: " · "))
-                        .scaledFont(size: 13, weight: .semibold, relativeTo: .footnote)
-                        .foregroundStyle(brand.palette.ink)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Spacer(minLength: 0)
+                // At an accessibility text size the name goes above its members rather than
+                // beside them: a fixed column would break "HANDS" into three lines of two
+                // letters and push the plate off the screen.
+                if typeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: 3) {
+                        name(category)
+                        members(category)
+                    }
+                } else {
+                    HStack(alignment: .firstTextBaseline, spacing: 10) {
+                        name(category).frame(width: 66, alignment: .leading)
+                        members(category)
+                        Spacer(minLength: 0)
+                    }
                 }
             }
         }
         .accessibilityElement(children: .combine)
+    }
+
+    private func name(_ category: Int) -> some View {
+        Text(plate.block(category).caps)
+            .plateCaps(size: 9.5)
+            .lineLimit(1)
+            .minimumScaleFactor(0.75)
+            .foregroundStyle(ink(category))
+    }
+
+    private func members(_ category: Int) -> some View {
+        Text((0..<plate.members).map { plate.block(category).members[$0].short }.joined(separator: " · "))
+            .scaledFont(size: 13, weight: .semibold, relativeTo: .footnote)
+            .foregroundStyle(brand.palette.ink)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     private func ink(_ category: Int) -> Color {
