@@ -20,6 +20,10 @@ enum LaunchOptions {
     /// today's shared plate and the next plate in the run.
     static var bed: String? { value(for: "-bed") }
 
+    /// `-fresh`: leave the plate uncut, so a capture can show the first minute — the floating
+    /// burin, the ghost crosshatch and the thread to the clue that forces it.
+    static var fresh: Bool { args.contains("-fresh") }
+
     /// `-demo cut|pull`. Nothing on a runner can touch the screen, so the app cuts its own
     /// plate and pulls its own print shortly after launch, and the critic films it.
     static var demo: String? { value(for: "-demo") }

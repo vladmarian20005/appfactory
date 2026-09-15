@@ -201,6 +201,9 @@ struct PlateView: View {
     /// The paper the plate is lying on gives it its width; everything else is worked out from
     /// that, so the cells are as big as the plate's shape allows and no bigger.
     let width: CGFloat
+    /// The cell the first clue forces, on a plate with no cuts on it. Passed in rather than
+    /// asked for per cell: it costs the solver a pass to answer.
+    var teaching: Pairing?
     @Environment(\.brand) private var brand
 
     private var plate: Plate { session.plate }
@@ -415,7 +418,7 @@ struct PlateView: View {
         let mark: Mark = bench.cascading.contains(pairing)
             ? .blank
             : (waiting ? (bench.pending?.mark ?? .blank) : session.grid.at(rowCell, columnCell))
-        let ghost = !session.hasCut && firstForced == pairing
+        let ghost = teaching == pairing
         return Button {
             bench.cut(rowCell, columnCell)
         } label: {
@@ -425,12 +428,6 @@ struct PlateView: View {
         .buttonStyle(.pressable(scale: 0.97, haptic: false))
         .accessibilityLabel(label(rowCell, columnCell, mark: mark))
         .accessibilityHint(hint(rowCell, columnCell, mark: mark))
-    }
-
-    /// The one cell the first clue forces, for the ghost crosshatch that does the teaching.
-    private var firstForced: Pairing? {
-        guard !session.hasCut, let step = bench.forcedNow.first else { return nil }
-        return Pairing(step.x, step.y)
     }
 
     private func label(_ x: Cell, _ y: Cell, mark: Mark) -> String {
@@ -445,11 +442,13 @@ struct PlateView: View {
 
     /// VoiceOver is the one place this app explains itself, and it should.
     private func hint(_ x: Cell, _ y: Cell, mark: Mark) -> String {
+        var accessibilityHint: String
         switch mark {
-        case .blank: return "Rules out \(plate.member(x).short) and \(plate.member(y).short). Double tap again to fix it instead."
-        case .ruled: return "Double tap to fix this pairing instead."
-        case .point: return "Double tap twice to take the point back out."
+        case .blank: accessibilityHint = "Rules out \(plate.member(x).short) and \(plate.member(y).short). Double tap again to fix it instead."
+        case .ruled: accessibilityHint = "Double tap to fix this pairing instead."
+        case .point: accessibilityHint = "Double tap twice to take the point back out."
         }
+        return accessibilityHint
     }
 
     // MARK: The figures, and the copper thread

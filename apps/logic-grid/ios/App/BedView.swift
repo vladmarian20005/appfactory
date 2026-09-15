@@ -63,13 +63,28 @@ struct BedView: View {
     // MARK: The paper, the plate and the clues
 
     private func plate(_ session: Session) -> some View {
-        GeometryReader { geo in
+        // The teaching costs the solver a pass, so it is asked for once here rather than by
+        // every cell on the plate.
+        let teaching = bench.teaching
+        return GeometryReader { geo in
             ScrollView {
                 VStack(spacing: 0) {
                     VStack(alignment: .leading, spacing: 14) {
                         Legend(plate: session.plate, muted: bench.record.calmInk && bench.isPro)
-                        PlateView(bench: bench, session: session, width: geo.size.width - 34)
+                        PlateView(bench: bench, session: session, width: geo.size.width - 34,
+                                  teaching: teaching?.pairing)
                             .frame(maxWidth: .infinity, alignment: .center)
+                        if !session.hasCut {
+                            // The burin lies beside the bed and floats until the first cut.
+                            Image("Burin")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 58)
+                                .rotationEffect(.degrees(-4))
+                                .ambientFloat(distance: 3, period: 2.8)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .accessibilityHidden(true)
+                        }
                         if let line = bench.marginLine {
                             Text(line)
                                 .brandFont(.subheadline, weight: .regular)
@@ -79,7 +94,7 @@ struct BedView: View {
                         }
                         LozengeRule(count: 3, color: brand.palette.ink.opacity(0.35), width: 11)
                             .frame(maxWidth: .infinity, alignment: .center)
-                        ClueList(bench: bench, session: session)
+                        ClueList(bench: bench, session: session, threaded: teaching?.clue)
                     }
                     .padding(17)
                     .background {
@@ -136,6 +151,9 @@ struct Legend: View {
 struct ClueList: View {
     @ObservedObject var bench: Bench
     let session: Session
+    /// On a fresh plate, the clue that forces the cell carrying the ghost crosshatch. It is
+    /// threaded to it in copper, and that is the whole of the teaching.
+    var threaded: Int?
     @Environment(\.brand) private var brand
 
     var body: some View {
@@ -185,6 +203,16 @@ struct ClueList: View {
         .background {
             if named {
                 Rectangle().fill(brand.palette.highlight.opacity(0.16))
+            }
+        }
+        .overlay(alignment: .leading) {
+            if threaded == clue.id {
+                // The copper thread, drawn from the clue towards the cell it forces.
+                Rectangle()
+                    .fill(brand.palette.highlight)
+                    .frame(width: 2)
+                    .offset(x: -7)
+                    .breathing(amount: 0.06, period: 2.6)
             }
         }
         .popIn(delay: Double(clue.id) * 0.04)

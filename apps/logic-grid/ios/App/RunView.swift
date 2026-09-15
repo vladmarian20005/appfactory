@@ -14,7 +14,7 @@ struct RunView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 22) {
+                VStack(spacing: 18) {
                     nextPlate
                     shelf
                     if bench.runIsLocked || !bench.isPro { locked }
@@ -23,7 +23,7 @@ struct RunView: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.top, 6)
-                .padding(.bottom, 30)
+                .padding(.bottom, 56)
             }
             .shopBackground()
             .navigationTitle("The run")
@@ -34,7 +34,7 @@ struct RunView: View {
 
     private var nextPlate: some View {
         VStack(spacing: 14) {
-            StandingPlate(number: rung, side: 190, state: .next)
+            StandingPlate(number: rung, side: 164, state: .next)
                 .ambientFloat(distance: 2.5, period: 4.6)
             Text(shapeCaps)
                 .plateCaps(size: 9.5)
@@ -110,11 +110,11 @@ struct RunView: View {
                 Image("Rack")
                     .resizable()
                     .scaledToFit()
-                    .frame(maxHeight: 150)
+                    .frame(maxHeight: 84)
                 ZStack {
-                    StandingPlate(number: Play.freeRungs + 1, side: 150, state: .locked)
+                    StandingPlate(number: Play.freeRungs + 1, side: 116, state: .locked)
                     Text("The run goes on")
-                        .plateCaps(size: 11)
+                        .plateCaps(size: 10)
                         .foregroundStyle(AppBrand.Plate.trough)
                         .rotationEffect(.degrees(-4))
                 }
@@ -230,10 +230,19 @@ struct StandingPlate: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             if state == .pulled {
+                // Its print, pegged behind it.
                 RoundedRectangle(cornerRadius: 3, style: .continuous)
                     .fill(brand.palette.surface)
-                    .frame(width: side * 0.86, height: side * 0.92)
-                    .offset(x: -side * 0.1, y: -side * 0.12)
+                    .overlay(alignment: .bottom) {
+                        Rectangle()
+                            .fill(brand.palette.ink.opacity(0.18))
+                            .frame(height: 0.7)
+                            .padding(.horizontal, side * 0.1)
+                            .padding(.bottom, side * 0.12)
+                    }
+                    .frame(width: side * 0.72, height: side * 0.6)
+                    .rotationEffect(.degrees(-5))
+                    .offset(x: -side * 0.2, y: -side * 0.24)
                     .shadow(color: .black.opacity(0.10), radius: 5, x: 1, y: 3)
             }
             ZStack {
@@ -247,21 +256,24 @@ struct StandingPlate: View {
                     CutShading(progress: 1, spacing: 4.2, weight: 1.1)
                         .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
                 }
-                if state == .next {
-                    Text("\(number)")
-                        .brandDisplay(size: side * 0.4)
-                        .foregroundStyle(AppBrand.Plate.trough.opacity(0.82))
-                        .shadow(color: AppBrand.Plate.lip.opacity(0.5), radius: 0, x: -0.7, y: -0.8)
-                    Image("Burin")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: side * 0.92)
-                        .rotationEffect(.degrees(-8))
-                        .offset(y: side * 0.24)
-                }
                 if state == .pulled {
                     CutShading(progress: 1, spacing: 5.4, weight: 0.7, tone: 0.5)
                         .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
+                }
+                if state == .next {
+                    // The number engraved on the bevel, and the burin lying across the plate
+                    // as it does on a plate that is ruled and waiting.
+                    Text("\(number)")
+                        .brandDisplay(size: side * 0.36)
+                        .foregroundStyle(AppBrand.Plate.trough.opacity(0.82))
+                        .shadow(color: AppBrand.Plate.lip.opacity(0.5), radius: 0, x: -0.7, y: -0.8)
+                        .offset(y: -side * 0.1)
+                    Image("Burin")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: side * 0.62)
+                        .rotationEffect(.degrees(-7))
+                        .offset(x: side * 0.1, y: side * 0.21)
                 }
             }
             .frame(width: side, height: side * 0.78)

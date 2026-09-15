@@ -1,0 +1,82 @@
+{
+  "_comment": "Every capture seeds the same bench — plate 215, rung 51, thirty-one days running, today's plate still on the bed — so a screenshot is reproducible and a ladder strip compares like with like. -pro where a screen shows what the unlock opens, because no runner can complete a purchase.",
+  "scheme": "Crosshatch",
+  "bundleId": "com.starhiveconcept.logicgrid",
+  "screens": [
+    {
+      "name": "01-line",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-screen", "line"],
+      "note": "The line: plates pulled at 108 pt behind the drying line, today's plate on the bed, the day-book page with a filled lozenge in each pulled day's cast ink and today ringed with the registration cross, and the plate caps at the foot. This is the first App Store screenshot, per the spec's 4.3 note — not a bare grid."
+    },
+    {
+      "name": "02-win",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-bed", "run", "-screen", "win"],
+      "note": "The pull at its peak: the plate inked and wiped, the print peeled off it with the answer engraved in its solved rows, the ghost numeral behind, the tier headline in copper, the filings frozen mid-fall by -stillFrames, and the margin card naming what is waiting."
+    },
+    {
+      "name": "03-bed",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-bed", "run"],
+      "note": "The bed mid-cut: the staircase matrix on copper, cast marks cut into the heads, the registration bands in each category's ink outside the bevel, points cut with their rows and columns crosshatched by the assist, a scar in the margin, and the clue list with the spent clues struck through."
+    },
+    {
+      "name": "04-first",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-bed", "daily", "-fresh"],
+      "note": "Today's plate, uncut: the first minute. Nothing is written — the ghost crosshatch sits on the one cell the first clue forces and every clue is still legible. Today's plate is the same one for everybody who opens it."
+    },
+    {
+      "name": "05-run",
+      "args": ["-onboarded", "-reset", "-sampleData", "-screen", "run"],
+      "note": "The run: the next plate standing at the front with its number engraved on the bevel and its shape in the plate caps, the rack behind it, the free tier's blank unruled plate crosshatched with the run's own words, and the bench shelf of what playing has opened. No -pro, so the fortieth is where the copper runs out."
+    },
+    {
+      "name": "06-paywall",
+      "args": ["-onboarded", "-reset", "-sampleData", "-fakeProducts", "-screen", "paywall"],
+      "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch, so the one-time unlock would be unavailable and the CTA would sit disabled. The bullets are ruled with the lozenge rather than a checkmark, because this app has no checkmark in it."
+    },
+    {
+      "name": "07-shop",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-screen", "settings"],
+      "note": "The kit's settings with the shop's own rows: plates pulled, points cut, longest line, days running, the sounds toggle, muted ink, the assist, and scrapping the plates behind its confirmation."
+    }
+  ],
+  "moments": [
+    {
+      "name": "cut",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-bed", "run", "-demo", "cut"],
+      "delay": 1.1,
+      "frames": 10,
+      "interval": 0.04,
+      "note": "The signature interaction, played by the app: the burin bites, the first stroke runs at −38° and the second crosses it seventy milliseconds later, swarf is thrown up and to the right, and a point opens as a lozenge past its own width and settles back — then the plate cuts the rest of that row and column itself, twenty-two milliseconds apart."
+    },
+    {
+      "name": "pull",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-bed", "run", "-demo", "pull"],
+      "delay": 2.6,
+      "frames": 10,
+      "interval": 0.12,
+      "note": "The last points and the pull: everything stills, the ink wash sweeps the plate and is wiped back off the surface, the paper comes down, the press turns, the print peels off from the left, filings fall, and the margin card rises under the tier headline."
+    }
+  ],
+  "ladder": [
+    {
+      "name": "rung-5",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-rung", "5", "-bed", "run"],
+      "note": "Session five: three categories, four a side — eight points, three blocks. Direct and negative clues only, and the line to protect is a few cuts long."
+    },
+    {
+      "name": "rung-51",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-rung", "51", "-bed", "run"],
+      "note": "Session fifty: four categories, four a side — twelve points, six blocks, and either/or in the vocabulary, which is the first clue kind that cannot be read off a single row."
+    },
+    {
+      "name": "rung-150",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-rung", "150", "-bed", "run"],
+      "note": "Rung a hundred and fifty: five categories, six a side — twenty-four points, ten blocks, the whole vocabulary through adjacency, a nine-deep chain, and the first sealed clue crosshatched over until the plate runs out of forced moves without it."
+    },
+    {
+      "name": "rung-500",
+      "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-rung", "500", "-bed", "run"],
+      "note": "Session five hundred: the same shape at its ceiling — all seven kinds, a fourteen-deep chain, four clues sealed when the plate comes up — built against the three kinds her own record says she is worst at. Session 5 and session 500 are not the same game: at five she reads four clues and marks, at five hundred she starts with half the list illegible."
+    }
+  ]
+}

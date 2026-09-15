@@ -23,7 +23,7 @@ struct LineView: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.top, 4)
-                .padding(.bottom, 30)
+                .padding(.bottom, 56)
             }
             .shopBackground()
             .navigationTitle("The line")
@@ -150,7 +150,8 @@ struct LineView: View {
                     Text(bench.session?.isDaily == true ? bench.session?.plate.title ?? "Today's plate" : "Today's plate")
                         .brandFont(.title3)
                         .foregroundStyle(brand.palette.ink)
-                        .fixedSize(horizontal: false, vertical: true)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
                 }
                 Spacer(minLength: 0)
                 Button {

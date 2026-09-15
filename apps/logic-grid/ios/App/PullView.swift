@@ -13,6 +13,7 @@ struct PrintSheet: View {
         VStack(alignment: .leading, spacing: compact ? 6 : 10) {
             if compact {
                 rows
+                    .frame(maxWidth: .infinity, alignment: .center)
                 Spacer(minLength: 0)
                 Text(dated)
                     .plateCaps(size: 8)
@@ -80,12 +81,12 @@ struct PrintSheet: View {
     }
 
     private var rows: some View {
-        VStack(alignment: .leading, spacing: compact ? 5 : 0) {
-            ForEach(Array(pull.rows.enumerated()), id: \.offset) { index, row in
+        VStack(alignment: .leading, spacing: compact ? 8 : 0) {
+            ForEach(Array(pull.rows.prefix(compact ? 2 : pull.rows.count).enumerated()), id: \.offset) { index, row in
                 if compact {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 10) {
                         ForEach(Array(row.prefix(2).enumerated()), id: \.offset) { _, glyph in
-                            EngravedMark(glyph: glyph, size: 20, color: brand.palette.ink, lip: nil, weight: 2)
+                            EngravedMark(glyph: glyph, size: 26, color: brand.palette.ink, lip: nil, weight: 2.1)
                         }
                     }
                 } else {

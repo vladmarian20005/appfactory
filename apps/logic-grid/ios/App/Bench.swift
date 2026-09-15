@@ -131,25 +131,39 @@ final class Bench: ObservableObject {
     /// has not come round lately; then the generator's pipeline, which discards anything it
     /// cannot prove.
     func rule(daily: Bool) {
+        let day = Play.dayNumber(for: .now)
         let rung = daily ? Play.dailyRung(for: .now) : max(1, record.rung)
         let open = Play.kindsOpen(at: rung).map(\.rawValue)
-        // Never the whole vocabulary: asking for every kind that is open is asking for
-        // nothing in particular.
-        let wanted = record.mastery.next(from: open, count: min(3, max(1, open.count - 1)),
-                                         unseenShare: 0.34, avoiding: Set(record.recentKinds))
-        let want = wanted.compactMap(ClueKind.init(rawValue:))
-        let themeID = record.themes.next(from: Themes.ids, count: 1, unseenShare: 0.34,
-                                         avoiding: Set(record.recentThemes)).first ?? Themes.ids[0]
 
-        let seed: UInt64 = daily
-            ? UInt64(bitPattern: Int64(Play.dayNumber(for: .now))) &* 0x2545_F491_4F6C_DD1D
-            : (record.salt ^ (UInt64(rung) &* 0x9E37_79B9_7F4A_7C15))
+        let want: [ClueKind]
+        let themeID: String
+        let seed: UInt64
+        if daily {
+            // Today's plate is the same plate for everybody who opens it, so nothing about it
+            // may come out of this bench's own record: the subject and the kinds it leans on
+            // are drawn from the date alone.
+            seed = UInt64(bitPattern: Int64(day)) &* 0x2545_F491_4F6C_DD1D
+            var rng = Seeded(seed: seed)
+            themeID = Themes.ids[rng.int(Themes.ids.count)]
+            var kinds = open.compactMap(ClueKind.init(rawValue:))
+            for i in stride(from: kinds.count - 1, to: 0, by: -1) { kinds.swapAt(i, rng.int(i + 1)) }
+            want = Array(kinds.prefix(min(3, max(1, open.count - 1))))
+        } else {
+            // Never the whole vocabulary: asking for every kind that is open is asking for
+            // nothing in particular.
+            want = record.mastery.next(from: open, count: min(3, max(1, open.count - 1)),
+                                       unseenShare: 0.34, avoiding: Set(record.recentKinds))
+                .compactMap(ClueKind.init(rawValue:))
+            themeID = record.themes.next(from: Themes.ids, count: 1, unseenShare: 0.34,
+                                         avoiding: Set(record.recentThemes)).first ?? Themes.ids[0]
+            seed = record.salt ^ (UInt64(rung) &* 0x9E37_79B9_7F4A_7C15)
+        }
 
         let plate = Generator.plate(theme: Themes.theme(id: themeID),
                                     shape: Play.shape(at: rung),
                                     want: want,
                                     rung: rung,
-                                    number: daily ? max(1, Play.dayNumber(for: .now) % 9000) : record.platesPulled + 1,
+                                    number: daily ? max(1, day % 9000) : record.platesPulled + 1,
                                     isDaily: daily,
                                     seed: seed)
 
@@ -186,7 +200,9 @@ final class Bench: ObservableObject {
         } else {
             rule(daily: daily)
         }
-        if LaunchOptions.sampleData || LaunchOptions.demo != nil || LaunchOptions.won { poseForCapture() }
+        if !LaunchOptions.fresh, LaunchOptions.sampleData || LaunchOptions.demo != nil || LaunchOptions.won {
+            poseForCapture()
+        }
     }
 
     // MARK: - The cut
@@ -204,6 +220,17 @@ final class Bench: ObservableObject {
         let fromClues = Solver.fromClues(session.grid, clues: session.readable)
         let fromPlate = Solver.fromPlate(session.grid)
         return (fromClues + fromPlate).filter { session.grid.at($0.x, $0.y) == .blank }
+    }
+
+    /// The whole of the teaching, and there is no text in it: on a fresh plate the one cell
+    /// the first clue forces carries a ghost crosshatch, and that clue is threaded to it in
+    /// copper. Both stop at the first cut and never come back. Computed once per render by the
+    /// bed, because it asks the solver a question.
+    var teaching: (pairing: Pairing, clue: Int?)? {
+        guard let session, !session.hasCut else { return nil }
+        let available = forcedNow
+        guard let step = available.first(where: { $0.clue != nil }) ?? available.first else { return nil }
+        return (Pairing(step.x, step.y), step.clue)
     }
 
     /// Bare copper → ruled out (two cut strokes) → fixed (one deep point) → bare copper. There
