@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="face" x1="0" y1="0" x2=".85" y2="1">
+      <stop offset="0" stop-color="#E4A765"/><stop offset=".46" stop-color="#CE8C48"/><stop offset="1" stop-color="#BB7733"/>
+    </linearGradient>
+    <linearGradient id="bevR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#A05F23"/><stop offset="1" stop-color="#6A3A10"/>
+    </linearGradient>
+    <linearGradient id="bevB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8C5019"/><stop offset="1" stop-color="#5E300C"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1=".9" y1="0" x2=".1" y2="1">
+      <stop offset="0" stop-color="#FFEECF" stop-opacity=".5"/>
+      <stop offset=".5" stop-color="#FFEECF" stop-opacity="0"/>
+    </linearGradient>
+    <!-- the cut: a fine crosshatch, a lit lip riding each dark trough -->
+    <pattern id="xh" width="4.4" height="4.4" patternUnits="userSpaceOnUse" patternTransform="rotate(38)">
+      <rect width="4.4" height="4.4" fill="#15191A" fill-opacity=".1"/>
+      <path d="M0 .1V4.5" stroke="#FBDCB0" stroke-width=".5" stroke-opacity=".55" transform="translate(-.7 0)"/>
+      <path d="M0 0V4.4" stroke="#15191A" stroke-width="1.15"/>
+      <path d="M0 2.2H4.4" stroke="#FBDCB0" stroke-width=".5" stroke-opacity=".5" transform="translate(0 -.7)"/>
+      <path d="M0 2.2H4.4" stroke="#15191A" stroke-width="1.15"/>
+    </pattern>
+    <filter id="drop" x="-25%" y="-25%" width="155%" height="165%">
+      <feDropShadow dx="0" dy="12" stdDeviation="13" flood-color="#15191A" flood-opacity=".32"/>
+    </filter>
+  </defs>
+
+  <g transform="rotate(-3.2 200 150)" filter="url(#drop)">
+    <!-- the bevel, filed on the bottom and the right, so the plate has thickness -->
+    <path d="M336 66 344 74V244 L336 236Z" fill="url(#bevR)"/>
+    <path d="M64 236 72 244H344 L336 236Z" fill="url(#bevB)"/>
+
+    <rect x="64" y="64" width="272" height="172" rx="2" fill="url(#face)"/>
+    <rect x="64" y="64" width="272" height="172" rx="2" fill="url(#sheen)"/>
+    <rect x="64.7" y="64.7" width="270.6" height="170.6" rx="2" fill="none" stroke="#F8D4A6" stroke-width="1.4" stroke-opacity=".85"/>
+
+    <!-- registration marks punched into the corners -->
+    <g stroke="#3A2007" stroke-width="1.4" stroke-opacity=".48" fill="none">
+      <path d="M79 72v13M72.5 78.5h13"/><path d="M321 72v13M314.5 78.5h13"/>
+      <path d="M79 215v13M72.5 221.5h13"/><path d="M321 215v13M314.5 221.5h13"/>
+    </g>
+
+    <!-- the staircase a logic grid is: two blocks across the top, one below the first -->
+    <g>
+      <!-- block A: fully hatched but for the four fixed pairings -->
+      <g>
+        <rect x="118" y="90" width="112" height="112" fill="none"/>
+        <g id="A">
+          <rect x="118" y="90"  width="28" height="28" fill="url(#xh)"/>
+          <rect x="174" y="90"  width="28" height="28" fill="url(#xh)"/>
+          <rect x="202" y="90"  width="28" height="28" fill="url(#xh)"/>
+          <rect x="118" y="118" width="28" height="28" fill="url(#xh)"/>
+          <rect x="146" y="118" width="28" height="28" fill="url(#xh)"/>
+          <rect x="202" y="118" width="28" height="28" fill="url(#xh)"/>
+          <rect x="146" y="146" width="28" height="28" fill="url(#xh)"/>
+          <rect x="174" y="146" width="28" height="28" fill="url(#xh)"/>
+          <rect x="202" y="146" width="28" height="28" fill="url(#xh)"/>
+          <rect x="118" y="174" width="28" height="28" fill="url(#xh)"/>
+          <rect x="146" y="174" width="28" height="28" fill="url(#xh)"/>
+          <rect x="174" y="174" width="28" height="28" fill="url(#xh)"/>
+        </g>
+      </g>
+      <!-- block B: still mostly open copper, one point cut -->
+      <g>
+        <rect x="238" y="90" width="28" height="28" fill="url(#xh)"/>
+        <rect x="294" y="118" width="28" height="28" fill="url(#xh)"/>
+        <rect x="266" y="174" width="28" height="28" fill="url(#xh)"/>
+      </g>
+
+      <!-- the rules, cut into the copper -->
+      <g fill="none" stroke="#15191A">
+        <g stroke-opacity=".2" stroke-width=".9">
+          <path d="M146 90v112M174 90v112M202 90v112M266 90v112M294 90v112"/>
+          <path d="M118 118h204M118 146h204M118 174h204"/>
+        </g>
+        <g stroke-opacity=".58" stroke-width="2">
+          <rect x="118" y="90" width="112" height="112"/>
+          <rect x="238" y="90" width="84" height="112"/>
+        </g>
+      </g>
+
+      <!-- the head marks, engraved above and beside the blocks -->
+      <g fill="none" stroke="#15191A" stroke-width="2" stroke-opacity=".8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M124 82h16l-2 4h-12Z"/><path d="M126.5 82v-5h11v5"/>
+        <path d="M152 82h16l-2 4h-12Z"/><path d="M160 82V75l5 7"/>
+        <path d="M180 79.5a6 3.5 0 0 1 12 0v2.5"/><path d="M178 84h16"/>
+        <path d="M206 84l8-8 8 8"/>
+        <circle cx="104" cy="104" r="6"/><path d="M104 100v4l3 1.6"/>
+        <path d="M98 138h12l-1.5 8h-9Z"/><path d="M100.5 138v-2a3.5 3.5 0 0 1 7 0v2"/>
+        <circle cx="104" cy="160" r="5.6"/><circle cx="104" cy="160" r="2"/>
+        <path d="M98 192.5 104 196l6-3.5"/><path d="M100.5 185.5 104 183.5l3.5 2"/>
+      </g>
+    </g>
+
+    <!-- four pairings fixed: the lozenge a burin cuts, deep enough to hold ink -->
+    <g>
+      <g transform="translate(160 104)">
+        <path d="M-11 1.4 Q0 -5 11 1.4 Q0 7.8 -11 1.4Z" fill="#FFECCB" fill-opacity=".95"/>
+        <path d="M-11 0 Q0 -6.4 11 0 Q0 6.4 -11 0Z" fill="#190D03"/>
+      </g>
+      <g transform="translate(188 132)">
+        <path d="M-11 1.4 Q0 -5 11 1.4 Q0 7.8 -11 1.4Z" fill="#FFECCB" fill-opacity=".95"/>
+        <path d="M-11 0 Q0 -6.4 11 0 Q0 6.4 -11 0Z" fill="#190D03"/>
+      </g>
+      <g transform="translate(216 160)">
+        <path d="M-11 1.4 Q0 -5 11 1.4 Q0 7.8 -11 1.4Z" fill="#FFECCB" fill-opacity=".95"/>
+        <path d="M-11 0 Q0 -6.4 11 0 Q0 6.4 -11 0Z" fill="#190D03"/>
+      </g>
+      <g transform="translate(132 188)">
+        <path d="M-11 1.4 Q0 -5 11 1.4 Q0 7.8 -11 1.4Z" fill="#FFECCB" fill-opacity=".95"/>
+        <path d="M-11 0 Q0 -6.4 11 0 Q0 6.4 -11 0Z" fill="#190D03"/>
+      </g>
+      <!-- the newest, in block B, with the swarf still beside it -->
+      <g transform="translate(280 104)">
+        <path d="M-12 1.6 Q0 -5.6 12 1.6 Q0 8.8 -12 1.6Z" fill="#FFF0D6"/>
+        <path d="M-12 0 Q0 -7.2 12 0 Q0 7.2 -12 0Z" fill="#190D03"/>
+        <g fill="#EFC48F">
+          <path d="M14 -6c6-3.5 13-4.5 19-2.5-6 .8-12 2.6-17 5.4Z"/>
+          <path d="M16 -14c4-2 9-2 13-1-4 .8-9 1.8-12 3.6Z" fill-opacity=".72"/>
+          <path d="M26 2c3-1.8 7-2 10-1-3 .8-6 1.8-8 2.8Z" fill-opacity=".6"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

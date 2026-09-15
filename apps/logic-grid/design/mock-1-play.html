@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Crosshatch · the bed</title>
+<style>
+  :root {
+    --canvas:  #96A199;
+    --surface: #F3EDDC;
+    --ink:     #15191A;
+    --inkSoft: #2F3634;
+    --accent:  #10525C;
+    --highlight:#9E4E17;
+    --success: #286554;
+    --miss:    #6E6455;
+    --prussian:#1D4468;
+    --sanguine:#8E3A33;
+    --bistre:  #6E5416;
+    --payne:   #3B454C;
+    --caps: ui-monospace, "SF Mono", Menlo, monospace;
+    --display: ui-serif, "New York", Georgia, serif;
+    --body: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { width: 440px; height: 956px; overflow: hidden; }
+  body { background: var(--canvas); font-family: var(--body); color: var(--ink); position: relative; }
+
+  .glow { position: absolute; inset: 0;
+    background: radial-gradient(circle 620px at 78% 5%, #B4BEB3 0%, rgba(180,190,179,0) 70%); }
+  .tooth { position: absolute; inset: 0;
+    background: repeating-linear-gradient(62deg, rgba(21,25,26,.034) 0 1px, transparent 1px 3.5px); }
+  .tooth.cross { background: repeating-linear-gradient(-62deg, rgba(21,25,26,.034) 0 1px, transparent 1px 3.5px);
+    -webkit-mask-image: radial-gradient(ellipse 430px 470px at 2% 98%, #000 0%, transparent 76%); }
+
+  .status { position: absolute; top: 0; left: 0; right: 0; height: var(--safe-top, 62px);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 30px 11px; font: 600 16px/1 var(--body); z-index: 40; }
+  .status .r { display: flex; gap: 6px; align-items: center; }
+  .nav { position: absolute; top: 0; left: 0; right: 0; height: 104px; z-index: 30;
+    background: rgba(243,237,220,.6); backdrop-filter: blur(22px) saturate(160%);
+    border-bottom: .5px solid rgba(21,25,26,.15);
+    display: flex; align-items: flex-end; padding: 0 16px 9px; }
+  .nav .back { font: 400 21px/1 var(--body); color: var(--accent); width: 62px; }
+  .nav .title { flex: 1; text-align: center; font: 600 17px/1 var(--display); }
+  .nav .menu { width: 62px; text-align: right; color: var(--accent); font: 700 18px/1 var(--body); letter-spacing: 1.6px; }
+
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: calc(48px + var(--safe-bottom, 34px));
+    background: rgba(243,237,220,.6); backdrop-filter: blur(22px) saturate(160%);
+    border-top: .5px solid rgba(21,25,26,.15); display: flex; padding-bottom: var(--safe-bottom, 34px); z-index: 30; }
+  .tabbar div { flex: 1; text-align: center; padding-top: 6px;
+    font: 500 10px/1.8 var(--body); color: rgba(47,54,52,.62); }
+  .tabbar div.on { color: var(--accent); }
+  .tabbar svg { display: block; margin: 0 auto; }
+
+  .rail { position: absolute; left: 0; right: 0; height: 2px; background: rgba(21,25,26,.12); z-index: 2; }
+  .rail::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: rgba(158,78,23,.22); }
+  .rail.top { top: 126px; } .rail.top::after { bottom: -1px; }
+  .rail.bot { bottom: 94px; } .rail.bot::after { top: -1px; }
+
+  .mount { position: absolute; left: 13px; right: 13px; top: 140px; bottom: 102px;
+    background: var(--surface); border-radius: 3px; z-index: 3;
+    box-shadow: 0 9px 24px rgba(21,25,26,.18), 0 1px 0 rgba(255,255,255,.55) inset; }
+  .wrap { position: absolute; left: 13px; right: 13px; top: 140px; bottom: 102px; z-index: 6;
+    padding: 11px 13px 0; display: flex; flex-direction: column; }
+
+  .legend { display: grid; gap: 2px; margin-bottom: 8px; }
+  .legend .cat { display: flex; align-items: baseline; gap: 6px; }
+  .legend .name { flex: 0 0 46px; font: 700 7.5px/1.7 var(--caps); letter-spacing: 1.5px; text-transform: uppercase; }
+  .legend .mem { font: 400 11px/1.6 var(--body); color: var(--inkSoft); letter-spacing: -.1px; }
+  .legend .mem b { font-weight: 600; color: var(--ink); }
+
+  /* the plate: copper, bevelled, lying on the paper mount */
+  .platewrap { position: relative; align-self: center; margin-top: 8px; }
+  .band { position: absolute; border-radius: 1.5px; }
+
+  .plate { position: relative; border-radius: 3px; padding: 10px 10px 0;
+    background:
+      radial-gradient(ellipse 300px 170px at 84% 2%, rgba(255,235,203,.3), rgba(255,235,203,0) 58%),
+      repeating-linear-gradient(72deg, rgba(255,255,255,.05) 0 1px, rgba(0,0,0,.03) 1px 2.6px),
+      linear-gradient(150deg, #E0A05E 0%, #CE8C48 46%, #BE7A36 100%);
+    border-bottom: 3.5px solid #7A4415; border-right: 3.5px solid #7A4415;
+    border-top: 1.2px solid #F4C68F; border-left: 1.2px solid #EDB878;
+    box-shadow: 0 11px 20px rgba(21,25,26,.3), 0 1.5px 0 rgba(255,255,255,.25) inset; }
+  .reg { position: absolute; opacity: .48; }
+
+  .margin { margin: 7px -11px 0; padding: 7px 11px 9px; border-top: .5px solid rgba(21,25,26,.3);
+    display: flex; align-items: flex-end; gap: 11px; position: relative; }
+  .mcaps { font: 700 7.5px/1.8 var(--caps); letter-spacing: 1.6px; text-transform: uppercase; color: rgba(21,25,26,.6); }
+  .pts { font: 700 46px/.86 var(--display); color: #22120A; letter-spacing: -1.6px; }
+  .pts small { font: 700 8px/1 var(--caps); letter-spacing: 1.5px; text-transform: uppercase;
+    color: rgba(21,25,26,.58); }
+  .tools { margin-left: auto; display: flex; gap: 13px; align-items: center; padding-bottom: 4px; }
+
+  .clues { margin-top: 11px; flex: 1; }
+  .clue { display: flex; gap: 9px; padding: 7px 0; align-items: flex-start;
+    border-top: .5px solid rgba(21,25,26,.11); position: relative; }
+  .clue:first-child { border-top: 0; padding-top: 2px; }
+  .num { flex: 0 0 auto; width: 20px; height: 13px; margin-top: 4px; position: relative; }
+  .num i { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font: 700 8.5px/1 var(--display); color: var(--surface); font-style: normal; }
+  .clue p { font: 400 15px/1.34 var(--display); letter-spacing: -.05px; }
+  .clue.used p { color: rgba(47,54,52,.5); }
+  .clue.used .strike { position: absolute; left: 29px; right: 4px; top: 52%; height: 1px; background: var(--success); opacity: .8; }
+</style>
+</head>
+<body>
+  <div class="glow"></div><div class="tooth"></div><div class="tooth cross"></div>
+
+  <svg width="0" height="0" style="position:absolute"><defs>
+    <!-- a ruled-out pairing: the cell is crosshatched — cut shading, not a glyph -->
+    <symbol id="hatch" viewBox="0 0 22 22">
+      <rect width="22" height="22" fill="#15191A" opacity=".10"/>
+      <g clip-path="url(#cl)">
+        <g stroke="#FBDCB0" stroke-width=".6" opacity=".5">
+          <path d="M-8 8.6 L14.6 -14M-8 13 L19 -14M-8 17.4 L23.4 -14M-8 21.8 L27.8 -14M-3.6 26.2 L32.2 -9.6M.8 30.6 L36.6 -5.2"/>
+        </g>
+        <g stroke="#15191A" stroke-width="1.25">
+          <path d="M-8 9.4 L15.4 -14M-8 13.8 L19.8 -14M-8 18.2 L24.2 -14M-8 22.6 L28.6 -14M-3.6 27 L33 -9.6M.8 31.4 L37.4 -5.2"/>
+          <path d="M-8 -6.4 L28.4 30M-8 -2 L24 30M-8 2.4 L19.6 30M-8 6.8 L15.2 30M-8 11.2 L10.8 30M-8 15.6 L6.4 30"/>
+        </g>
+      </g>
+      <clipPath id="cl"><rect width="22" height="22"/></clipPath>
+    </symbol>
+    <!-- mid-cascade: the first direction is cut, the second has not arrived yet -->
+    <symbol id="half" viewBox="0 0 22 22">
+      <rect width="22" height="22" fill="#15191A" opacity=".05"/>
+      <g clip-path="url(#cl2)">
+        <g stroke="#FBDCB0" stroke-width=".6" opacity=".5">
+          <path d="M-8 8.6 L14.6 -14M-8 13 L19 -14M-8 17.4 L23.4 -14M-8 21.8 L27.8 -14M-3.6 26.2 L32.2 -9.6M.8 30.6 L36.6 -5.2"/>
+        </g>
+        <g stroke="#15191A" stroke-width="1.25">
+          <path d="M-8 9.4 L15.4 -14M-8 13.8 L19.8 -14M-8 18.2 L24.2 -14M-8 22.6 L28.6 -14M-3.6 27 L33 -9.6M.8 31.4 L37.4 -5.2"/>
+        </g>
+      </g>
+      <clipPath id="cl2"><rect width="22" height="22"/></clipPath>
+    </symbol>
+    <!-- a fixed pairing: the lozenge a burin cuts, deep, on clean copper -->
+    <symbol id="point" viewBox="0 0 22 22">
+      <path d="M2 11.6 Q11 6.6 20 11.6 Q11 16.6 2 11.6 Z" fill="#FFE6BE" opacity=".95"/>
+      <path d="M2 11 Q11 6 20 11 Q11 16 2 11 Z" fill="#1A0E04"/>
+      <path d="M3.6 10.7 Q11 7.1 18.4 10.7" fill="none" stroke="#7E4A1C" stroke-width=".6" opacity=".8"/>
+    </symbol>
+    <!-- the cell the first clue forces, before anything has been cut -->
+    <symbol id="ghost" viewBox="0 0 22 22">
+      <rect width="22" height="22" fill="#15191A" opacity=".04"/>
+      <g clip-path="url(#cl3)" stroke="#15191A" stroke-width="1.25" opacity=".16">
+        <path d="M-8 9.4 L15.4 -14M-8 13.8 L19.8 -14M-8 18.2 L24.2 -14M-8 22.6 L28.6 -14M-3.6 27 L33 -9.6M.8 31.4 L37.4 -5.2"/>
+        <path d="M-8 -6.4 L28.4 30M-8 -2 L24 30M-8 2.4 L19.6 30M-8 6.8 L15.2 30M-8 11.2 L10.8 30M-8 15.6 L6.4 30"/>
+      </g>
+      <clipPath id="cl3"><rect width="22" height="22"/></clipPath>
+    </symbol>
+    <symbol id="reg" viewBox="0 0 13 13">
+      <g stroke="#2A1607" stroke-width="1" fill="none"><path d="M6.5 0.5V12.5M0.5 6.5H12.5"/><circle cx="6.5" cy="6.5" r="3.2" stroke-width=".8"/></g>
+    </symbol>
+
+    <!-- the cast marks: engraved into the copper, one weight, no colour -->
+    <g id="_"></g>
+    <symbol id="m-coat" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5 12 7.5 15 4.5l4.5 2.5-1.5 5-2-.8V20H8v-8.8l-2 .8-1.5-5Z"/></g></symbol>
+    <symbol id="m-hat" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14V8a5 5 0 0 1 10 0v6"/><path d="M3 14.8h18"/></g></symbol>
+    <symbol id="m-pipe" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5h8v3a4 4 0 0 0 8 0V5"/></g></symbol>
+    <symbol id="m-boot" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 4v9L5 15.6V19h14v-2.6l-5.5-2V4Z"/></g></symbol>
+    <symbol id="m-ferry" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 15h19l-2.5 5H5Z"/><path d="M6 15V9.5h12V15"/><path d="M12 9.5V4.5"/></g></symbol>
+    <symbol id="m-packet" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16h18l-2 4.5H5Z"/><path d="M12 15.5V3.5l6.5 8H12"/></g></symbol>
+    <symbol id="m-lugger" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5h18l-2 4H5Z"/><path d="M12 16V3.5"/><path d="M12 5.5 5.5 16H12"/><path d="M12 8.5l6 7.5h-6"/></g></symbol>
+    <symbol id="m-skiff" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13.5 12 19.5l10-6"/><path d="M6 9 12 5.5 18 9"/></g></symbol>
+    <symbol id="m-salt" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5h12l-1.5 10h-9Z"/><path d="M8.5 9.5V7a3.5 3.5 0 0 1 7 0v2.5"/></g></symbol>
+    <symbol id="m-rope" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="6"/><circle cx="12" cy="13.5" r="2.2"/><path d="M12 7.5V3.5"/></g></symbol>
+    <symbol id="m-lamp" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 10h9l1.5 8.5H6Z"/><path d="M9.5 10 12 4l2.5 6"/></g></symbol>
+    <symbol id="m-apple" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.5c-4.5-2.5-7.5 1-6.5 6s4.5 6.5 6.5 4.5c2 2 5.5-.5 6.5-4.5s-2-8.5-6.5-6Z"/><path d="M12 8.5V4"/></g></symbol>
+    <symbol id="m-four" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5V12l4 2.5"/></g></symbol>
+    <symbol id="m-five" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5V12l4.8-1.8"/></g></symbol>
+    <symbol id="m-six" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5V12v5.5"/></g></symbol>
+    <symbol id="m-seven" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5V12l-4.6 3"/></g></symbol>
+    <symbol id="loupe" viewBox="0 0 24 24"><g fill="none" stroke="#10525C" stroke-width="1.9" stroke-linecap="round"><circle cx="10" cy="10" r="6.6"/><path d="M15 15 21 21"/><path d="M7.4 8.2A3.4 3.4 0 0 1 10.2 6.7"/></g></symbol>
+    <symbol id="burnisher" viewBox="0 0 24 24"><g fill="none" stroke="#2F3634" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5c1.5-4.5 3.5-7 6.5-9"/><path d="M10 11.5 14.8 6.7l3.5 3.5-4.8 4.8Z"/><path d="M15.8 5.7 17.8 3.5l3 3-2.1 2"/></g></symbol>
+  </defs></svg>
+
+  <div class="rail top"></div><div class="rail bot"></div><div class="mount"></div>
+
+  <div class="wrap">
+    <div class="legend">
+      <div class="cat"><span class="name" style="color:var(--sanguine)">Hands</span><span class="mem"><b>Amos</b> · <b>Brice</b> · <b>Dyer</b> · <b>Field</b></span></div>
+      <div class="cat"><span class="name" style="color:var(--prussian)">Craft</span><span class="mem"><b>ferry</b> · <b>packet</b> · <b>lugger</b> · <b>skiff</b></span></div>
+      <div class="cat"><span class="name" style="color:var(--bistre)">Cargo</span><span class="mem"><b>salt</b> · <b>rope</b> · <b>lamp&nbsp;oil</b> · <b>apples</b></span></div>
+      <div class="cat"><span class="name" style="color:var(--payne)">Hour</span><span class="mem"><b>four</b> · <b>five</b> · <b>six</b> · <b>seven</b></span></div>
+    </div>
+
+    <div class="platewrap" id="platewrap">
+      <div class="plate" id="plate">
+        <div id="grid" style="position:relative"></div>
+        <div class="margin">
+          <div>
+            <div class="mcaps">Plate 214 · 17 September · depth 5</div>
+            <div class="pts">9<small>&nbsp;of 12 points &nbsp;·&nbsp; line of 6</small></div>
+          </div>
+          <div class="tools">
+            <svg width="22" height="22" viewBox="0 0 24 24"><use href="#burnisher"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24"><use href="#loupe"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="clues">
+      <div class="clue used">
+        <span class="num"><svg width="20" height="13" viewBox="0 0 20 13"><path d="M1 6.5 Q10 1.4 19 6.5 Q10 11.6 1 6.5Z" fill="#8E3A33"/></svg><i>1</i></span>
+        <p>Amos does not take the ferry, and he is not carrying salt.</p><div class="strike"></div>
+      </div>
+      <div class="clue used">
+        <span class="num"><svg width="20" height="13" viewBox="0 0 20 13"><path d="M1 6.5 Q10 1.4 19 6.5 Q10 11.6 1 6.5Z" fill="#1D4468"/></svg><i>2</i></span>
+        <p>The lugger sails at five.</p><div class="strike"></div>
+      </div>
+      <div class="clue">
+        <span class="num"><svg width="20" height="13" viewBox="0 0 20 13"><path d="M1 6.5 Q10 1.4 19 6.5 Q10 11.6 1 6.5Z" fill="#6E5416"/></svg><i>3</i></span>
+        <p>The lamp oil is either Dyer's or Field's.</p>
+      </div>
+      <div class="clue">
+        <span class="num"><svg width="20" height="13" viewBox="0 0 20 13"><path d="M1 6.5 Q10 1.4 19 6.5 Q10 11.6 1 6.5Z" fill="#3B454C"/></svg><i>4</i></span>
+        <p>Whoever carries the rope sails before the packet.</p>
+      </div>
+      <div class="clue">
+        <span class="num"><svg width="20" height="13" viewBox="0 0 20 13"><path d="M1 6.5 Q10 1.4 19 6.5 Q10 11.6 1 6.5Z" fill="#8E3A33"/></svg><i>5</i></span>
+        <p>Brice is long gone by seven, and the apples never go aboard the skiff.</p>
+      </div>
+      <div class="clue">
+        <span class="num"><svg width="20" height="13" viewBox="0 0 20 13"><path d="M1 6.5 Q10 1.4 19 6.5 Q10 11.6 1 6.5Z" fill="#1D4468"/></svg><i>6</i></span>
+        <p>The skiff goes out an hour after the salt.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="status">
+    <span>9:41</span>
+    <span class="r">
+      <svg width="17" height="11" viewBox="0 0 17 11"><g fill="#15191A"><rect y="7.5" width="3" height="3.5" rx=".7"/><rect x="4.5" y="5.5" width="3" height="5.5" rx=".7"/><rect x="9" y="3" width="3" height="8" rx=".7"/><rect x="13.5" width="3" height="11" rx=".7"/></g></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 9.6 5.2 6.7a4 4 0 0 1 5.6 0Z" fill="#15191A"/><path d="M2.8 4.3a7.4 7.4 0 0 1 10.4 0" stroke="#15191A" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M.6 1.6a10.6 10.6 0 0 1 14.8 0" stroke="#15191A" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg width="25" height="11" viewBox="0 0 25 11"><rect x=".5" y=".5" width="20" height="10" rx="2.8" fill="none" stroke="#15191A" opacity=".45"/><rect x="2" y="2" width="15" height="7" rx="1.6" fill="#15191A"/><path d="M22.2 3.6v3.8a2.2 2.2 0 0 0 0-3.8Z" fill="#15191A" opacity=".45"/></svg>
+    </span>
+  </div>
+
+  <div class="nav"><span class="back">‹ Bed</span><span class="title">The Six O'Clock Ferry</span><span class="menu">•••</span></div>
+
+  <div class="tabbar">
+    <div class="on"><svg width="24" height="20" viewBox="0 0 24 20"><rect x="2.4" y="2" width="19.2" height="16" rx="1" fill="none" stroke="#10525C" stroke-width="1.6"/><g stroke="#10525C" stroke-width="1.3" opacity=".8"><path d="M5.4 14.6 10 10M8 14.6 12.6 10M5.4 9.6 10 14.2M8 9.6 12.6 14.2"/></g><path d="M14.2 10 Q17.4 7.8 20.6 10 Q17.4 12.2 14.2 10Z" fill="#10525C"/></svg>Bed</div>
+    <div><svg width="24" height="20" viewBox="0 0 24 20" fill="none" stroke="#2F3634" stroke-width="1.6" opacity=".7"><path d="M1.5 4h21"/><rect x="3.5" y="4" width="7" height="10" rx=".8"/><rect x="13.5" y="4" width="7" height="13" rx=".8"/></svg>Line</div>
+    <div><svg width="24" height="20" viewBox="0 0 24 20" fill="none" stroke="#2F3634" stroke-width="1.6" opacity=".7"><rect x="2.5" y="3" width="4.6" height="15" rx=".8"/><rect x="9.7" y="3" width="4.6" height="15" rx=".8"/><rect x="16.9" y="3" width="4.6" height="15" rx=".8"/></svg>Run</div>
+    <div><svg width="24" height="20" viewBox="0 0 24 20" fill="none" stroke="#2F3634" stroke-width="1.6" opacity=".7"><circle cx="12" cy="10" r="3.4"/><path d="M12 .8v3M12 16.2v3M2.8 10h3M18.2 10h3M5.5 3.5l2.1 2.1M16.4 14.4l2.1 2.1M18.5 3.5l-2.1 2.1M7.6 14.4l-2.1 2.1"/></svg>Shop</div>
+  </div>
+
+<script>
+const N = 4, CELL = 21, GAP = 6, HEAD = 23;
+const colHeads = [['m-ferry','m-packet','m-lugger','m-skiff'],
+                  ['m-salt','m-rope','m-lamp','m-apple'],
+                  ['m-four','m-five','m-six','m-seven']];
+const rowHeads = [['m-coat','m-hat','m-pipe','m-boot'],
+                  ['m-four','m-five','m-six','m-seven'],
+                  ['m-salt','m-rope','m-lamp','m-apple']];
+const live = [[1,1,1],[1,1,0],[1,0,0]];
+// 'p' point · 'x' hatched out · 'h' mid-cascade · 'g' the ghost of the forced cut · '' bare copper
+const marks = {
+  '0,0': [['x','p','x','x'],['p','x','x','x'],['x','x','x','p'],['x','x','p','x']],
+  '0,1': [['x','' ,'' ,'x'],['' ,'x','' ,'' ],['x','x','p','x'],['x','' ,'x','' ]],
+  '0,2': [['' ,'x','' ,'' ],['' ,'' ,'' ,'x'],['x','' ,'' ,'' ],['' ,'x','' ,'' ]],
+  '1,0': [['x','x','p','x'],['x','' ,'x','' ],['' ,'' ,'x','' ],['' ,'x','' ,'' ]],
+  '1,1': [['' ,'' ,'' ,'' ],['x','p','x','h'],['' ,'x','' ,'' ],['' ,'x','' ,'' ]],
+  '2,0': [['x','' ,'' ,'g'],['' ,'x','' ,'' ],['' ,'' ,'x','' ],['' ,'' ,'' ,'x']],
+};
+const blockW = N * CELL, step = blockW + GAP;
+const gridW = HEAD + GAP + 3 * step - GAP, gridH = HEAD + GAP + 3 * step - GAP;
+let h = '<div style="position:relative; width:' + gridW + 'px; height:' + gridH + 'px">';
+
+// column head marks, on bare copper above each group
+for (let cb = 0; cb < 3; cb++) for (let i = 0; i < N; i++) {
+  const x = HEAD + GAP + cb * step + i * CELL;
+  h += '<svg width="' + CELL + '" height="' + HEAD + '" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" style="position:absolute;left:' + x + 'px;top:0"><use href="#' + colHeads[cb][i] + '"/></svg>';
+}
+// row head marks
+for (let rb = 0; rb < 3; rb++) for (let i = 0; i < N; i++) {
+  const y = HEAD + GAP + rb * step + i * CELL;
+  h += '<svg width="' + HEAD + '" height="' + CELL + '" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" style="position:absolute;left:0;top:' + y + 'px"><use href="#' + rowHeads[rb][i] + '"/></svg>';
+}
+// the blocks
+for (let rb = 0; rb < 3; rb++) for (let cb = 0; cb < 3; cb++) {
+  if (!live[rb][cb]) continue;
+  const x = HEAD + GAP + cb * step, y = HEAD + GAP + rb * step;
+  const closed = rb === 0 && cb === 0;
+  h += '<div style="position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + blockW + 'px;height:' + blockW + 'px;' +
+       'box-shadow:0 0 0 1.5px rgba(21,25,26,' + (closed ? '.66' : '.36') + ')">';
+  const m = marks[rb + ',' + cb];
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    const k = m[r][c];
+    const id = k === 'p' ? 'point' : k === 'x' ? 'hatch' : k === 'h' ? 'half' : k === 'g' ? 'ghost' : null;
+    h += '<div style="position:absolute;left:' + (c*CELL) + 'px;top:' + (r*CELL) + 'px;width:' + CELL + 'px;height:' + CELL + 'px;' +
+         'box-shadow:inset 0 0 0 .5px rgba(21,25,26,.2)">' +
+         (id ? '<svg width="' + CELL + '" height="' + CELL + '" viewBox="0 0 22 22"><use href="#' + id + '"/></svg>' : '') + '</div>';
+  }
+  h += '</div>';
+}
+// the figures: each category that closes is stamped into the plate's blank corner, and by the
+// last point the corner holds the whole print
+const figX = HEAD + GAP + 1.5 * step + 6, figY = HEAD + GAP + 2 * step - 4;
+const pair = (a, b, on) =>
+  '<div style="display:flex;gap:1px;margin-top:5px;opacity:' + (on ? .95 : .2) + '">' +
+  '<svg width="27" height="27" viewBox="0 0 24 24"><use href="#' + a + '"/></svg>' +
+  '<svg width="27" height="27" viewBox="0 0 24 24"><use href="#' + b + '"/></svg></div>';
+h += '<div style="position:absolute;left:' + figX + 'px;top:' + figY + 'px">' +
+     '<div style="font:700 7px/1.9 var(--caps);letter-spacing:1.6px;text-transform:uppercase;color:rgba(21,25,26,.52)">Settled</div>' +
+     '<div style="display:flex;gap:9px">' +
+       '<div>' + pair('m-coat', 'm-ferry', 1) + pair('m-pipe', 'm-lugger', 0) + '</div>' +
+       '<div>' + pair('m-hat', 'm-packet', 1) + pair('m-boot', 'm-skiff', 0) + '</div>' +
+     '</div></div>';
+// a slip: the burin ran out of the cell and skidded off across the copper
+h += '<svg style="position:absolute;left:' + (HEAD + GAP + step + 62) + 'px;top:' + (HEAD + GAP + step - 6) + 'px" width="120" height="74">' +
+     '<path d="M4 6 C34 22, 68 40, 112 66" fill="none" stroke="#FFDDAE" stroke-width="1.5" opacity=".42" transform="translate(-1,-1.3)"/>' +
+     '<path d="M4 6 C34 22, 68 40, 112 66" fill="none" stroke="#3A2410" stroke-width="1.2" opacity=".72"/></svg>';
+h += '</div>';
+document.getElementById('grid').innerHTML = h;
+
+// registration marks in the plate's corners
+const pl = document.getElementById('plate');
+[['left:4px;top:4px'],['right:4px;top:4px'],['left:4px;bottom:4px'],['right:4px;bottom:4px']].forEach(p => {
+  pl.insertAdjacentHTML('beforeend',
+    '<svg class="reg" viewBox="0 0 13 13" width="13" height="13" style="' + p[0] + '"><use href="#reg"/></svg>');
+});
+
+// the registration bands: the cast inks, on the paper, outside the bevel
+const wrap = document.getElementById('platewrap');
+const inks = ['#1D4468', '#6E5416', '#3B454C'], rowInks = ['#8E3A33', '#3B454C', '#6E5416'];
+const PAD = 12.2;
+for (let i = 0; i < 3; i++) {
+  const x = PAD + HEAD + GAP + i * step;
+  wrap.insertAdjacentHTML('beforeend',
+    '<div class="band" style="background:' + inks[i] + ';left:' + x + 'px;width:' + blockW + 'px;height:3px;top:-6px"></div>');
+  const y = PAD + HEAD + GAP + i * step;
+  wrap.insertAdjacentHTML('beforeend',
+    '<div class="band" style="background:' + rowInks[i] + ';top:' + y + 'px;height:' + blockW + 'px;width:3px;left:-6px"></div>');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Crosshatch · the first screen</title>
+<style>
+  :root {
+    --canvas: #96A199; --surface: #F3EDDC; --ink: #15191A; --inkSoft: #2F3634;
+    --accent: #10525C; --highlight: #9E4E17;
+    --caps: ui-monospace, "SF Mono", Menlo, monospace;
+    --display: ui-serif, "New York", Georgia, serif;
+    --body: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { width: 440px; height: 956px; overflow: hidden; }
+  body { background: var(--canvas); font-family: var(--body); color: var(--ink); position: relative; }
+
+  .glow { position: absolute; inset: 0;
+    background: radial-gradient(circle 620px at 78% 5%, #B4BEB3 0%, rgba(180,190,179,0) 70%); }
+  .tooth { position: absolute; inset: 0;
+    background: repeating-linear-gradient(62deg, rgba(21,25,26,.034) 0 1px, transparent 1px 3.5px); }
+  .tooth.cross { background: repeating-linear-gradient(-62deg, rgba(21,25,26,.034) 0 1px, transparent 1px 3.5px);
+    -webkit-mask-image: radial-gradient(ellipse 430px 470px at 2% 98%, #000 0%, transparent 76%); }
+
+  .status { position: absolute; top: 0; left: 0; right: 0; height: var(--safe-top, 62px);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 30px 11px; font: 600 16px/1 var(--body); z-index: 40; }
+  .status .r { display: flex; gap: 6px; align-items: center; }
+
+  .rail { position: absolute; left: 0; right: 0; height: 2px; background: rgba(21,25,26,.13); z-index: 2; }
+  .rail::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: rgba(158,78,23,.22); }
+  .rail.top { top: 84px; } .rail.top::after { bottom: -1px; }
+  .rail.bot { bottom: calc(var(--safe-bottom, 34px) + 152px); } .rail.bot::after { top: -1px; }
+
+  /* the shop's own mark, at the head of the first screen */
+  .mark { position: absolute; top: 104px; left: 0; right: 0; text-align: center; z-index: 5;
+    font: 700 8.5px/1.9 var(--caps); letter-spacing: 4.4px; text-transform: uppercase; color: rgba(47,54,52,.68); }
+  .markrule { position: absolute; top: 128px; left: 50%; transform: translateX(-50%); z-index: 5;
+    display: flex; align-items: center; gap: 6px; }
+
+  .art { position: absolute; top: 162px; left: 0; right: 0; height: 330px; z-index: 5;
+    display: flex; align-items: center; justify-content: center; }
+  .art svg { width: 430px; height: 322px; }
+
+  .copy { position: absolute; top: 528px; left: 0; right: 0; padding: 0 34px; z-index: 5; text-align: center; }
+  .copy h1 { font: 700 42px/1.05 var(--display); letter-spacing: -1px; }
+  .copy p { font: 400 17.5px/1.45 var(--display); color: var(--inkSoft); margin-top: 16px; }
+
+  /* the page indicator, drawn as the app's own marks: a cut lozenge and two open cells */
+  .dots { position: absolute; bottom: calc(var(--safe-bottom, 34px) + 116px); left: 0; right: 0;
+    display: flex; justify-content: center; align-items: center; gap: 11px; z-index: 5; }
+  .dots .cell { width: 15px; height: 11px; }
+
+  .cta { position: absolute; left: 24px; right: 24px; bottom: calc(var(--safe-bottom, 34px) + 34px); z-index: 5;
+    background: var(--accent); color: var(--surface); border-radius: 26px; text-align: center;
+    padding: 15px 0; font: 600 17px/1 var(--body);
+    box-shadow: 0 6px 16px rgba(16,82,92,.28), 0 1px 0 rgba(255,255,255,.22) inset; }
+  .skip { position: absolute; left: 0; right: 0; bottom: calc(var(--safe-bottom, 34px) + 22px); z-index: 5;
+    text-align: center; font: 500 15px/1 var(--body); color: rgba(47,54,52,.7); }
+</style>
+</head>
+<body>
+  <div class="glow"></div><div class="tooth"></div><div class="tooth cross"></div>
+  <div class="rail top"></div><div class="rail bot"></div>
+
+  <div class="mark">Crosshatch</div>
+  <div class="markrule">
+    <svg width="22" height="2"><rect width="22" height="1.4" fill="#2F3634" opacity=".38"/></svg>
+    <svg width="15" height="10" viewBox="0 0 15 10"><path d="M.8 5 Q7.5 1 14.2 5 Q7.5 9 .8 5Z" fill="#9E4E17"/></svg>
+    <svg width="22" height="2"><rect width="22" height="1.4" fill="#2F3634" opacity=".38"/></svg>
+  </div>
+
+  <div class="art">
+    <svg viewBox="0 0 400 300">
+      <defs>
+        <linearGradient id="face" x1="0" y1="0" x2=".85" y2="1">
+          <stop offset="0" stop-color="#E4A765"/><stop offset=".46" stop-color="#CE8C48"/><stop offset="1" stop-color="#BB7733"/>
+        </linearGradient>
+        <linearGradient id="bevR" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#A05F23"/><stop offset="1" stop-color="#6A3A10"/>
+        </linearGradient>
+        <linearGradient id="bevB" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#8C5019"/><stop offset="1" stop-color="#5E300C"/>
+        </linearGradient>
+        <linearGradient id="sheen" x1=".9" y1="0" x2=".1" y2="1">
+          <stop offset="0" stop-color="#FFEECF" stop-opacity=".5"/><stop offset=".5" stop-color="#FFEECF" stop-opacity="0"/>
+        </linearGradient>
+        <pattern id="xh" width="4.4" height="4.4" patternUnits="userSpaceOnUse" patternTransform="rotate(38)">
+          <rect width="4.4" height="4.4" fill="#15191A" fill-opacity=".1"/>
+          <path d="M0 .1V4.5" stroke="#FBDCB0" stroke-width=".5" stroke-opacity=".4" transform="translate(-.7 0)"/>
+          <path d="M0 0V4.4" stroke="#15191A" stroke-width="1.15"/>
+          <path d="M0 2.2H4.4" stroke="#FBDCB0" stroke-width=".5" stroke-opacity=".38" transform="translate(0 -.7)"/>
+          <path d="M0 2.2H4.4" stroke="#15191A" stroke-width="1.15"/>
+        </pattern>
+        <filter id="drop" x="-25%" y="-25%" width="155%" height="165%">
+          <feDropShadow dx="0" dy="12" stdDeviation="13" flood-color="#15191A" flood-opacity=".32"/>
+        </filter>
+      </defs>
+      <g transform="rotate(-3.2 200 150)" filter="url(#drop)">
+        <path d="M336 66 344 74V244 L336 236Z" fill="url(#bevR)"/>
+        <path d="M64 236 72 244H344 L336 236Z" fill="url(#bevB)"/>
+        <rect x="64" y="64" width="272" height="172" rx="2" fill="url(#face)"/>
+        <rect x="64" y="64" width="272" height="172" rx="2" fill="url(#sheen)"/>
+        <rect x="64.7" y="64.7" width="270.6" height="170.6" rx="2" fill="none" stroke="#F8D4A6" stroke-width="1.4" stroke-opacity=".85"/>
+        <g stroke="#3A2007" stroke-width="1.4" stroke-opacity=".48" fill="none">
+          <path d="M79 72v13M72.5 78.5h13"/><path d="M321 72v13M314.5 78.5h13"/>
+          <path d="M79 215v13M72.5 221.5h13"/><path d="M321 215v13M314.5 221.5h13"/>
+        </g>
+        <g>
+          <rect x="118" y="90"  width="28" height="28" fill="url(#xh)"/>
+          <rect x="174" y="90"  width="28" height="28" fill="url(#xh)"/>
+          <rect x="202" y="90"  width="28" height="28" fill="url(#xh)"/>
+          <rect x="118" y="118" width="28" height="28" fill="url(#xh)"/>
+          <rect x="146" y="118" width="28" height="28" fill="url(#xh)"/>
+          <rect x="202" y="118" width="28" height="28" fill="url(#xh)"/>
+          <rect x="146" y="146" width="28" height="28" fill="url(#xh)"/>
+          <rect x="174" y="146" width="28" height="28" fill="url(#xh)"/>
+          <rect x="202" y="146" width="28" height="28" fill="url(#xh)"/>
+          <rect x="118" y="174" width="28" height="28" fill="url(#xh)"/>
+          <rect x="146" y="174" width="28" height="28" fill="url(#xh)"/>
+          <rect x="174" y="174" width="28" height="28" fill="url(#xh)"/>
+          <rect x="238" y="90"  width="28" height="28" fill="url(#xh)"/>
+          <rect x="294" y="118" width="28" height="28" fill="url(#xh)"/>
+          <rect x="266" y="174" width="28" height="28" fill="url(#xh)"/>
+        </g>
+        <g fill="none" stroke="#15191A">
+          <g stroke-opacity=".2" stroke-width=".9">
+            <path d="M146 90v112M174 90v112M202 90v112M266 90v112M294 90v112"/>
+            <path d="M118 118h204M118 146h204M118 174h204"/>
+          </g>
+          <g stroke-opacity=".58" stroke-width="2">
+            <rect x="118" y="90" width="112" height="112"/><rect x="238" y="90" width="84" height="112"/>
+          </g>
+        </g>
+        <g fill="none" stroke="#15191A" stroke-width="2" stroke-opacity=".8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M124 82h16l-2 4h-12Z"/><path d="M126.5 82v-5h11v5"/>
+          <path d="M152 82h16l-2 4h-12Z"/><path d="M160 82V75l5 7"/>
+          <path d="M180 79.5a6 3.5 0 0 1 12 0v2.5"/><path d="M178 84h16"/>
+          <path d="M206 84l8-8 8 8"/>
+          <circle cx="104" cy="104" r="6"/><path d="M104 100v4l3 1.6"/>
+          <path d="M98 138h12l-1.5 8h-9Z"/><path d="M100.5 138v-2a3.5 3.5 0 0 1 7 0v2"/>
+          <circle cx="104" cy="160" r="5.6"/><circle cx="104" cy="160" r="2"/>
+          <path d="M98 192.5 104 196l6-3.5"/><path d="M100.5 185.5 104 183.5l3.5 2"/>
+        </g>
+        <g>
+          <g transform="translate(160 104)"><path d="M-11 1.4 Q0 -5 11 1.4 Q0 7.8 -11 1.4Z" fill="#FFECCB" fill-opacity=".95"/><path d="M-11 0 Q0 -6.4 11 0 Q0 6.4 -11 0Z" fill="#190D03"/></g>
+          <g transform="translate(188 132)"><path d="M-11 1.4 Q0 -5 11 1.4 Q0 7.8 -11 1.4Z" fill="#FFECCB" fill-opacity=".95"/><path d="M-11 0 Q0 -6.4 11 0 Q0 6.4 -11 0Z" fill="#190D03"/></g>
+          <g transform="translate(216 160)"><path d="M-11 1.4 Q0 -5 11 1.4 Q0 7.8 -11 1.4Z" fill="#FFECCB" fill-opacity=".95"/><path d="M-11 0 Q0 -6.4 11 0 Q0 6.4 -11 0Z" fill="#190D03"/></g>
+          <g transform="translate(132 188)"><path d="M-11 1.4 Q0 -5 11 1.4 Q0 7.8 -11 1.4Z" fill="#FFECCB" fill-opacity=".95"/><path d="M-11 0 Q0 -6.4 11 0 Q0 6.4 -11 0Z" fill="#190D03"/></g>
+          <g transform="translate(280 104)">
+            <path d="M-12 1.6 Q0 -5.6 12 1.6 Q0 8.8 -12 1.6Z" fill="#FFF0D6"/>
+            <path d="M-12 0 Q0 -7.2 12 0 Q0 7.2 -12 0Z" fill="#190D03"/>
+            <g fill="#EFC48F">
+              <path d="M14 -6c6-3.5 13-4.5 19-2.5-6 .8-12 2.6-17 5.4Z"/>
+              <path d="M16 -14c4-2 9-2 13-1-4 .8-9 1.8-12 3.6Z" fill-opacity=".72"/>
+              <path d="M26 2c3-1.8 7-2 10-1-3 .8-6 1.8-8 2.8Z" fill-opacity=".6"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="copy">
+    <h1>A plate a day</h1>
+    <p>Copper, ruled into a grid, with a handful of clues under it. One goes on the bed every morning and it is the same plate for everyone.</p>
+  </div>
+
+  <div class="dots">
+    <svg class="cell" viewBox="0 0 15 11"><path d="M.8 5.5 Q7.5 1.2 14.2 5.5 Q7.5 9.8 .8 5.5Z" fill="#15191A"/></svg>
+    <svg class="cell" viewBox="0 0 15 11"><rect x=".7" y=".7" width="13.6" height="9.6" rx="1" fill="none" stroke="#2F3634" stroke-opacity=".42" stroke-width="1.3"/></svg>
+    <svg class="cell" viewBox="0 0 15 11"><rect x=".7" y=".7" width="13.6" height="9.6" rx="1" fill="none" stroke="#2F3634" stroke-opacity=".42" stroke-width="1.3"/></svg>
+  </div>
+
+  <div class="cta">Go on</div>
+
+  <div class="status">
+    <span>9:41</span>
+    <span class="r">
+      <svg width="17" height="11" viewBox="0 0 17 11"><g fill="#15191A"><rect y="7.5" width="3" height="3.5" rx=".7"/><rect x="4.5" y="5.5" width="3" height="5.5" rx=".7"/><rect x="9" y="3" width="3" height="8" rx=".7"/><rect x="13.5" width="3" height="11" rx=".7"/></g></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 9.6 5.2 6.7a4 4 0 0 1 5.6 0Z" fill="#15191A"/><path d="M2.8 4.3a7.4 7.4 0 0 1 10.4 0" stroke="#15191A" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M.6 1.6a10.6 10.6 0 0 1 14.8 0" stroke="#15191A" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg width="25" height="11" viewBox="0 0 25 11"><rect x=".5" y=".5" width="20" height="10" rx="2.8" fill="none" stroke="#15191A" opacity=".45"/><rect x="2" y="2" width="15" height="7" rx="1.6" fill="#15191A"/><path d="M22.2 3.6v3.8a2.2 2.2 0 0 0 0-3.8Z" fill="#15191A" opacity=".45"/></svg>
+    </span>
+  </div>
+</body>
+</html>

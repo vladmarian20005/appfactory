@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Crosshatch · the pull</title>
+<style>
+  :root {
+    --canvas:  #96A199; --surface: #F3EDDC; --ink: #15191A; --inkSoft: #2F3634;
+    --accent:  #10525C; --highlight:#9E4E17; --success: #286554; --miss: #6E6455;
+    --prussian:#1D4468; --sanguine:#8E3A33; --bistre: #6E5416; --payne: #3B454C;
+    --caps: ui-monospace, "SF Mono", Menlo, monospace;
+    --display: ui-serif, "New York", Georgia, serif;
+    --body: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { width: 440px; height: 956px; overflow: hidden; }
+  body { background: var(--canvas); font-family: var(--body); color: var(--ink); position: relative; }
+
+  /* the shop dims 12 % for the pull */
+  .glow { position: absolute; inset: 0;
+    background: radial-gradient(circle 620px at 78% 5%, #B4BEB3 0%, rgba(180,190,179,0) 70%); }
+  .tooth { position: absolute; inset: 0;
+    background: repeating-linear-gradient(62deg, rgba(21,25,26,.034) 0 1px, transparent 1px 3.5px); }
+  .tooth.cross { background: repeating-linear-gradient(-62deg, rgba(21,25,26,.034) 0 1px, transparent 1px 3.5px);
+    -webkit-mask-image: radial-gradient(ellipse 430px 470px at 2% 98%, #000 0%, transparent 76%); }
+  .dim { position: absolute; inset: 0; background: rgba(12,16,15,.12); }
+
+  .status { position: absolute; top: 0; left: 0; right: 0; height: var(--safe-top, 62px);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 30px 11px; font: 600 16px/1 var(--body); z-index: 40; }
+  .status .r { display: flex; gap: 6px; align-items: center; }
+
+  .rail { position: absolute; left: 0; right: 0; height: 2px; background: rgba(21,25,26,.14); z-index: 2; }
+  .rail::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: rgba(158,78,23,.24); }
+  .rail.top { top: 76px; } .rail.top::after { bottom: -1px; }
+  .rail.bot { bottom: 60px; } .rail.bot::after { top: -1px; }
+
+  /* the ghost numeral counting up, behind everything */
+  .ghost { position: absolute; left: 0; right: 0; top: 104px; text-align: center; z-index: 3;
+    font: 700 122px/1 var(--display); color: rgba(158,78,23,.17); letter-spacing: -5px; }
+  .ghostcap { position: absolute; left: 0; right: 0; top: 90px; text-align: center; z-index: 3;
+    font: 700 8px/1.8 var(--caps); letter-spacing: 3px; text-transform: uppercase; color: rgba(158,78,23,.42); }
+
+  /* the plate on the bed, inked and wiped, with the paper peeling off it */
+  .stage { position: absolute; left: 0; right: 0; top: 182px; height: 380px; z-index: 5; }
+  .plate { position: absolute; left: 62px; top: 10px; width: 340px; height: 372px; border-radius: 3px;
+    background:
+      radial-gradient(ellipse 280px 160px at 84% 2%, rgba(255,235,203,.26), rgba(255,235,203,0) 58%),
+      repeating-linear-gradient(72deg, rgba(255,255,255,.05) 0 1px, rgba(0,0,0,.03) 1px 2.6px),
+      linear-gradient(150deg, #E0A05E 0%, #CE8C48 46%, #BE7A36 100%);
+    border-bottom: 3.5px solid #7A4415; border-right: 3.5px solid #7A4415;
+    border-top: 1.2px solid #F4C68F; border-left: 1.2px solid #EDB878;
+    box-shadow: 0 12px 24px rgba(21,25,26,.34); overflow: hidden; }
+  .plate .wiped { position: absolute; left: 0; top: 0; width: 340px; height: 372px; opacity: .62; }
+
+  /* the print, peeling back off the plate's left edge */
+  .print { position: absolute; left: 24px; top: 0; width: 300px; height: 330px;
+    background: linear-gradient(103deg, #FCF8EC 0%, #F3EDDC 30%, #EDE5CE 100%);
+    border-radius: 2px; transform: rotate(-1.8deg); z-index: 6;
+    box-shadow: -18px 14px 32px rgba(21,25,26,.36), 0 1px 0 rgba(255,255,255,.75) inset;
+    padding: 15px 16px 0; }
+  /* the curl where the sheet lifts off the copper */
+  .curl { position: absolute; left: 14px; top: -4px; width: 22px; height: 338px; z-index: 7;
+    background: linear-gradient(96deg, #E4D9BE 0%, #FEFAF0 40%, #F6F0E0 74%, rgba(21,25,26,.18) 100%);
+    transform: rotate(-1.8deg); border-radius: 11px 2px 2px 11px;
+    box-shadow: -7px 5px 14px rgba(21,25,26,.3); }
+
+  .plateMark { font: 700 7px/1.9 var(--caps); letter-spacing: 2px; text-transform: uppercase;
+    color: rgba(47,54,52,.66); text-align: center; }
+  .printTitle { font: 600 16px/1.15 var(--display); text-align: center; margin: 2px 0 8px; }
+  .rows { display: grid; }
+  .row { display: flex; align-items: center; padding: 6px 2px;
+    border-top: .5px solid rgba(21,25,26,.13); }
+  .row .who { flex: 0 0 62px; font: 600 12.5px/1.2 var(--display); }
+  .row .hr { flex: 1; height: 3px; margin: 0 3px;
+    background-image: radial-gradient(circle, rgba(21,25,26,.28) 40%, transparent 42%);
+    background-size: 5px 3px; }
+  .printFoot { margin-top: 9px; padding-top: 7px; border-top: .5px solid rgba(21,25,26,.22);
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font: 700 7px/1.8 var(--caps); letter-spacing: 1.3px; text-transform: uppercase; color: #9E4E17;
+    white-space: nowrap; }
+
+  .headline { position: absolute; left: 0; right: 0; top: 566px; text-align: center; z-index: 8;
+    font: 700 31px/1.06 var(--display); color: #9E4E17; letter-spacing: -.7px; padding: 0 20px; }
+  .praise { position: absolute; left: 0; right: 0; top: 646px; text-align: center; z-index: 8;
+    font: 400 16px/1.32 var(--display); color: var(--inkSoft); padding: 0 32px; }
+
+  /* the margin card */
+  .card { position: absolute; left: 18px; right: 18px; top: 706px; z-index: 8;
+    background: var(--surface); border-radius: 3px; padding: 15px 17px 16px;
+    box-shadow: 0 10px 26px rgba(21,25,26,.2), 0 1px 0 rgba(255,255,255,.6) inset; }
+  .card .k { font: 700 7.5px/1.9 var(--caps); letter-spacing: 1.7px; text-transform: uppercase; color: rgba(47,54,52,.62); }
+  .card .s { font: 400 15.5px/1.4 var(--display); margin-top: 3px; }
+  .card .strip { display: flex; gap: 3px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+  .card .actions { display: flex; gap: 10px; margin-top: 15px; }
+  .btn { flex: 1; text-align: center; border-radius: 22px; padding: 12px 0;
+    font: 600 15.5px/1 var(--body); }
+  .btn.p { background: var(--accent); color: var(--surface); }
+  .btn.s { background: rgba(21,25,26,.07); color: var(--accent); }
+
+  /* filings and paper dust */
+  .dust { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
+</style>
+</head>
+<body>
+  <div class="glow"></div><div class="tooth"></div><div class="tooth cross"></div><div class="dim"></div>
+
+  <svg width="0" height="0" style="position:absolute"><defs>
+    <symbol id="m-coat" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5 12 7.5 15 4.5l4.5 2.5-1.5 5-2-.8V20H8v-8.8l-2 .8-1.5-5Z"/></g></symbol>
+    <symbol id="m-hat" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14V8a5 5 0 0 1 10 0v6"/><path d="M3 14.8h18"/></g></symbol>
+    <symbol id="m-pipe" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5h8v3a4 4 0 0 0 8 0V5"/></g></symbol>
+    <symbol id="m-boot" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 4v9L5 15.6V19h14v-2.6l-5.5-2V4Z"/></g></symbol>
+    <symbol id="m-ferry" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 15h19l-2.5 5H5Z"/><path d="M6 15V9.5h12V15"/><path d="M12 9.5V4.5"/></g></symbol>
+    <symbol id="m-packet" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16h18l-2 4.5H5Z"/><path d="M12 15.5V3.5l6.5 8H12"/></g></symbol>
+    <symbol id="m-lugger" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5h18l-2 4H5Z"/><path d="M12 16V3.5"/><path d="M12 5.5 5.5 16H12"/><path d="M12 8.5l6 7.5h-6"/></g></symbol>
+    <symbol id="m-skiff" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13.5 12 19.5l10-6"/><path d="M6 9 12 5.5 18 9"/></g></symbol>
+    <symbol id="m-salt" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5h12l-1.5 10h-9Z"/><path d="M8.5 9.5V7a3.5 3.5 0 0 1 7 0v2.5"/></g></symbol>
+    <symbol id="m-rope" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="6"/><circle cx="12" cy="13.5" r="2.2"/><path d="M12 7.5V3.5"/></g></symbol>
+    <symbol id="m-lamp" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 10h9l1.5 8.5H6Z"/><path d="M9.5 10 12 4l2.5 6"/></g></symbol>
+    <symbol id="m-apple" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.5c-4.5-2.5-7.5 1-6.5 6s4.5 6.5 6.5 4.5c2 2 5.5-.5 6.5-4.5s-2-8.5-6.5-6Z"/><path d="M12 8.5V4"/></g></symbol>
+    <symbol id="m-four" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5V12l4 2.5"/></g></symbol>
+    <symbol id="m-five" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5V12l4.8-1.8"/></g></symbol>
+    <symbol id="m-six" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5V17.5"/></g></symbol>
+    <symbol id="m-seven" viewBox="0 0 24 24"><g fill="none" stroke="#15191A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5V12l-4.6 3"/></g></symbol>
+  </defs></svg>
+
+  <div class="rail top"></div><div class="rail bot"></div>
+
+  <div class="ghostcap">Points cut</div>
+  <div class="ghost">24</div>
+
+  <div class="stage">
+    <!-- the plate, inked and wiped: the cuts hold the ink, the surface is clean -->
+    <div class="plate">
+      <canvas class="wiped" id="wiped" width="680" height="744"></canvas>
+      <!-- the four settled pairings, stamped into the plate's blank corner as each closed -->
+      <div id="figs" style="position:absolute; left:266px; top:150px; opacity:.72"></div>
+    </div>
+    <svg class="dust" id="dust"></svg>
+    <!-- the print, peeling back off it -->
+    <div class="print">
+      <div class="plateMark">Crosshatch &nbsp;·&nbsp; Plate 214 &nbsp;·&nbsp; 17 September</div>
+      <div class="printTitle">The Six O'Clock Ferry</div>
+      <div class="rows" id="rows"></div>
+      <div class="printFoot">
+        <svg width="12" height="8" viewBox="0 0 13 9"><path d="M.8 4.5 Q6.5 1 12.2 4.5 Q6.5 8 .8 4.5Z" fill="#9E4E17"/></svg>
+        Twenty-four points · line of fourteen
+        <svg width="12" height="8" viewBox="0 0 13 9"><path d="M.8 4.5 Q6.5 1 12.2 4.5 Q6.5 8 .8 4.5Z" fill="#9E4E17"/></svg>
+      </div>
+    </div>
+    <div class="curl"></div>
+  </div>
+
+  <div class="headline">NOT A SCAR, AND YOUR<br>LONGEST LINE</div>
+  <div class="praise">“Clean off the plate. Nothing on it you could not give a reason for.”</div>
+
+  <div class="card">
+    <div class="k">The margin</div>
+    <div class="s">Pulled clean — twenty-four points, longest line fourteen. Nine on the line. The aquatint box comes down at thirty.</div>
+    <div class="strip" id="strip"></div>
+    <div class="actions">
+      <div class="btn s">Send the margin</div>
+      <div class="btn p">Rule the next plate</div>
+    </div>
+  </div>
+
+  <div class="status">
+    <span>9:41</span>
+    <span class="r">
+      <svg width="17" height="11" viewBox="0 0 17 11"><g fill="#15191A"><rect y="7.5" width="3" height="3.5" rx=".7"/><rect x="4.5" y="5.5" width="3" height="5.5" rx=".7"/><rect x="9" y="3" width="3" height="8" rx=".7"/><rect x="13.5" width="3" height="11" rx=".7"/></g></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 9.6 5.2 6.7a4 4 0 0 1 5.6 0Z" fill="#15191A"/><path d="M2.8 4.3a7.4 7.4 0 0 1 10.4 0" stroke="#15191A" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M.6 1.6a10.6 10.6 0 0 1 14.8 0" stroke="#15191A" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg width="25" height="11" viewBox="0 0 25 11"><rect x=".5" y=".5" width="20" height="10" rx="2.8" fill="none" stroke="#15191A" opacity=".45"/><rect x="2" y="2" width="15" height="7" rx="1.6" fill="#15191A"/><path d="M22.2 3.6v3.8a2.2 2.2 0 0 0 0-3.8Z" fill="#15191A" opacity=".45"/></svg>
+    </span>
+  </div>
+
+<script>
+// The print: the answer, engraved — four hands, each with their craft, cargo and hour.
+const solved = [
+  ['Amos',  'm-lugger', 'm-rope',  'm-five'],
+  ['Brice', 'm-skiff',  'm-salt',  'm-four'],
+  ['Dyer',  'm-ferry',  'm-lamp',  'm-six'],
+  ['Field', 'm-packet', 'm-apple', 'm-seven'],
+];
+document.getElementById('figs').innerHTML = solved.map(r =>
+  '<div style="display:flex; gap:1px; margin-bottom:11px">' +
+  '<svg width="27" height="27" viewBox="0 0 24 24"><use href="#' + r[1] + '"/></svg>' +
+  '<svg width="27" height="27" viewBox="0 0 24 24"><use href="#' + r[2] + '"/></svg></div>').join('');
+
+document.getElementById('rows').innerHTML = solved.map(r =>
+  '<div class="row"><span class="who">' + r[0] + '</span>' +
+  r.slice(1).map(m => '<svg width="32" height="32" viewBox="0 0 24 24"><use href="#' + m + '"/></svg>').join('<span class="hr"></span>') +
+  '</div>').join('');
+
+// The proof strip on the margin card: one mark per point, in the order they were cut.
+// A lozenge is a forced cut; a hairline is a slip. This plate has no hairlines.
+document.getElementById('strip').innerHTML =
+  Array.from({ length: 24 }, (_, i) =>
+    '<svg width="11" height="8" viewBox="0 0 13 9" style="margin-right:' + ((i + 1) % 6 === 0 ? 6 : 0) + 'px">' +
+    '<path d="M.8 4.5 Q6.5 1 12.2 4.5 Q6.5 8 .8 4.5Z" fill="#15191A" opacity=".82"/></svg>').join('') +
+  '<div style="flex-basis:100%;font:700 7.5px/2.4 var(--caps);letter-spacing:1.7px;text-transform:uppercase;color:#9E4E17">' +
+  'Twenty-four forced · not one guess</div>';
+
+// The wiped plate: every cut still holds its ink, the copper surface is clean.
+(function () {
+  const c = document.getElementById('wiped').getContext('2d');
+  c.scale(2, 2);
+  const CELL = 21, GAP = 6, HEAD = 23, N = 4, step = N * CELL + GAP, OX = 12, OY = 14;
+  const live = [[1,1,1],[1,1,0],[1,0,0]];
+  // in a finished plate every row and column of every block has exactly one point
+  const sol = [[1,2,0,3],[3,0,2,1],[2,3,1,0]];
+  c.strokeStyle = 'rgba(21,25,26,.34)'; c.lineWidth = 1;
+  for (let rb = 0; rb < 3; rb++) for (let cb = 0; cb < 3; cb++) {
+    if (!live[rb][cb]) continue;
+    const bx = OX + HEAD + GAP + cb * step, by = OY + HEAD + GAP + rb * step;
+    c.strokeStyle = 'rgba(21,25,26,.6)'; c.lineWidth = 1.4;
+    c.strokeRect(bx, by, N * CELL, N * CELL);
+    for (let r = 0; r < N; r++) for (let col = 0; col < N; col++) {
+      const x = bx + col * CELL, y = by + r * CELL;
+      c.strokeStyle = 'rgba(21,25,26,.2)'; c.lineWidth = .5;
+      c.strokeRect(x, y, CELL, CELL);
+      const isPoint = sol[(rb + cb) % 3][r] === col;
+      if (isPoint) {
+        c.beginPath();
+        c.moveTo(x + 2, y + CELL / 2);
+        c.quadraticCurveTo(x + CELL / 2, y + CELL / 2 - 5, x + CELL - 2, y + CELL / 2);
+        c.quadraticCurveTo(x + CELL / 2, y + CELL / 2 + 5, x + 2, y + CELL / 2);
+        c.fillStyle = '#120902'; c.fill();
+      } else {
+        c.save(); c.beginPath(); c.rect(x, y, CELL, CELL); c.clip();
+        c.fillStyle = 'rgba(21,25,26,.10)'; c.fillRect(x, y, CELL, CELL);
+        c.strokeStyle = 'rgba(21,25,26,.85)'; c.lineWidth = 1.25;
+        for (let k = -6; k < 8; k++) {
+          c.beginPath(); c.moveTo(x - 8, y + k * 4.4 + 9);      c.lineTo(x + 30, y + k * 4.4 - 29); c.stroke();
+          c.beginPath(); c.moveTo(x - 8, y + k * 4.4 - 6);      c.lineTo(x + 30, y + k * 4.4 + 32); c.stroke();
+        }
+        c.restore();
+      }
+    }
+  }
+})();
+
+// Filings and paper dust, frozen at the peak of the burst.
+(function () {
+  const svg = document.getElementById('dust');
+  const cols = ['#FBDCB0', '#C98C4E', '#15191A', '#F3EDDC', '#9E4E17'];
+  let s = 7, r = () => (s = (s * 1103515245 + 12345) % 2147483648) / 2147483648;
+  let out = '';
+  for (let i = 0; i < 64; i++) {
+    const a = r() * Math.PI * 2, d = 120 + r() * 240;
+    const x = 210 + Math.cos(a) * d * 1.1, y = 172 + Math.sin(a) * d * .8 + d * .3;
+    const w = 3.4 + r() * 9, h = 1.6 + r() * 3, rot = r() * 180;
+    out += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w.toFixed(1) +
+           '" height="' + h.toFixed(1) + '" rx=".6" fill="' + cols[i % 5] +
+           '" opacity="' + (.45 + r() * .5).toFixed(2) + '" transform="rotate(' + rot.toFixed(0) +
+           ' ' + x.toFixed(1) + ' ' + y.toFixed(1) + ')"/>';
+  }
+  svg.innerHTML = out;
+})();
+</script>
+</body>
+</html>
