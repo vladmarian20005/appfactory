@@ -1,0 +1,10 @@
+{
+  "_comment": "Read by tools/asc/release.mjs in app-release. Category ids are App Store Connect's. Every age rating question not listed under ageRating is answered 'none'. Crosshatch draws its own art, generates its own plates and shows nobody else's content.",
+  "primaryCategory": "GAMES",
+  "primarySubcategoryOne": "GAMES_PUZZLE",
+  "primarySubcategoryTwo": "GAMES_BOARD",
+  "secondaryCategory": "GAMES",
+  "contentRights": "DOES_NOT_USE_THIRD_PARTY_CONTENT",
+  "ageRating": {},
+  "price": "0"
+}

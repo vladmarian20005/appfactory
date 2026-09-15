@@ -1,0 +1,33 @@
+An engraver's bench, and one plate a day.
+
+Copper, ruled into a grid, with a handful of clues under it. Two strokes across a pairing rule it out. One deep point fixes it — and the plate does the rest of the crossing out itself, so bookkeeping is never the puzzle. When the last point is cut, the plate is inked, wiped and pulled through the press as a print, and the print goes up on the line to dry.
+
+EVERY PLATE IS PROVED BEFORE IT IS SERVED
+
+Nothing here is dealt from a deck and nothing is tuned against you. Each plate is generated, then solved by a constraint solver, then pruned clue by clue while the answer stays the only one it can be. If it cannot be proved solvable by reasoning alone, it is discarded and you never see it. The loupe proves it too: ask, and it names the clue that forces the next mark and what it forces.
+
+THE ONLY THING YOU CAN GET WRONG
+
+In a puzzle of pure deduction the one mistake available is marking something the clues have not forced yet — and the plate knows. A forced cut takes cleanly and adds to your line. A guess, even a right one, skids: it leaves a hairline scar in the margin, and the scar prints. It costs that plate's clean sheet and nothing else. Never a life, never a hint you have run out of, never the day, never a plate already pulled.
+
+A RUN THAT KEEPS CLIMBING
+
+The plates grow with you: three categories and four to a side at the start, five categories and six a side later, and seven kinds of clue that open one at a time — direct, negative, either/or, before-and-after, arithmetic, adjacency, exclusive-or. Past a hundred and fifty plates some clues arrive scratched out, and bite open only when the plate has no forced move without them, so you start on partial information. What the generator builds next is chosen from the kinds you have been missing.
+
+TODAY'S PLATE IS THE SAME PLATE FOR EVERYONE
+
+Seeded from the date, running a published week from Monday's easy plate to Sunday's hard one. Free forever, at any point in your run.
+
+WHAT YOU EARN BY PLAYING
+
+The drying line, the pencil for titling a print's margin, the burnisher for taking one scar off a pull, the aquatint box, coloured stock so a year of prints reads as a calendar, and a bound book for them. They arrive for cutting well, not for paying.
+
+NO ADS. NO TIMER. NO SCORE.
+
+There is no advertising in this app, no video to watch for a hint, no currency, no energy meter and nothing that expires. A day you miss is a bare square on the day-book page, which is the truth and not an accusation. Everything you have cut stays on your phone: Crosshatch makes no network connection of any kind, has no account, and collects nothing.
+
+FREE, AND WHAT THE UNLOCK ADDS
+
+Free forever: a proved plate every day, the first forty plates of the run, the loupe, undo, restart, the day-book, the drying line and the share card. One payment unlocks the rest of the generated run, muted ink for a quieter plate, and control of the crossing-out assist. No subscription.
+
+For anyone who likes the "who owns the zebra" kind of puzzle and wants to be right on purpose — with a reason for every mark on the plate.

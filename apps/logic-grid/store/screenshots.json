@@ -1,0 +1,44 @@
+{
+  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/logic-grid/store/screenshots.json apps/logic-grid/store/screenshots/en-US. Raw captures come from app-verify (apps/logic-grid/qa) and are copied into store/raw. Ordered by beauty, not by tab order — but the line comes second rather than last, per the spec's 4.3 note that the listing must not open on a bare grid. The background is the zinc slab going to copper; the font is the app's own New York.",
+  "background": "linear-gradient(168deg,#1A2220 0%,#5E6A62 44%,#B98046 100%)",
+  "textColor": "#F3EDDC",
+  "accent": "#F0A257",
+  "font": "serif",
+  "shots": [
+    {
+      "src": "raw/02-win.png",
+      "title": "Finish it and the press prints it",
+      "subtitle": "Inked, wiped, pulled — and it goes up to dry."
+    },
+    {
+      "src": "raw/01-line.png",
+      "title": "Every plate you have pulled",
+      "subtitle": "A month of the day-book reads as a page."
+    },
+    {
+      "src": "raw/03-bed.png",
+      "title": "Cut what the clues force",
+      "subtitle": "Two strokes rule a pairing out. One point fixes it."
+    },
+    {
+      "src": "raw/04-first.png",
+      "title": "One proved plate a day, free",
+      "subtitle": "Seeded from the date: the same plate for everyone."
+    },
+    {
+      "src": "raw/05-run.png",
+      "title": "No ads. No timer. No score.",
+      "subtitle": "Nothing expires and nothing runs out."
+    },
+    {
+      "src": "raw/06-paywall.png",
+      "title": "One payment, the whole run",
+      "subtitle": "Forty plates free first. No subscription."
+    },
+    {
+      "src": "raw/07-shop.png",
+      "title": "It all stays on your phone",
+      "subtitle": "No account, and no network connection at all."
+    }
+  ]
+}

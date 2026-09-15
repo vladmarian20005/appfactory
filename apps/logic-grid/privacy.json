@@ -1,0 +1,51 @@
+{
+  "_comment": "The single source of truth for what this app does with data. Three things are generated from it and must never drift apart: ios/App/PrivacyInfo.xcprivacy, store/app_privacy_details.json, and the published privacy policy page. Change this file, re-run the generators, do not hand-edit the outputs.",
+
+  "appName": "Crosshatch",
+  "company": "Starhive Concept Srl",
+  "companyURL": "https://starhiveconcept.com/",
+  "effectiveDate": "2026-09-15",
+  "supportEmail": "support@starhiveconcept.com",
+  "pageSlug": "logic-grid-privacy-policy-terms",
+
+  "collects": [],
+
+  "storesOnDevice": [
+    "The plate on the bed: its clues, its answer and every mark you have made on it, saved after each one so a crash never costs a plate.",
+    "Every print you have pulled: the date, the plate's number and subject, the points cut, your longest line and how many scars were in the margin.",
+    "How you are getting on with each kind of clue, which is what the next plate is built from, and which subjects the shop has set lately.",
+    "A few settings: whether you have been through onboarding, whether sounds are on, muted ink, and whether the plate crosses out for you."
+  ],
+
+  "network": [],
+
+  "requiredReasonAPIs": [
+    {
+      "category": "NSPrivacyAccessedAPICategoryUserDefaults",
+      "reason": "CA92.1",
+      "why": "@AppStorage and UserDefaults, used only for this app's own settings and its record of your plates."
+    }
+  ],
+
+  "purchases": {
+    "type": "one-time",
+    "name": "Crosshatch Unlock",
+    "products": ["Crosshatch Unlock"],
+    "trial": null,
+    "processor": "Apple",
+    "freeTier": "One proved plate every day, forever, and the first forty of the run — with the loupe, undo, restart, the streak, the day-book and the share card. The unlock adds the rest of the generated run, muted ink and the crossing-out assist."
+  },
+
+  "notifications": {
+    "used": false,
+    "why": "Crosshatch sends no notifications. A plate that waits is not an emergency, and a notification that guilts somebody about a puzzle is the opposite of what this app is for."
+  },
+
+  "ads": false,
+  "analytics": false,
+  "tracking": false,
+  "account": false,
+  "childDirected": false,
+
+  "attribution": "Crosshatch makes no network connection of any kind. Every plate is generated and proved on your phone, there is no server to talk to, no account to make, and nothing to sync."
+}
