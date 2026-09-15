@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Crosshatch</title>
+  <defs>
+    <linearGradient id="zinc" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9AA49B"/><stop offset="1" stop-color="#5D6A63"/>
+    </linearGradient>
+    <linearGradient id="face" x1=".12" y1="-.06" x2=".88" y2="1">
+      <stop offset="0" stop-color="#F4B87E"/>
+      <stop offset=".3" stop-color="#E0A05E"/>
+      <stop offset=".68" stop-color="#C1802F"/>
+      <stop offset="1" stop-color="#8E4E18"/>
+    </linearGradient>
+    <linearGradient id="bevel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8E4E18"/><stop offset="1" stop-color="#4A2308"/>
+    </linearGradient>
+    <linearGradient id="bevelR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#A45E22"/><stop offset="1" stop-color="#5A2A0D"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1=".88" y1="-.1" x2=".28" y2=".82">
+      <stop offset="0" stop-color="#FFF5E2" stop-opacity=".58"/>
+      <stop offset=".4" stop-color="#FFF5E2" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="loz" x1=".14" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#40250A"/><stop offset=".42" stop-color="#0F0702"/><stop offset="1" stop-color="#2A1607"/>
+    </linearGradient>
+
+    <!-- Two passes of parallel troughs crossing at 32°, not at a right angle. That shallow
+         crossing is what makes crosshatch read as tone; cross it square and it reads as a
+         window screen, which is what the first two drafts of this icon did. -->
+    <pattern id="passA" width="60" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(40)">
+      <path d="M-4 9.4H64" stroke="#FFE7BE" stroke-width="2.8" stroke-opacity=".5"/>
+      <path d="M-4 15H64" stroke="#160B02" stroke-width="9"/>
+    </pattern>
+    <pattern id="passB" width="76" height="38" patternUnits="userSpaceOnUse" patternTransform="rotate(72)">
+      <path d="M-4 13.4H80" stroke="#FFE7BE" stroke-width="2.4" stroke-opacity=".34"/>
+      <path d="M-4 19H80" stroke="#160B02" stroke-width="7"/>
+    </pattern>
+
+    <!-- shading laid in from the lower right, stopping on a clean edge the way a burin stops -->
+    <linearGradient id="shadeA" x1=".28" y1=".18" x2=".76" y2=".76">
+      <stop offset=".24" stop-color="#000" stop-opacity="0"/>
+      <stop offset=".29" stop-color="#fff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="shadeB" x1=".38" y1=".3" x2=".86" y2=".88">
+      <stop offset=".3" stop-color="#000" stop-opacity="0"/>
+      <stop offset=".36" stop-color="#fff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="1"/>
+    </linearGradient>
+    <mask id="wedgeA"><rect x="-90" y="-90" width="1204" height="1204" fill="url(#shadeA)"/></mask>
+    <mask id="wedgeB"><rect x="-90" y="-90" width="1204" height="1204" fill="url(#shadeB)"/></mask>
+  </defs>
+
+  <!-- the zinc slab, in the slivers the plate's rotation leaves bare -->
+  <rect width="1024" height="1024" fill="url(#zinc)"/>
+
+  <g transform="rotate(-4 512 512)">
+    <!-- the bevel filed on the bottom and the right: it is a piece of metal, not a page -->
+    <path d="M1000 -46 1064 18V1064 L1000 1000Z" fill="url(#bevelR)"/>
+    <path d="M-40 1000 24 1064H1064 L1000 1000Z" fill="url(#bevel)"/>
+
+    <rect x="-40" y="-46" width="1040" height="1046" fill="url(#face)"/>
+    <rect x="-40" y="-46" width="1040" height="1046" fill="url(#sheen)"/>
+
+    <!-- the first pass runs further up the plate than the second, so the tone has two steps:
+         hatched at the edge, crosshatched and darker in the corner -->
+    <g mask="url(#wedgeA)"><rect x="-40" y="-46" width="1040" height="1046" fill="url(#passA)"/></g>
+    <g mask="url(#wedgeB)"><rect x="-40" y="-46" width="1040" height="1046" fill="url(#passB)"/></g>
+
+    <!-- one point cut alone in clean copper: the deepest, most deliberate mark on the plate -->
+    <g transform="translate(352 386) rotate(-7) scale(1.14)">
+      <path d="M-182 0 Q-92 -48 0 -54 Q92 -48 182 0 Q92 48 0 54 Q-92 48 -182 0Z"
+            fill="#FFF5E2" transform="translate(-11 -15)"/>
+      <path d="M-182 0 Q-92 -48 0 -54 Q92 -48 182 0 Q92 48 0 54 Q-92 48 -182 0Z" fill="url(#loz)"/>
+      <path d="M-142 -4 Q-72 -42 0 -46 Q72 -42 142 -4" fill="none" stroke="#A66530" stroke-width="7" stroke-opacity=".45"/>
+    </g>
+
+    <!-- the curl of swarf the burin threw off it -->
+    <g fill="#FBE0B4">
+      <path d="M556 254c52-34 114-42 166-22-52 6-104 22-148 48Z"/>
+      <path d="M592 180c36-20 80-22 114-11-36 7-75 16-100 30Z" fill-opacity=".85"/>
+      <path d="M650 310c26-16 58-18 80-9-26 7-50 14-66 23Z" fill-opacity=".66"/>
+    </g>
+
+    <!-- the plate's registration mark, punched in the clear corner -->
+    <g stroke="#3A2007" stroke-opacity=".3" fill="none">
+      <path d="M126 104v80M88 144h80" stroke-width="10"/>
+      <circle cx="128" cy="144" r="23" stroke-width="7"/>
+    </g>
+  </g>
+</svg>

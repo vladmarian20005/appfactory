@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="face" x1=".1" y1="0" x2=".9" y2="1">
+      <stop offset="0" stop-color="#E4A765"/><stop offset=".5" stop-color="#CE8C48"/><stop offset="1" stop-color="#BB7733"/>
+    </linearGradient>
+    <linearGradient id="bevB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8C5019"/><stop offset="1" stop-color="#5E300C"/>
+    </linearGradient>
+    <linearGradient id="bevR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#A05F23"/><stop offset="1" stop-color="#6A3A10"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1=".9" y1="0" x2=".2" y2=".9">
+      <stop offset="0" stop-color="#FFEECF" stop-opacity=".45"/><stop offset=".5" stop-color="#FFEECF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2=".3" y2="1">
+      <stop offset="0" stop-color="#6E4522"/><stop offset=".45" stop-color="#4B2C13"/><stop offset="1" stop-color="#301A09"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2=".2" y2="1">
+      <stop offset="0" stop-color="#E7E3DA"/><stop offset=".35" stop-color="#A9A79F"/>
+      <stop offset=".62" stop-color="#6E6E69"/><stop offset="1" stop-color="#3B3B38"/>
+    </linearGradient>
+    <linearGradient id="ferrule" x1="0" y1="0" x2=".2" y2="1">
+      <stop offset="0" stop-color="#E9C48A"/><stop offset=".5" stop-color="#A97434"/><stop offset="1" stop-color="#6A4415"/>
+    </linearGradient>
+    <pattern id="passA" width="40" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(40)">
+      <path d="M-2 6.3H44" stroke="#FBDCB0" stroke-width="1.5" stroke-opacity=".45"/>
+      <path d="M-2 10H44" stroke="#15191A" stroke-width="5"/>
+    </pattern>
+    <pattern id="passB" width="50" height="25" patternUnits="userSpaceOnUse" patternTransform="rotate(72)">
+      <path d="M-2 8.4H54" stroke="#FBDCB0" stroke-width="1.3" stroke-opacity=".34"/>
+      <path d="M-2 12.5H54" stroke="#15191A" stroke-width="4.4"/>
+    </pattern>
+    <linearGradient id="shA" x1=".18" y1=".1" x2=".72" y2=".84">
+      <stop offset=".18" stop-color="#000" stop-opacity="0"/><stop offset=".26" stop-color="#fff"/><stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <linearGradient id="shB" x1=".3" y1=".22" x2=".82" y2=".9">
+      <stop offset=".3" stop-color="#000" stop-opacity="0"/><stop offset=".38" stop-color="#fff"/><stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <clipPath id="plateClip"><rect x="34" y="52" width="292" height="182" rx="2"/></clipPath>
+    <mask id="mA"><rect x="34" y="52" width="292" height="182" fill="url(#shA)"/></mask>
+    <mask id="mB"><rect x="34" y="52" width="292" height="182" fill="url(#shB)"/></mask>
+    <filter id="drop" x="-20%" y="-20%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="11" flood-color="#15191A" flood-opacity=".3"/>
+    </filter>
+    <filter id="toolDrop" x="-30%" y="-40%" width="170%" height="200%">
+      <feDropShadow dx="-4" dy="11" stdDeviation="7" flood-color="#15191A" flood-opacity=".42"/>
+    </filter>
+  </defs>
+
+  <!-- the plate, part cut -->
+  <g filter="url(#drop)">
+    <path d="M326 52 334 60V242 L326 234Z" fill="url(#bevR)"/>
+    <path d="M34 234 42 242H334 L326 234Z" fill="url(#bevB)"/>
+    <rect x="34" y="52" width="292" height="182" rx="2" fill="url(#face)"/>
+    <g clip-path="url(#plateClip)">
+      <g mask="url(#mA)"><rect x="34" y="52" width="292" height="182" fill="url(#passA)"/></g>
+      <g mask="url(#mB)"><rect x="34" y="52" width="292" height="182" fill="url(#passB)"/></g>
+    </g>
+    <rect x="34" y="52" width="292" height="182" rx="2" fill="url(#sheen)"/>
+    <rect x="34.7" y="52.7" width="290.6" height="180.6" rx="2" fill="none" stroke="#F8D4A6" stroke-width="1.4" stroke-opacity=".8"/>
+    <g stroke="#3A2007" stroke-width="1.3" stroke-opacity=".45" fill="none">
+      <path d="M50 60v12M44 66h12"/><path d="M310 60v12M304 66h12"/>
+      <path d="M50 214v12M44 220h12"/><path d="M310 214v12M304 220h12"/>
+    </g>
+    <!-- one point already cut -->
+    <g transform="translate(112 98)">
+      <path d="M-25 3 Q0 -12 25 3 Q0 18 -25 3Z" fill="#FFECCB"/>
+      <path d="M-25 0 Q0 -15 25 0 Q0 15 -25 0Z" fill="#190D03"/>
+    </g>
+  </g>
+
+  <!-- the burin: mushroom handle, lozenge-section shaft, the point resting on the copper -->
+  <g filter="url(#toolDrop)" transform="rotate(-27 250 150)">
+    <!-- the shaft -->
+    <path d="M150 146 316 138 316 152 150 158Z" fill="url(#steel)"/>
+    <path d="M150 146 316 138 316 143.5 150 150.5Z" fill="#F2EFE8" fill-opacity=".55"/>
+    <!-- the cutting point, a lozenge in section, at the copper -->
+    <path d="M150 146 120 158 150 158Z" fill="#8E8C86"/>
+    <path d="M150 146 120 158 150 152Z" fill="#DFDCD3"/>
+    <!-- the ferrule -->
+    <rect x="312" y="132" width="16" height="28" rx="3" fill="url(#ferrule)"/>
+    <!-- the mushroom handle, with the flat filed off its underside -->
+    <path d="M326 122 q46 -6 58 24 q6 26 -22 34 q-20 6 -36 -2 l0 -12 -4 0 0 -32 4 0Z" fill="url(#wood)"/>
+    <path d="M330 126 q34 -4 46 16" fill="none" stroke="#9A6837" stroke-width="3" stroke-opacity=".5" stroke-linecap="round"/>
+    <path d="M336 168 q30 6 46 -6" fill="none" stroke="#1C0E04" stroke-width="3" stroke-opacity=".5" stroke-linecap="round"/>
+  </g>
+
+  <!-- the curl of swarf coming off the point -->
+  <g fill="#F1C894">
+    <path d="M196 176c22-16 50-22 72-14-22 4-45 10-62 22Z"/>
+    <path d="M210 196c15-11 34-15 49-10-15 3-31 7-42 15Z" fill-opacity=".8"/>
+    <path d="M186 206c11-8 25-11 36-7-11 2-23 5-31 11Z" fill-opacity=".62"/>
+  </g>
+</svg>

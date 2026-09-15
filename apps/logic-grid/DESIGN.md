@@ -471,9 +471,28 @@ line, and a rule of three lozenges as a section divider.
 corner, and paper has a cut edge. Against the kit's 22 that alone changes how the app feels
 before anything else is drawn. Nothing in this app is a 22 pt white card with a shadow.
 
-**The crosshatch** — two strokes at ±38° — is the app's progress glyph everywhere: a ruled-out
-cell, a sealed clue, a used-up clue's strike, a day not pulled in the day-book, the paywall's
-locked plate.
+**The crosshatch** is the ruled-out mark, and it is the one thing on this list the build must
+not get wrong, because the first draft of mock 1 got it wrong. A ruled-out pairing is **the
+whole cell filled with cut shading** — the cell darkens under a field of fine troughs — not two
+strokes forming an X in the middle of it. Two strokes at cell size *is* an ✗, which is the
+glyph this app exists to refuse, and it looked exactly like Cross Logic's grid until it was
+redrawn.
+
+Two things make the fill read as engraving rather than as a mesh, and both were learned from a
+render:
+
+1. **The two passes cross at about 32°, never at a right angle.** Square crossing produces a
+   window screen; a shallow crossing produces lozenge-shaped interstices, which is why the
+   technique is called crosshatch and why it reads as tone. The app's two passes run at
+   **+40° and +72°**.
+2. **Fine and close, not thick and open.** In a 21 pt cell: troughs 1.25 pt at
+   `ink.opacity(0.85)`, spaced 4.4 pt, over a flat `ink.opacity(0.10)` wash, each with a
+   0.5 pt `lip` hairline offset 0.7 pt to its upper left. Cut lines heavier than that turn the
+   cell into a grille.
+
+The same field, at the same two angles, is the app's mark everywhere else: a sealed clue, the
+locked plate on the run, the empty part of the paywall's plate, and — laid in from the lower
+right and fading out — the icon.
 
 ### Art
 
@@ -718,7 +737,7 @@ real 34 pt target with a real press state and a VoiceOver label.
 **Empty (a plate with no cuts):** nothing is written. The burin floats, the first forced cell
 carries its ghost crosshatch, and a copper thread runs to the clue that forces it.
 
-### 2. The line — Progress (tab 2) · mock 3 shows the first thing a new user sees
+### 2. The line — Progress (tab 2) · mock 4
 
 **Its one job:** today's plate, everything pulled, and the run of days. This is the screen the
 first App Store screenshot shows, per the spec's 4.3 note — not a bare grid.
@@ -734,10 +753,13 @@ Top to bottom:
 - **The drying line** (from the first pull): prints pegged on a cord with lozenge pegs, newest
   at the left, scrolling horizontally, each 96 pt wide with its date pencilled in the margin.
   Once `chine` is earned each sits on its day's colour of stock, so a year of them is a calendar.
-- **The day-book page**: the month as a page of the shop's day-book, each day a small square of
-  copper. A day you pulled is **inked** in that plate's lead cast ink; today carries the
-  registration cross in `accent`; a day you missed is bare copper — no grey, no red, no mark.
-  A month reads as a page.
+- **The day-book page**: the month as a page of the shop's day-book — paper, ruled into a 7×5
+  grid of squares at `ink.opacity(0.15)`. A day you pulled carries a **filled lozenge in that
+  plate's lead cast ink**; today is ringed in `accent` with the registration cross in it; a day
+  you missed is simply an empty square — no grey, no red, no mark at all. (Paper, not copper:
+  the rule is that colour is ink and ink only goes on paper, and a day-book is a book.) The
+  header reads `September` with `TWENTY-TWO INKED` opposite it in the plate caps. A month reads
+  as a page, and a year of them is a portrait of how you actually spend a Tuesday.
 - `214 PULLED · 31 DAYS RUNNING · LONGEST 58` in the plate caps.
 - `ShareLink` over `ShareImage.render` — "Send the margin".
 
@@ -776,10 +798,22 @@ line."; unlocked — "Everything you have cut is on this phone and nowhere else.
 
 The kit's restore, rate, share, support and privacy rows are unchanged.
 
-### 5. The paywall · and 6. Onboarding
+### 5. The paywall · and 6. Onboarding · mock 3 shows onboarding page 1
 
 Both the kit's, named in the engraver's voice as §Voice sets out, each with its art, the paywall
-with `bulletStyle: .ruled(mark: "◆")`.
+with `bulletStyle: .ruled(mark: "◆")`. Onboarding sets its title at 42 pt New York Bold over the
+art, with `CROSSHATCH` in the plate caps at the head of the screen between two rules and a
+lozenge, and the page indicator drawn as the app's own marks: a cut lozenge for the page you are
+on, an empty ruled cell for each one you are not.
+
+### The mocks
+
+| Mock | Shows |
+| --- | --- |
+| `design/mock-1-play.html` | The bed mid-cut: a four-category, four-a-side plate at rung 51, nine of twelve points cut, one category closed, the cascade mid-run in one block, a scar in the margin, and the clue list with two clues struck through. |
+| `design/mock-2-win.html` | The pull at its peak: the plate inked and wiped, the print peeling off it, the ghost numeral behind, the `best` headline, and the margin card. |
+| `design/mock-3-first.html` | Onboarding page 1, the first thing a new user sees. |
+| `design/mock-4-line.html` | The line: the hero at 108 pt, the drying line, today's plate on the bed, the day-book page and the plate caps at the foot. This is the first App Store screenshot, per the spec's 4.3 note. |
 
 ### Captures
 
@@ -797,21 +831,32 @@ reproducible.
 it. The mark, not the machine, and not the table.
 
 **The composition:** the plate fills the square at −4°, full bleed, with its **bevel showing
-along the bottom and right** so it reads as a thick piece of metal rather than a page; the four
-corners of the square show a sliver of the zinc slab behind. Across the upper right, **six
-strokes at −38° crossed by six at +38°**, each drawn as a lit upper lip over a dark trough,
-48 units wide, spaced so the field reads as cut shading rather than as a grid — denser toward
-the lower right. In the middle left, in clean uncut copper, **one deep lozenge point**, 210
-units across, the darkest and most deliberate thing on the icon, with a curl of swarf beside it.
-So: a plate, a field of hatching, and one perfect point.
+along the bottom and right** so it reads as a thick piece of metal rather than a page; the
+corners show a sliver of the zinc slab behind. From the lower right, **a field of cut shading**
+is laid in and fades out along a clean diagonal edge about a third of the way up — two passes of
+parallel troughs, the first at **+40°** on a 30-unit pitch and the second at **+72°** on a
+38-unit pitch, each a `#160B02` trough with a `#FFE7BE` hairline on its upper lip. The first
+pass runs further up the plate than the second, so the tone has two steps: hatched at the edge,
+crosshatched and darker in the corner. In the clear copper at the middle left sits **one deep
+lozenge point**, about 410 units across, tilted −7°, with a `#FFF5E2` lip offset up and to the
+left — the darkest and most deliberate thing on the icon — and a curl of swarf above it. A
+registration mark is punched in the empty corner.
 
-**The colours:** the face `#E8A768` at the upper left → `#8C4A1B` at the lower right; cut lips
-`#FBDCB0`, troughs `#241305`; the bevel `#5E2C0E` with a `#C98C4E` lit edge; the lozenge in
-`#1A0E04` with a `#FBDCB0` lip on its upper left; the zinc corners `#96A199` → `#5D6A63`.
+**The colours:** the face `#F4B87E` at the upper left → `#8E4E18` at the lower right; troughs
+`#160B02` with `#FFE7BE` lips; the bevel `#4A2308`–`#A45E22`; the lozenge `#40250A` → `#0F0702`;
+the zinc corners `#9AA49B` → `#5D6A63`.
 
-Read at 120 px next to the leaders' icons: copper with cut marks on it, next to Cross Logic's
-white spreadsheet with a green tick, Nonogram.com's navy blocks and Redirect It!'s neon arrows.
-No letter, no numeral, no glyph on a gradient. Rendered to `design/icon-1024.png`.
+**Four drafts, and what each one got wrong**, because the mistake is easy to repeat: the first
+drew the hatching as six heavy strokes each way and came out a **garden trellis**; the second
+halved the weight and came out a **window screen**; the third halved it again and was *still* a
+screen, which is when the actual rule surfaced — **crossing at a right angle can only ever make
+a mesh.** The fourth crosses the two passes at 32°, and the interstices become lozenges, and it
+reads as engraved tone. The same finding governs the plate on every screen (see "Shape").
+
+Read at 120 px next to the leaders' icons: copper, a dark textured wedge and one dark almond,
+next to Cross Logic's white spreadsheet with a green tick, Nonogram.com's navy blocks and
+Redirect It!'s neon arrows. No letter, no numeral, no glyph on a gradient. Rendered to
+`design/icon-1024.png`.
 
 ## Share card
 

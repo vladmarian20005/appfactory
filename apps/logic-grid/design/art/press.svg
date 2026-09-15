@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 292" width="400" height="292">
+  <defs>
+    <linearGradient id="iron" x1=".1" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#56605A"/><stop offset=".45" stop-color="#37403C"/><stop offset="1" stop-color="#1B2220"/>
+    </linearGradient>
+    <linearGradient id="ironL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#78817B"/><stop offset=".3" stop-color="#4A534E"/><stop offset="1" stop-color="#232A27"/>
+    </linearGradient>
+    <linearGradient id="rollerG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9AA29B"/><stop offset=".3" stop-color="#5E665F"/><stop offset="1" stop-color="#232A27"/>
+    </linearGradient>
+    <linearGradient id="face" x1=".1" y1="0" x2=".9" y2="1">
+      <stop offset="0" stop-color="#E4A765"/><stop offset=".5" stop-color="#CE8C48"/><stop offset="1" stop-color="#B3701F"/>
+    </linearGradient>
+    <linearGradient id="paper" x1=".1" y1="0" x2=".9" y2="1">
+      <stop offset="0" stop-color="#FCF8EC"/><stop offset=".45" stop-color="#F3EDDC"/><stop offset="1" stop-color="#E9E0C9"/>
+    </linearGradient>
+    <linearGradient id="curlG" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#D8CBAC"/><stop offset=".45" stop-color="#FEFAF0"/><stop offset="1" stop-color="#EFE7D1"/>
+    </linearGradient>
+    <linearGradient id="brassG" x1="0" y1="0" x2=".3" y2="1">
+      <stop offset="0" stop-color="#EFCE97"/><stop offset=".5" stop-color="#AF7A38"/><stop offset="1" stop-color="#6A4415"/>
+    </linearGradient>
+    <linearGradient id="cordG" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9E4E17" stop-opacity=".18"/><stop offset=".12" stop-color="#9E4E17"/>
+      <stop offset=".88" stop-color="#9E4E17"/><stop offset="1" stop-color="#9E4E17" stop-opacity=".18"/>
+    </linearGradient>
+    <filter id="drop" x="-25%" y="-25%" width="155%" height="160%">
+      <feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#15191A" flood-opacity=".28"/>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="170%" height="170%">
+      <feDropShadow dx="-3" dy="6" stdDeviation="6" flood-color="#15191A" flood-opacity=".3"/>
+    </filter>
+  </defs>
+
+  <!-- the drying line, strung above and behind the press -->
+  <path d="M158 22 Q276 28 394 20" fill="none" stroke="url(#cordG)" stroke-width="2.4"/>
+  <g filter="url(#soft)">
+    <g transform="translate(176 26) rotate(-1.4)">
+      <rect width="46" height="62" rx="1.2" fill="#F6F1E1"/>
+      <g fill="none" stroke="#15191A" stroke-width="2" stroke-opacity=".76" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 22h11l-1.5 3h-8Z"/><path d="M12 22v-3h7v3"/>
+        <path d="M27 21a4 2.4 0 0 1 8 0v3.6"/><path d="M25 26h12"/>
+        <path d="M10 43c2.4-2.4 2.4-4.6 2.4-7a4 4 0 0 1 8 0c0 2.4 0 4.6 2.4 7Z"/>
+        <circle cx="31" cy="40" r="4.6"/><circle cx="31" cy="40" r="1.7"/>
+      </g>
+      <path d="M7 51h32" stroke="#15191A" stroke-opacity=".18" stroke-width=".7"/>
+    </g>
+    <g transform="translate(244 30) rotate(1.2)">
+      <rect width="46" height="62" rx="1.2" fill="#F1EAD6"/>
+      <g fill="none" stroke="#15191A" stroke-width="2" stroke-opacity=".76" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="15" cy="22" r="4.6"/><path d="M15 18v4l3 1.6"/>
+        <path d="M27 25h11l-1.5 3h-8Z"/><path d="M29.5 25 32 19l2.5 6"/>
+        <path d="M10 43c3-4 9-4 12 0-3 4-9 4-12 0Z"/><path d="M22 43l2.5-2.4v4.8Z"/>
+        <path d="M36 41a4.6 4.6 0 0 1-6.2-6.2 5 5 0 1 0 6.2 6.2Z"/>
+      </g>
+      <path d="M7 51h32" stroke="#15191A" stroke-opacity=".18" stroke-width=".7"/>
+    </g>
+    <g transform="translate(312 25) rotate(-.9)">
+      <rect width="46" height="62" rx="1.2" fill="#EFE7D3"/>
+      <g fill="none" stroke="#15191A" stroke-width="2" stroke-opacity=".76" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 25h11l-1.5 3h-8Z"/><path d="M12 25v-4h7v4"/>
+        <circle cx="32" cy="23" r="4.6"/><path d="M32 19v4l3 1.6"/>
+        <circle cx="15" cy="42" r="3.6"/><path d="M17.4 44.4 23 50M20 47l-1.6 1.6"/>
+        <path d="M27 45h11l-1.5 3h-8Z"/>
+      </g>
+      <path d="M7 51h32" stroke="#15191A" stroke-opacity=".18" stroke-width=".7"/>
+    </g>
+  </g>
+  <g fill="#9E4E17">
+    <g transform="translate(199 22)"><path d="M-8 3 Q0 -1.5 8 3 Q0 7.5 -8 3Z"/><rect x="-1" y="3" width="2" height="6" rx=".8"/></g>
+    <g transform="translate(267 26)"><path d="M-8 3 Q0 -1.5 8 3 Q0 7.5 -8 3Z"/><rect x="-1" y="3" width="2" height="6" rx=".8"/></g>
+    <g transform="translate(335 21)"><path d="M-8 3 Q0 -1.5 8 3 Q0 7.5 -8 3Z"/><rect x="-1" y="3" width="2" height="6" rx=".8"/></g>
+  </g>
+
+  <g filter="url(#drop)">
+    <!-- the far cheek -->
+    <rect x="296" y="112" width="26" height="150" rx="2" fill="url(#iron)"/>
+
+    <!-- the bed, run out to the right of the rollers, carrying the plate -->
+    <path d="M128 196 384 186 384 210 128 220Z" fill="url(#ironL)"/>
+    <path d="M128 196 384 186 384 192 128 202Z" fill="#8C948E" fill-opacity=".4"/>
+
+    <!-- the plate, inked and wiped, still on the bed -->
+    <g transform="translate(206 152) rotate(-2.2)">
+      <path d="M0 0h162v44H0Z" fill="#6A3A10" transform="translate(4 5)"/>
+      <rect width="162" height="44" rx="1.5" fill="url(#face)"/>
+      <g fill="none" stroke="#15191A" stroke-opacity=".48" stroke-width="1.3">
+        <rect x="10" y="7" width="64" height="30"/><rect x="84" y="7" width="68" height="30"/>
+        <path d="M31 7v30M52 7v30M106 7v30M129 7v30M10 17h64M10 27h64M84 17h68M84 27h68"/>
+      </g>
+      <g fill="#15191A" fill-opacity=".8">
+        <path d="M11 9h19v7H11ZM53 19h20v7H53ZM32 29h19v7H32ZM85 29h20v7H85ZM130 9h21v7h-21ZM107 19h21v7h-21Z"/>
+      </g>
+      <g fill="#190D03">
+        <path d="M32 12 Q41.5 8.4 51 12 Q41.5 15.6 32 12Z"/>
+        <path d="M11 22 Q20.5 18.4 30 22 Q20.5 25.6 11 22Z"/>
+        <path d="M86 12 Q95.5 8.4 105 12 Q95.5 15.6 86 12Z"/>
+      </g>
+    </g>
+
+    <!-- the sheet, pulled back off the plate and curling at its left edge -->
+    <g transform="translate(222 126) rotate(-3)">
+      <rect width="140" height="62" rx="1.5" fill="url(#paper)"/>
+      <g fill="none" stroke="#15191A" stroke-width="2.2" stroke-opacity=".8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 26h13l-2 3.5H24Z"/><path d="M24.5 26v-4h8v4"/>
+        <path d="M50 25a5 3 0 0 1 10 0v3.5"/><path d="M48 30h14"/>
+        <path d="M78 24c2.6-2.6 2.6-5 2.6-7.4a4.4 4.4 0 0 1 8.8 0c0 2.4 0 4.8 2.6 7.4Z"/>
+        <circle cx="114" cy="22" r="5.4"/><circle cx="114" cy="22" r="2"/>
+      </g>
+      <path d="M16 41h108" stroke="#15191A" stroke-opacity=".2" stroke-width=".8"/>
+      <text x="70" y="53" font-family="ui-serif, Georgia, serif" font-size="8.5" font-style="italic"
+            fill="#2F3634" fill-opacity=".72" text-anchor="middle">The Six O'Clock Ferry</text>
+    </g>
+    <path d="M216 124 q-13 21 -5 45 q4 11 14 15 l6 -4 q-10 -8 -12 -20 q-2 -19 7 -34Z" fill="url(#curlG)"/>
+
+    <!-- the near cheek, in front of the bed -->
+    <rect x="96" y="104" width="30" height="160" rx="2" fill="url(#ironL)"/>
+    <rect x="96" y="104" width="9" height="160" rx="2" fill="#98A099" fill-opacity=".3"/>
+    <rect x="86" y="258" width="52" height="12" rx="2.5" fill="url(#iron)"/>
+    <rect x="290" y="256" width="40" height="10" rx="2.5" fill="url(#iron)"/>
+
+    <!-- the two rollers the bed runs between -->
+    <rect x="104" y="120" width="204" height="24" rx="12" fill="url(#rollerG)"/>
+    <rect x="104" y="152" width="204" height="20" rx="10" fill="url(#rollerG)" opacity=".85"/>
+    <ellipse cx="112" cy="132" rx="11" ry="12" fill="#6E766F"/>
+
+    <!-- the star wheel: one heavy turn at a time -->
+    <g transform="translate(112 132)">
+      <g stroke="url(#brassG)" stroke-width="6" stroke-linecap="round">
+        <path d="M0 0 0 -44M0 0 0 44M0 0 -44 0M0 0 44 0M0 0 -31 -31M0 0 31 31M0 0 31 -31M0 0 -31 31"/>
+      </g>
+      <g fill="#C08D4B">
+        <circle cx="0" cy="-47" r="6"/><circle cx="0" cy="47" r="6"/>
+        <circle cx="-47" cy="0" r="6"/><circle cx="47" cy="0" r="6"/>
+        <circle cx="-33" cy="-33" r="6"/><circle cx="33" cy="33" r="6"/>
+        <circle cx="33" cy="-33" r="6"/><circle cx="-33" cy="33" r="6"/>
+      </g>
+      <circle r="10" fill="url(#brassG)"/>
+      <circle r="3.8" fill="#3A2409"/>
+    </g>
+  </g>
+
+  <!-- the bed rail: the floor of the shop -->
+  <rect x="0" y="278" width="400" height="2.6" fill="#15191A" fill-opacity=".12"/>
+  <rect x="0" y="278" width="400" height="1" fill="#9E4E17" fill-opacity=".22"/>
+</svg>
