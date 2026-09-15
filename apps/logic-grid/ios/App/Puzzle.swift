@@ -139,6 +139,10 @@ struct Grid: Codable, Equatable {
 struct Plate: Codable, Equatable {
     var rung: Int
     var themeID: String
+    /// Which of the subject's blocks this plate was cast from. A plate smaller than five
+    /// categories drops a cast block and keeps the ordered one, because the ordering is what
+    /// three of the seven clue kinds compare.
+    var blockIndices: [Int]
     var title: String
     /// `casting[category][member]` is the mark cut for that member, assigned when the plate
     /// was ruled so no two members of a plate ever wear the same figure.
@@ -156,7 +160,11 @@ struct Plate: Codable, Equatable {
 
     var theme: Theme { Themes.theme(id: themeID) }
 
-    func block(_ category: Int) -> CastBlock { theme.blocks[category] }
+    func block(_ category: Int) -> CastBlock {
+        let blocks = theme.blocks
+        let index = category < blockIndices.count ? blockIndices[category] : category
+        return blocks[min(index, blocks.count - 1)]
+    }
 
     func member(_ cell: Cell) -> CastMember { block(cell.category).members[cell.member] }
 

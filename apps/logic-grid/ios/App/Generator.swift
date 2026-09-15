@@ -40,7 +40,14 @@ enum Generator {
                       isDaily: Bool,
                       seed: UInt64) -> Plate {
         var rng = Seeded(seed: seed)
-        let categories = min(shape.categories, theme.blocks.count)
+        // The ordered category is always the last one on the plate, whatever the shape: it is
+        // what the relational, arithmetic and adjacency clues compare, so a four-category
+        // plate drops a cast block rather than the ordering.
+        let full = theme
+        let wanted = max(3, min(shape.categories, full.blocks.count))
+        let indices = Array(0..<(wanted - 1)) + [full.blocks.count - 1]
+        let theme = Theme(id: full.id, title: full.title, blocks: indices.map { full.blocks[$0] })
+        let categories = theme.blocks.count
         let members = shape.members
         let allowed = Array(ClueKind.allCases.prefix(max(2, shape.kinds)))
 
@@ -67,22 +74,26 @@ enum Generator {
             var order = pool
             if attempt > 0 { shuffle(&order, rng: &rng) }
             let built = minimalSet(from: order, draft: draft, want: want, target: shape.depth)
-            let proof = Solver.proves(built, categories: categories, members: members)
-            guard proof.solved else { continue }
+            guard Solver.proves(built, categories: categories, members: members).solved else { continue }
+            let measured = Solver.depth(of: built, categories: categories, members: members)
             let leaning = Double(built.filter { want.contains($0.kind) }.count) / Double(max(1, built.count))
-            let miss = Double(abs(proof.waves - shape.depth)) + (proof.waves > shape.depth ? 1.5 : 0)
-            let score = leaning * 3 - miss * 0.6 - Double(built.count) * 0.04
+            let variety = Double(Set(built.map(\.kind)).count)
+            // Depth is compared, not merely stored: a set deeper than the rung asks for is
+            // worse than one just under it, and among equals the one that leans on the kinds
+            // her record asked for wins.
+            let miss = Double(abs(measured - shape.depth)) + (measured > shape.depth ? 1.5 : 0)
+            let score = leaning * 3 + variety * 0.25 - miss * 0.6 - Double(built.count) * 0.04
             if score > bestScore {
                 bestScore = score
                 best = built
-                bestDepth = proof.waves
+                bestDepth = measured
             }
         }
 
         if best.isEmpty {
             // Nothing minimal proved out — serve the whole truth rather than an unproved plate.
             best = candidates(draft, allowed: [.direct], rng: &rng)
-            bestDepth = Solver.proves(best, categories: categories, members: members).waves
+            bestDepth = Solver.depth(of: best, categories: categories, members: members)
         }
 
         // Number them as they are set, and hand each its category's ink.
@@ -98,6 +109,7 @@ enum Generator {
 
         return Plate(rung: rung,
                      themeID: theme.id,
+                     blockIndices: indices,
                      title: theme.title,
                      casting: casting(theme: theme, categories: categories, members: members),
                      categories: categories,
@@ -185,6 +197,44 @@ enum Generator {
         return out
     }
 
+    /// The pool, dealt round by round from each kind rather than in one block per kind: the
+    /// kinds her record asked for come round twice as often, the direct ones come last. A set
+    /// built entirely out of one kind reads as a form to fill in; one built out of negatives
+    /// and either/ors needs chained inference to crack, which is where depth comes from.
+    private static func interleaved(_ pool: [Clue], want: [ClueKind]) -> [Clue] {
+        var groups: [[Clue]] = []
+        for kind in ClueKind.allCases.sorted(by: { weight(Clue(id: 0, kind: $0, a: Cell(category: 0, member: 0), b: Cell(category: 0, member: 0)), want: want)
+                                                 < weight(Clue(id: 0, kind: $1, a: Cell(category: 0, member: 0), b: Cell(category: 0, member: 0)), want: want) }) {
+            let group = pool.filter { $0.kind == kind }
+            if !group.isEmpty { groups.append(group) }
+        }
+        var cursors = Array(repeating: 0, count: groups.count)
+        var out: [Clue] = []
+        out.reserveCapacity(pool.count)
+        while out.count < pool.count {
+            var dealt = false
+            for (index, group) in groups.enumerated() {
+                let helpings = want.contains(group[0].kind) ? 2 : 1
+                for _ in 0..<helpings where cursors[index] < group.count {
+                    out.append(group[cursors[index]])
+                    cursors[index] += 1
+                    dealt = true
+                }
+            }
+            if !dealt { break }
+        }
+        return out
+    }
+
+    /// How readily a clue is given up: the kinds her record asked for are kept longest, a
+    /// direct clue goes first.
+    private static func weight(_ clue: Clue, want: [ClueKind]) -> Int {
+        // A direct clue is always the first thing given up, whatever her record says: a plate
+        // held up by "the bell-ringer is Amos" falls over in one pass.
+        if clue.kind == .direct { return 2 }
+        return want.contains(clue.kind) ? 0 : 1
+    }
+
     private static func shuffle(_ clues: inout [Clue], rng: inout Seeded) {
         for i in stride(from: clues.count - 1, to: 0, by: -1) {
             clues.swapAt(i, rng.int(i + 1))
@@ -195,6 +245,7 @@ enum Generator {
 
     private static func minimalSet(from pool: [Clue], draft: PlateDraft, want: [ClueKind], target: Int) -> [Clue] {
         let categories = draft.categories, members = draft.members
+        let pool = interleaved(pool, want: want)
         var chosen: [Clue] = []
         var index = 0
         // Add in twos until the plate proves out; testing after every single clue doubles the
@@ -208,11 +259,11 @@ enum Generator {
         }
         guard Solver.proves(chosen, categories: categories, members: members).solved else { return [] }
 
-        // Prune the kinds she is already good at first, so what survives is the plate leaning
-        // on the kinds her own record asked for.
+        // Prune the easy clues and the kinds she is already good at first, so what survives is
+        // a plate leaning on the kinds her own record asked for.
         let order = chosen.indices.sorted { a, b in
-            let wa = want.contains(chosen[a].kind), wb = want.contains(chosen[b].kind)
-            if wa != wb { return !wa }
+            let wa = weight(chosen[a], want: want), wb = weight(chosen[b], want: want)
+            if wa != wb { return wa > wb }
             return a < b
         }
         var dropped = Set<Int>()
@@ -242,7 +293,7 @@ enum Generator {
     private static func seal(_ clues: [Clue], count: Int, categories: Int, members: Int) -> [Clue] {
         guard count > 0, clues.count > count + 2 else { return clues }
         var grid = Grid(categories: categories, members: members)
-        Solver.cascade(&grid, collecting: false)
+        Solver.close(&grid)
         var firstUse = [Int: Int](minimumCapacity: clues.count)
         var wave = 0
         while !grid.isPulled {
@@ -254,7 +305,7 @@ enum Generator {
                 moved = true
             }
             guard moved else { break }
-            Solver.cascade(&grid, collecting: false)
+            Solver.close(&grid)
             wave += 1
         }
         let latest = clues.indices.sorted { (firstUse[$0] ?? .max) > (firstUse[$1] ?? .max) }.prefix(count)

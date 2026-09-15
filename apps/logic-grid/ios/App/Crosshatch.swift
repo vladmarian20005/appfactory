@@ -9,12 +9,14 @@ struct Crosshatch: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if onboarded {
+                if onboarded || LaunchOptions.onboarded {
                     RootView()
                         .environmentObject(store)
                         .factoryReviewPrompt(afterSessions: 3)
                 } else {
-                    OnboardingView(pages: AppInfo.onboarding) { onboarded = true }
+                    OnboardingView(pages: AppInfo.onboarding,
+                                   nextTitle: AppInfo.onboardingNext,
+                                   finishTitle: AppInfo.onboardingFinish) { onboarded = true }
                 }
             }
             .brand(AppBrand.brand)

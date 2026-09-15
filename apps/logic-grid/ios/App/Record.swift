@@ -158,8 +158,8 @@ struct SavedPlate: Codable, Equatable {
     /// What is at risk, and nothing beyond this plate. `Run` carries its own chain and its
     /// longest, and it is `Codable`, so a plate picked up tomorrow is the same run.
     var run: Run
-    /// One mark per cut she made, in order: the proof strip on the share card.
-    var strip: [Bool]
+    /// Every mark she made, in order, so the plate can be replayed from bare copper.
+    var actions: [Action]
     /// Where the burin skidded, as a fraction along the margin.
     var scars: [Double]
     var openedSeals: [Int]

@@ -16,6 +16,10 @@ enum LaunchOptions {
     /// `-screen bed|line|run|settings|paywall|win`
     static var screen: String? { value(for: "-screen") }
 
+    /// `-bed daily|run`: which plate the bench opens on, so a capture can choose between
+    /// today's shared plate and the next plate in the run.
+    static var bed: String? { value(for: "-bed") }
+
     /// `-demo cut|pull`. Nothing on a runner can touch the screen, so the app cuts its own
     /// plate and pulls its own print shortly after launch, and the critic films it.
     static var demo: String? { value(for: "-demo") }

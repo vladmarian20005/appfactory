@@ -290,6 +290,16 @@ enum Spelled {
         }
     }
 
+    /// A date as the day-book would have it: the eleventh of January.
+    static func ordinal(_ n: Int) -> String {
+        let irregular = [1: "first", 2: "second", 3: "third", 5: "fifth", 8: "eighth",
+                         9: "ninth", 12: "twelfth", 20: "twentieth", 21: "twenty-first",
+                         22: "twenty-second", 23: "twenty-third", 25: "twenty-fifth",
+                         28: "twenty-eighth", 29: "twenty-ninth", 30: "thirtieth", 31: "thirty-first"]
+        if let word = irregular[n] { return word }
+        return out(n) + "th"
+    }
+
     /// Sentence case, for a line that starts with a number.
     static func capitalised(_ n: Int) -> String {
         let word = out(n)
