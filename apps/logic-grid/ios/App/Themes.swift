@@ -9,6 +9,9 @@ struct CastMember {
     let subject: String
     let predicate: String
     let preferred: Glyph
+    /// "The apples are Dyer's", not "the apples is Dyer's". Three members in the whole cast
+    /// take a plural verb and the clue phrasing has to agree with them.
+    var plural = false
 }
 
 /// How an ordered category compares. One category on every plate is ordered — an hour, a
@@ -37,8 +40,9 @@ struct CastBlock {
     }
 }
 
-private func member(_ short: String, _ subject: String, _ predicate: String, _ glyph: Glyph) -> CastMember {
-    CastMember(short: short, subject: subject, predicate: predicate, preferred: glyph)
+private func member(_ short: String, _ subject: String, _ predicate: String, _ glyph: Glyph,
+                    plural: Bool = false) -> CastMember {
+    CastMember(short: short, subject: subject, predicate: predicate, preferred: glyph, plural: plural)
 }
 
 /// The shop's whole cast. Blocks are reused across themes, which is why thirty-two subjects
@@ -88,8 +92,8 @@ enum Cast {
         member("salt", "the salt", "carrying the salt", .basket),
         member("rope", "the rope", "carrying the rope", .coil),
         member("lamp oil", "the lamp oil", "carrying the lamp oil", .lamp),
-        member("apples", "the apples", "carrying the apples", .apple),
-        member("hides", "the hides", "carrying the hides", .chest),
+        member("apples", "the apples", "carrying the apples", .apple, plural: true),
+        member("hides", "the hides", "carrying the hides", .chest, plural: true),
         member("tea", "the tea", "carrying the tea", .jar),
     ])
 
@@ -151,7 +155,7 @@ enum Cast {
         member("ledger", "the ledger", "taking the ledger", .chest),
         member("letter", "the letter", "taking the letter", .feather),
         member("parcel", "the parcel", "taking the parcel", .basket),
-        member("keys", "the keys", "taking the keys", .key),
+        member("keys", "the keys", "taking the keys", .key, plural: true),
         member("lantern", "the lantern", "taking the lantern", .lamp),
         member("pail", "the pail", "taking the pail", .jar),
     ])

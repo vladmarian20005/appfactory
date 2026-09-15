@@ -272,10 +272,19 @@ public struct PaywallView: View {
                     }
                 }
                 Spacer()
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? brand.palette.accent : brand.palette.inkSoft)
-                    .font(.title3)
-                    .contentTransition(.symbolEffect(.replace))
+                // An app that sets its bullets with a printed mark has usually banished the
+                // checkmark on purpose — Crosshatch has no tick and no cross anywhere in it —
+                // and the selected row is the one place the kit used to put one back.
+                if case let .ruled(mark) = bulletStyle {
+                    Text(mark)
+                        .brandFont(.title3)
+                        .foregroundStyle(isSelected ? brand.palette.accent : brand.palette.inkSoft.opacity(0.4))
+                } else {
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .foregroundStyle(isSelected ? brand.palette.accent : brand.palette.inkSoft)
+                        .font(.title3)
+                        .contentTransition(.symbolEffect(.replace))
+                }
             }
             .padding(16)
             .background(brand.palette.surface, in: shape)

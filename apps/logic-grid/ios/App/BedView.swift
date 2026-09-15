@@ -212,8 +212,11 @@ struct ClueList: View {
                     .opacity(sealed ? 0 : 1)
                     .fixedSize(horizontal: false, vertical: true)
                 if sealed {
-                    CutShading(progress: 1, spacing: 3.6, weight: 1, tone: 0.9)
-                        .frame(height: 22)
+                    // Scratched over, not blacked out: the clue is there under the hatching
+                    // and it bites open when the plate has no forced move without it.
+                    CutShading(progress: 1, spacing: 4.6, weight: 0.9, tone: 0.5)
+                        .frame(height: 20)
+                        .opacity(0.8)
                         .accessibilityLabel("A sealed clue. It bites open when the plate runs out of forced moves without it.")
                 }
             }

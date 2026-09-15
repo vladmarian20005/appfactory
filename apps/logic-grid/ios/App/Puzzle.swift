@@ -187,18 +187,19 @@ extension Clue {
                        ordered: Int, plate: PlateDraft) -> String {
         func subject(_ cell: Cell) -> String { plate.member(cell).subject }
         func predicate(_ cell: Cell) -> String { plate.member(cell).predicate }
+        func copula(_ cell: Cell) -> String { plate.member(cell).plural ? "are" : "is" }
         func sentence(_ body: String) -> String { body.prefix(1).uppercased() + body.dropFirst() + "." }
 
         switch kind {
         case .direct:
             let (x, y) = a.category < b.category ? (a, b) : (b, a)
-            return sentence("\(subject(x)) is \(predicate(y))")
+            return sentence("\(subject(x)) \(copula(x)) \(predicate(y))")
         case .negative:
             let (x, y) = a.category < b.category ? (a, b) : (b, a)
-            return sentence("\(subject(x)) is not \(predicate(y))")
+            return sentence("\(subject(x)) \(copula(x)) not \(predicate(y))")
         case .either:
             guard let c else { return "" }
-            return sentence("\(subject(a)) is either \(predicate(b)) or \(predicate(c))")
+            return sentence("\(subject(a)) \(copula(a)) either \(predicate(b)) or \(predicate(c))")
         case .relational:
             let template = plate.ordering(ordered)?.before ?? "%1 goes before %2"
             return sentence(fill(template, subject(a), subject(b), n: n, plate: plate, ordered: ordered))
@@ -210,8 +211,13 @@ extension Clue {
             return sentence(fill(template, subject(a), subject(b), n: n, plate: plate, ordered: ordered))
         case .exclusive:
             guard let c, let d else { return "" }
-            let first = "\(subject(a)) is \(predicate(b))"
-            let second = "\(subject(c)) is \(predicate(d))"
+            // The two halves are about the same subject, so it is named once: "Holt is on the
+            // barge or at six o'clock, but not both" rather than saying "Holt" twice.
+            if c == a {
+                return sentence("\(subject(a)) \(copula(a)) \(predicate(b)) or \(predicate(d)), but not both")
+            }
+            let first = "\(subject(a)) \(copula(a)) \(predicate(b))"
+            let second = "\(subject(c)) \(copula(c)) \(predicate(d))"
             return sentence("either \(first), or \(second) — not both")
         }
     }
