@@ -34,12 +34,18 @@ on:
         required: false
         type: string
         default: "400"
+      architect_model:
+        description: Model for the design direction and architecture
+        required: false
+        type: choice
+        options: [claude-fable-5-1, claude-opus-5-5, claude-opus-5]
+        default: claude-fable-5-1
       model:
         description: Model to build with
         required: false
         type: choice
-        options: [claude-opus-5, claude-sonnet-5]
-        default: claude-opus-5
+        options: [claude-opus-5-5, claude-fable-5-1, claude-opus-5, claude-sonnet-5]
+        default: claude-opus-5-5
       chain:
         description: On success, start the next stage automatically
         required: false
@@ -95,7 +101,11 @@ jobs:
       SLUG: ${{ inputs.slug }}
       DISPLAY_NAME: ${{ inputs.display_name }}
       MAX_TURNS: ${{ inputs.max_turns || '400' }}
-      MODEL: ${{ inputs.model || 'claude-opus-5' }}
+      # Two models, two jobs. The architect decides what the app is and how it is put together
+      # (DESIGN.md, ARCHITECTURE.md); the builder writes the Swift to it. Fable reasons best
+      # about the whole shape before a line exists; Opus 5.5 is the stronger long-horizon coder.
+      ARCHITECT_MODEL: ${{ inputs.architect_model || 'claude-fable-5-1' }}
+      MODEL: ${{ inputs.model || 'claude-opus-5-5' }}
       CHAIN: ${{ inputs.chain }}
       # Where the work lands: the branch this was dispatched on, main when the relay did it.
       FACTORY_BRANCH: ${{ github.ref_name }}
@@ -147,6 +157,10 @@ jobs:
           if [ -f "apps/$SLUG/DESIGN.md" ]; then echo "exists=true" >> "$GITHUB_OUTPUT"; echo "DESIGN.md exists; keeping it."
           else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
 
+      # Opus 5.5 needs a newer Claude Code than the action bundles; see the action.
+      - id: claude-cli
+        uses: ./.github/actions/claude-cli
+
       - name: Direct the app
         id: direct
         if: steps.design.outputs.exists == 'false'
@@ -154,6 +168,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          path_to_claude_code_executable: ${{ steps.claude-cli.outputs.path }}
           allowed_bots: "github-actions"
           prompt: |
             Read TASTE.md, then .claude/skills/direct/SKILL.md, and follow the skill exactly to
@@ -164,12 +179,14 @@ jobs:
             and Chromium are installed for tools/design/render.mjs and tools/icon.mjs.
 
             Commit AND PUSH as you go:
-              git pull --rebase origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
+              git pull --rebase --autostash origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
 
             Do not scaffold the app or write Swift; the next agent builds from what you write.
+            You are the architect: DESIGN.md and ARCHITECTURE.md are the whole brief the builder
+            gets, so make them complete enough to build from without guessing.
           claude_args: >-
-            --max-turns 120
-            --model ${{ env.MODEL }}
+            --max-turns 160
+            --model ${{ env.ARCHITECT_MODEL }}
             --setting-sources project
             --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
             Bash(node:*),Bash(tools/*),Bash(sips:*),Bash(git:*),Bash(ls:*),Bash(cat:*),
@@ -188,7 +205,7 @@ jobs:
           git config user.email "factory@users.noreply.github.com"
           git add -A "apps/$SLUG"
           git diff --cached --quiet || git commit -m "$SLUG: design direction leftovers from run ${{ github.run_id }}"
-          git pull --rebase origin "${FACTORY_BRANCH}" || true
+          git pull --rebase --autostash origin "${FACTORY_BRANCH}" || true
           git push origin "HEAD:${FACTORY_BRANCH}" || echo "::warning::push failed; the builder still has the files"
           [ -f "apps/$SLUG/DESIGN.md" ] || echo "::warning::the direction agent wrote no DESIGN.md; the builder is told to write one first"
 
@@ -197,6 +214,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          path_to_claude_code_executable: ${{ steps.claude-cli.outputs.path }}
           # A build from a trigger branch is dispatched by the relay job, so it arrives as
           # github-actions[bot], which the action refuses by default.
           allowed_bots: "github-actions"
@@ -207,8 +225,11 @@ jobs:
           prompt: |
             Read TASTE.md, then .claude/skills/new-app/SKILL.md, and follow the skill exactly
             to build the app `${{ env.SLUG }}`, display name "${{ env.DISPLAY_NAME }}", from
-            apps/${{ env.SLUG }}/SPEC.md in the direction apps/${{ env.SLUG }}/DESIGN.md sets.
-            Read the repository's CLAUDE.md first.
+            apps/${{ env.SLUG }}/SPEC.md in the direction apps/${{ env.SLUG }}/DESIGN.md sets,
+            on the structure apps/${{ env.SLUG }}/ARCHITECTURE.md lays out (when it exists).
+            Read the repository's CLAUDE.md first. Where ARCHITECTURE.md and reality disagree
+            (an API that does not exist, a FactoryKit type with another name), keep its intent,
+            do the simplest thing that works, and note the change at the bottom of it.
 
             You are on a GitHub macOS runner. There is no Xcode GUI, no physical device and
             nobody to ask. A simulator is already booted and its UDID is in $SIM_UDID, so
@@ -217,7 +238,7 @@ jobs:
             Commit AND PUSH after each screen works, not once at the end. Committing alone
             saves nothing: this checkout is on an ephemeral runner and dies with it. Push to
             the branch as you go, even when the app is half finished:
-              git pull --rebase origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
+              git pull --rebase --autostash origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
 
             Order of work, because the turn budget is finite:
             1. Scaffold; AppBrand.swift from DESIGN.md's tokens; the drawn icon and art;
@@ -279,7 +300,7 @@ jobs:
           else
             git commit -m "$SLUG: build leftovers from run ${{ github.run_id }}"
           fi
-          git pull --rebase origin "${FACTORY_BRANCH}" || true
+          git pull --rebase --autostash origin "${FACTORY_BRANCH}" || true
           git push origin "HEAD:${FACTORY_BRANCH}" || echo "::warning::push failed; the artifact still has the work"
 
       - name: Record the result

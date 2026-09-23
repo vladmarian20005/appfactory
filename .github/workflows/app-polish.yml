@@ -32,12 +32,18 @@ on:
         required: false
         type: string
         default: "2"
-      model:
-        description: Model for the critic and the polish
+      architect_model:
+        description: Model for the design direction and architecture, and the critic
         required: false
         type: choice
-        options: [claude-opus-5, claude-sonnet-5]
-        default: claude-opus-5
+        options: [claude-fable-5-1, claude-opus-5-5, claude-opus-5]
+        default: claude-fable-5-1
+      model:
+        description: Model for the polish
+        required: false
+        type: choice
+        options: [claude-opus-5-5, claude-fable-5-1, claude-opus-5, claude-sonnet-5]
+        default: claude-opus-5-5
 
 permissions:
   contents: write
@@ -60,7 +66,10 @@ jobs:
       SLUG: ${{ inputs.slug }}
       CHAIN: ${{ inputs.chain }}
       MAX_POLISH: ${{ inputs.max_polish || '2' }}
-      MODEL: ${{ inputs.model || 'claude-opus-5' }}
+      # The critic is deliberately not the builder's model: a judge with another model's eye
+      # misses fewer of the builder's habits. Fable directs and judges; Opus 5.5 polishes.
+      ARCHITECT_MODEL: ${{ inputs.architect_model || 'claude-fable-5-1' }}
+      MODEL: ${{ inputs.model || 'claude-opus-5-5' }}
       FACTORY_BRANCH: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
@@ -98,6 +107,10 @@ jobs:
           if [ -f "apps/$SLUG/DESIGN.md" ]; then echo "exists=true" >> "$GITHUB_OUTPUT"
           else echo "exists=false" >> "$GITHUB_OUTPUT"; echo "No DESIGN.md; directing first."; fi
 
+      # Opus 5.5 needs a newer Claude Code than the action bundles; see the action.
+      - id: claude-cli
+        uses: ./.github/actions/claude-cli
+
       - name: Direct the app
         id: direct
         if: steps.design.outputs.exists == 'false'
@@ -105,6 +118,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          path_to_claude_code_executable: ${{ steps.claude-cli.outputs.path }}
           allowed_bots: "github-actions"
           prompt: |
             Read TASTE.md, then .claude/skills/direct/SKILL.md, and follow the skill exactly to
@@ -117,11 +131,11 @@ jobs:
             feature the spec names; change what it is like.
 
             You are on a GitHub macOS runner with no GUI and nobody to ask. Commit AND PUSH:
-              git pull --rebase origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
+              git pull --rebase --autostash origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
             Do not change the app's Swift; the polish agent builds from what you write.
           claude_args: >-
-            --max-turns 120
-            --model ${{ env.MODEL }}
+            --max-turns 160
+            --model ${{ env.ARCHITECT_MODEL }}
             --setting-sources project
             --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
             Bash(node:*),Bash(tools/*),Bash(sips:*),Bash(git:*),Bash(ls:*),Bash(cat:*),
@@ -138,7 +152,7 @@ jobs:
           git config user.email "factory@users.noreply.github.com"
           git add -A "apps/$SLUG"
           git diff --cached --quiet || git commit -m "$SLUG: design direction leftovers from run ${{ github.run_id }}"
-          git pull --rebase origin "$FACTORY_BRANCH" || true
+          git pull --rebase --autostash origin "$FACTORY_BRANCH" || true
           git push origin "HEAD:$FACTORY_BRANCH" || echo "::warning::push failed"
 
       - name: Capture every screen
@@ -167,6 +181,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          path_to_claude_code_executable: ${{ steps.claude-cli.outputs.path }}
           allowed_bots: "github-actions"
           prompt: |
             Read TASTE.md, then .claude/skills/critique/SKILL.md, and follow the skill exactly to
@@ -184,10 +199,12 @@ jobs:
             ladder.png, not from the pretty screens.
 
             Write apps/${{ env.SLUG }}/CRITIQUE.md and apps/${{ env.SLUG }}/design-score.json
-            and nothing else. Do not commit.
+            and nothing else. Do not commit. Write design-score.json as soon as you have scored
+            every line, then refine both files: a verdict that exists beats a perfect one that
+            ran out of turns (logic-grid's critic read for 91 turns and wrote nothing).
           claude_args: >-
-            --max-turns 80
-            --model ${{ env.MODEL }}
+            --max-turns 200
+            --model ${{ env.ARCHITECT_MODEL }}
             --setting-sources project
             --allowedTools "Read,Write,Glob,Grep,Skill,TodoWrite,
             Bash(node:*),Bash(ls:*),Bash(cat:*),Bash(find:*),Bash(wc:*),Bash(sips:*)"
@@ -232,7 +249,7 @@ jobs:
           git config user.email "factory@users.noreply.github.com"
           for f in "apps/$SLUG/CRITIQUE.md" "$score"; do [ -f "$f" ] && git add "$f"; done
           git diff --cached --quiet || git commit -m "$SLUG: critique $verdict"
-          git pull --rebase origin "$FACTORY_BRANCH" || true
+          git pull --rebase --autostash origin "$FACTORY_BRANCH" || true
           git push origin "HEAD:$FACTORY_BRANCH" || echo "::warning::could not push the critique"
 
       - name: No verdict, no polish
@@ -272,6 +289,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          path_to_claude_code_executable: ${{ steps.claude-cli.outputs.path }}
           allowed_bots: "github-actions"
           prompt: |
             Read TASTE.md, then .claude/skills/polish/SKILL.md, and follow the skill exactly to
@@ -283,7 +301,7 @@ jobs:
             apps/${{ env.SLUG }}/qa/ and apps/${{ env.SLUG }}/qa/design/.
 
             Commit AND PUSH after every fix that works:
-              git pull --rebase origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
+              git pull --rebase --autostash origin ${{ env.FACTORY_BRANCH }} && git push origin HEAD:${{ env.FACTORY_BRANCH }}
             Finish with .github/scripts/verify-app.sh ${{ env.SLUG }} passing and
             node tools/design/tells.mjs ${{ env.SLUG }} reporting no FAIL.
           claude_args: >-
@@ -308,7 +326,7 @@ jobs:
           git config user.email "factory@users.noreply.github.com"
           git add -A "apps/$SLUG"
           git diff --cached --quiet || git commit -m "$SLUG: polish pass $(( ${{ steps.gate.outputs.attempts }} + 1 ))"
-          git pull --rebase origin "$FACTORY_BRANCH" || true
+          git pull --rebase --autostash origin "$FACTORY_BRANCH" || true
           git push origin "HEAD:$FACTORY_BRANCH"
 
       - name: Re-verify
@@ -326,7 +344,7 @@ jobs:
           if [ "${{ steps.reverify.outcome }}" = "success" ]; then
             .github/scripts/record-stage.sh "$SLUG" verify ok
             gh workflow run app-polish.yml -f slug="$SLUG" -f chain="$CHAIN" -f max_polish="$MAX_POLISH" \
-              -f model="$MODEL" --ref "$FACTORY_BRANCH"
+              -f model="$MODEL" -f architect_model="$ARCHITECT_MODEL" --ref "$FACTORY_BRANCH"
             echo "Polish pass done and verified; the next app-polish run judges it." >> "$GITHUB_STEP_SUMMARY"
           else
             .github/scripts/record-stage.sh "$SLUG" verify fail

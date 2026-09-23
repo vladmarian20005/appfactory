@@ -75,6 +75,11 @@ jobs:
             [ -f "$d/privacy.json" ] || continue
             stage=$(sed -n 's/^stage:[[:space:]]*//p' "$d/STATUS.md" 2>/dev/null | head -1)
             case "$stage" in shelved*|stopped*|archived*) continue ;; esac
+            # An app still in the build or polish loop has no page yet; app-pages publishes it
+            # and app-compliance checks it. Flagging it here failed 2026-09-21's preflight on
+            # logic-grid, which was mid-polish, and buried the real signal.
+            pages=$(node -p "(require('./$d/state.json').stages?.pages?.status)||''" 2>/dev/null || true)
+            [ "$pages" = "ok" ] || { echo "  skip      $slug: pages not published yet"; continue; }
 
             base=$(node -p "const p=require('./$d/privacy.json'); (p.companyURL||'').replace(/\/$/,'')+'/'+p.pageSlug+'/'" 2>/dev/null) || continue
             for url in "$base" "$base#support"; do

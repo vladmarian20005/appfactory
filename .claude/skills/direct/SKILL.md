@@ -5,8 +5,8 @@ description: Design direction for an app before it is built — the idea, the lo
 
 # /direct <slug>
 
-Requires `apps/<slug>/SPEC.md`. Produces `apps/<slug>/DESIGN.md` and `apps/<slug>/design/`:
-the brief the build implements and the critic holds it to.
+Requires `apps/<slug>/SPEC.md`. Produces `apps/<slug>/DESIGN.md`, `apps/<slug>/ARCHITECTURE.md`
+and `apps/<slug>/design/`: the brief the build implements and the critic holds it to.
 
 Read `TASTE.md` first, all of it. That is the bar. Your job is to decide, before any Swift
 exists, what this app is like to use — specifically enough that a builder with no taste of
@@ -195,14 +195,50 @@ Art pieces go in `design/art/<name>.svg`, each with a `viewBox`. Render one to c
 `node tools/design/art.mjs apps/<slug>/design/art/<name>.svg "$RUNNER_TEMP/Check.imageset" --width 200`
 — and Read the @3x PNG. The builder renders them into the asset catalog.
 
-## 7. Commit
+## 7. ARCHITECTURE.md — how it is put together
 
-Commit DESIGN.md and design/ (mocks, their PNGs, icon, art) as `<slug>: design direction`,
-and push.
+You are the architect as well as the art director. The builder is a strong coder with a long
+turn budget and no time to rethink the app's shape halfway through; every structural
+decision it makes on the fly is one it may make twice, differently. Decide them here, after
+DESIGN.md is pushed and before the mocks' revision, and keep it to what a builder needs:
+
+```
+# <Name> · architecture
+
+## Model
+Every persisted type (fields, types, what owns it), and where it lives: SwiftData, a Codable
+file, @AppStorage. Schema versioning from day one if any of it survives an update.
+
+## The engine
+The code behind `## The play`: the generator or scheduler, its inputs and outputs, where the
+`Ladder`, `Mastery`, `Run` and `Earned` from FactoryKit plug in, and the one function a test
+could call to prove session 150 differs from session 5. Deterministic under a seed.
+
+## State and flow
+The app's root state, which screen owns what, how a session starts, ends and is saved, and
+what happens on relaunch mid-session, on a day boundary, and after a month away.
+
+## Files
+The Swift files under ios/App/, one line each: what is in it. Views, the engine, the store,
+the brand. Nothing in FactoryKit gets copied into the app.
+
+## Risks
+The two or three things most likely to eat the builder's turns (a gesture, a layout at the
+largest text size, a generator that must never repeat) and the simplest way through each.
+```
+
+Only what FactoryKit really offers: read `FactoryKit/Sources/` before naming a type. Push it
+the moment it is whole.
+
+## 8. Commit
+
+Commit DESIGN.md, ARCHITECTURE.md and design/ (mocks, their PNGs, icon, art) as
+`<slug>: design direction`, and push.
 
 ## Done means
 
-DESIGN.md has every section, with real hex values, timings and lines of copy; three mocks
+DESIGN.md has every section, with real hex values, timings and lines of copy; ARCHITECTURE.md
+names the model, the engine, the flow and the files; three mocks
 exist, rendered and revised; the icon and every art piece render; the palette's contrast is
 checked; everything is pushed. The builder should be able to implement the app without
 making a single aesthetic decision you did not make first.

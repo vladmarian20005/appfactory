@@ -84,10 +84,15 @@ jobs:
           slug: ${{ env.SLUG }}
           browser: "true"
 
+      # Opus 5.5 needs a newer Claude Code than the action bundles; see the action.
+      - id: claude-cli
+        uses: ./.github/actions/claude-cli
+
       - name: Write the launch kit
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          path_to_claude_code_executable: ${{ steps.claude-cli.outputs.path }}
           allowed_bots: "github-actions"
           prompt: |
             Read .claude/skills/content/SKILL.md and follow it for the app `${{ env.SLUG }}`.
@@ -103,8 +108,8 @@ jobs:
 
             Commit as you go, not once at the end.
           claude_args: >-
-            --max-turns 80
-            --model claude-opus-5
+            --max-turns 200
+            --model claude-opus-5-5
             --setting-sources project
             --allowedTools "Read,Edit,Write,Glob,Grep,Skill,TodoWrite,
             Bash(xcrun:*),Bash(ffmpeg:*),Bash(sips:*),Bash(node:*),Bash(npm:*),
@@ -127,7 +132,7 @@ jobs:
           git config user.email "factory@users.noreply.github.com"
           git add "apps/$SLUG/content"
           git diff --cached --quiet || git commit -m "$SLUG: launch kit"
-          git pull --rebase origin "${FACTORY_BRANCH}" || true
+          git pull --rebase --autostash origin "${FACTORY_BRANCH}" || true
           git push origin "HEAD:${FACTORY_BRANCH}" || echo "::warning::push failed; the artifact has the work"
 
       - name: Publish the landing page

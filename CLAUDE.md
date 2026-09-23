@@ -58,6 +58,12 @@ tools/               new-app.sh, sim.sh, icon.mjs, design/, qa/, screenshots/, p
   icon — decided in `DESIGN.md` before any Swift, built in the brand from the first screen,
   and judged by `app-polish`'s critic. An app that works and looks like the template fails.
   Never `Color(.systemGroupedBackground)`, never the store pitch inside the product.
+- **Two models, one subscription.** Every agent authenticates with `CLAUDE_CODE_OAUTH_TOKEN`
+  (`claude setup-token`, bills the Claude plan, never the API). The architect,
+  `claude-fable-5-1`, writes DESIGN.md and ARCHITECTURE.md and is the critic; the builder,
+  `claude-opus-5-5`, writes, fixes and polishes the Swift, the listing and the launch kit.
+  Every agent step runs the Claude Code pinned in `.github/actions/claude-cli` (the action's
+  bundled one was too old for Opus 5.5); bump it there when a model needs a newer CLI.
 - **`state.json` is the handoff.** Each stage asserts the previous one passed and its commit
   is still an ancestor of HEAD. `STATUS.md` is prose for humans; `state.json` is for the
   pipeline.

@@ -13,6 +13,9 @@ template in a new color. Produces an app that builds, runs, renders every screen
 Read `TASTE.md` before anything else. SPEC.md says **what** to build. DESIGN.md says **what it
 is like**: the idea, the palette, the signature interaction, the reward, the voice, and three
 mocks in `design/`. Build that. Where DESIGN.md is silent, decide the way it would.
+`ARCHITECTURE.md`, when it exists, says **how it is put together**: the model, the engine
+behind the play, the flow and the files. Follow it; where it names something that does not
+exist, keep the intent, do the simplest thing that works, and note the change at its bottom.
 
 You are most likely running on a `macos-26` GitHub runner with no GUI, no physical device and
 no Xcode window. Everything below works there. Nothing below needs a human.
