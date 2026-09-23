@@ -1,0 +1,25 @@
+{
+  "pass": false,
+  "scores": {
+    "idea": 5,
+    "look": 5,
+    "signature": 4,
+    "reward": 4,
+    "voice": 4,
+    "craft": 3,
+    "firstMinute": 3,
+    "escalation": 4,
+    "pull": 3
+  },
+  "tells": ["pitch-in-product", "ending-names-what-never-arrives", "large-text-breaks"],
+  "summary": "The best-looking and best-built play in the factory, failed on one thing: the margin card and the run's shelf promise six things earned by cutting, and three of them — the pencil at four, the aquatint at thirty, the edition at a hundred and fifty — exist only as words, so the first promise the second session makes is one the app does not keep.",
+  "fixes": [
+    "Make the pencil, the aquatint box and the edition real on the print and the line, or cut Play.earned to the three that exist and rewrite the horizons — the margin card must name something that visibly arrives.",
+    "Largest text: stack the today card vertically and let the button go full width; cap the print sheet's Dynamic Type like the plate and let the press's height follow its content so the headline never lands on the print.",
+    "Take the free-tier sentence out of the Settings footer; the paywall and onboarding page 3 are the only places the promise is allowed.",
+    "Give the slip its body: .shake(trigger: bench.slips) on the cell and the skid stroke running 6 pt out of the cell into the margin — bench.slips is published and nothing reads it.",
+    "The first minute: crop the burin art to the tool alone lying across the paper at real size, draw the copper thread as a path from the clue's lozenge to the ghost cell, and add an onboarding capture to qa.json.",
+    "The print goes up on the line under one matchedGeometryEffect, the ghost numeral peeks above the print as the mock shows, and the press turn is a bed travel, not a 0.6° tilt.",
+    "The daily's margin reads PLATE 2719: name it TODAY'S PLATE with the date, and reconcile 'twelve points' with 'twenty-six forced' so the line never outruns the points on a print."
+  ]
+}
