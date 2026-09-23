@@ -213,11 +213,16 @@ is behind the one-time unlock, and that door cannot be the only one.
 | At | id | What opens | The line |
 | --- | --- | --- | --- |
 | 1 | `line` | **The drying line.** Pulled prints hang on a cord behind the press, newest at the left; any one can be taken down and read. | "Your first pull is on the line. It will be dry by morning." |
-| 4 | `pencil` | **The pencil.** A print's margin can be titled in your own hand. | "Four on the line. There is a pencil on the bench if you want to name them." |
+| 4 | `pencil` | **The pencil.** A print taken down off the line (or today's) takes a name in italic under the plate's title, and the name hangs on the line with it. | "Four on the line. There is a pencil on the bench — take one down and name it." |
 | 12 | `burnisher` | **The burnisher.** One scar a plate can be polished out by hand, leaving a faint bloom where it was — so the print comes out unscratched even when the plate did not. | "Twelve. The burnisher is worth keeping by you now." |
-| 30 | `aquatint` | **The aquatint box.** Prints come out in tone as well as line — the figures in the margin get their shading. | "Thirty pulled. The aquatint box comes down off the shelf." |
+| 30 | `aquatint` | **The aquatint box.** Prints come out in tone as well as line — every cast mark on every print, on the win and on the line, comes up out of a round of fine `CutShading(tone: 0.25)`. | "Thirty pulled. The aquatint box comes down off the shelf, and every figure prints in tone." |
 | 75 | `chine` | **Chine-collé.** A leaf of coloured paper goes under each pull, so every print carries the colour of its day and a year on the line reads as a calendar. | "Seventy-five. There is coloured stock under the bench — every pull takes the colour of its day from here." |
-| 150 | `edition` | **The edition.** Prints are numbered in your own series and the line binds into a book, a year to a spread. | "A hundred and fifty. They do not fit the line any more. There is a book for them." |
+| 150 | `edition` | **The edition.** From the 150th every print carries its `№` in copper, and the drying line hangs in spreads of seven, a week to a spread, with a ruled upright between them. | "A hundred and fifty. From here every print is numbered, and the line hangs in weeks." |
+
+A print is numbered by its place in her book (`platesPulled + 1`), never by the plate it came
+off: the daily is everybody's plate and carries no number of hers, only `TODAY'S PLATE` and
+the date. The line counts **points**: a forced point on the key lengthens it, any other forced
+cut keeps it standing, a guess breaks it — so no print shows a line longer than its points.
 
 The burnisher is a mercy, not an eraser: it takes the scratch off the **print**, and it does not
 restore the line or the clean sheet. A burnished plate can never be a `best`.
