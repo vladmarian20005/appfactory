@@ -415,10 +415,18 @@ final class Bench: ObservableObject {
         stampFigures(&session, closed: session.closedPairs)
     }
 
+    /// The line is points: a forced point on the key — the pairings the plate's points are
+    /// counted in — lengthens it, any other forced cut keeps it standing, and a guess of
+    /// either kind breaks it. Each of those points can be cut once, so a print can never show
+    /// a line longer than the points on it.
     private func replayRun(_ actions: [Action]) -> Run {
         var run = Run()
         for action in actions {
-            if action.forced { run.hit() } else { run.miss() }
+            if !action.forced {
+                run.miss()
+            } else if action.mark == .point, action.x.category == 0 || action.y.category == 0 {
+                run.hit()
+            }
         }
         return run
     }
@@ -756,7 +764,8 @@ final class Bench: ObservableObject {
                               name: total - made >= 4 && made % 3 == 0 ? Self.sampleNames[made / 3 % Self.sampleNames.count] : nil,
                               themeID: theme.id,
                               points: members * (categories - 1),
-                              longestLine: 6 + rng.int(14),
+                              // The line counts points, so it is never longer than the plate.
+                              longestLine: max(3, members * (categories - 1) - rng.int(6)),
                               scars: made % 4 == 1 ? 1 + rng.int(2) : 0,
                               burnished: false,
                               tier: made % 4 == 1 ? Run.Tier.good.rawValue : Run.Tier.clean.rawValue,
@@ -770,7 +779,7 @@ final class Bench: ObservableObject {
         }
         record.pulls = pulls.reversed()
         record.rung = rung
-        record.bestLine = 58
+        record.bestLine = pulls.map(\.longestLine).max() ?? 0
         record.pointsCut = pulls.reduce(0) { $0 + $1.points }
         // A record with an opinion in it: the two kinds she is solid at and the rest she is
         // not, so `Mastery.next` asks the generator for something in particular.

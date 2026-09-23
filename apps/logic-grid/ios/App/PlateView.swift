@@ -596,8 +596,10 @@ struct PlateView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "d MMMM"
         let date = formatter.string(from: Date())
-        if muted { return "plate \(plate.number) · \(date)" }
-        return "plate \(plate.number) · \(date) · depth \(plate.depth)"
+        // Today's plate is everybody's, so it carries no number of hers — only the day.
+        let name = plate.isDaily ? "today's plate" : "plate \(plate.number)"
+        if muted { return "\(name) · \(date)" }
+        return "\(name) · \(date) · depth \(plate.depth)"
     }
 
     /// Every scar, as a hairline scratch running out into the margin. They stay for the life
