@@ -67,7 +67,8 @@ struct Session: Equatable {
 /// Where the pull has got to. The whole of it is 1.5 seconds; a still capture freezes on the
 /// print, which is the frame worth photographing.
 enum PullStage: Int, Comparable {
-    case none, stilling, inking, wiping, paper, press, peel, settled
+    /// `hung`: the print is pegged — it has gone up on the line — after the card has risen.
+    case none, stilling, inking, wiping, paper, press, peel, settled, hung
     static func < (a: PullStage, b: PullStage) -> Bool { a.rawValue < b.rawValue }
 }
 
@@ -577,18 +578,22 @@ final class Bench: ObservableObject {
     private func choreograph() {
         pullBursts += 1
         guard !Motion.isStill else {
-            stage = .settled
+            stage = .hung
             return
         }
         Task { @MainActor in
+            // Each beat holds long enough to be seen as its own state — the ink standing in
+            // the lines, the wipe, the paper, the press, the peel — and the print is pegged
+            // on the line last, once the margin card has risen under it.
             let beats: [(PullStage, UInt64)] = [
-                (.stilling, 120_000_000),
-                (.inking, 80_000_000),
-                (.wiping, 220_000_000),
-                (.paper, 140_000_000),
-                (.press, 220_000_000),
-                (.peel, 120_000_000),
-                (.settled, 400_000_000),
+                (.stilling, 100_000_000),
+                (.inking, 100_000_000),
+                (.wiping, 280_000_000),
+                (.paper, 220_000_000),
+                (.press, 240_000_000),
+                (.peel, 220_000_000),
+                (.settled, 360_000_000),
+                (.hung, 360_000_000),
             ]
             for (next, wait) in beats {
                 try? await Task.sleep(nanoseconds: wait)
@@ -605,6 +610,9 @@ final class Bench: ObservableObject {
                         Haptics.celebrate()
                         Tones.shared.play(.step(7))
                     }
+                case .hung:
+                    Haptics.tap()
+                    Tones.shared.play(.pop)
                 default: break
                 }
             }

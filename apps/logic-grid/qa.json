@@ -56,10 +56,10 @@
     {
       "name": "pull",
       "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-bed", "run", "-demo", "pull"],
-      "delay": 2.4,
+      "delay": 1.2,
       "frames": 12,
-      "interval": 0.08,
-      "note": "The last points and the pull: everything stills, the ink wash sweeps the plate and is wiped back off the surface, the paper comes down, the press turns, the print peels off from the left, filings fall, and the margin card rises under the tier headline."
+      "interval": 0,
+      "note": "The last points and the pull, about 1.9 s: everything stills, the ink wash sweeps the plate and is wiped back off the surface, the paper comes down on the plate, plate and paper travel ten points through the press, the print peels up off it from the left, the headline sets, filings fall, the engraver speaks and the margin card rises — and last the print is pegged on the cord, gone up on the line. The simulator only manages a frame every one to four seconds while this plays, so a strip catches three or four of those beats."
     }
   ],
   "ladder": [

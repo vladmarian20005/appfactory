@@ -86,6 +86,9 @@ struct GroundTooth: View {
             hatch(&context, size: size, degrees: 62, tone: tone, whole: true)
             hatch(&context, size: size, degrees: -62, tone: tone, whole: false)
         }
+        // Rasterised once and composited after, rather than re-stroked under every beat of
+        // the pull.
+        .drawingGroup()
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
@@ -93,13 +96,14 @@ struct GroundTooth: View {
     /// One field of parallel strokes. The second pass covers the lower-left quadrant only, so
     /// that corner is literally crosshatched and sits a shade darker.
     private func hatch(_ context: inout GraphicsContext, size: CGSize, degrees: Double, tone: Color, whole: Bool) {
-        let reach = size.width + size.height
+        // From the middle, half the diagonal reaches every corner at any angle.
+        let reach = hypot(size.width, size.height) / 2 + 4
         let radians = degrees * .pi / 180
         let dx = CGFloat(cos(radians)), dy = CGFloat(sin(radians))
         var path = Path()
         var offset: CGFloat = -reach
         while offset < reach {
-            let origin = CGPoint(x: -dy * offset, y: dx * offset)
+            let origin = CGPoint(x: size.width / 2 - dy * offset, y: size.height / 2 + dx * offset)
             path.move(to: CGPoint(x: origin.x - dx * reach, y: origin.y - dy * reach))
             path.addLine(to: CGPoint(x: origin.x + dx * reach, y: origin.y + dy * reach))
             offset += 3.5

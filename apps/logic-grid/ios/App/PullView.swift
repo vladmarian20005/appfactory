@@ -381,6 +381,24 @@ struct PullView: View {
                         }
                         PrintSheet(pull: pull, ink: stock)
                     }
+                    .overlay(alignment: .top) {
+                        // Pegged: the print has gone up on the line. The cord runs out past
+                        // both edges and the peg bites the top of the sheet.
+                        if stage >= .hung {
+                            ZStack {
+                                Rectangle()
+                                    .fill(brand.palette.highlight.opacity(0.75))
+                                    .frame(height: 1.5)
+                                    .padding(.horizontal, -40)
+                                Lozenge()
+                                    .fill(brand.palette.highlight)
+                                    .frame(width: 16, height: 10)
+                            }
+                            .offset(y: -3)
+                            .transition(.scale(scale: 0.2, anchor: .center).combined(with: .opacity))
+                            .accessibilityHidden(true)
+                        }
+                    }
                     .frame(width: min(300, width * 0.8))
                     // Peeled from the left: the sheet lifts off at an angle and settles.
                     .rotationEffect(.degrees(showPrint ? -1.5 : (stage >= .press ? 0 : -4)),
@@ -413,13 +431,16 @@ struct PullView: View {
                 .foregroundStyle(brand.palette.highlight)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+                .opacity(stage >= .peel ? 1 : 0)
+                .scaleEffect(stage >= .peel ? 1 : 0.92)
+            // The engraver speaks a beat after the headline, as the card comes up.
             Text("“\(bench.praise)”")
                 .brandFont(.title3, weight: .regular)
                 .foregroundStyle(brand.palette.inkSoft)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+                .opacity(stage >= .settled ? 1 : 0)
         }
-        .opacity(stage >= .peel ? 1 : 0)
         .animation(Motion.resolved(Motion.gentle), value: stage)
     }
 

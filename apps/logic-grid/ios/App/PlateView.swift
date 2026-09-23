@@ -11,7 +11,9 @@ struct HatchField: Shape {
 
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        let reach = rect.width + rect.height
+        // Half the diagonal reaches every corner from the middle at any angle; anything past
+        // it is drawn and clipped away, which on a whole plate is thousands of lines.
+        let reach = hypot(rect.width, rect.height) / 2 + spacing
         let radians = degrees * .pi / 180
         let dx = CGFloat(cos(radians)), dy = CGFloat(sin(radians))
         var offset = -reach
@@ -51,7 +53,17 @@ struct CutShading: View {
 
     @ViewBuilder
     private func pass(_ degrees: Double, trim: CGFloat, ink: Double) -> some View {
-        if trim > 0 {
+        if trim >= 1 {
+            // Fully cut — which is nearly every hatch on screen at rest — skips the trim, which
+            // would otherwise measure the whole path on every frame.
+            ZStack {
+                HatchField(degrees: degrees, spacing: spacing)
+                    .stroke(AppBrand.Plate.lip.opacity(0.5 * Double(tone)), lineWidth: weight * 0.4)
+                    .offset(x: -0.7, y: -0.7)
+                HatchField(degrees: degrees, spacing: spacing)
+                    .stroke(AppBrand.Plate.trough.opacity(ink * Double(tone)), lineWidth: weight)
+            }
+        } else if trim > 0 {
             ZStack {
                 HatchField(degrees: degrees, spacing: spacing)
                     .trim(from: 0, to: trim)
