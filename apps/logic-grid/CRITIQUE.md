@@ -1,157 +1,58 @@
 # Crosshatch · critique
 
-**Verdict: fail.** An engraver's bench, drawn through: copper ruled into a staircase matrix, cast marks
-instead of rotated labels, a crosshatch that reads as tone, a pull that inks and wipes and prints, and a
-generator that actually reads what the player is bad at — this is the first app through the factory
-whose play is as designed as its look. It fails on one thing that decides it: the margin card ends every
-session by naming what is waiting — "The pencil comes to the bench at four", "The aquatint box comes
-down at thirty" — and three of the six things it names do not exist anywhere in the code, so the first
-promise the second session makes is one the app does not keep.
+**Verdict: pass.** An engraver's bench drawn all the way through — copper ruled into a staircase matrix with cast marks in its heads, a crosshatch that reads as tone, a pull that inks, wipes and prints, prints pegged on a cord over a day-book page — and, underneath it, a generator that reads the player's own record to build the next plate and a ladder that is still changing the game at rung 270. The one thing that most decides it is that the second session is real in the code, not only in the prose: `Mastery` is written on every cut and read by the generator, `Run` puts one plate's clean sheet at risk and nothing else, six things arrive for playing and every one of them is consulted by a view, and the margin card ends a session by naming the next one truthfully. What holds it back from higher is a capture, not a design: the pull's filmstrip is twelve blank frames, so the reward's 1.5 seconds are scored from a still and the code.
 
 | | Score | Evidence |
 | --- | --- | --- |
-| Idea | 5 | Every screen is the shop: the plate on paper on zinc (`qa/03-bed.png`), prints pegged on a cord over a day-book page (`qa/01-line.png`), plates standing in a rack (`qa/05-run.png`), a paywall whose hero is the drying line (`qa/06-paywall.png`). Even the icon is a plate with one point cut. |
-| Look | 5 | A canvas with tooth and bed rails, New York Bold at 108 pt over the line, corner radius 3, six cast inks that never cross the bevel, copper that dims rather than inverts in `qa/design/dark-03-bed.png`. One crop of the plate is unmistakable. |
-| Signature interaction | 4 | The code has it all — `Cut.bite` and `Cut.point` springs (`AppBrand.swift:49-50`), two-pass `CutShading` trimmed over 160 ms (`PlateView.swift:117-131`), swarf from the cell (`PlateView.swift:283-287`), a 22 ms cascade with a haptic every second cell (`Bench.swift:343-364`). But `moment-cut.png` shows two cuts and eight identical frames, and the slip has no shake and no skid: `bench.slips` is published (`Bench.swift:332`) and no view reads it; `.shake(trigger:)` appears nowhere. |
-| Reward | 4 | `qa/02-win.png` is a print you would send: the answer engraved, filings frozen mid-fall, `PULLED CLEAN. NOTHING GUESSED ON IT` in copper, a margin card that names the record. Four tiers with their own filings, haptics and tones (`Bench.swift:575-610`, `PullView.swift:222-229`). Held at 4: the print does not go up on the line (`matchedGeometryEffect` is nowhere), the ghost numeral is hidden under the print, and the press "turns" by 0.6° (`PullView.swift:260`). |
-| Voice | 4 | The engraver is real and varied: twelve praise lines, nine near-misses, five for a block closing (`AppInfo.swift:49-89`), "Read three again. It settles Dyer and the packet." (`Bench.swift:467`), every button in his words. Held at 4 because the Settings footer recites the free tier — "One plate a day and the first forty of the run" (`RootView.swift:116-118`) — and the daily's margin reads `PLATE 2719` (`qa/04-first.png`), which is a day number, not a plate. |
-| Craft | 3 | Hierarchy and rhythm are right and dark mode is designed. Largest text is not: in `qa/design/ax-01-line.png` the today card's button is a column reading "Ba / ck / to / th" and the date breaks "SEPTE / MBER"; in `ax-02-win.png` the print sheet grows past the screen and the headline sets on top of it. At the default size "Rule the next plate" already wraps to two lines on the margin card (`qa/02-win.png`). |
-| First minute | 3 | Onboarding is not captured — `qa/04-first.png` is the uncut daily, which is the first *plate*, not the first *minute*. On it the teaching is faint: the ghost crosshatch is there, the "copper thread" is a 2 pt bar beside clue one (`BedView.swift:232-239`), and the floating burin is the whole `burin.svg` — plate and all — pasted at 58 pt in the paper's corner (`BedView.swift:79-86`), which reads as a misplaced thumbnail rather than a tool on the bench. |
-| Escalation | 4 | `ladder.png` is four different games: 3×4 with five direct clues → 4×4 with either/or at depth 6 → 5×6 with arithmetic at depth 9 → 5×6 with exclusive-or at depth 14. All five dials are read by `Play.shape(at:)` (`Record.swift:21-28`); `flattensAt` is 270 and stated. Not 5: the last two panels share a shape and the strip cannot show the sealed clues or the depth that separate them, and the free run stops at 40 with only the daily's week (14–205) climbing past it for a non-payer. |
-| Pull | 3 | The next plate is genuinely chosen — `Mastery.next` over the seven kinds, avoiding last plate's (`Bench.swift:154-158`), the generator scoring sets by how hard they lean on `want` (`Generator.swift:79-85`). But the ending's promise is hollow three times out of six: `hasEarned` is consulted for `burnisher` and `chine` only (`Bench.swift:495`, `PullView.swift:292`, `LineView.swift:95`). Pencil, aquatint and edition are blurbs on a shelf (`RunView.swift:156-178`). |
+| Idea | 5 | Every screen is the shop and nothing else: the plate on paper on the zinc slab (`qa/03-bed.png`), prints on a cord over the day-book (`qa/01-line.png`), plates standing in a rack (`qa/05-run.png`), the drying line as the paywall's hero (`qa/06-paywall.png`), a copper plate with one point cut as the icon. The ruled-out mark is the app's name happening under the thumb. |
+| Look | 5 | A zinc canvas with a crosshatch tooth and a north light, New York Bold at 108 pt over the line, corner radius 3 everywhere, six cast inks that live on the paper and never cross the bevel, copper that dims rather than inverts in `qa/design/dark-03-bed.png`. One crop of the plate is unmistakable next to Cross Logic's white table. |
+| Signature interaction | 4 | The cut is complete in code: `Haptics.rigid` then `tap` for the two strokes and `thud` + `.pop` for a point (`Bench.swift:274-282`), the tone climbing with the line (`:282`, `:331`), two-pass `CutShading` trimmed over 160 ms (`PlateView.swift:129-157`), swarf from the cell (`:296-300`), the 22 ms cascade with a haptic every second cell (`Bench.swift:344-365`), and now the slip shakes its cell (`PlateView.swift:506`) and leaves a skid on the copper (`:334-352`) — the hairline is visible on the top-right block in `qa/03-bed.png`. Held at 4 because `qa/design/moment-cut.png` shows one cut's swarf drifting across frames 2–4 and then six identical frames; the two strokes and the cascade are not in the strip. |
+| Reward | 4 | `qa/02-win.png` is a print you would send: the answer engraved in solved rows, the ghost `12` now rising above it, filings frozen mid-fall, `PULLED CLEAN. NOTHING GUESSED ON IT` in copper, the engraver's line, and a margin card that names the record. Eight beats with their haptics and tones (`Bench.swift:586-628`), four tiers of filings (`PullView.swift:312-319`), the best pulled twice off register (`:376-381`), the print pegged on the cord at `.hung` (`:387-400`). Held at 4: `qa/design/moment-pull.png` is twelve white frames, so none of that motion is verified, and at first view the card's "Rule the next plate" sits under the tab bar (`qa/02-win.png`). |
+| Voice | 5 | The master engraver, dry and exact, never about you: twelve praise lines, nine near-misses, five for a block closing, three for a seal biting open (`AppInfo.swift:49-89`); "Read three again. It settles Dyer and the packet." (`Bench.swift:476`); "The book runs back to the nineteenth of January." (`qa/02-win.png`). Every button is his — "Go on", "Take the burin", "Back to the bed", "Wipe it", "Scrap them" — and the Settings footer no longer recites the free tier (`qa/07-shop.png`). The pitch is on the paywall and page three of onboarding, nowhere else. |
+| Craft | 4 | Hierarchy and rhythm are right, dark mode is designed, and the largest text holds now: the today card stacks and the legend goes vertical (`qa/design/ax-01-line.png`), the print keeps its layout and the headline sets under it (`ax-02-win.png`). Not 5: the margin scar is drawn through "OF 12 POINTS" so it reads as a strikethrough of the total (`qa/03-bed.png`, every ladder panel past the first; `PlateView.swift:607-618`); the run's shelf is four identical hatched rectangles (`qa/05-run.png`); the onboarding plate's hatching crosses at a right angle and reads as a window screen (`qa/08-onboarding.png`); the print's title truncates to "The Weighbridge…" at the largest size. |
+| First minute | 4 | Onboarding is captured and is the mock: `CROSSHATCH` between two rules and a lozenge, the plate drawn, "A plate a day" in New York, the page indicator as a cut lozenge and two ruled cells, "Go on" (`qa/08-onboarding.png`). The first plate teaches with no text: the tool floats on the bench, the one forced cell carries a ghost crosshatch, and a real copper thread runs from clue one to it (`qa/04-first.png`, `BedView.swift:77-91`, `:273-297`). Not 5 because Wednesday's first lesson is an either/or clue, which is the first kind that cannot be read off a row — the thread teaches the hardest thing on the plate first. |
+| Escalation | 4 | `ladder.png` is four different games — 3×4 with five direct clues → 4×4 with either/or at depth 6 → 5×6 with arithmetic and a `SETTLED` figure at depth 9 → 5×6 with exclusive-or at depth 14 — and all five dials are read by `Play.shape(at:)` (`Record.swift:21-28`). `flattensAt` is 270 (`FactoryKit/Ladder.swift:78-82` on `Record.swift:18`) and DESIGN.md says what happens past it. Not 5: the last two panels share a shape and the sealed clues that separate them are below the fold; measured depth is 5 at rung 5 and 6 at rung 51 against dial targets of 2 and 4, so the depth dial does nothing until about rung 66; and a free player's own run stops at 40 with only the daily's week climbing past it. |
+| Pull | 4 | The next plate is chosen, not dealt: `Mastery.next` over the seven kinds with an unseen share, avoiding the last plate's (`Bench.swift:155-157`), a second `Mastery` over thirty-two subjects avoiding the last three (`:158-159`), and a generator that deals the wanted kinds twice as often and scores the surviving set on how hard it leans on them (`Generator.swift:73-91`, `:204-227`). The ending names what waits and it is true: pencil, burnisher, aquatint, chine-collé and the edition are each read by a view. Not 5: for a free player past forty, "Rule the next plate" is a paywall door every day and the daily's seven rungs repeat weekly for good; and the daily never seals (`Generator.swift:107`). |
+
+As an editor: the first screenshot is the bed mid-cut (`03-bed.png`) — the plate is the identity and no one else in the category has it — with the line second for the 4.3 note, and I would feature it. The weakest screen is the run: four blank plates on a shelf, the rack art repeated from the paywall at thumbnail size, and the free tier's locked plate sitting under a "Rule the next plate" button. A stranger's sentence: "It's a logic puzzle drawn as a copper engraving, and finishing one prints it."
 
 ## Slop tells present
 
-- **The business model inside the product.** `RootView.swift:116-118`, visible in `qa/07-shop.png`'s footer
-  position when free: "One plate a day and the first forty of the run. Every print you have pulled stays on
-  the line." The paywall and onboarding page 3 carry the promise; a Settings footer may not.
-- **An ending that names what never arrives.** `Record.swift:54-63` promises the pencil at 4, the aquatint at 30,
-  the edition at 150; `Play.horizon` (`Record.swift:67-76`) puts them on every margin card; nothing in the
-  app changes when they are reached. TASTE's fifth owed thing is "specific, earned, **true**".
-- **Large text does not hold.** `qa/design/ax-01-line.png` and `ax-02-win.png` — a broken button and a headline
-  set over the print. Not a frozen size (everything scales through `scaledFont` and `brandDisplay`), but a
-  layout that was never looked at past `.xxxLarge`.
+None. `node tools/design/tells.mjs logic-grid`: 0 hard tells, 0 smells. Checked in the screenshots: the canvas is zinc with a drawn tooth, not gray; no SF Symbol is a hero (the tab glyphs and the kit's sparkle on the upgrade row are chrome); the win is a full screen, not a sheet; praise comes from pools; the first and last screens read "Go on" / "Take the burin" and "Unlock every plate"; nothing is frozen at a point size; no "come back tomorrow" anywhere in the app.
 
-`tells.mjs`: 0 hard tells, 0 smells.
+Two things to note that are not tells: `Points cut` (`RootView.swift:106`) accumulates and nothing reads it, which is a vanity row rather than a stat that should choose something; and `Days running` is shown unasked and used for nothing, which is the design.
 
 ## The second session
 
-- **Where the curve stops.** `Play.ladder` (`Record.swift:13-19`): members 4→6 by rung 111, categories 3→5 by 85,
-  kinds 2→7 by 136, depth 2→14 by 228, sealed 1→4 from 150 to **270**. `flattensAt` is 270, past 150, and
-  every dial is read in `Play.shape(at:)`. Past 270 the shape is fixed and what still changes is `want`
-  (`Bench.swift:154`), which is honest and said so. A plate pulled clean advances the rung by 2
-  (`Bench.swift:560`), so the ladder rewards deduction over trial. The free run stops at 40
-  (`Record.swift:79`); the daily runs the published week 14/28/46/68/96/140/205 (`Record.swift:37-43`) free.
-- **What chooses the next unit.** `Mastery<String>` over clue-kind ids, written on a forced cut
-  (`Bench.swift:311`), a slip (`:316`) and a loupe (`:464`), read in `rule()` (`Bench.swift:154-156`) with
-  `unseenShare: 0.34` and `avoiding: recentKinds`; a second `Mastery` over 32 themes avoiding the last
-  three (`:157-158`). The generator deals the wanted kinds twice as often (`Generator.swift:217`), prunes them
-  last (`:231-236`), and scores the surviving set on `leaning` and on measured depth against the rung's
-  target (`:78-85`, `:282-284`). Nothing here is `%` over a fixed list; the only seeded uniform draw is the
-  daily's theme (`Bench.swift:147`), which must be shared and is. The praise pools use `seed % count`
-  (`AppInfo.swift:94`) — that is fine for lines, and the seed moves every plate.
-- **What is at risk.** `Run` for one plate: a forced cut is `hit()`, an unforced or contradicting one is `miss()`
-  (`Bench.swift:417-423`); a miss appends a scar that prints (`:314`, `PullView.swift:65-73`); the tier is
-  `run.tier(score: longestChain, beating: bestLine)` and a scarred or burnished plate can never be a best
-  (`Bench.swift:526-531`). Losing costs the clean sheet, the line, and one hairline on this print. The rung
-  still advances, the plate still pulls, nothing earned is lost, and the burnisher at twelve is a mercy
-  that takes the scratch off the print and not off the record (`:498-507`). Right.
-- **What is earned without paying.** `Play.earned` names six (`Record.swift:51-64`). Two are real: the burnisher
-  (`Bench.swift:493-507`) and chine-collé, which colours the stock of every print (`LineView.swift:94-98`,
-  `PullView.swift:290-295`, visible in `qa/01-line.png`). The line at one is the line, which exists from the
-  first pull regardless. The pencil, the aquatint box and the edition are consulted by nothing:
-  `grep hasEarned` finds `burnisher` and `chine` and no other id. A player at four plates is told "There is
-  a pencil on the bench if you want to name them" and there is no pencil.
+- **Where the curve stops.** `Play.ladder` (`Record.swift:13-19`): members 4→6 by rung 111, categories 3→5 by 85, kinds 2→7 by 136, depth 2→14 by 228, sealed 1→4 from 150 to **270**. `flattensAt` is 270 and `climbs(through: 150)` is true; every dial is read in `Play.shape(at:)` (`Record.swift:21-28`) and handed to the generator (`Bench.swift:163-169`). Past 270 the shape is fixed and what still changes is `want` — the three kinds her record is weakest at — which DESIGN.md says plainly. A clean pull advances the rung by two (`Bench.swift:571`). Caveats: the depth dial's early targets are below what a 3×4 plate can measure (`ladder.png` panel 1 shows depth 5 at rung 5), so three dials do the climbing before rung 66; the free run ends at 40 (`Record.swift:82`) and the daily runs the published week 14/28/46/68/96/140/205 (`Record.swift:37-43`) free forever.
+- **What chooses the next unit.** `Mastery<String>` over the clue-kind ids, written on a forced cut (`Bench.swift:312`), a slip (`:317`) and a loupe (`:473`), read in `rule()` with `unseenShare: 0.34` and `avoiding: recentKinds` (`:155-157`); a second `Mastery` over the themes (`:158-159`). The generator deals the wanted kinds twice as often (`Generator.swift:217`), gives up direct clues first (`:231-236`), puts clues back until the measured depth is under the rung's target (`:281-285`), and keeps the set that leans hardest on `want` (`:79-91`). The daily is seeded from the date alone — subject and kinds included — so it is everybody's plate (`Bench.swift:142-151`). Nothing is `%` over a fixed list; the only modulo is the praise pool's line index, and its seed moves every plate.
+- **What is at risk, and what losing it costs.** `Run` for one plate: a forced point on the key is `hit()`, any unforced or contradicting mark is `miss()` (`Bench.swift:422-432`); a miss appends a scar that prints (`:315`, `PullView.swift:96-107`) and a skid on the copper (`PlateView.swift:334-352`); the tier is `run.tier(score: longestChain, beating: bestLine)` and a scarred or burnished plate can never be a best (`Bench.swift:535-540`). It costs this plate's clean sheet, this line and one hairline on this print. The plate still pulls, the rung still advances, nothing earned is lost, and the burnisher at twelve takes the scratch off the print and not off the record (`:502-516`).
+- **What is earned without paying.** `Play.earned` names six (`Record.swift:51-64`) and every one is read: the pencil names a print (`Bench.swift:674-684`, `PullView.swift:126-144`, "wet tuesday" in `qa/01-line.png`); the burnisher (`Bench.swift:504`); the aquatint box tones every figure (`RootView.swift:57`, `PullView.swift:148-157`, the shaded discs in `qa/02-win.png`); chine-collé colours the stock (`LineView.swift:142-146`, `PullView.swift:420-424`); the edition numbers the print and hangs the line in sevens (`PullView.swift:87-94`, `LineView.swift:73`, `№ 214` in `qa/01-line.png`). The unlock at forty is a door and not the only one.
 
-Why open it on Thursday: because Thursday's plate is rung 68 and Wednesday's was 46, because the next plate in
-the run was built against the three clue kinds you are worst at, because yesterday's print is on the line
-in yesterday's colour and today's square in the day-book is still bare copper — and, until the fix above,
-*not* because the aquatint box comes down at thirty.
+Why open it on Thursday: because Thursday's plate is rung 68 — five to a side and a relational clue Wednesday's 46 did not have — because the next plate in the run was built against the three kinds you are worst at, because yesterday's print is on the line in yesterday's colour with the name you pencilled on it, and because today's square in the day-book is still bare copper.
 
 ## Keep
 
-- The plate. Cast marks in the heads, the two-pass crosshatch at 40° and 72° that reads as tone, the lozenge
-  point with its lip, registration bands outside the bevel and never inside, the margin with its plate
-  caps and 34 pt count, figures stamped into the void as blocks close. This is the app.
-- The pull's result screen: the tilted print with the answer in solved rows, copper headline, the quote, the
-  margin card with its lozenge rule and proof caps, filings in copper and ink rather than party colours.
-- The line: 108 pt New York, prints on a cord with lozenge pegs, chine-collé stock, the day-book with a
-  filled lozenge per pulled day and the registration cross on today, `214 PULLED · 31 DAYS RUNNING ·
-  LONGEST 58` unasked at the foot.
-- Dark mode: the copper dims and the paper goes to night; nothing is inverted.
-- The engine and its honesty: solver-judged cuts, scars that print, a clean pull climbing two rungs, the
-  sealed clue that bites open when the plate runs dry of forced moves, `Mastery` read by the generator.
-- The voice, all of it, and every button label.
-- The icon.
+- The plate: cast marks in the heads, the two-pass crosshatch at 40° and 72° that reads as tone, the lozenge point with its lip, registration bands outside the bevel and never inside, figures stamped into the void as blocks close, the margin's plate caps and 34 pt count.
+- The pull's still: the tilted print with the answer in solved rows, the ghost numeral above it, the copper headline, the quote, the margin card with its proof caps, filings in copper and ink.
+- The line: 108 pt New York, prints on a cord with lozenge pegs on their day's stock with names in pencil and `№` in copper, the day-book with a filled lozenge per pulled day and the registration cross on today, the plate caps unasked at the foot.
+- The engine and its honesty: solver-judged cuts, scars that print, skids on the copper, a clean pull climbing two rungs, sealed clues that bite open when the plate runs dry, `Mastery` read by the generator, and an ending that names a true thing.
+- The first minute: masthead, drawn plate, "Take the burin", the floating tool, the ghost cell and the copper thread.
+- Dark mode, the voice, every button label, the share card that spoils nothing, and the icon.
 
 ## Fix, in this order
 
-1. **Make the earned things real, or stop promising them.** `Record.swift:51-64`, `RunView.swift:143-187`,
-   `PullView.swift:317-375`, `LineView.swift`. Build the three: *pencil* — a `TextField` on the print's margin
-   on the line (`PrintSheet`, non-compact) that writes a `title` override on `Pull`, shown in the plate caps
-   under the title; *aquatint* — once earned, the cast marks on every print and on the hanging prints get a
-   `CutShading(tone: 0.25)` wash under them so the figures come out in tone; *edition* — `№ 151` in the
-   print's margin from the 150th, and the drying line grouped into spreads of seven with a rule between.
-   If that is too much for a polish pass, cut `Play.earned` to `line`, `burnisher`, `chine` and rewrite
-   `Play.horizon` so no card names a thing that does not arrive. Next capture: `01-line.png` at 214 pulls
-   shows numbered, toned, titled prints; a `-rung 5` capture's margin card names something that the
-   `-rung 51` line visibly has.
-2. **Largest text.** `LineView.swift:144-166`: read `dynamicTypeSize.isAccessibilitySize` as `Legend` already
-   does (`BedView.swift:124-140`) and stack the today card vertically — portrait, caps, title, then the
-   button at `maxWidth: .infinity`. `PullView.swift:233-288`: the fixed `.frame(height: 296)` is what puts the
-   headline on the print; let the press size itself, and give `PrintSheet` the same
-   `.dynamicTypeSize(...DynamicTypeSize.accessibility1)` cap the plate has (`PlateView.swift:280`) with the
-   same one-line reason — a print is a fixed object too. Give the margin card's two buttons a `VStack` at
-   accessibility sizes. Next capture: `ax-01-line.png` reads "Back to the bed" on one line; `ax-02-win.png`
-   shows the print, then the headline under it, then the card.
-3. **The Settings footer.** `RootView.swift:116-118`: both states read "Everything you have cut is on this phone
-   and nowhere else." The free tier is stated on the paywall and nowhere else. Next capture: `07-shop.png`
-   without `-pro` shows no mention of forty.
-4. **The slip.** `PlateView.swift:444-460`: `.shake(trigger: bench.slips)` on the cell that skidded (keep the
-   pairing of the last unforced action on `Bench`), `Haptics.soft()` is already there. Draw the skid: on a
-   slip, a `Path` from the cell's centre 6 pt past its edge in `Plate.trough.opacity(0.45)`, trimmed
-   0→1 on `Cut.bite`, kept for the plate's life alongside the margin scar. Next capture: a `-demo cut` with
-   `slipAt` shows a hairline leaving a cell, not just one lying in the margin.
-5. **The first minute.** `BedView.swift:79-86`: the burin is the whole `burin.svg` at 58 pt. Cut a second file,
-   `design/art/burin-tool.svg`, the tool alone, and lay it 140 pt wide across the paper's lower edge at
-   −4° with the same `ambientFloat`. `BedView.swift:232-239`: replace the 2 pt bar with a real thread — an
-   anchor preference from the ghost cell and one from the clue's lozenge, and a `Path` between them in
-   `highlight` at 1 pt, breathing. Add `08-onboarding` to `qa.json` with no `-onboarded` so the three pages
-   and "Take the burin" are seen. Next capture: `04-first.png` shows a tool on a bench and a line from
-   clue one to a cell; an onboarding capture exists.
-6. **The pull's last 400 ms.** `PullView.swift:264-283`: a `@Namespace` on `RootView`, `matchedGeometryEffect(id:
-   pull.number)` on the `PrintSheet` here and on the newest print in `LineView.dryingLine`, so at `.settled`
-   the print travels; failing that, the print slides up and out and the line tab's newest peg pops in. Move
-   the print down 30 pt so the 132 pt ghost numeral shows above it as `mock-2-win.png` has it; turn the
-   press by travelling the plate 10 pt on `.press` rather than tilting it 0.6°. Next capture: `02-win.png`
-   shows the numeral's top; `moment-pull.png` has more than three distinct states in twelve frames.
-7. **Two words in the margin.** `Bench.swift:166`: the daily is numbered `day % 9000` and prints `PLATE 2719`.
-   Number dailies by their week and day — `PLATE W38·3` — or drop the number and set `TODAY'S PLATE · 23
-   SEPTEMBER · DEPTH 4`. `PullView.swift:377-382` and `PrintSheet`: "twelve points · line of twenty-six"
-   reads as a contradiction because the line counts every cut and the points count only fixes. Either count
-   the line in points only (`run.hit()` on `.point` cuts) or say "twenty-six cuts, twelve points, longest
-   line twenty-six". Next capture: `04-first.png`'s margin has no four-digit plate; `02-win.png`'s print
-   never shows a line longer than its points.
+1. **Re-shoot the pull.** `qa.json:56-63`, `moment-pull.png`. All twelve frames are white — the burst fires at `interval: 0` at 1.2 s, before the app's first frame (`moment-cut.png`'s first frame at 1.1 s is white too). Set `delay` to 1.6 and `interval` to 0.25 so the strip spans the 1.9 s the note describes, and confirm `-demo pull` renders rather than hangs. Next capture: at least four distinct states — plate alone, the ink wash, the print peeling, the print pegged with the card under it.
+2. **Move the scar off the caps.** `PlateView.swift:607-618` draws the hairline at `height − 14 − (index % 3) × 9`, which is exactly the caps line, so `qa/03-bed.png` reads `OF ~~12~~ POINTS` and every ladder panel past the first has the total struck out. Draw it in the band between the margin's rule and the caps (`y = 8 + (index % 3) × 4`), or run it off the plate's lower edge as mock 1 does. Next capture: the `12` unstruck, a hairline visibly separate from the type.
+3. **Lift the win's action out from under the tab bar.** `PullView.swift:296` pads the bottom by 62; the glass tab bar is taller, so `qa/02-win.png` shows "Rule the next plate" blurred under it at first view — the one thing to do after a pull, hidden. Pad by 100, or scroll the card into view at `.settled`. Next capture: the button fully visible below the proof caps.
+4. **Give the run's shelf real prints.** `RunView.swift:232-247` pegs a blank cream rectangle behind every pulled plate, so plates 47–50 in `qa/05-run.png` are four identical hatched slabs, and `:110-113` repeats the paywall's rack at 84 pt. Look up `record.pulls` by number and peg `PrintSheet(pull:compact:)` at 56 pt behind each pulled plate; drop the `Rack` image from the locked block and let the crosshatched plate 41 carry it alone. Next capture: four different prints behind 47–50, one hero per screen.
+5. **Redraw the onboarding plate's hatching.** `design/art/plate.svg` crosses its two passes at a right angle — the window screen DESIGN.md's icon notes reject — and `qa/08-onboarding.png` is the first thing a new user sees. Run the passes at +40° and +72° on the pitches the icon uses; check `burin.svg` the same way. Next capture: the cells read as tone, as they do on the bed.
+6. **Let the daily seal.** `Generator.swift:107` takes two off the shape for the daily, so Sunday's rung 205 (sealed 2) seals nothing and the "first third played on partial information" never reaches the free player, against DESIGN.md's "Sunday … two clues sealed". Use `shape.sealed` for the daily, or `shape.sealed − 1` if Sunday should be gentler. Next capture: a Sunday daily with a crosshatched clue in its list.
+7. **Make the depth dial describe the plate.** `Record.swift:17` opens depth at 12 from 2, but a 3×4 plate measures 5 at rung 5 and a 4×4 measures 6 at rung 51 (`ladder.png`), so the dial and the margin's `DEPTH` disagree for seventy rungs. Start it at 5, opening at 40, every 14 to the same ceiling at 166 — or lift the shape's floor into the target — so `shapeCaps` on the run and the caps on the plate say the same number. Next capture: the run's `DEPTH n` and the bed's `DEPTH n` agree at rung 51.
 
 ## Against the mocks
 
-- **Mock 1, the bed.** Close. The build's plate, legend, bands, margin and clue list match the mock cell for
-  cell. Flatter: the mock's `SETTLED` figures sit in the void at 22 pt with two rows; the build's are
-  smaller and the void is empty in `03-bed.png` because no block has closed at that pose. The mock's margin
-  shows the scar as a hairline running from the plate's edge out into the margin; the build's runs across
-  "OF 12" in the caps. The three grey lozenges under the plate read as a page indicator, not a rule.
-- **Mock 2, the win.** The build has the tilted print, the copper headline, the quote and the margin card.
-  Flatter: the ghost numeral `24` that the mock shows rising behind the print is hidden under it; the
-  mock's plate stands clear to the right showing its cuts and figures, the build's is mostly covered; the
-  mock's proof strip is 24 lozenges in groups of six, the build's is 18 identical grey dots.
-- **Mock 3, first.** Not captured. The mock's masthead — `CROSSHATCH` between two rules and a lozenge, the
-  plate at 400 pt, "A plate a day" in New York at 42 pt, the page indicator as a cut lozenge and two ruled
-  cells — is in `AppInfo.swift:100-130` and `Crosshatch.swift:17-22`, and the polish pass has to show it.
-- **Mock 4, the line.** The mock's title is "The line" in New York Bold; the build's is the system large title in
-  SF Pro — the first thing on the screen and the only thing on it not in the brand. TASTE keeps the
-  navigation chrome standard, so this is a note, not a fix: if the polish pass wants the mock's title, set
-  the nav title inline and draw the screen's own `brandFont(.largeTitle)` heading. The mock's today card
-  fits on one line with a one-line button; the build's title and button both wrap at the default size.
-  The mock's prints overlap the hero's lower third; the build's hang just under it, which is fine.
-- **The tab bar.** The mock names the fourth tab "Shop" with a small sun; the build uses `lightbulb.max`,
-  which says "ideas" and not "the shop". `wrench.and.screwdriver` or `lamp.desk` would be the engraver's.
+- **Mock 1, the bed.** Cell for cell the build is the mock: legend, bands, staircase, margin, clue list with struck clues in verdigris, `SETTLED` figures in the void (`ladder.png`, panel 3). Flatter: the mock's scar runs from the plate's edge into the margin clear of the type, the build's runs through `OF 12`; the three grey lozenges under the plate still read as a page indicator rather than a rule (`BedView.swift:99`).
+- **Mock 2, the win.** The ghost numeral now shows above the print, the plate stands to the right, the headline and card match. Flatter: the mock's proof strip is twenty-four lozenges in groups of six that show the solve; the build's `LozengeRule(count: 18)` (`PullView.swift:467`) is eighteen identical grey lozenges that show nothing — the real strip exists on the share card (`ShareCard.swift:66-87`) and could be reused here. The mock's two buttons are visible; the build's are under the tab bar.
+- **Mock 3, first.** Matches: masthead, plate, "A plate a day" in New York, the lozenge indicator, "Go on". Flatter only in the plate art's right-angle hatching.
+- **Mock 4, the line.** The mock's title is New York; the build's is the system large title, which is the chrome TASTE keeps standard and is fine. The mock hangs the prints over the hero's lower third; the build hangs them just under, with the cord touching the numeral's foot, which reads as one object. The prints now carry names, `№` and coloured stock the mock did not have.
