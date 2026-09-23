@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="100 104 300 100" width="300" height="100">
+  <!-- The burin alone, lying on the bench: lozenge-section point, steel shaft, brass ferrule,
+       and the mushroom handle with its flat filed off. The same tool as burin.svg, off the plate. -->
+  <defs>
+    <linearGradient id="wood" x1="0" y1="0" x2=".3" y2="1">
+      <stop offset="0" stop-color="#6E4522"/><stop offset=".45" stop-color="#4B2C13"/><stop offset="1" stop-color="#301A09"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2=".2" y2="1">
+      <stop offset="0" stop-color="#E7E3DA"/><stop offset=".35" stop-color="#A9A79F"/>
+      <stop offset=".62" stop-color="#6E6E69"/><stop offset="1" stop-color="#3B3B38"/>
+    </linearGradient>
+    <linearGradient id="ferrule" x1="0" y1="0" x2=".2" y2="1">
+      <stop offset="0" stop-color="#E9C48A"/><stop offset=".5" stop-color="#A97434"/><stop offset="1" stop-color="#6A4415"/>
+    </linearGradient>
+    <filter id="toolDrop" x="-20%" y="-60%" width="140%" height="240%">
+      <feDropShadow dx="-3" dy="8" stdDeviation="5" flood-color="#15191A" flood-opacity=".32"/>
+    </filter>
+  </defs>
+  <g filter="url(#toolDrop)">
+    <path d="M150 146 316 138 316 152 150 158Z" fill="url(#steel)"/>
+    <path d="M150 146 316 138 316 143.5 150 150.5Z" fill="#F2EFE8" fill-opacity=".55"/>
+    <path d="M150 146 120 158 150 158Z" fill="#8E8C86"/>
+    <path d="M150 146 120 158 150 152Z" fill="#DFDCD3"/>
+    <rect x="312" y="132" width="16" height="28" rx="3" fill="url(#ferrule)"/>
+    <path d="M326 122 q46 -6 58 24 q6 26 -22 34 q-20 6 -36 -2 l0 -12 -4 0 0 -32 4 0Z" fill="url(#wood)"/>
+    <path d="M330 126 q34 -4 46 16" fill="none" stroke="#9A6837" stroke-width="3" stroke-opacity=".5" stroke-linecap="round"/>
+    <path d="M336 168 q30 6 46 -6" fill="none" stroke="#1C0E04" stroke-width="3" stroke-opacity=".5" stroke-linecap="round"/>
+  </g>
+</svg>

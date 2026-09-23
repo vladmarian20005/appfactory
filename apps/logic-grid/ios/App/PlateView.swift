@@ -489,6 +489,7 @@ struct PlateView: View {
                     hinted: bench.loupe?.pairing == pairing, waiting: waiting)
         }
         .buttonStyle(.pressable(scale: 0.97, haptic: false))
+        .anchorPreference(key: ThreadAnchors.self, value: .center) { ghost ? ["cell": $0] : [:] }
         // A slip is forgiven with a shake of the cell it happened on, never a buzzer.
         .shake(trigger: lastSkid == pairing ? bench.slips : 0)
         .accessibilityLabel(label(rowCell, columnCell, mark: mark))

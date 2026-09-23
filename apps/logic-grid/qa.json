@@ -37,6 +37,11 @@
       "name": "07-shop",
       "args": ["-onboarded", "-reset", "-sampleData", "-pro", "-screen", "settings"],
       "note": "The kit's settings with the shop's own rows: plates pulled, points cut, longest line, days running, the sounds toggle, muted ink, the assist, and scrapping the plates behind its confirmation."
+    },
+    {
+      "name": "08-onboarding",
+      "args": ["-reset"],
+      "note": "The first minute, before any plate: the CROSSHATCH masthead between two rules and a lozenge, the plate drawn in copper, 'A plate a day' in New York, the page indicator as a cut lozenge and two ruled cells, and 'Go on' — the pages end on 'Take the burin'."
     }
   ],
   "moments": [

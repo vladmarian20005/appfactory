@@ -75,14 +75,18 @@ struct BedView: View {
                                   teaching: teaching?.pairing)
                             .frame(maxWidth: .infinity, alignment: .center)
                         if !session.hasCut {
-                            // The burin lies beside the bed and floats until the first cut.
-                            Image("Burin")
+                            // The burin lies on the bench along the plate's lower edge and
+                            // floats until the first cut.
+                            Image("BurinTool")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 58)
+                                .frame(width: 140)
                                 .rotationEffect(.degrees(-4))
                                 .ambientFloat(distance: 3, period: 2.8)
                                 .frame(maxWidth: .infinity, alignment: .trailing)
+                                .padding(.top, -6)
+                                .padding(.bottom, -8)
+                                .allowsHitTesting(false)
                                 .accessibilityHidden(true)
                         }
                         if let line = bench.marginLine {
@@ -97,6 +101,13 @@ struct BedView: View {
                         ClueList(bench: bench, session: session, threaded: teaching?.clue)
                     }
                     .padding(17)
+                    .overlayPreferenceValue(ThreadAnchors.self) { anchors in
+                        GeometryReader { proxy in
+                            if let clue = anchors["clue"], let cell = anchors["cell"] {
+                                CopperThread(from: proxy[clue], to: proxy[cell])
+                            }
+                        }
+                    }
                     .background {
                         RoundedRectangle(cornerRadius: 3, style: .continuous)
                             .fill(brand.palette.surface)
@@ -204,6 +215,9 @@ struct ClueList: View {
                     .foregroundStyle(brand.palette.surface)
             }
             .padding(.top, 4)
+            .anchorPreference(key: ThreadAnchors.self, value: .leading) {
+                threaded == clue.id ? ["clue": $0] : [:]
+            }
             ZStack(alignment: .leading) {
                 Text(sealed ? placeholder(clue) : clue.text)
                     .brandFont(.body, weight: .regular)
@@ -228,16 +242,6 @@ struct ClueList: View {
                 Rectangle().fill(brand.palette.highlight.opacity(0.16))
             }
         }
-        .overlay(alignment: .leading) {
-            if threaded == clue.id {
-                // The copper thread, drawn from the clue towards the cell it forces.
-                Rectangle()
-                    .fill(brand.palette.highlight)
-                    .frame(width: 2)
-                    .offset(x: -7)
-                    .breathing(amount: 0.06, period: 2.6)
-            }
-        }
         .popIn(delay: Double(clue.id) * 0.04)
         .accessibilityElement(children: .combine)
     }
@@ -252,6 +256,43 @@ struct ClueList: View {
         let inks = brand.palette.extras
         if bench.record.calmInk && bench.isPro || inks.isEmpty { return brand.palette.inkSoft }
         return inks[category % inks.count]
+    }
+}
+
+/// The two ends of the copper thread: the threaded clue's lozenge and the ghost cell it
+/// forces. Each reports where it is; the paper draws the thread between them.
+struct ThreadAnchors: PreferenceKey {
+    static let defaultValue: [String: Anchor<CGPoint>] = [:]
+    static func reduce(value: inout [String: Anchor<CGPoint>], nextValue: () -> [String: Anchor<CGPoint>]) {
+        value.merge(nextValue()) { $1 }
+    }
+}
+
+/// The thread itself: out of the clue's lozenge into the paper's gutter, and up to the cell
+/// the clue forces — a single copper hair, breathing. It goes at the first cut.
+struct CopperThread: View {
+    let from: CGPoint
+    let to: CGPoint
+    @Environment(\.brand) private var brand
+
+    var body: some View {
+        let gutter = max(6, min(from.x, to.x) - 22)
+        ZStack {
+            Path { path in
+                path.move(to: from)
+                path.addCurve(to: to,
+                              control1: CGPoint(x: gutter, y: from.y - 30),
+                              control2: CGPoint(x: gutter, y: to.y + 40))
+            }
+            .stroke(brand.palette.highlight, style: StrokeStyle(lineWidth: 1, lineCap: .round))
+            Circle()
+                .fill(brand.palette.highlight)
+                .frame(width: 4, height: 4)
+                .position(to)
+        }
+        .breathing(amount: 0.06, period: 2.6)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 
