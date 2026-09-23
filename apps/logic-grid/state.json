@@ -38,6 +38,12 @@
       "sha": "7244ff4182fbb26caecd07c48e0357e8cc2450fe",
       "at": "2026-09-23T17:47:23.976Z",
       "run": "https://github.com/vladmarian20005/appfactory/actions/runs/35897818874"
+    },
+    "compliance": {
+      "status": "fail",
+      "sha": "7244ff4182fbb26caecd07c48e0357e8cc2450fe",
+      "at": "2026-09-23T17:48:08.673Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/35898009582"
     }
   }
 }
