@@ -12,6 +12,8 @@ struct PrintSheet: View {
     @Environment(\.brand) private var brand
     @Environment(\.aquatint) private var aquatint
     @State private var draft = ""
+    /// The names' column grows with the type, so a name never breaks mid-word.
+    @ScaledMetric(relativeTo: .callout) private var nameWidth: CGFloat = 62
 
     var body: some View {
         VStack(alignment: .leading, spacing: compact ? 6 : 10) {
@@ -37,9 +39,13 @@ struct PrintSheet: View {
                 HStack(spacing: 8) {
                     Text("Crosshatch")
                         .plateCaps(size: 9)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
                     Spacer(minLength: 0)
                     Text("\(numbered)  ·  \(dated)")
                         .plateCaps(size: 9)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
                 }
                 .foregroundStyle(brand.palette.inkSoft)
                 Text(pull.title)
@@ -54,7 +60,7 @@ struct PrintSheet: View {
                     Text("\(Spelled.out(pull.points)) points  ·  line of \(Spelled.out(pull.longestLine))")
                         .plateCaps(size: 9)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.7)
+                        .minimumScaleFactor(0.5)
                         .foregroundStyle(brand.palette.highlight)
                     Lozenge().fill(brand.palette.highlight).frame(width: 11, height: 7)
                 }
@@ -99,6 +105,9 @@ struct PrintSheet: View {
                 }
             }
         }
+        // A print is a fixed object, like the plate: it holds its layout at the first
+        // accessibility size, and a print hanging on the line is a thumbnail of one.
+        .dynamicTypeSize(...(compact ? DynamicTypeSize.xLarge : .accessibility1))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("A print of plate \(pull.number), \(pull.title), \(pull.points) points, longest line \(pull.longestLine)\(pull.isClean ? ", not a scar" : ", \(pull.scars) scars")")
     }
@@ -161,7 +170,8 @@ struct PrintSheet: View {
                         Text(index < pull.names.count ? pull.names[index] : "")
                             .brandFont(.callout)
                             .foregroundStyle(brand.palette.ink)
-                            .frame(width: 62, alignment: .leading)
+                            .lineLimit(1)
+                            .frame(width: nameWidth, alignment: .leading)
                         ForEach(Array(row.dropFirst().enumerated()), id: \.offset) { position, glyph in
                             if position > 0 { leader }
                             figure(glyph, size: 24, weight: 2.2)
@@ -310,8 +320,22 @@ struct PullView: View {
 
     // MARK: The bed, the plate, the sheet
 
+    /// Where the plate sits on the bed: in the middle under the paper, travelling ten points
+    /// through the rollers on the press, then set aside to the right once the print is off it.
+    private var plateTop: CGFloat {
+        if showPrint { return 196 }
+        return stage >= .press ? 96 : 86
+    }
+
+    /// The paper lies on the plate, goes through the press with it, and peels up and back off
+    /// it — leaving the ghost numeral's top showing above the print.
+    private var printTop: CGFloat {
+        if showPrint { return 104 }
+        return stage >= .press ? 96 : 86
+    }
+
     private func press(width: CGFloat) -> some View {
-        ZStack(alignment: .center) {
+        ZStack(alignment: .top) {
             // The count, as a ghost numeral behind everything.
             VStack(spacing: 2) {
                 Text("Points cut")
@@ -324,7 +348,10 @@ struct PullView: View {
                 .brandDisplay(size: 132)
                 .foregroundStyle(brand.palette.highlight.opacity(0.16))
             }
-            .frame(maxHeight: .infinity, alignment: .top)
+            // The numeral is a watermark behind the print, not reading matter; past the first
+            // accessibility size it would only push the print off the screen.
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+            .accessibilityHidden(true)
             .zIndex(0)
 
             // The plate on the bed, inked and wiped.
@@ -337,8 +364,9 @@ struct PullView: View {
                         .opacity(stage == .inking ? 0.82 : (stage == .wiping ? 0.22 : 0))
                         .animation(Motion.resolved(Motion.gentle), value: stage)
                 }
-                .rotationEffect(.degrees(stage >= .press ? 0.6 : 0))
-                .offset(x: showPrint ? 52 : 0, y: showPrint ? 72 : (stage >= .press ? 34 : 24))
+                .scaleEffect(stage == .press ? 0.985 : 1)
+                .offset(x: showPrint ? 52 : 0)
+                .padding(.top, plateTop)
                 .zIndex(1)
 
             // The paper comes down, the press turns, and the print peels back off the plate.
@@ -354,16 +382,19 @@ struct PullView: View {
                         PrintSheet(pull: pull, ink: stock)
                     }
                     .frame(width: min(300, width * 0.8))
-                    .rotationEffect(.degrees(-1.5))
-                    .offset(x: -14, y: showPrint ? 12 : 40)
+                    // Peeled from the left: the sheet lifts off at an angle and settles.
+                    .rotationEffect(.degrees(showPrint ? -1.5 : (stage >= .press ? 0 : -4)),
+                                    anchor: .trailing)
+                    .offset(x: -14)
                     .opacity(stage == .paper ? 0.55 : 1)
                     .scaleEffect(showPrint ? 1 : 0.97, anchor: .topLeading)
+                    .padding(.top, printTop)
                     .animation(Motion.resolved(Motion.bouncy), value: stage)
                 }
             }
             .zIndex(2)
         }
-        .frame(height: 296)
+        .padding(.bottom, 10)
         .frame(maxWidth: .infinity)
     }
 
@@ -417,7 +448,18 @@ struct PullView: View {
             Text(proofCaps)
                 .plateCaps(size: 9.5)
                 .foregroundStyle(brand.palette.highlight)
-            HStack(spacing: 12) {
+            // Stacked rather than side by side: "Rule the next plate" is the one thing to do
+            // next and it sets on one line at every size.
+            VStack(spacing: 10) {
+                Button {
+                    if bench.runIsLocked { showPaywall = true } else { bench.rule(daily: false) }
+                } label: {
+                    Text("Rule the next plate")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 4)
+                }
+                .brandProminent()
                 if let image = shareCard, let pull = bench.pulled {
                     ShareLink(item: image,
                               preview: SharePreview("Plate \(pull.number)", image: image)) {
@@ -433,15 +475,6 @@ struct PullView: View {
                             .fill(brand.palette.ink.opacity(0.07))
                     }
                 }
-                Button {
-                    if bench.runIsLocked { showPaywall = true } else { bench.rule(daily: false) }
-                } label: {
-                    Text("Rule the next plate")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 4)
-                }
-                .brandProminent()
             }
         }
         .padding(18)

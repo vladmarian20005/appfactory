@@ -9,6 +9,7 @@ struct LineView: View {
     @Binding var showPaywall: Bool
     @Binding var tab: RootView.Tab
     @Environment(\.brand) private var brand
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var inHand: Pull?
 
     private var pulls: [Pull] { bench.record.pulls.reversed() }
@@ -189,28 +190,37 @@ struct LineView: View {
                 .brandProminent()
             }
         } else {
-            HStack(spacing: 14) {
+            // At the accessibility sizes the card stacks — portrait, caps, title, then the
+            // button across the card — the way the bed's legend does, so nothing sets a
+            // syllable to a line.
+            let layout = typeSize.isAccessibilitySize
+                ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
+                : AnyLayout(HStackLayout(alignment: .top, spacing: 14))
+            layout {
                 PlatePortrait(seed: bench.session?.plate.number ?? 214, side: 76)
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Today  ·  \(dated)")
                         .plateCaps(size: 9.5)
                         .foregroundStyle(brand.palette.inkSoft)
+                        .fixedSize(horizontal: false, vertical: true)
                     Text(bench.session?.isDaily == true ? bench.session?.plate.title ?? "Today's plate" : "Today's plate")
                         .brandFont(.title3)
                         .foregroundStyle(brand.palette.ink)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.8)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button {
+                        bench.openBed(daily: true)
+                        tab = .bed
+                    } label: {
+                        Text(started ? "Back to the bed" : "Set it on the bed")
+                            .font(.headline)
+                            .lineLimit(1)
+                            .frame(maxWidth: typeSize.isAccessibilitySize ? .infinity : nil)
+                            .padding(.vertical, 2)
+                    }
+                    .brandProminent()
+                    .padding(.top, 8)
                 }
-                Spacer(minLength: 0)
-                Button {
-                    bench.openBed(daily: true)
-                    tab = .bed
-                } label: {
-                    Text(started ? "Back to the bed" : "Set it on the bed")
-                        .font(.headline)
-                        .padding(.vertical, 2)
-                }
-                .brandProminent()
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(14)
             .background {
