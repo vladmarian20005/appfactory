@@ -1,7 +1,7 @@
 {
   "fix_attempts": 0,
   "slug": "logic-grid",
-  "polish_attempts": 0,
+  "polish_attempts": 1,
   "stages": {
     "build": {
       "status": "ok",
