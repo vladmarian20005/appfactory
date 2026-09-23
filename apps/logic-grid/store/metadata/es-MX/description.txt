@@ -1,0 +1,33 @@
+Un banco de grabador y una placa al día.
+
+Cobre, rayado en cuadrícula, con unas cuantas pistas debajo. Dos trazos sobre una pareja la descartan. Un punto profundo la fija, y la placa hace sola el resto del tachado, así que llevar las cuentas nunca es el acertijo. Cuando cortas el último punto, la placa se entinta, se limpia y pasa por la prensa como un grabado, y el grabado se cuelga en el tendedero a secar.
+
+CADA PLACA SE DEMUESTRA ANTES DE SERVIRSE
+
+Aquí nada sale de una baraja y nada está ajustado en tu contra. Cada placa se genera, la resuelve un solucionador de restricciones y luego se poda pista por pista mientras la respuesta siga siendo la única posible. Si no se puede demostrar que se resuelve solo razonando, se descarta y nunca la ves. La lupa también lo demuestra: pregúntale y te dice qué pista obliga la siguiente marca y qué obliga.
+
+LO ÚNICO EN QUE PUEDES EQUIVOCARTE
+
+En un acertijo de pura deducción, el único error posible es marcar algo que las pistas todavía no obligan, y la placa lo sabe. Un corte obligado entra limpio y suma a tu racha. Una suposición, aunque sea correcta, patina: deja una cicatriz finísima en el margen, y la cicatriz se imprime. Cuesta la hoja limpia de esa placa y nada más. Nunca una vida, nunca una pista que se te acabó, nunca el día, nunca una placa ya impresa.
+
+UNA SERIE QUE SIGUE SUBIENDO
+
+Las placas crecen contigo: tres categorías y cuatro por lado al principio, cinco categorías y seis por lado más adelante, y siete tipos de pista que se abren uno a la vez: directa, negativa, una u otra, antes y después, aritmética, adyacencia y o exclusivo. Pasadas las ciento cincuenta placas, algunas pistas llegan tachadas y solo se abren cuando la placa ya no tiene una jugada obligada sin ellas, así que empiezas con información parcial. Lo que el generador construye después se elige entre los tipos que te han faltado.
+
+LA PLACA DE HOY ES LA MISMA PARA TODOS
+
+Sembrada con la fecha, en una semana publicada que va de la placa fácil del lunes a la difícil del domingo. Gratis para siempre, en cualquier punto de tu serie.
+
+LO QUE GANAS JUGANDO
+
+El tendedero, el lápiz para titular el margen de un grabado, el bruñidor para quitarle una cicatriz a una impresión, la caja de aguatinta, papel de color para que un año de grabados se lea como un calendario, y un libro encuadernado para guardarlos. Llegan por cortar bien, no por pagar.
+
+SIN ANUNCIOS. SIN RELOJ. SIN PUNTAJE.
+
+Esta app no tiene publicidad, ni videos que ver a cambio de una pista, ni moneda, ni medidor de energía, ni nada que caduque. Un día que te saltas es un cuadro vacío en la página del diario, que es la verdad y no un reproche. Todo lo que has cortado se queda en tu teléfono: Crosshatch no hace ninguna conexión de red, no tiene cuenta y no recopila nada.
+
+GRATIS, Y LO QUE AGREGA EL DESBLOQUEO
+
+Gratis para siempre: una placa demostrada cada día, las primeras cuarenta placas de la serie, la lupa, deshacer, reiniciar, el diario, el tendedero y la tarjeta para compartir. Un solo pago desbloquea el resto de la serie generada, tinta apagada para una placa más tranquila y el control del tachado asistido. Sin suscripción.
+
+Para quien disfruta los acertijos del tipo “¿de quién es la cebra?” y quiere acertar a propósito, con una razón para cada marca en la placa.

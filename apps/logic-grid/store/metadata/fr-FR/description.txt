@@ -1,0 +1,33 @@
+Un établi de graveur, et une plaque par jour.
+
+Du cuivre, quadrillé, avec quelques indices en dessous. Deux traits en croix sur une paire l’éliminent. Un point profond la fixe, et la plaque fait elle-même le reste des croix, si bien que la comptabilité n’est jamais l’énigme. Quand le dernier point est gravé, la plaque est encrée, essuyée et passée sous la presse pour devenir une estampe, et l’estampe va sécher sur le fil.
+
+CHAQUE PLAQUE EST PROUVÉE AVANT D’ÊTRE SERVIE
+
+Ici, rien n’est tiré d’un paquet de cartes et rien n’est réglé contre vous. Chaque plaque est générée, puis résolue par un solveur de contraintes, puis élaguée indice par indice tant que la réponse reste la seule possible. Si l’on ne peut pas prouver qu’elle se résout par le seul raisonnement, elle est jetée et vous ne la voyez jamais. La loupe le prouve aussi : demandez-lui, et elle nomme l’indice qui impose la marque suivante et ce qu’il impose.
+
+LA SEULE CHOSE QUE VOUS POUVEZ RATER
+
+Dans une énigme de pure déduction, la seule erreur possible est de marquer ce que les indices n’imposent pas encore, et la plaque le sait. Un trait imposé passe net et allonge votre série. Une supposition, même juste, dérape : elle laisse une rayure fine comme un cheveu dans la marge, et la rayure s’imprime. Elle coûte la feuille sans faute de cette plaque, et rien d’autre. Jamais une vie, jamais un indice épuisé, jamais la journée, jamais une plaque déjà tirée.
+
+UNE PROGRESSION QUI NE CESSE DE MONTER
+
+Les plaques grandissent avec vous : trois catégories et quatre par côté au début, cinq catégories et six par côté plus tard, et sept sortes d’indices qui s’ouvrent une à une : direct, négatif, l’un ou l’autre, avant-après, arithmétique, adjacence, ou exclusif. Au-delà de cent cinquante plaques, certains indices arrivent raturés et ne s’ouvrent que lorsque la plaque n’a plus de coup imposé sans eux : vous commencez avec une information partielle. Ce que le générateur construit ensuite est choisi parmi les sortes qui vous ont manqué.
+
+LA PLAQUE DU JOUR EST LA MÊME POUR TOUS
+
+Tirée de la date, selon une semaine publiée qui va de la plaque facile du lundi à la difficile du dimanche. Gratuite pour toujours, où que vous en soyez.
+
+CE QUE VOUS GAGNEZ EN JOUANT
+
+Le fil de séchage, le crayon pour titrer la marge d’une estampe, le brunissoir pour effacer une rayure d’un tirage, la boîte à aquatinte, du papier de couleur pour qu’une année d’estampes se lise comme un calendrier, et un livre relié pour les ranger. Ils arrivent parce que vous gravez bien, pas parce que vous payez.
+
+SANS PUB. SANS CHRONO. SANS SCORE.
+
+Cette app ne contient aucune publicité, aucune vidéo à regarder contre un indice, aucune monnaie, aucune jauge d’énergie et rien qui expire. Un jour manqué est une case vide sur la page du journal : c’est la vérité, pas un reproche. Tout ce que vous avez gravé reste sur votre téléphone : Crosshatch n’établit aucune connexion réseau, n’a pas de compte et ne collecte rien.
+
+GRATUIT, ET CE QUE LE DÉBLOCAGE AJOUTE
+
+Gratuit pour toujours : une plaque prouvée chaque jour, les quarante premières plaques de la progression, la loupe, annuler, recommencer, le journal, le fil de séchage et la carte à partager. Un seul paiement débloque le reste de la progression générée, l’encre sourde pour une plaque plus calme et le réglage de l’aide aux croix. Sans abonnement.
+
+Pour qui aime les énigmes du genre « à qui appartient le zèbre ? » et veut avoir raison exprès, avec une raison pour chaque marque sur la plaque.

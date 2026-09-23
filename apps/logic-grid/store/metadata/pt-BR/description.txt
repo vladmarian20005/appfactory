@@ -1,0 +1,33 @@
+Uma bancada de gravador e uma placa por dia.
+
+Cobre, riscado em grade, com algumas pistas embaixo. Dois traços cruzados sobre um par o descartam. Um ponto fundo o confirma, e a própria placa faz o resto das marcações, então a contabilidade nunca é o enigma. Quando o último ponto é gravado, a placa é entintada, limpa e passada na prensa como uma gravura, e a gravura vai para o varal secar.
+
+CADA PLACA É PROVADA ANTES DE SER SERVIDA
+
+Aqui nada sai de um baralho e nada é ajustado contra você. Cada placa é gerada, resolvida por um solucionador de restrições e depois podada pista por pista enquanto a resposta continuar sendo a única possível. Se não der para provar que ela se resolve só com raciocínio, ela é descartada e você nunca a vê. A lupa também prova: pergunte, e ela diz qual pista força a próxima marca e o que ela força.
+
+A ÚNICA COISA EM QUE VOCÊ PODE ERRAR
+
+Num enigma de dedução pura, o único erro possível é marcar algo que as pistas ainda não forçaram, e a placa sabe. Um corte forçado entra limpo e soma à sua sequência. Um chute, mesmo certo, escorrega: deixa um arranhão fino como um fio de cabelo na margem, e o arranhão sai na impressão. Custa a folha limpa daquela placa e nada mais. Nunca uma vida, nunca uma dica que acabou, nunca o dia, nunca uma placa já impressa.
+
+UMA JORNADA QUE NÃO PARA DE SUBIR
+
+As placas crescem com você: três categorias e quatro por lado no começo, cinco categorias e seis por lado depois, e sete tipos de pista que se abrem um de cada vez: direta, negativa, um ou outro, antes e depois, aritmética, adjacência e ou exclusivo. Depois de cento e cinquenta placas, algumas pistas chegam riscadas e só se abrem quando a placa não tem jogada forçada sem elas, então você começa com informação parcial. O que o gerador constrói em seguida é escolhido entre os tipos que andaram faltando para você.
+
+A PLACA DE HOJE É A MESMA PARA TODOS
+
+Semeada pela data, seguindo uma semana publicada que vai da placa fácil de segunda à difícil de domingo. Grátis para sempre, em qualquer ponto da sua jornada.
+
+O QUE VOCÊ GANHA JOGANDO
+
+O varal de secagem, o lápis para dar título à margem de uma gravura, o brunidor para tirar um arranhão de uma impressão, a caixa de água-tinta, papel colorido para que um ano de gravuras se leia como um calendário, e um livro encadernado para guardá-las. Chegam por gravar bem, não por pagar.
+
+SEM ANÚNCIOS. SEM CRONÔMETRO. SEM PONTOS.
+
+Este app não tem publicidade, nem vídeo para assistir em troca de dica, nem moeda, nem barra de energia, nem nada que expire. Um dia perdido é um quadrado vazio na página do diário, o que é a verdade e não uma acusação. Tudo o que você gravou fica no seu celular: o Crosshatch não faz nenhuma conexão de rede, não tem conta e não coleta nada.
+
+GRÁTIS, E O QUE O DESBLOQUEIO ACRESCENTA
+
+Grátis para sempre: uma placa provada por dia, as primeiras quarenta placas da jornada, a lupa, desfazer, recomeçar, o diário, o varal e o cartão para compartilhar. Um único pagamento desbloqueia o resto da jornada gerada, tinta suave para uma placa mais tranquila e o controle da marcação assistida. Sem assinatura.
+
+Para quem gosta daquele enigma do tipo “quem é o dono da zebra” e quer acertar de propósito, com um motivo para cada marca na placa.
