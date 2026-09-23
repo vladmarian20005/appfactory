@@ -33,7 +33,7 @@ struct RootView: View {
                 }
                 .shopBackground()
             }
-            .tabItem { Label("Shop", systemImage: "lightbulb.max") }
+            .tabItem { Label("Shop", systemImage: "lamp.desk") }
             .tag(Tab.shop)
         }
         .sheet(isPresented: $showPaywall) {
@@ -114,9 +114,7 @@ struct ShopRows: View {
                     Toggle("Let the plate cross out for you", isOn: Binding(get: { bench.record.assist }, set: bench.setAssist))
                 }
             } footer: {
-                Text(bench.isPro
-                     ? "Everything you have cut is on this phone and nowhere else."
-                     : "One plate a day and the first forty of the run. Every print you have pulled stays on the line.")
+                Text("Everything you have cut is on this phone and nowhere else.")
             }
             Section {
                 Button("Scrap the plates", role: .destructive) { confirmScrap = true }
