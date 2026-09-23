@@ -7,14 +7,28 @@ struct PrintSheet: View {
     let pull: Pull
     var compact = false
     var ink: Color?
+    /// The pencil, when she has it and the print is in her hands: a name in the margin.
+    var onName: ((String) -> Void)?
     @Environment(\.brand) private var brand
+    @Environment(\.aquatint) private var aquatint
+    @State private var draft = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: compact ? 6 : 10) {
             if compact {
                 rows
                     .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.top, pull.isEditioned ? 9 : 0)
                 Spacer(minLength: 0)
+                if let name = pull.name {
+                    Text(name)
+                        .italic()
+                        .brandFont(.caption, weight: .regular)
+                        .foregroundStyle(brand.palette.ink.opacity(0.78))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
                 Text(dated)
                     .plateCaps(size: 8)
                     .foregroundStyle(brand.palette.inkSoft)
@@ -24,13 +38,14 @@ struct PrintSheet: View {
                     Text("Crosshatch")
                         .plateCaps(size: 9)
                     Spacer(minLength: 0)
-                    Text("plate \(pull.number)  ·  \(dated)")
+                    Text("\(numbered)  ·  \(dated)")
                         .plateCaps(size: 9)
                 }
                 .foregroundStyle(brand.palette.inkSoft)
                 Text(pull.title)
                     .brandFont(.title3)
                     .foregroundStyle(brand.palette.ink)
+                pencil
                 rule
                 rows
                 rule
@@ -60,6 +75,18 @@ struct PrintSheet: View {
                 }
                 .shadow(color: .black.opacity(0.16), radius: 9, x: 2, y: 5)
         }
+        .overlay(alignment: .topTrailing) {
+            // The edition number, in the corner of the sheet the way it is pencilled on a
+            // real print.
+            if compact, pull.isEditioned {
+                Text("№ \(pull.number)")
+                    .plateCaps(size: 7)
+                    .tracking(0.6)
+                    .foregroundStyle(brand.palette.highlight)
+                    .padding(.top, 5)
+                    .padding(.trailing, 6)
+            }
+        }
         .overlay(alignment: .topLeading) {
             // Every scar prints. A burnished plate comes up clean; the plate remembers.
             if !pull.isClean && !pull.burnished {
@@ -80,13 +107,53 @@ struct PrintSheet: View {
         Rectangle().fill(brand.palette.ink.opacity(0.18)).frame(height: 0.5)
     }
 
+    private var numbered: String {
+        pull.isEditioned ? "№ \(pull.number)" : "plate \(pull.number)"
+    }
+
+    /// Her name for it, in pencil under the plate's title. With the pencil in hand the line
+    /// is a field; otherwise it is only what she wrote.
+    @ViewBuilder
+    private var pencil: some View {
+        if let onName {
+            TextField("name it in pencil", text: $draft)
+                .italic()
+                .brandFont(.callout, weight: .regular)
+                .foregroundStyle(brand.palette.ink.opacity(0.8))
+                .submitLabel(.done)
+                .onAppear { draft = pull.name ?? "" }
+                .onSubmit { onName(draft) }
+                .onChange(of: draft) { _, value in onName(value) }
+                .accessibilityLabel("Name this print")
+                .accessibilityHint("Pencils a name in the print's margin, under the plate's title.")
+        } else if let name = pull.name {
+            Text(name)
+                .italic()
+                .brandFont(.callout, weight: .regular)
+                .foregroundStyle(brand.palette.ink.opacity(0.8))
+        }
+    }
+
+    /// A cast mark as it prints. Past the aquatint box a fine tone is bitten in under each
+    /// figure, so they come up out of a ground rather than sitting on bare paper.
+    private func figure(_ glyph: Glyph, size: CGFloat, weight: CGFloat) -> some View {
+        EngravedMark(glyph: glyph, size: size, color: brand.palette.ink, lip: nil, weight: weight)
+            .background {
+                if aquatint {
+                    CutShading(progress: 1, spacing: 2.6, weight: 0.8, tone: 0.25)
+                        .frame(width: size * 1.35, height: size * 1.35)
+                        .clipShape(Circle())
+                }
+            }
+    }
+
     private var rows: some View {
         VStack(alignment: .leading, spacing: compact ? 8 : 0) {
             ForEach(Array(pull.rows.prefix(compact ? 2 : pull.rows.count).enumerated()), id: \.offset) { index, row in
                 if compact {
                     HStack(spacing: 10) {
                         ForEach(Array(row.prefix(2).enumerated()), id: \.offset) { _, glyph in
-                            EngravedMark(glyph: glyph, size: 26, color: brand.palette.ink, lip: nil, weight: 2.1)
+                            figure(glyph, size: 26, weight: 2.1)
                         }
                     }
                 } else {
@@ -97,7 +164,7 @@ struct PrintSheet: View {
                             .frame(width: 62, alignment: .leading)
                         ForEach(Array(row.dropFirst().enumerated()), id: \.offset) { position, glyph in
                             if position > 0 { leader }
-                            EngravedMark(glyph: glyph, size: 24, color: brand.palette.ink, lip: nil, weight: 2.2)
+                            figure(glyph, size: 24, weight: 2.2)
                         }
                         Spacer(minLength: 0)
                     }
@@ -120,6 +187,19 @@ struct PrintSheet: View {
         let formatter = DateFormatter()
         formatter.dateFormat = compact ? "d MMM" : "d MMMM"
         return formatter.string(from: pull.date)
+    }
+}
+
+private struct AquatintKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    /// The aquatint box is down: every print's figures come up in tone. Set once at the root
+    /// from the record, so every print in the app agrees.
+    var aquatint: Bool {
+        get { self[AquatintKey.self] }
+        set { self[AquatintKey.self] = newValue }
     }
 }
 

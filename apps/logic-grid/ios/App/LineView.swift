@@ -9,6 +9,7 @@ struct LineView: View {
     @Binding var showPaywall: Bool
     @Binding var tab: RootView.Tab
     @Environment(\.brand) private var brand
+    @State private var inHand: Pull?
 
     private var pulls: [Pull] { bench.record.pulls.reversed() }
 
@@ -26,6 +27,7 @@ struct LineView: View {
                 .padding(.bottom, 56)
             }
             .shopBackground()
+            .sheet(item: $inHand) { takenDown($0) }
             .navigationTitle("The line")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -66,14 +68,26 @@ struct LineView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: 9) {
                 ForEach(Array(pulls.prefix(24).enumerated()), id: \.element.number) { index, pull in
-                    VStack(spacing: 0) {
-                        Lozenge()
-                            .fill(brand.palette.highlight)
-                            .frame(width: 13, height: 8)
-                            .zIndex(1)
-                        PrintSheet(pull: pull, compact: true, ink: stock(pull))
-                            .frame(width: 96, height: 132)
-                            .rotationEffect(.degrees(index % 2 == 0 ? -1.4 : 1.1))
+                    HStack(alignment: .top, spacing: 9) {
+                        if index > 0, index % 7 == 0, editioned {
+                            spread
+                        }
+                        Button {
+                            Haptics.selection()
+                            inHand = pull
+                        } label: {
+                            VStack(spacing: 0) {
+                                Lozenge()
+                                    .fill(brand.palette.highlight)
+                                    .frame(width: 13, height: 8)
+                                    .zIndex(1)
+                                PrintSheet(pull: pull, compact: true, ink: stock(pull))
+                                    .frame(width: 96, height: 132)
+                                    .rotationEffect(.degrees(index % 2 == 0 ? -1.4 : 1.1))
+                            }
+                        }
+                        .buttonStyle(.pressable)
+                        .accessibilityHint(bench.hasPencil ? "Takes the print down to name it." : "Takes the print down.")
                     }
                     .popIn(delay: Double(index) * 0.03)
                 }
@@ -87,6 +101,39 @@ struct LineView: View {
                 .frame(height: 1.5)
                 .padding(.top, 10)
         }
+    }
+
+    /// Past the edition the line hangs in spreads of seven, a week to a spread, with a ruled
+    /// upright between them and the week's first number cut at its foot.
+    private var editioned: Bool { bench.record.hasEarned("edition") }
+
+    private var spread: some View {
+        VStack(spacing: 4) {
+            Rectangle()
+                .fill(brand.palette.highlight.opacity(0.7))
+                .frame(width: 1, height: 118)
+            Lozenge()
+                .fill(brand.palette.highlight)
+                .frame(width: 9, height: 6)
+        }
+        .padding(.top, 14)
+        .padding(.horizontal, 3)
+        .accessibilityHidden(true)
+    }
+
+    /// A print taken down off the line to look at, and — with the pencil — to name.
+    private func takenDown(_ pull: Pull) -> some View {
+        let current = bench.record.pulls.first { $0.number == pull.number } ?? pull
+        return ScrollView {
+            PrintSheet(pull: current, ink: stock(current),
+                       onName: bench.hasPencil ? { bench.name(print: current.number, $0) } : nil)
+                .rotationEffect(.degrees(-0.8))
+                .padding(20)
+        }
+        .scrollDismissesKeyboard(.interactively)
+        .shopBackground()
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
     }
 
     /// Chine-collé, earned at seventy-five: every print carries the colour of its day, so a
@@ -126,7 +173,8 @@ struct LineView: View {
                 Text("Today's is on the line")
                     .brandFont(.title2)
                     .foregroundStyle(brand.palette.ink)
-                PrintSheet(pull: pull, ink: stock(pull))
+                PrintSheet(pull: pull, ink: stock(pull),
+                           onName: bench.hasPencil ? { bench.name(print: pull.number, $0) } : nil)
                 Text("The next plate in your own run is ruled and waiting on the bench.")
                     .brandFont(.callout, weight: .regular)
                     .foregroundStyle(brand.palette.inkSoft)

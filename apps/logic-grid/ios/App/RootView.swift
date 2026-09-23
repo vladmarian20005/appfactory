@@ -54,6 +54,7 @@ struct RootView: View {
                         },
                         onDone: { showPaywall = false })
         }
+        .environment(\.aquatint, bench.record.hasEarned("aquatint"))
         .onAppear(perform: start)
         .onChange(of: store.isPro) { _, isPro in bench.note(pro: isPro) }
     }

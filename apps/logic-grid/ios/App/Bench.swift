@@ -537,7 +537,9 @@ final class Bench: ObservableObject {
                 current.plate.glyph(Cell(category: category, member: current.plate.solution.member(category, of: entity)))
             }
         }
-        let print = Pull(number: current.plate.number,
+        // A print is numbered by its place in her book, not by the plate it came off — the
+        // daily is everybody's plate, but the print of it is hers.
+        let print = Pull(number: record.platesPulled + 1,
                          day: day,
                          date: .now,
                          title: current.plate.title,
@@ -653,6 +655,18 @@ final class Bench: ObservableObject {
 
     // MARK: - The shop
 
+    var hasPencil: Bool { record.hasEarned("pencil") }
+
+    /// The pencil: a name in the print's margin, over the plate's own title. An empty name
+    /// rubs it out.
+    func name(print number: Int, _ name: String) {
+        guard hasPencil, let index = record.pulls.firstIndex(where: { $0.number == number }) else { return }
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        record.pulls[index].name = trimmed.isEmpty ? nil : String(trimmed.prefix(40))
+        if pulled?.number == number { pulled = record.pulls[index] }
+        persist()
+    }
+
     func setCalm(_ on: Bool) { record.calmInk = on; persist() }
     func setAssist(_ on: Bool) { record.assist = on; persist() }
 
@@ -729,6 +743,9 @@ final class Bench: ObservableObject {
                               day: day,
                               date: Date(timeIntervalSince1970: Double(day) * 86_400 + 32_400),
                               title: theme.title,
+                              // Past the pencil some of them have names on, the way a real
+                              // line would: not every one, and never in the same hand twice.
+                              name: total - made >= 4 && made % 3 == 0 ? Self.sampleNames[made / 3 % Self.sampleNames.count] : nil,
                               themeID: theme.id,
                               points: members * (categories - 1),
                               longestLine: 6 + rng.int(14),
@@ -756,6 +773,11 @@ final class Bench: ObservableObject {
         for theme in Themes.ids.prefix(6) { record.themes.record(theme, correct: true) }
         record.recentThemes = Array(Themes.ids.prefix(3))
     }
+
+    private static let sampleNames = [
+        "wet tuesday", "the quay one", "for m.", "before the train", "kitchen table",
+        "second proof", "dyer again", "after the storm", "the long one",
+    ]
 
     /// Nine of twelve points cut, a block closed and a scar in the margin — the state mock 1
     /// shows, reached by cutting the plate rather than by posing it.

@@ -52,15 +52,15 @@ enum Play {
         .init(id: "line", title: "The drying line",
               blurb: "Your first pull is on the line. It will be dry by morning.", at: 1),
         .init(id: "pencil", title: "The pencil",
-              blurb: "Four on the line. There is a pencil on the bench if you want to name them.", at: 4),
+              blurb: "Four on the line. There is a pencil on the bench — take one down and name it.", at: 4),
         .init(id: "burnisher", title: "The burnisher",
               blurb: "Twelve. The burnisher is worth keeping by you now.", at: 12),
         .init(id: "aquatint", title: "The aquatint box",
-              blurb: "Thirty pulled. The aquatint box comes down off the shelf.", at: 30),
+              blurb: "Thirty pulled. The aquatint box comes down off the shelf, and every figure prints in tone.", at: 30),
         .init(id: "chine", title: "Chine-collé",
               blurb: "Seventy-five. There is coloured stock under the bench — every pull takes the colour of its day from here.", at: 75),
         .init(id: "edition", title: "The edition",
-              blurb: "A hundred and fifty. They do not fit the line any more. There is a book for them.", at: 150),
+              blurb: "A hundred and fifty. From here every print is numbered, and the line hangs in weeks.", at: 150),
     ])
 
     /// What a session ends on: the next thing waiting, named and shortened to fit a margin.
@@ -71,9 +71,12 @@ enum Play {
         case "burnisher": return "The burnisher comes to the bench at twelve"
         case "aquatint": return "The aquatint box comes down at thirty"
         case "chine": return "The coloured stock comes out at seventy-five"
-        default: return "The book for them is bound at a hundred and fifty"
+        default: return "The edition is numbered from a hundred and fifty"
         }
     }
+
+    /// The print the edition is numbered from, which is the pull the edition arrives on.
+    static let editionFrom = 150
 
     /// The free run, past which the whole generated ladder is behind the one-time unlock.
     static let freeRungs = 40
@@ -88,6 +91,9 @@ struct Pull: Codable, Identifiable, Equatable {
     var day: Int
     var date: Date
     var title: String
+    /// What she called it, in pencil, once the pencil is on the bench. The plate's own title
+    /// stays underneath it.
+    var name: String?
     var themeID: String
     var points: Int
     var longestLine: Int
@@ -102,6 +108,9 @@ struct Pull: Codable, Identifiable, Equatable {
     var ink: Int
 
     var isClean: Bool { scars == 0 }
+
+    /// The edition is numbered from the hundred and fiftieth print on.
+    var isEditioned: Bool { number >= Play.editionFrom }
 }
 
 /// The plate caps under the day-book, and everything the app remembers about the player. A
