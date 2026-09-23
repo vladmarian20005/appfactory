@@ -267,6 +267,7 @@ struct PlateView: View {
             rules(layout)
             heads(layout)
             cells(layout)
+            skids(layout)
             if !layout.voidRect.isEmpty, !session.figures.isEmpty {
                 figures(layout)
             }
@@ -291,18 +292,51 @@ struct PlateView: View {
     private func swarfOrigin(_ layout: PlateLayout) -> UnitPoint {
         let pairing = bench.pending.map { Pairing($0.x, $0.y) }
             ?? session.actions.last.map { Pairing($0.x, $0.y) }
-        guard let pairing,
-              let rowIndex = layout.rows.firstIndex(where: { $0 == pairing.a.category || $0 == pairing.b.category }),
+        guard let pairing, let centre = centre(of: pairing, layout) else { return UnitPoint(x: 0.5, y: 0.45) }
+        let width = layout.width + 12, height = layout.height + marginHeight
+        return UnitPoint(x: centre.x / width, y: centre.y / height)
+    }
+
+    /// The middle of a pairing's cell on the copper, wherever the staircase put its block.
+    private func centre(of pairing: Pairing, _ layout: PlateLayout) -> CGPoint? {
+        guard let rowIndex = layout.rows.firstIndex(where: { $0 == pairing.a.category || $0 == pairing.b.category }),
               let columnIndex = layout.columns.firstIndex(where: {
                   $0 == (layout.rows[rowIndex] == pairing.a.category ? pairing.b.category : pairing.a.category)
               })
-        else { return UnitPoint(x: 0.5, y: 0.45) }
+        else { return nil }
         let row = layout.rows[rowIndex] == pairing.a.category ? pairing.a.member : pairing.b.member
         let column = layout.rows[rowIndex] == pairing.a.category ? pairing.b.member : pairing.a.member
         let origin = layout.origin(columnIndex: columnIndex, rowIndex: rowIndex)
-        let width = layout.width + 12, height = layout.height + marginHeight
-        return UnitPoint(x: (origin.x + (CGFloat(column) + 0.5) * layout.cell) / width,
-                         y: (origin.y + (CGFloat(row) + 0.5) * layout.cell) / height)
+        return CGPoint(x: origin.x + (CGFloat(column) + 0.5) * layout.cell,
+                       y: origin.y + (CGFloat(row) + 0.5) * layout.cell)
+    }
+
+    /// The last cell the burin skidded on — the one that shakes when it happens.
+    private var lastSkid: Pairing? {
+        session.actions.last { !$0.forced }.map { Pairing($0.x, $0.y) }
+    }
+
+    /// Every slip, drawn where it happened: a hairline leaving the cell and running six points
+    /// past its edge, the way a burin skids off a cut it was not sure of. They stay for the
+    /// life of the plate, alongside the scar in the margin.
+    private func skids(_ layout: PlateLayout) -> some View {
+        let slips = session.actions.enumerated().filter { !$0.element.forced }
+        return ZStack(alignment: .topLeading) {
+            ForEach(slips, id: \.offset) { index, action in
+                if let from = centre(of: Pairing(action.x, action.y), layout) {
+                    // Each skid runs off at its own angle, down and to the right, as a
+                    // right hand's burin does.
+                    let angle = Angle.degrees(18 + Double((index * 29) % 50))
+                    let reach = layout.cell / 2 + 6
+                    Skid(from: from,
+                         to: CGPoint(x: from.x + reach * CGFloat(cos(angle.radians)),
+                                     y: from.y + reach * CGFloat(sin(angle.radians))))
+                }
+            }
+        }
+        .frame(width: layout.width + 12, height: layout.height + marginHeight, alignment: .topLeading)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
     private func face(_ layout: PlateLayout) -> some View {
@@ -455,6 +489,8 @@ struct PlateView: View {
                     hinted: bench.loupe?.pairing == pairing, waiting: waiting)
         }
         .buttonStyle(.pressable(scale: 0.97, haptic: false))
+        // A slip is forgiven with a shake of the cell it happened on, never a buzzer.
+        .shake(trigger: lastSkid == pairing ? bench.slips : 0)
         .accessibilityLabel(label(rowCell, columnCell, mark: mark))
         .accessibilityHint(hint(rowCell, columnCell, mark: mark))
     }
@@ -621,5 +657,33 @@ struct BurnisherMark: Shape {
         path.move(to: CGPoint(x: side * 0.1, y: side * 0.9))
         path.addLine(to: CGPoint(x: side * 0.3, y: side * 0.74))
         return path
+    }
+}
+
+/// One skid: a hairline trimmed out from the cell on the burin's own bite spring, and kept.
+private struct Skid: View {
+    let from: CGPoint
+    let to: CGPoint
+    @State private var drawn: CGFloat = Motion.isStill ? 1 : 0
+
+    var body: some View {
+        ZStack {
+            // The burr thrown up beside the skid catches the light, as every cut's lip does.
+            hairline
+                .stroke(AppBrand.Plate.lip.opacity(0.8), style: StrokeStyle(lineWidth: 1, lineCap: .round))
+                .offset(x: -0.8, y: -0.8)
+            hairline
+                .stroke(AppBrand.Plate.trough.opacity(0.75), style: StrokeStyle(lineWidth: 1.3, lineCap: .round))
+        }
+        .onAppear { withMotion(AppBrand.Cut.bite) { drawn = 1 } }
+    }
+
+    private var hairline: some Shape {
+        Path { path in
+            path.move(to: from)
+            // A slight hook at the end, where the point left the metal.
+            path.addQuadCurve(to: to, control: CGPoint(x: (from.x + to.x) / 2 + 2, y: (from.y + to.y) / 2 - 1.5))
+        }
+        .trim(from: 0, to: drawn)
     }
 }
