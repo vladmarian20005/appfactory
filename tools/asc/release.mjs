@@ -106,7 +106,10 @@ const info = infos.find((i) => !["READY_FOR_DISTRIBUTION", "REPLACED_WITH_NEW_IN
   // calm, single-player apps with no web views, chat or user content; an app that has any of
   // that declares it in release.json, and the compliance gate is where that gets noticed.
   const age = await ascMaybe(`/appInfos/${info.id}/ageRatingDeclaration`);
-  const NOT_QUESTIONS = new Set(["kidsAgeBand", "ageRatingOverride", "ageRatingOverrideV2", "koreaAgeRatingOverride", "developerAgeRatingInfoUrl"]);
+  // gracRatingClassificationNumber is Korea's GRAC certificate number, not a question. Apple
+  // added it in September 2026 and refuses any value unless koreaAgeRatingOverride is set, so
+  // answering it "NONE" failed quizday's submission on 2026-09-23.
+  const NOT_QUESTIONS = new Set(["kidsAgeBand", "ageRatingOverride", "ageRatingOverrideV2", "koreaAgeRatingOverride", "gracRatingClassificationNumber", "developerAgeRatingInfoUrl"]);
   const want = {};
   for (const [k, v] of Object.entries(age.attributes)) {
     if (NOT_QUESTIONS.has(k)) continue;
