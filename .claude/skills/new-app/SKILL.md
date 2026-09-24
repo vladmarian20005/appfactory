@@ -172,7 +172,9 @@ no Xcode window. Everything below works there. Nothing below needs a human.
     Two rules that cost nothing now and a rejection later: do not repeat a word from the
     name or subtitle in `keywords.txt`, because Apple indexes all three together and a
     repeat spends the characters twice; and every claim in `description.txt` must be true
-    of the binary you just built — if it says "no ads", grep for an ad SDK before writing it.
+    of the binary you just built — if it says "no ads", grep for an ad SDK before writing it. If the app
+    sells an auto-renewable subscription, finish with `node tools/aso/legal.mjs <slug>`: the
+    description must link the Terms of Use or App Review stops it under 3.1.2.
 
     `apps/<slug>/store/release.json` — what `app-release` sets in App Store Connect, from
     SPEC.md's Store section: `primaryCategory` and `secondaryCategory` as App Store Connect

@@ -27,3 +27,9 @@ Quizday Pro (선택)
 계정도 가입도 없습니다. Quizday에는 분석 도구, 추적기, 광고 SDK가 없고 점수는 기기에만 저장됩니다. 앱은 연습 라운드를 시작할 때만 네트워크를 사용합니다.
 
 연습 문제는 Open Trivia Database에서 가져옵니다.
+
+구독 약관
+결제 금액은 구입을 확인할 때 Apple 계정으로 청구됩니다. 현재 기간이 끝나기 최소 24시간 전에 취소하지 않으면 구독이 자동으로 갱신되며, 갱신 요금은 기간 종료 전 24시간 이내에 청구됩니다. 언제든지 Apple 계정 설정에서 구독을 관리하거나 취소할 수 있습니다. 무료 체험이 제공되는 경우, 구독을 구입하면 체험 기간의 남은 부분은 소멸됩니다.
+
+이용 약관(EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+개인정보 처리방침: https://starhiveconcept.com/quizday-privacy-policy-terms/

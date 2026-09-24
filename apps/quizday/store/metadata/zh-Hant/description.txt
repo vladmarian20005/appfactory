@@ -27,3 +27,9 @@ Quizday Pro（選用）
 不需要帳號，也不需要註冊。Quizday 沒有數據分析、沒有追蹤器，也沒有廣告 SDK，你的成績只會保存在你的裝置上。只有在你開始練習回合時，App 才會連網。
 
 練習模式的題目來自 Open Trivia Database。
+
+訂閱條款
+確認購買時將向你的 Apple 帳號收費。除非在目前週期結束前至少 24 小時取消，訂閱將自動續訂，續訂費用會在週期結束前 24 小時內收取。你可以隨時在 Apple 帳號設定中管理或取消訂閱。如提供免費試用，購買訂閱後試用期的剩餘部分將失效。
+
+使用條款（EULA）: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+隱私權政策: https://starhiveconcept.com/quizday-privacy-policy-terms/

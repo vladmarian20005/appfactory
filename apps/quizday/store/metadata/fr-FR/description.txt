@@ -27,3 +27,9 @@ Confidentialité
 Pas de compte, pas d'inscription. Quizday n'a ni outil d'analyse, ni traqueur, ni SDK publicitaire, et vos scores restent sur votre appareil. L'app n'utilise le réseau que lorsque vous lancez une manche d'entraînement.
 
 Les questions d'entraînement proviennent de l'Open Trivia Database.
+
+Conditions de l'abonnement
+Le paiement est débité de votre compte Apple à la confirmation de l'achat. L'abonnement se renouvelle automatiquement, sauf si vous l'annulez au moins 24 heures avant la fin de la période en cours ; le renouvellement est débité dans les 24 heures qui précèdent cette échéance. Vous pouvez le gérer ou l'annuler à tout moment dans les réglages de votre compte Apple. Si un essai gratuit est proposé, la partie non utilisée prend fin à l'achat d'un abonnement.
+
+Conditions d'utilisation (CLUF): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Politique de confidentialité: https://starhiveconcept.com/quizday-privacy-policy-terms/

@@ -67,6 +67,18 @@ for loc in $locales; do
   echo "::endgroup::"
 done
 
+# Guideline 3.1.2: an app selling an auto-renewable subscription must link the Terms of Use
+# from its product page, not only from the paywall. Quizday 1.0 was rejected for this on
+# 24 Sep 2026. tools/aso/legal.mjs writes the block; this only asks whether it is there.
+echo "::group::Terms of Use"
+if out=$(node tools/aso/legal.mjs "$slug" --check 2>&1); then
+  pass "$(echo "$out" | tail -1 | sed 's/^ *ok *//')"
+else
+  echo "$out" | grep -v '^  ok' | while IFS= read -r l; do echo "::error::$l"; done
+  fail "a description sells a subscription without linking the Terms of Use. Run: node tools/aso/legal.mjs $slug"
+fi
+echo "::endgroup::"
+
 # Every localization's keyword field is indexed on the same storefront, so the same term in
 # two of them buys nothing the second time.
 cross=$(printf '%s' "$all_keywords" | awk -F'\t' 'NF==2 && $2!="" {c[$2]++; l[$2]=l[$2]" "$1} END {for (k in c) if (c[k]>1) print k" ("l[k]" )"}')

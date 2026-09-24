@@ -62,6 +62,11 @@ together, so a repeat spends characters twice.
 **Every claim in the description must be true of the binary.** If it says "no ads", grep for
 an ad SDK before you write it. The compliance gate checks this, but finding it here is faster.
 
+**An app with an auto-renewable subscription links its Terms of Use from the description.**
+Run `node tools/aso/legal.mjs <slug>` after writing or translating any description: it
+appends the renewal terms and the EULA and privacy links in every localization, and
+`listing-check.sh` fails without them. Quizday 1.0 was rejected under 3.1.2 for this.
+
 ## 3. Privacy, terms and support page
 
 `apps/<slug>/privacy.json` is the source of truth for what the app does with data. The

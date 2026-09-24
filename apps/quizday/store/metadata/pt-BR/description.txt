@@ -27,3 +27,9 @@ Privacidade
 Não há conta nem cadastro. O Quizday não tem análise de uso, rastreadores nem SDK de publicidade, e suas pontuações ficam no seu aparelho. O app só usa a internet quando você começa uma rodada de prática.
 
 As perguntas de prática vêm do Open Trivia Database.
+
+Termos da assinatura
+O pagamento é cobrado na sua Conta Apple ao confirmar a compra. A assinatura é renovada automaticamente, a menos que seja cancelada pelo menos 24 horas antes do fim do período atual, e a renovação é cobrada nas 24 horas anteriores a esse fim. Gerencie ou cancele quando quiser nos ajustes da sua Conta Apple. Se houver um teste gratuito, a parte não utilizada termina quando você comprar uma assinatura.
+
+Termos de Uso (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Política de Privacidade: https://starhiveconcept.com/quizday-privacy-policy-terms/

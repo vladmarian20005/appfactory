@@ -27,3 +27,9 @@ Quyền riêng tư
 Không cần tài khoản, không cần đăng ký. Quizday không có công cụ phân tích, trình theo dõi hay SDK quảng cáo, và điểm của bạn chỉ lưu trên thiết bị. Ứng dụng chỉ dùng mạng khi bạn bắt đầu một lượt luyện tập.
 
 Câu hỏi luyện tập lấy từ Open Trivia Database.
+
+Điều khoản gói đăng ký
+Khoản thanh toán được tính vào Tài khoản Apple của bạn khi bạn xác nhận mua. Gói đăng ký tự động gia hạn trừ khi bạn hủy ít nhất 24 giờ trước khi kỳ hiện tại kết thúc, và phí gia hạn được tính trong vòng 24 giờ trước khi kỳ đó kết thúc. Bạn có thể quản lý hoặc hủy bất cứ lúc nào trong cài đặt Tài khoản Apple. Nếu có dùng thử miễn phí, phần chưa dùng sẽ kết thúc khi bạn mua gói đăng ký.
+
+Điều khoản sử dụng (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Chính sách quyền riêng tư: https://starhiveconcept.com/quizday-privacy-policy-terms/

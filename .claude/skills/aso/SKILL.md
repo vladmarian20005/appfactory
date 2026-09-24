@@ -39,7 +39,9 @@ no tracking, say that and nothing more. A promise the binary does not keep is a 
   app's brand, no category names Apple already assigns ("games", "utilities").
 - **promotional_text** (170) and **description** (4000): the English ones, rewritten in that
   language with the same structure and the same claims. Keep prices in US dollars exactly as
-  en-US states them; keep the subscription terms paragraph if en-US has one.
+  en-US states them. Leave out the "Subscription terms" paragraph and the Terms of Use and
+  Privacy Policy links at the end of en-US: `tools/aso/legal.mjs` writes them in every
+  language, and a translated copy would sit beside its own.
 - **release_notes**: the en-US notes in that language.
 
 privacy_url and support_url are copied from en-US by the writer script; do not write them.
@@ -51,6 +53,7 @@ characters:
 
 ```
 node tools/aso/write-locales.mjs apps/<slug>/store/metadata /tmp/listing.json
+node tools/aso/legal.mjs <slug>
 .github/scripts/listing-check.sh <slug>
 ```
 

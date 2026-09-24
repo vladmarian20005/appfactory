@@ -102,6 +102,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: .github/scripts/git-auth.sh
 
+      # Generated, not translated: the renewal terms and the Terms of Use link are legal text,
+      # and an agent rewriting a description can drop them. Runs after the agent, every time.
+      - name: Subscription terms in every description
+        if: always()
+        run: node tools/aso/legal.mjs "$SLUG"
+
       - name: Check the listing
         id: check
         if: always()
