@@ -1,0 +1,25 @@
+{
+  "pass": true,
+  "scores": {
+    "idea": 5,
+    "look": 5,
+    "signature": 4,
+    "reward": 4,
+    "voice": 5,
+    "craft": 4,
+    "firstMinute": 4,
+    "escalation": 4,
+    "pull": 4
+  },
+  "tells": [],
+  "summary": "A lacemaker's pillow that is unmistakably its own on every screen, with a generator that reads its ladder and a record that chooses the next ground; what holds it back is a win whose gold edge floats off the card, a second button under the tab bar, and a first launch that can hand a newcomer Sunday's fourteen-by-fourteen.",
+  "fixes": [
+    "LiftView: draw the picot round the thread's own extent, not the whole card, so the lifted lace and its gold edge stay inside the parchment in 02-win.",
+    "Bench.init: a first launch (no pieces, rung 1) opens on the book's pattern 1, a five-by-five, instead of whatever today's weekday rung is; Sunday is 14x14 with a window and a loose end.",
+    "LiftView margin card: make the two buttons fit side by side as mock-2 shows, and give the ScrollView tab-bar-safe bottom room so 'Send a swatch' is not under the bar.",
+    "LiftView head: use the same ViewThatFits as PillowView.head so the caps do not set in four lines with a hyphenated SEP-TEMBER at accessibility sizes.",
+    "Voice.ending and PillowView.doneForToday: name tomorrow's pattern from the published week ('Tomorrow's is nine by nine, pricked at midnight.').",
+    "qa.json moments: start the wind film at the demo's first pin and slow the demo to ~0.45 s a pin; start the lift film at 1.9 s so the strip shows the tighten, the pins out and the rise rather than 13 identical frames.",
+    "qa.json 01-sampler: capture with today's piece lifted (-won) so the store's first screenshot shows today's piece and its tier line as mock-4 does, not a button."
+  ]
+}
