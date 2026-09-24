@@ -272,10 +272,10 @@ else {
   console.log(`\nreview submission  created ${submission.id}`);
 }
 
-// A submission App Review sent back (UNRESOLVED_ISSUES) still holds the version and its
-// purchases, and Apple refuses new items on it with a 409. Fixing the listing or the build and
-// setting `submitted` again is the resubmission, so skip straight to that. Quizday 1.0's
-// 3.1.2 metadata rejection is where this was learned.
+// A submission App Review sent back (UNRESOLVED_ISSUES) refuses new items with a 409. Setting
+// `submitted` on it again is the resubmission when Apple allows it; when it answers "Version is
+// not ready to be submitted yet" instead (quizday 1.0, after a 3.1.2 metadata rejection), the
+// way out is to cancel it and put the version and its purchases into a fresh submission.
 if (submission.attributes.state === "UNRESOLVED_ISSUES") {
   try {
     const after = (await asc("PATCH", `/reviewSubmissions/${submission.id}`, {
@@ -284,9 +284,21 @@ if (submission.attributes.state === "UNRESOLVED_ISSUES") {
     console.log(`\nResubmitted after App Review's issues: ${after.attributes.state}.`);
     process.exit(0);
   } catch (e) {
-    console.error(`\nApple refused the resubmission:\n  ${e.message}`);
-    process.exit(1);
+    console.log(`  resubmitting it was refused (${e.message.split("\n")[0]}); cancelling it for a fresh one`);
   }
+  await asc("PATCH", `/reviewSubmissions/${submission.id}`, {
+    data: { type: "reviewSubmissions", id: submission.id, attributes: { canceled: true } },
+  });
+  // Cancelling is asynchronous: a new submission cannot be created while this one is CANCELING.
+  for (let i = 0; i < 24; i++) {
+    const s = (await asc("GET", `/reviewSubmissions/${submission.id}`)).data.attributes.state;
+    if (s !== "CANCELING") { console.log(`  old submission ${s}`); break; }
+    await new Promise((r) => setTimeout(r, 10_000));
+  }
+  submission = (await asc("POST", "/reviewSubmissions", {
+    data: { type: "reviewSubmissions", attributes: { platform: "IOS" }, relationships: { app: { data: { type: "apps", id: app.id } } } },
+  })).data;
+  console.log(`review submission  created ${submission.id}`);
 }
 
 // What is already in it, so a re-run adds only what is missing.
