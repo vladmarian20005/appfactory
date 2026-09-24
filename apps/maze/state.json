@@ -1,5 +1,13 @@
 {
   "fix_attempts": 0,
   "slug": "maze",
-  "polish_attempts": 0
+  "polish_attempts": 0,
+  "stages": {
+    "build": {
+      "status": "ok",
+      "sha": "80571f73a862720924f6ca94ff24a798bdc14af3",
+      "at": "2026-09-24T17:48:52.542Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/36025864500"
+    }
+  }
 }
