@@ -272,6 +272,23 @@ else {
   console.log(`\nreview submission  created ${submission.id}`);
 }
 
+// A submission App Review sent back (UNRESOLVED_ISSUES) still holds the version and its
+// purchases, and Apple refuses new items on it with a 409. Fixing the listing or the build and
+// setting `submitted` again is the resubmission, so skip straight to that. Quizday 1.0's
+// 3.1.2 metadata rejection is where this was learned.
+if (submission.attributes.state === "UNRESOLVED_ISSUES") {
+  try {
+    const after = (await asc("PATCH", `/reviewSubmissions/${submission.id}`, {
+      data: { type: "reviewSubmissions", id: submission.id, attributes: { submitted: true } },
+    })).data;
+    console.log(`\nResubmitted after App Review's issues: ${after.attributes.state}.`);
+    process.exit(0);
+  } catch (e) {
+    console.error(`\nApple refused the resubmission:\n  ${e.message}`);
+    process.exit(1);
+  }
+}
+
 // What is already in it, so a re-run adds only what is missing.
 const present = new Set();
 for (const it of await ascAll(`/reviewSubmissions/${submission.id}/items?limit=100`)) {
