@@ -40,6 +40,10 @@ struct PillowView: View {
 
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text(title).brandFont(.title3).foregroundStyle(brand.palette.ink)
+                .accessibilityAddTraits(.isHeader)
+        }
         ToolbarItem(placement: .topBarTrailing) {
             if let lift = bench.lift {
                 SwatchShareLink(piece: lift.piece, record: bench.record, compact: true)

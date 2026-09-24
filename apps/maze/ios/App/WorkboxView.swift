@@ -16,8 +16,7 @@ struct WorkboxView: View {
                          activeTitle: "The pattern book is open") {
                 WorkboxRows()
             }
-            .navigationTitle("The workbox")
-            .navigationBarTitleDisplayMode(.inline)
+            .serifTitle("The workbox")
             .background { Linen(ticking: bench.record.ticking) }
         }
     }

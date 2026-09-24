@@ -29,8 +29,7 @@ struct SamplerView: View {
                 .padding(.vertical, 12)
             }
             .linen(ticking: record.ticking)
-            .navigationTitle("The sampler")
-            .navigationBarTitleDisplayMode(.inline)
+            .serifTitle("The sampler")
             .toolbar {
                 if let last = record.pieces.last {
                     ToolbarItem(placement: .topBarTrailing) {

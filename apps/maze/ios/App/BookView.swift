@@ -29,8 +29,7 @@ struct BookView: View {
                 .padding(.vertical, 12)
             }
             .linen(ticking: record.ticking)
-            .navigationTitle("The book")
-            .navigationBarTitleDisplayMode(.inline)
+            .serifTitle("The book")
             .navigationDestination(for: Piece.self) { PieceView(piece: $0) }
         }
     }

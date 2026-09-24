@@ -623,14 +623,26 @@ final class Bench: ObservableObject {
         pieces = Array(pieces.suffix(19))
         for i in pieces.indices { pieces[i].id = i + 1 }
         r.pieces = pieces
-        r.bestThread = pieces.map(\.longestThread).max() ?? 0
+        // The sample's best thread is short of a full eight by eight, so a clean lift of
+        // today's is the loudest one — the lift the win's capture and its mock show.
+        r.bestThread = min(pieces.map(\.longestThread).max() ?? 0, 49)
         r.recentGrounds = pieces.suffix(3).map(\.ground)
         record = r
         which = .today
         if !LaunchOptions.fresh && LaunchOptions.demo != "lift" {
             ensurePillow(sync: true)
-            if let p = current { wind(upTo: p.pricking.pins * 2 / 3) }
-            if LaunchOptions.demo == nil { mutate { $0.run.miss() } }
+            if let p = current {
+                // Picked out once, a third of the way in, so the thread standing is the rest.
+                let target = p.pricking.pins * 2 / 3
+                if LaunchOptions.demo == nil && !LaunchOptions.won {
+                    wind(upTo: target / 3)
+                    mutate { $0.run.miss() }
+                }
+                wind(upTo: target)
+                if LaunchOptions.demo == nil, let run = current?.plaits.last {
+                    line = MarginLine(kind: .plait, text: "Plaited. \(Words.capitalised(run.count)) pins in a bar.")
+                }
+            }
         }
     }
 

@@ -80,6 +80,24 @@ extension ThreadColour {
     }
 }
 
+// MARK: - Titles
+
+extension View {
+    /// An inline navigation title set in New York, like the sampler's lettering.
+    func serifTitle(_ title: String) -> some View {
+        navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(title)
+                        .brandFont(.title3)
+                        .foregroundStyle(AppBrand.brand.palette.ink)
+                        .accessibilityAddTraits(.isHeader)
+                }
+            }
+    }
+}
+
 // MARK: - The caps
 
 extension View {

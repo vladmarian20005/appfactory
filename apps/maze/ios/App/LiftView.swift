@@ -33,7 +33,7 @@ struct LiftView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let cardSize = max(200, min(geo.size.width - 48, geo.size.height * 0.5))
+            let cardSize = max(200, min(geo.size.width - 48, geo.size.height * 0.4))
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
                     HStack {
