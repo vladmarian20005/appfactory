@@ -1,0 +1,51 @@
+{
+  "_comment": "The single source of truth for what this app does with data. Three things are generated from it and must never drift apart: ios/App/PrivacyInfo.xcprivacy, store/app_privacy_details.json, and the published privacy policy page. Change this file, re-run the generators, do not hand-edit the outputs.",
+
+  "appName": "Lacework",
+  "company": "Starhive Concept Srl",
+  "companyURL": "https://starhiveconcept.com/",
+  "effectiveDate": "2026-09-24",
+  "supportEmail": "support@starhiveconcept.com",
+  "pageSlug": "maze-privacy-policy-terms",
+
+  "collects": [],
+
+  "storesOnDevice": [
+    "The pattern on the pillow: its pins, its gimp, its proved answer and every pin your thread has taken, saved as you wind so a crash never costs a thread.",
+    "Every piece you have lifted: the date, its size and ground, the thread's path, how many times it was picked out and the longest thread you wound.",
+    "Your place in the pattern book, and how you are getting on with each lace ground, which is what the next pattern is chosen from.",
+    "A few settings: whether you have been through onboarding, whether sounds are on, the thread and cover you chose, your initials if you set them, and the hour of the reminder if you pinned one."
+  ],
+
+  "network": [],
+
+  "requiredReasonAPIs": [
+    {
+      "category": "NSPrivacyAccessedAPICategoryUserDefaults",
+      "reason": "CA92.1",
+      "why": "@AppStorage and UserDefaults, used only for this app's own settings: onboarding and sounds."
+    }
+  ],
+
+  "purchases": {
+    "type": "one-time",
+    "name": "The Pattern Book",
+    "products": ["The Pattern Book"],
+    "trial": null,
+    "processor": "Apple",
+    "freeTier": "Today's proved pattern every day, forever, and the first sixty patterns in the book — with the sampler, the month card, the marking pin and every thread earned by playing. The unlock adds the rest of the book, loose work and the ledger."
+  },
+
+  "notifications": {
+    "used": true,
+    "why": "Only if you pin a reminder: one local notification a day at the hour you choose, reading \"Today's pattern is pricked and pinned.\" It is scheduled on your phone and nothing is sent anywhere."
+  },
+
+  "ads": false,
+  "analytics": false,
+  "tracking": false,
+  "account": false,
+  "childDirected": false,
+
+  "attribution": "Lacework makes no network connection of any kind. Every pattern is generated and proved on your phone, there is no server to talk to, no account to make, and nothing to sync."
+}

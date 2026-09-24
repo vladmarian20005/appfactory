@@ -1,0 +1,44 @@
+{
+  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/maze/store/screenshots.json apps/maze/store/screenshots/en-US. Raw captures come from app-verify (apps/maze/qa) and are copied into store/raw. The sampler leads, per the spec's 4.3 note that the listing opens on the daily and the days running, never a bare grid. The background is linen going to indigo thread; the font is the app's own New York.",
+  "background": "linear-gradient(168deg,#F6F0E3 0%,#E8E0CF 46%,#31497A 100%)",
+  "textColor": "#2A2521",
+  "accent": "#A8413A",
+  "font": "serif",
+  "shots": [
+    {
+      "src": "raw/01-sampler.png",
+      "title": "A pattern a day, kept as lace",
+      "subtitle": "The same pattern for everyone, every morning."
+    },
+    {
+      "src": "raw/02-win.png",
+      "title": "Pull the pins. It lifts off.",
+      "subtitle": "Every piece goes into your sampler."
+    },
+    {
+      "src": "raw/03-pillow.png",
+      "title": "One thread through every pin",
+      "subtitle": "Never crossing, never twice. Just look."
+    },
+    {
+      "src": "raw/05-first-pattern.png",
+      "title": "No ads. Ever.",
+      "subtitle": "No lives, no timer, nothing to buy your way out of."
+    },
+    {
+      "src": "raw/04-book.png",
+      "title": "Proved to have one answer",
+      "subtitle": "The book climbs to fourteen pins a side."
+    },
+    {
+      "src": "raw/06-paywall.png",
+      "title": "One payment, the whole book",
+      "subtitle": "Sixty patterns free first. No subscription."
+    },
+    {
+      "src": "raw/07-workbox.png",
+      "title": "It all stays on your phone",
+      "subtitle": "No account, and no network connection at all."
+    }
+  ]
+}

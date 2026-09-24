@@ -1,0 +1,86 @@
+{
+  "scheme": "Lacework",
+  "bundleId": "com.starhiveconcept.maze",
+  "screens": [
+    {
+      "name": "01-sampler",
+      "args": ["-onboarded", "-sampleData", "-screen", "sampler"],
+      "note": "The first App Store screenshot, per the spec's 4.3 note: nineteen pieces at 112 pt, the sampler cloth of small laces in indigo and rose, the hem's days running, and the month as a pricking card with today ringed."
+    },
+    {
+      "name": "02-win",
+      "args": ["-onboarded", "-sampleData", "-won"],
+      "note": "The lift at its last phase, best tier: the pins out and the pricks left, the lace risen with its gold picot edge, the ghost numeral under it, snips frozen mid-fall, the madder headline, and the margin card naming what is waiting."
+    },
+    {
+      "name": "03-pillow",
+      "args": ["-onboarded", "-sampleData"],
+      "note": "Today's pattern mid-wind on the pillow: the card pinned at -1.2 degrees, the thread with its rings and plaits, the bobbin at the thread's end, THREAD 28 · PICKED OUT ONCE, the plait line and the run marks."
+    },
+    {
+      "name": "04-book",
+      "args": ["-onboarded", "-sampleData", "-screen", "book"],
+      "note": "The pattern book: the next card at 76 pt with the ground Mastery chose for it, the chapters by size, the cushion of what playing has earned."
+    },
+    {
+      "name": "05-first-pattern",
+      "args": ["-onboarded", "-reset"],
+      "note": "A first launch's pillow: today's pattern unwound, the brass start pin breathing and the ghost thread showing the first move without a word."
+    },
+    {
+      "name": "06-paywall",
+      "args": ["-onboarded", "-sampleData", "-fakeProducts", "-screen", "paywall"],
+      "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch. The book art, the pin-head bullets, one payment."
+    },
+    {
+      "name": "07-workbox",
+      "args": ["-onboarded", "-sampleData", "-screen", "workbox"],
+      "note": "The kit's settings on the linen: the pillow's counts, sounds, the reminder, the thread picker once silk is earned."
+    },
+    {
+      "name": "08-onboarding",
+      "args": ["-reset"],
+      "note": "The first screen anyone sees: LACEWORK between hairlines, the pillow drawn, 'A pattern a day', the pin-head page mark, 'Go on'."
+    }
+  ],
+  "ladder": [
+    {
+      "name": "rung-5",
+      "args": ["-onboarded", "-rung", "5", "-wound", "8"],
+      "note": "Session 5: five by five, both ends pinned, two fifths open — the gimp leads and the puzzle is one fork. Indigo on linen."
+    },
+    {
+      "name": "rung-51",
+      "args": ["-onboarded", "-rung", "51", "-wound", "30"],
+      "note": "Session 51: nine by nine, three quarters open, both ends still pinned; the ground chosen by Mastery from the player's record. Gold thread in hand, earned at forty pieces."
+    },
+    {
+      "name": "rung-150",
+      "args": ["-onboarded", "-pro", "-rung", "150", "-wound", "40"],
+      "note": "Session 150: fourteen by fourteen with a window cut in it, as open as can be proved, only the start pinned. Gold thread, picots in the sampler."
+    },
+    {
+      "name": "rung-500",
+      "args": ["-onboarded", "-pro", "-rung", "500", "-wound", "60"],
+      "note": "Session 500: fourteen by fourteen in a ground of windows, neither end pinned — the thread may begin anywhere. The pillow re-covered in indigo ticking."
+    }
+  ],
+  "moments": [
+    {
+      "name": "wind",
+      "args": ["-onboarded", "-demo", "wind"],
+      "delay": 2.2,
+      "frames": 12,
+      "interval": 0.15,
+      "note": "The signature interaction, played by the app: fourteen pins wound, each reaching, wrapping and sinking, the bobbin following; a wrong turn and its unpick with the pin springing back up."
+    },
+    {
+      "name": "lift",
+      "args": ["-onboarded", "-demo", "lift"],
+      "delay": 2.4,
+      "frames": 12,
+      "interval": 0.14,
+      "note": "The last three pins and the lift: the thread tightens in a wave, the pins come out, the lace rises with its shadow, the numeral counts, the snips fall, the headline and the margin card arrive."
+    }
+  ]
+}

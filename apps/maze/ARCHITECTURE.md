@@ -349,3 +349,28 @@ Nothing in FactoryKit is copied into the app: `Ladder`, `Mastery`, `Run`, `Earne
    text around it scales. Cap the Pillow screen's `dynamicTypeSize` at `.accessibility2`, put
    the margin card's buttons in a bottom `safeAreaInset`, and let the caps line wrap to two
    lines rather than truncate. The sampler and the book scroll, so they need nothing.
+
+## Changes made in the build (2026-09-24)
+
+- **Bundle and product id.** `com.starhiveconcept.maze` and `com.starhiveconcept.maze.pro`,
+  not `com.factory.maze(.pro)`: every app shipped through App Store Connect uses the owner's
+  `com.starhiveconcept` prefix (`new-app.sh` reads it from a `.env` that is not on the runner).
+- **Solver pruning.** Beyond the free-region and dead-end checks: a chessboard parity check
+  on the bare pins (incremental, O(1)), and the flood fill runs only when the head's ring of
+  eight cells is broken between two of its open neighbours. Same verdicts, about 3× faster;
+  14×14 fully open pricks in 0.8–1.7 s on the runner.
+- **Path search** starts only on the commoner chessboard colour when the counts differ (the
+  other can never finish), with sixteen seeded starts of 40,000 nodes.
+- **Valenciennes' ground of windows** is a ring of 2×2 windows two pins in, not single-pin
+  windows one pin in: the single-pin ring closed corners into loops and failed the path search
+  on 32 of 40 seeds. Shape 4 only occurs at 14 a side, where the 2×2 ring threads on 40 of 40.
+- **No final publish proof.** Every removal was proved unique against the published ends, so
+  the last accepted state is unique by construction and `answer` is the generated path.
+- **`Record.nextBook`** was added beside `tomorrow`, for the next book pattern pricked ahead.
+- **`LaceworkTests`** was not added as a target. A standalone `swift -O` harness over the three
+  engine files re-proved each generated pattern unique at the 250,000-node budget, showed the
+  same seed gives the same walls twice, timed the 14-a-side cases (Sunday's daily under 1.5 s)
+  and threaded every window template; the numbers are in STATUS.md. The next sixty dailies all
+  prove unique at 250,000 nodes and regenerate identically from their seed.
+- **The lift's tightening wave** is a brighter, heavier stroke trimmed along the thread over
+  0.6 s rather than per-segment widths, and the pins come out as one layer rather than per pin.
