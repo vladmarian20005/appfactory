@@ -1,0 +1,1 @@
+Un patrón al día, el mismo para todos: pasa un solo hilo por cada alfiler y levanta el encaje del mundillo. Cada tablero está probado: tiene una única solución.
