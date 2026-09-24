@@ -133,11 +133,11 @@ week, like a crossword week, the same for everybody:
 
 | Mon | Tue | Wed | Thu | Fri | Sat | Sun |
 | --- | --- | --- | --- | --- | --- | --- |
-| 6 | 14 | 26 | 40 | 58 | 82 | 120 |
+| 6 | 14 | 26 | 40 | 58 | 82 | 131 |
 
-Which gives, through the dials above: Monday 5×5 and mostly gimp; Wednesday 7×7; Friday 9×9,
-four fifths open; Saturday 11×11 as a medallion; Sunday 14×14, fully open, with a window in it,
-only the start pinned. Seeded from the date, so it is the same pattern for everyone who opens
+Which gives, through the dials above: Monday 5×5 and mostly gimp, both ends pinned; Wednesday
+7×7; Friday 9×9, four fifths open; Saturday 11×11 as a medallion, nearly all open; Sunday
+14×14, fully open, with a window in it, and only the start pinned (`loose` is 1 from rung 131). Seeded from the date, so it is the same pattern for everyone who opens
 it, exactly as the spec asks, and its ground is chosen from the date too (a seeded draw over
 the grounds open at that rung, never the same ground as the previous three days). Today's
 pattern is free forever at every rung, and it counts as a **piece** — for the sampler, for
@@ -268,7 +268,7 @@ sinks.
 | --- | --- |
 | finger down | On the brass start pin (or, when both ends are loose, any bare pin). Its head brightens 12 %, and **the bobbin** appears — a small walnut bobbin, 14 × 34 pt, hanging 22 pt below and to the right of the finger, following it with a 60 ms lag on `Motion.gentle` so it swings. `Haptics.soft()`. |
 | 0–70 | **The reach.** As the finger crosses into the inner 64 % of a neighbouring bare pin's cell, the thread extends from the last pin to the new one: a `Path` from centre to centre, `.trim(to:)` 0 → 1 over 0.07 s on `.spring(response: 0.12, dampingFraction: 0.9)` — `Lace.wind`. 3.4 pt, round caps, in the thread colour. |
-| 40 | **The wrap.** If the thread turns at this pin, the corner is drawn as a wrap: the path goes *round* the pin on an arc of radius 0.36 cell rather than through its centre, so the thread visibly hangs on the pin the way lace does. Straight runs pass the pin on its outer side. |
+| 40 | **The wrap.** If the thread turns at this pin, it throws a loop round it: a ring of thread, radius 0.17 cell, 2 pt, drawn round the pin on `Motion.pop` so it tightens visibly. A straight run passes through the pin's centre, under its sunk head, so a bar reads as beads on a string and a turn reads as a knot — which is what lace on pins looks like. |
 | 70 | **The pin sinks.** Its head scales 1 → 0.86 and its shadow goes; it has been pushed into the pillow under the thread. `Haptics.selection()` — a detent, one per pin. |
 | 70 | `Tones.shared.play(.step(runLength % 5), volume: 0.35)` where `runLength` is the pins in the current straight run — so a long bar plays a rising phrase and a turn starts the phrase over. The shape of the thread is audible before it is legible. |
 | 110 | Settled. Nothing about a taken pin moves again until the lift. |
@@ -339,7 +339,7 @@ taken and never come back. The words "drag", "swipe" and "tap" appear nowhere on
 | 120–720 | **The thread tightens.** A wave runs from the start pin to the last: each segment's stroke goes 3.4 → 3.8 pt and its colour brightens 6 %, staggered so the whole wave takes 0.6 s however many pins there are (`stagger = 0.6 / pins`). Every run gets its twist, plaited or not: the whole piece is lace now. `Tones.shared.play(.success)` at 200. |
 | 260–860 | **The pins come out.** In the same wave, each pin's head rises out of the pillow — scale 1 → 1.3 → 0, opacity → 0 — and leaves a **prick**, a 1.5 pt hole in the card where it stood. Four beats spaced evenly through the wave fire `Haptics.impact(0.25 + 0.15 × beat)` and `Tones.shared.play(.step(beat))`. |
 | 720–1120 | **The lace lifts.** The thread — now the whole figure, free of its pins — scales 1 → 1.06 and rises 14 pt on `Motion.bouncy`, a soft shadow growing under it (radius 0 → 18, opacity 0 → 0.22); the pillow dims 8 % on `Motion.gentle`. `Haptics.celebrate()` and `Tones.shared.play(.fanfare)` at 760. |
-| 900–1500 | **The count.** Behind the lifted lace, the pins taken rise as a ghost numeral at `.brandDisplay(size: 112)` in `accent.opacity(0.14)`: `CountUp(to: pins, duration: 0.6, onTick:)`, each tick `Haptics.impact(0.25 + 0.03 × n)`. |
+| 900–1500 | **The count.** On the card, under the lifted lace, the pins taken rise as a ghost numeral at `.brandDisplay(size: 112)` in `accent.opacity(0.14)` — a watermark in the parchment, seen through the lace: `CountUp(to: pins, duration: 0.6, onTick:)`, each tick `Haptics.impact(0.25 + 0.03 × n)`. |
 | 1000 | **Snips and pin-heads.** `.confetti(trigger: lifts, colors: [steel, threadColour, brass], from: UnitPoint(x: 0.5, y: 0.45), count: 40, power: 0.6)` — a small, heavy fall of steel and thread-ends, gone fast. Never party confetti. |
 | 1150 | The tier headline sets under the lace in New York at 30 pt, in `highlight`, then the lacemaker's line from the praise pool under it in `inkSoft`. |
 | 1320 | **The margin card** rises on `Motion.gentle` with the ending's two lines and the buttons. |
@@ -484,11 +484,14 @@ as a section divider.
 snipped, not a rounded card; the pillow alone is softer (28) and is drawn, not a surface.
 Against the kit's 22 that alone changes how the app feels before anything else is drawn.
 
-**The thread** is drawn one way everywhere: 3.4 pt, round caps and joins, going *round* a pin
-on an arc of 0.36 cell where it turns, along the pin's outer side where it runs straight, and
-with a 1 pt lightened dashed strand along any run that is plaited. The same thread, at the same
-proportions, is the piece in the sampler (at 56 pt per piece), the swatch on the share card, the
-figure on the icon, and the illustration's subject. **The gimp** — the pattern's walls — is the
+**The thread** is drawn one way everywhere: 3.4 pt, round caps and joins, centre to centre
+through the pins, with **a ring of thread round every pin it turns on** (radius 0.17 cell,
+2 pt) and a 1 pt lightened dashed strand along any run that is plaited. The same thread, at the
+same proportions, is the piece in the sampler (at 56 pt per piece), the swatch on the share
+card, the figure on the icon, and the illustration's subject. `design/lace.js` is the reference
+drawing of it — the mocks and the art are all drawn by it — and `ThreadPath.swift` reproduces
+its geometry exactly. The first mock drew the rings at 0.22 cell and 2.6 pt and the thread read
+as a circuit diagram; at 0.17 and 2 pt it reads as lace. Do not make them bigger. **The gimp** — the pattern's walls — is the
 other line: 2.5 pt in `ink.opacity(0.7)`, round caps, matte, drawn on the card *between* cells,
 never through a pin. Thread never crosses gimp and never crosses itself; the app has no
 crossing anywhere in it.
@@ -500,8 +503,10 @@ card with no pins and no card: the pillow shows through a snipped edge.
 
 ### Art
 
-Drawn as SVG in `design/art/`, rendered by `node tools/design/art.mjs` into the asset catalog
-and used as `Image("…")`. No SF Symbol is ever the hero of a screen.
+Drawn as SVG in `design/art/` — generated by `node apps/maze/design/make-art.mjs` from
+`lace.js`, so every thread in the art is a real single-thread path in the app's own geometry —
+rendered by `node tools/design/art.mjs … --width 260` into the asset catalog and used as
+`Image("…")`. Each has a 372 × 340 `viewBox`. No SF Symbol is ever the hero of a screen.
 
 | File | Depicts | Where |
 | --- | --- | --- |
@@ -713,17 +718,22 @@ Top to bottom:
   the subtitle where the toolbar allows it, else `TODAY'S PATTERN · 24 SEPTEMBER` in the caps
   under the title. The toolbar carries a `Menu` with "Pull the pins" (behind its confirmation),
   "Thread" (once silk is earned) and, once the piece is lifted, a `ShareLink`.
-- The **caps line**: `TODAY'S PATTERN · NINE BY NINE · ROSE GROUND`, and the count beside it:
-  **54** at 34 pt in New York with `of 81 pins` in the caps.
+- The **head**, two columns so nothing wraps: at the left the caps line `NINE BY NINE · ROSE
+  GROUND` with the count under it — **54** at 34 pt in New York with `of 81 pins` in the caps
+  beside it; at the right, ranged right, `TODAY'S PATTERN` over `24 SEPTEMBER` in the caps (or
+  `PATTERN 51` over `THE BOOK`).
 - **The pillow**, with **the card** on it at −1.2°, and on the card: the pins, the gimp, the
   windows (if the shape has them) as snipped holes showing the pillow through, the brass start
   pin (and the ringed finish pin when it is pinned), the thread, the plaits, and the bobbin
   lying where the finger left it. At fourteen a side on a 393 pt phone the pitch is about 25 pt;
   the card fills the width less 32 pt and is square.
-- **The margin**, on the pillow under the card: `THREAD 31 · PICKED OUT ONCE` in the caps at the
-  left, and the lacemaker's most recent line in `inkSoft` at 15 pt, which changes on a plait, an
-  unpick or a dead end and otherwise sits empty. Marking pins (once earned) are set on the card
-  itself; nothing about them appears here.
+- **The margin**, on the linen under the pillow: `THREAD 31 · PICKED OUT ONCE · TWO PLAITS` in
+  the caps, the lacemaker's most recent line in `inkSoft` at 17 pt italic (the word before the
+  full stop — "Plaited." — in `success`, upright), which changes on a plait, an unpick or a dead
+  end and otherwise sits empty; and under it **the run marks** — one short 18 × 3.4 pt bar of
+  thread per straight run wound so far, solid where the run plaited and at 30 % where it did
+  not, so the shape of the solve is legible at a glance and the same marks go on the swatch.
+  Marking pins (once earned) are set on the card itself; nothing about them appears here.
 - Once the piece is lifted, the margin becomes the **margin card** (see The reward) with the
   ending's two lines, "Send a swatch" and "Pin the next pattern".
 
@@ -818,10 +828,13 @@ for the page you are on, an empty prick for each one you are not.
 
 | Mock | Shows |
 | --- | --- |
-| `design/mock-1-play.html` | The pillow mid-wind: a nine-by-nine rose ground at rung 51, fifty-four of eighty-one pins taken, two plaits, the bobbin under the finger, `THREAD 31 · PICKED OUT ONCE` and a plait line in the margin. |
-| `design/mock-2-win.html` | The lift at its peak: the pins out and the pricks left, the lace risen with its shadow, the ghost numeral behind, the `best` headline in madder, and the margin card. |
-| `design/mock-3-first.html` | Onboarding page 1, the first thing a new user sees. |
-| `design/mock-4-sampler.html` | The sampler: the hero at 112 pt, today's piece, the cloth of small laces, the month card and the hem. This is the first App Store screenshot, per the spec's 4.3 note. |
+| `design/mock-1-play.html` | The pillow mid-wind: today's nine-by-nine rose ground, fifty-four of eighty-one pins taken, two plaits, the bobbin lying at the thread's end, `THREAD 31 · PICKED OUT ONCE · TWO PLAITS`, the plait line and the run marks in the margin. |
+| `design/mock-2-win.html` | The lift at its peak, `best` tier: the pins out and the pricks left, the lace risen with its shadow and its gold picot edge, the ghost numeral in the card under it, snips frozen mid-fall, the headline in madder, the lacemaker's line, and the margin card with both buttons above the tab bar. |
+| `design/mock-3-first.html` | Onboarding page 1, the first thing a new user sees: the masthead, the pillow, "A pattern a day", the pin-head page indicator, "Go on". |
+| `design/mock-4-sampler.html` | The sampler: the hero at 112 pt, today's piece with its tier line, three rows of small laces on the cloth, the hem caps, and the month card with today ringed. This is the first App Store screenshot, per the spec's 4.3 note. "Pin a reminder" sits below the fold. |
+
+All four are drawn by `design/lace.js`, which generates a real single-thread path for every
+board shown, so no mock contains a thread that could not exist.
 
 ### Captures
 
@@ -841,23 +854,25 @@ piece, not the pillow, and not an arrow.
 **The composition:** the parchment card fills the square at −3°, nearly full bleed, held by
 four brass pins at its corners, with a sliver of linen showing at the edges and the card's
 shadow along the bottom and right so it reads as paper lying on cloth. In the middle 70 %, a
-**five-by-five field of pins** — steel shafts seen end-on, each a round head with a highlight —
-and **one indigo thread** wound through all twenty-five in a single path that reads as a
-serpentine with a twist in it, going round each pin on a wrap and passing straight pins on the
-outside, two of its runs plaited with the lighter strand. It starts at a **brass** pin at the
-lower left and the last pin it reaches, at the upper right, is ringed. A **walnut bobbin** lies
-across the lower-left corner where the thread began, its band painted madder. Three short bars
-of gimp lie between pins where the pattern would have them.
+**five-by-five field of pins**, and **one indigo thread** wound through all twenty-five in a
+single path that **spirals in** — up the left side, across the top, down the right, along the
+bottom and round again, twice, to the pin at the centre — with a ring of thread round each of
+the eight pins it turns on and the three outer runs plaited with the lighter strand. It starts
+at a **brass** pin at the lower left and ends on the **ringed brass pin at the centre**. A
+**walnut bobbin** lies across the lower-left corner where the thread began, its band painted
+madder. Three short bars of gimp lie between pins where the pattern would have them. The first
+draft wound a serpentine instead and read at a glance as the letters "NE"; a spiral into a
+centre pin reads as a labyrinth in thread, which is the idea.
 
-**The colours:** the linen `#E8E0CF` → `#D9CFB8` at the edges; the card `#FAF5EA` → `#EFE7D6`
-toward the lower right; the thread `#31497A` with a `#8FA5D6` twist; the pins `#6F7B88` heads
-with `#FFFFFF` highlights and `#3E4750` shadows; brass `#9C7A2E` with a `#E8CC7A` highlight; the
-bobbin `#7A4E2E` with a `#A8413A` band.
+**The colours:** the linen `#F0E9DA` → `#D5CAB2` at the edges; the card `#FBF6EC` → `#ECE3D0`
+toward the lower right; the thread `#31497A` with a `#9DB2E0` twist; the sunk pins `#4E5966`;
+brass `#9C7A2E` with a `#F0DDA3` highlight; the bobbin `#7A4E2E` with a `#A8413A` band.
 
-Read at 120 px next to the leaders' icons: a cream square with a blue winding line and steel
-dots, next to Color Maze Master's red arrows on navy, Maze Madness's neon arrows on black,
-Color Fill 3D's pink cubes and Tomb of the Mask's yellow pixel face. The only light icon in the
-row. No letter, no numeral, no glyph on a gradient. Rendered to `design/icon-1024.png`.
+Read at 120 px next to the leaders' icons: a cream square with a blue spiral and a brass point
+at its heart, next to Color Maze Master's red arrows on navy, Maze Madness's neon arrows on
+black, Color Fill 3D's pink cubes and Tomb of the Mask's yellow pixel face. The only light icon
+in the row. No letter, no numeral, no glyph on a gradient. `design/icon.svg`, rendered to
+`design/icon-1024.png`.
 
 ## Share card
 

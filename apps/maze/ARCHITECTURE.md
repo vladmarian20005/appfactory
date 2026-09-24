@@ -120,7 +120,7 @@ enum Play {
         .init("shape", from: 1,  by: 1, every: 45, opensAt: 30, ceiling: 4),
         .init("loose", from: 0,  by: 1, every: 90, opensAt: 41, ceiling: 2),
     ])
-    static let dailyWeek = [6, 14, 26, 40, 58, 82, 120]          // Mon…Sun
+    static let dailyWeek = [6, 14, 26, 40, 58, 82, 131]          // Mon…Sun; Sunday's finish is loose
     static let freePatterns = 60
     static let groundOpens: [Ground: Int] = [.tulle: 1, .bar: 1, .rose: 10, .torchon: 22,
                                              .spider: 36, .fan: 52, .honeycomb: 70, .valenciennes: 90]
@@ -143,7 +143,7 @@ shared). The daily's seed is `UInt64(day) &* 0x9E37_79B9_7F4A_7C15`, nothing per
 `ios/Tests`) proves: the same inputs give byte-identical `Pricking`s twice; `pricking(rung: 5)`
 and `pricking(rung: 150)` differ in `side`, `shape`, `loose` and `gimp.count / pins` (the
 open ratio); every one of the next sixty dailies proves unique under budget; and Sunday's
-daily (rung 120) generates in under 1.5 s on the simulator in Debug. That last one is the
+daily (rung 131) generates in under 1.5 s on the simulator in Debug. That last one is the
 timing gate the spec asks for, and it is the first thing to run once the engine compiles.
 
 ### Generating

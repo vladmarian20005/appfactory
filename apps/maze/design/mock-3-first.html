@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lacework · a pattern a day</title>
+<style>
+  :root {
+    --canvas: #E8E0CF; --surface: #F8F3E7; --ink: #2A2521; --inkSoft: #655B52;
+    --accent: #31497A; --highlight: #A8413A; --steel: #6F7B88; --brass: #9C7A2E; --walnut: #7A4E2E; --pillow: #DDD4C0;
+    --display: ui-serif, "New York", Georgia, serif;
+    --body: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { width: 440px; height: 956px; overflow: hidden; }
+  body { background: var(--canvas); font-family: var(--body); color: var(--ink); position: relative; }
+  .glow { position: absolute; inset: 0;
+    background: radial-gradient(circle 560px at 22% 6%, #F6F0E3 0%, rgba(246,240,227,0) 70%); }
+  .weave { position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, rgba(42,37,33,.035) 0 .75px, transparent .75px 2.6px),
+      repeating-linear-gradient(90deg, rgba(42,37,33,.035) 0 .75px, transparent .75px 2.6px); }
+  .status { position: absolute; top: 0; left: 0; right: 0; height: var(--safe-top, 62px);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 30px 11px; font: 600 16px/1 var(--body); z-index: 40; }
+  .status .r { display: flex; gap: 6px; align-items: center; }
+
+  .caps { font: 600 10.5px/1.6 var(--body); letter-spacing: 2.4px; text-transform: uppercase; color: var(--inkSoft); }
+  .mast { position: absolute; left: 40px; right: 40px; top: 96px; display: flex; align-items: center; gap: 12px; }
+  .mast .rule { flex: 1; height: .5px; background: rgba(42,37,33,.3); }
+  .mast .pin { width: 6px; height: 6px; border-radius: 50%; background: var(--steel); box-shadow: -1px -1px 0 rgba(255,255,255,.8) inset, 1px 1px 1px rgba(42,37,33,.3); }
+
+  .art { position: absolute; left: 0; right: 0; top: 150px; height: 360px; display: flex; justify-content: center; align-items: center; }
+  .art svg { width: 372px; height: 340px; overflow: visible; filter: drop-shadow(0 18px 22px rgba(42,37,33,.16)); }
+
+  .copy { position: absolute; left: 36px; right: 36px; top: 542px; text-align: center; }
+  .copy h1 { font: 500 42px/1.08 var(--display); color: var(--ink); letter-spacing: -.6px; }
+  .copy p { margin: 16px auto 0; max-width: 330px; font: 400 19px/1.36 var(--body); color: var(--inkSoft); }
+
+  .dots { position: absolute; left: 0; right: 0; top: 792px; display: flex; justify-content: center; gap: 13px; align-items: center; }
+  .dots .on { width: 8px; height: 8px; border-radius: 50%; background: var(--steel); box-shadow: -1px -1px 0 rgba(255,255,255,.8) inset, 1px 1px 1px rgba(42,37,33,.3); }
+  .dots .off { width: 5px; height: 5px; border-radius: 50%; background: rgba(42,37,33,.22); }
+
+  .btn { position: absolute; left: 20px; right: 20px; bottom: 44px; height: 54px; border-radius: 27px;
+    background: linear-gradient(180deg, #3E5A92, var(--accent)); color: var(--surface);
+    font: 600 17px/54px var(--body); text-align: center;
+    box-shadow: 0 1px 0 rgba(255,255,255,.3) inset, 0 8px 18px rgba(49,73,122,.28); }
+</style>
+</head>
+<body>
+  <div class="glow"></div><div class="weave"></div>
+
+  <div class="mast"><div class="rule"></div><span class="caps">Lacework</span><div class="pin"></div><div class="rule"></div></div>
+
+  <div class="art">
+    <svg viewBox="0 0 372 340" id="art"></svg>
+  </div>
+
+  <div class="copy">
+    <h1>A pattern a day</h1>
+    <p>Pricked into a card and pinned to the pillow every morning — the same one for everyone who opens it.</p>
+  </div>
+
+  <div class="dots"><div class="on"></div><div class="off"></div><div class="off"></div></div>
+  <div class="btn">Go on</div>
+
+  <div class="status">
+    <span>9:41</span>
+    <span class="r">
+      <svg width="17" height="11" viewBox="0 0 17 11"><g fill="#2A2521"><rect y="7.5" width="3" height="3.5" rx=".7"/><rect x="4.5" y="5.5" width="3" height="5.5" rx=".7"/><rect x="9" y="3" width="3" height="8" rx=".7"/><rect x="13.5" width="3" height="11" rx=".7"/></g></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 9.6 5.2 6.7a4 4 0 0 1 5.6 0Z" fill="#2A2521"/><path d="M2.8 4.3a7.4 7.4 0 0 1 10.4 0" stroke="#2A2521" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M.6 1.6a10.6 10.6 0 0 1 14.8 0" stroke="#2A2521" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg width="25" height="11" viewBox="0 0 25 11"><rect x=".5" y=".5" width="20" height="10" rx="2.8" fill="none" stroke="#2A2521" opacity=".45"/><rect x="2" y="2" width="15" height="7" rx="1.6" fill="#2A2521"/><path d="M22.2 3.6v3.8a2.2 2.2 0 0 0 0-3.8Z" fill="#2A2521" opacity=".45"/></svg>
+    </span>
+  </div>
+
+<script src="lace.js"></script>
+<script>
+  // The pillow, three-quarter on: a bolster in linen, the pricking card pinned to it, a thread
+  // part-wound, and the bobbin lying by the thread's end. The same drawing is design/art/pillow.svg.
+  const pat = makePattern(7, 7, 0.3, 27);
+  const lace = drawLace({ ...pat, pitch: 30, taken: 27, bobbin: true, breathe: false });
+  const art = document.getElementById('art');
+  art.innerHTML = `
+    <defs>
+      <linearGradient id="bol" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E6DECB"/><stop offset=".6" stop-color="#D9CFB9"/><stop offset="1" stop-color="#C9BEA6"/></linearGradient>
+      <linearGradient id="crd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBF6EB"/><stop offset="1" stop-color="#EEE5D2"/></linearGradient>
+      <pattern id="wv" width="2.6" height="2.6" patternUnits="userSpaceOnUse"><path d="M0 0H2.6M0 0V2.6" stroke="#2A2521" stroke-opacity=".06" stroke-width=".7"/></pattern>
+    </defs>
+    <!-- the bolster -->
+    <g transform="skewX(-6)">
+      <rect x="40" y="70" width="330" height="230" rx="44" fill="url(#bol)"/>
+      <rect x="40" y="70" width="330" height="230" rx="44" fill="url(#wv)"/>
+      <path d="M62 84 Q205 62 348 84" fill="none" stroke="#F6F0E3" stroke-width="2" opacity=".8"/>
+      <ellipse cx="205" cy="300" rx="150" ry="10" fill="#2A2521" opacity=".08"/>
+    </g>
+    <!-- the card, pinned at its corners -->
+    <g transform="translate(88 92) rotate(-2.5)">
+      <rect x="0" y="0" width="240" height="240" rx="8" fill="#2A2521" opacity=".12" transform="translate(4 8)"/>
+      <rect x="0" y="0" width="240" height="240" rx="8" fill="url(#crd)"/>
+      <svg x="0" y="0" width="240" height="240" viewBox="0 0 ${lace.size} ${lace.size}">${lace.svg}</svg>
+      ${[[7,7],[225,7],[7,225],[225,225]].map(([x,y]) => `<circle cx="${x+1}" cy="${y+1.5}" r="4.4" fill="#2A2521" opacity=".3"/><circle cx="${x}" cy="${y}" r="4.4" fill="#9C7A2E"/><circle cx="${x-1.4}" cy="${y-1.4}" r="1.4" fill="#F0DDA3"/>`).join('')}
+    </g>
+  `;
+</script>
+</body>
+</html>

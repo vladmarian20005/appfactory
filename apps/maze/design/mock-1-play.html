@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lacework · the pillow</title>
+<style>
+  :root {
+    --canvas: #E8E0CF; --surface: #F8F3E7; --ink: #2A2521; --inkSoft: #655B52;
+    --accent: #31497A; --highlight: #A8413A; --success: #4A7457; --miss: #7A6748;
+    --steel: #6F7B88; --brass: #9C7A2E; --walnut: #7A4E2E; --pillow: #DDD4C0;
+    --display: ui-serif, "New York", Georgia, serif;
+    --body: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { width: 440px; height: 956px; overflow: hidden; }
+  body { background: var(--canvas); font-family: var(--body); color: var(--ink); position: relative; }
+  .glow { position: absolute; inset: 0;
+    background: radial-gradient(circle 560px at 22% 6%, #F6F0E3 0%, rgba(246,240,227,0) 70%); }
+  .weave { position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, rgba(42,37,33,.035) 0 .75px, transparent .75px 2.6px),
+      repeating-linear-gradient(90deg, rgba(42,37,33,.035) 0 .75px, transparent .75px 2.6px); }
+
+  .status { position: absolute; top: 0; left: 0; right: 0; height: var(--safe-top, 62px);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 30px 11px; font: 600 16px/1 var(--body); z-index: 40; }
+  .status .r { display: flex; gap: 6px; align-items: center; }
+  .nav { position: absolute; top: 0; left: 0; right: 0; height: 104px; z-index: 30;
+    background: rgba(248,243,231,.55); backdrop-filter: blur(22px) saturate(160%);
+    border-bottom: .5px solid rgba(42,37,33,.14);
+    display: flex; align-items: flex-end; padding: 0 16px 9px; }
+  .nav .l { width: 62px; }
+  .nav .title { flex: 1; text-align: center; font: 500 17px/1 var(--display); }
+  .nav .menu { width: 62px; text-align: right; color: var(--accent); font: 700 18px/1 var(--body); letter-spacing: 1.6px; }
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: calc(48px + var(--safe-bottom, 34px));
+    background: rgba(248,243,231,.55); backdrop-filter: blur(22px) saturate(160%);
+    border-top: .5px solid rgba(42,37,33,.14); display: flex; padding-bottom: var(--safe-bottom, 34px); z-index: 30; }
+  .tabbar div { flex: 1; text-align: center; padding-top: 6px; font: 500 10px/1.8 var(--body); color: rgba(101,91,82,.7); }
+  .tabbar div.on { color: var(--accent); }
+  .tabbar svg { display: block; margin: 0 auto; }
+
+  .caps { font: 600 10.5px/1.6 var(--body); letter-spacing: 2px; text-transform: uppercase; color: var(--inkSoft); }
+  .head { position: absolute; left: 20px; right: 20px; top: 124px; display: flex; align-items: flex-end; justify-content: space-between; white-space: nowrap; }
+  .count { font: 500 34px/1 var(--display); color: var(--ink); letter-spacing: -.5px; display: flex; align-items: baseline; gap: 8px; margin-top: 4px; }
+  .count .caps { letter-spacing: 1.6px; }
+
+  .pillow { position: absolute; left: 12px; right: 12px; top: 198px; height: 470px; border-radius: 28px;
+    background: linear-gradient(180deg, #E2DAC6 0%, var(--pillow) 55%, #D6CCB5 100%);
+    box-shadow: 0 1px 0 #F4EDDD inset, 0 -1px 0 rgba(42,37,33,.08) inset, 0 18px 34px rgba(42,37,33,.16), 0 3px 6px rgba(42,37,33,.06); }
+  .pillow::before { content: ""; position: absolute; inset: 0; border-radius: 28px;
+    background: repeating-linear-gradient(0deg, rgba(42,37,33,.03) 0 .75px, transparent .75px 2.6px),
+                repeating-linear-gradient(90deg, rgba(42,37,33,.03) 0 .75px, transparent .75px 2.6px); }
+  .card { position: absolute; left: 50%; top: 50%; width: 400px; height: 400px; margin: -200px 0 0 -200px;
+    background: linear-gradient(150deg, #FAF5EA 0%, var(--surface) 55%, #EFE7D6 100%);
+    border-radius: 10px; transform: rotate(-1.2deg);
+    box-shadow: 0 6px 14px rgba(42,37,33,.14), 0 1px 0 rgba(255,255,255,.7) inset; }
+  .card svg { position: absolute; left: 0; top: 0; width: 400px; height: 400px; }
+  .cpin { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--brass);
+    box-shadow: 1px 1.5px 2px rgba(42,37,33,.35), -1px -1px 0 #E8CC7A inset; }
+
+  .margin { position: absolute; left: 24px; right: 24px; top: 690px; }
+  .margin .line { margin-top: 10px; font: 400 17px/1.4 var(--body); color: var(--inkSoft); font-style: italic; }
+  .margin .line b { font-style: normal; font-weight: 500; color: var(--success); }
+  .marks { position: absolute; left: 24px; right: 24px; top: 772px; display: flex; gap: 6px; align-items: center; }
+  .marks i { width: 18px; height: 3.4px; border-radius: 2px; background: var(--accent); }
+  .marks i.plain { opacity: .3; }
+</style>
+</head>
+<body>
+  <div class="glow"></div><div class="weave"></div>
+
+  <div class="head">
+    <div>
+      <div class="caps">Nine by nine · rose ground</div>
+      <div class="count">54 <span class="caps">of 81 pins</span></div>
+    </div>
+    <div class="caps" style="text-align:right">Today's pattern<br>24 September</div>
+  </div>
+
+  <div class="pillow">
+    <div class="card" id="card">
+      <svg id="lace" viewBox="0 0 400 400"></svg>
+      <div class="cpin" style="left:7px;top:7px"></div><div class="cpin" style="right:7px;top:7px"></div>
+      <div class="cpin" style="left:7px;bottom:7px"></div><div class="cpin" style="right:7px;bottom:7px"></div>
+    </div>
+  </div>
+
+  <div class="margin">
+    <div class="caps">Thread 31 · picked out once · two plaits</div>
+    <div class="line"><b>Plaited.</b> Six pins in a bar.</div>
+  </div>
+  <!-- the thread so far, run by run: a plaited run is solid, a plain one faint -->
+  <div class="marks"><i class="plain"></i><i class="plain"></i><i></i><i class="plain"></i><i class="plain"></i><i class="plain"></i><i></i><i class="plain"></i><i class="plain"></i></div>
+
+  <div class="status">
+    <span>9:41</span>
+    <span class="r">
+      <svg width="17" height="11" viewBox="0 0 17 11"><g fill="#2A2521"><rect y="7.5" width="3" height="3.5" rx=".7"/><rect x="4.5" y="5.5" width="3" height="5.5" rx=".7"/><rect x="9" y="3" width="3" height="8" rx=".7"/><rect x="13.5" width="3" height="11" rx=".7"/></g></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 9.6 5.2 6.7a4 4 0 0 1 5.6 0Z" fill="#2A2521"/><path d="M2.8 4.3a7.4 7.4 0 0 1 10.4 0" stroke="#2A2521" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M.6 1.6a10.6 10.6 0 0 1 14.8 0" stroke="#2A2521" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg width="25" height="11" viewBox="0 0 25 11"><rect x=".5" y=".5" width="20" height="10" rx="2.8" fill="none" stroke="#2A2521" opacity=".45"/><rect x="2" y="2" width="15" height="7" rx="1.6" fill="#2A2521"/><path d="M22.2 3.6v3.8a2.2 2.2 0 0 0 0-3.8Z" fill="#2A2521" opacity=".45"/></svg>
+    </span>
+  </div>
+  <div class="nav"><span class="l"></span><span class="title">The rose ground</span><span class="menu">•••</span></div>
+
+  <div class="tabbar">
+    <div class="on"><svg width="26" height="20" viewBox="0 0 26 20"><rect x="2" y="3" width="22" height="14" rx="5" fill="none" stroke="#31497A" stroke-width="1.6"/><path d="M7 12.5 10 8l3 5 3-5 3 4.5" fill="none" stroke="#31497A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Pillow</div>
+    <div><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#655B52" stroke-width="1.6" opacity=".75"><rect x="3" y="2" width="20" height="16" rx="1.5"/><path d="M3 6.5h20M7 10.5h3M12 10.5h3M17 10.5h3M7 14h3M12 14h3"/></svg>Sampler</div>
+    <div><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#655B52" stroke-width="1.6" opacity=".75"><path d="M4 3.5h8a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2z"/><path d="M22 3.5h-8a2 2 0 0 0-2 2v12h8a2 2 0 0 0 2-2z"/></svg>Book</div>
+    <div><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#655B52" stroke-width="1.6" opacity=".75"><rect x="3" y="7" width="20" height="11" rx="2"/><path d="M9 7V4.5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2V7M3 12h20"/></svg>Workbox</div>
+  </div>
+
+<script src="lace.js"></script>
+<script>
+  const pat = makePattern(9, 20260924, 0.28, 54);
+  const out = drawLace({ ...pat, pitch: 40, taken: 54, bobbin: true, markers: [] });
+  const svg = document.getElementById('lace');
+  svg.setAttribute('viewBox', `0 0 ${out.size} ${out.size}`);
+  svg.innerHTML = out.svg;
+</script>
+</body>
+</html>

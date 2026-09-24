@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lacework · the sampler</title>
+<style>
+  :root {
+    --canvas: #E8E0CF; --surface: #F8F3E7; --ink: #2A2521; --inkSoft: #655B52;
+    --accent: #31497A; --highlight: #A8413A; --success: #4A7457; --steel: #6F7B88; --brass: #9C7A2E; --rose: #C4586A;
+    --display: ui-serif, "New York", Georgia, serif;
+    --body: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { width: 440px; height: 956px; overflow: hidden; }
+  body { background: var(--canvas); font-family: var(--body); color: var(--ink); position: relative; }
+  .glow { position: absolute; inset: 0;
+    background: radial-gradient(circle 560px at 22% 6%, #F6F0E3 0%, rgba(246,240,227,0) 70%); }
+  .weave { position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, rgba(42,37,33,.035) 0 .75px, transparent .75px 2.6px),
+      repeating-linear-gradient(90deg, rgba(42,37,33,.035) 0 .75px, transparent .75px 2.6px); }
+  .status { position: absolute; top: 0; left: 0; right: 0; height: var(--safe-top, 62px);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 30px 11px; font: 600 16px/1 var(--body); z-index: 40; }
+  .status .r { display: flex; gap: 6px; align-items: center; }
+  .nav { position: absolute; top: 0; left: 0; right: 0; height: 104px; z-index: 30;
+    background: rgba(248,243,231,.55); backdrop-filter: blur(22px) saturate(160%);
+    border-bottom: .5px solid rgba(42,37,33,.14);
+    display: flex; align-items: flex-end; padding: 0 16px 9px; }
+  .nav .l { width: 62px; }
+  .nav .title { flex: 1; text-align: center; font: 500 17px/1 var(--display); }
+  .nav .menu { width: 62px; text-align: right; }
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: calc(48px + var(--safe-bottom, 34px));
+    background: rgba(248,243,231,.55); backdrop-filter: blur(22px) saturate(160%);
+    border-top: .5px solid rgba(42,37,33,.14); display: flex; padding-bottom: var(--safe-bottom, 34px); z-index: 30; }
+  .tabbar div { flex: 1; text-align: center; padding-top: 6px; font: 500 10px/1.8 var(--body); color: rgba(101,91,82,.7); }
+  .tabbar div.on { color: var(--accent); }
+  .tabbar svg { display: block; margin: 0 auto; }
+
+  .caps { font: 600 10.5px/1.6 var(--body); letter-spacing: 2px; text-transform: uppercase; color: var(--inkSoft); }
+  .hero { position: absolute; left: 22px; top: 112px; font: 500 112px/1 var(--display); color: var(--ink); letter-spacing: -3px; }
+  .hero .caps { margin-top: 2px; letter-spacing: 2.6px; padding-left: 4px; }
+
+  .todayPiece { position: absolute; right: 16px; top: 126px; width: 292px; display: flex; gap: 12px; align-items: flex-start; justify-content: flex-end; }
+  .todayPiece .piece { flex: 0 0 auto; width: 124px; height: 124px; border-radius: 10px; background: linear-gradient(150deg, #FAF5EA, #EFE7D6); transform: rotate(1.5deg);
+    box-shadow: 0 8px 18px rgba(42,37,33,.16), 0 1px 0 rgba(255,255,255,.7) inset; position: relative; }
+  .todayPiece .piece svg { position: absolute; inset: 0; width: 124px; height: 124px; }
+  .todayPiece .t { flex: 1; text-align: right; padding-top: 6px; }
+  .todayPiece .t .caps { line-height: 1.5; font-size: 9.5px; letter-spacing: 1.6px; white-space: nowrap; }
+  .todayPiece .t .tier { margin-top: 8px; font: 500 16px/1.25 var(--display); color: var(--highlight); }
+
+  .cloth { position: absolute; left: 16px; right: 16px; top: 300px; height: 322px; background: var(--surface); border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(42,37,33,.12), 0 1px 0 rgba(255,255,255,.7) inset; padding: 14px 12px; }
+  .cloth::before { content: ""; position: absolute; inset: 8px; border: .5px solid rgba(42,37,33,.22); border-radius: 5px; pointer-events: none; }
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px 6px; }
+  .lace { text-align: center; }
+  .lace svg { width: 56px; height: 56px; display: block; margin: 0 auto; }
+  .lace .caps { font-size: 8px; letter-spacing: 1.2px; line-height: 1.9; }
+  .hem { position: absolute; left: 0; right: 0; bottom: 12px; text-align: center; }
+
+  .month { position: absolute; left: 16px; right: 16px; top: 640px; height: 200px; background: var(--surface); border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(42,37,33,.12), 0 1px 0 rgba(255,255,255,.7) inset; padding: 14px 18px; }
+  .month .mh { display: flex; justify-content: space-between; align-items: baseline; }
+  .month .mh b { font: 500 22px/1 var(--display); }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px 0; margin-top: 14px; justify-items: center; }
+  .day { width: 18px; height: 18px; position: relative; }
+  .day i { position: absolute; left: 50%; top: 50%; width: 3px; height: 3px; margin: -1.5px 0 0 -1.5px; border-radius: 50%; background: rgba(42,37,33,.18); }
+  .day.pin i { width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; background: var(--accent); box-shadow: -1px -1px 0 rgba(255,255,255,.55) inset, 1px 1.2px 1.5px rgba(42,37,33,.3); }
+  .day.pin.rose i { background: var(--rose); }
+  .day.today::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid var(--accent); }
+  .row { position: absolute; left: 24px; right: 24px; top: 848px; display: flex; justify-content: space-between; align-items: center; }
+  .toggle { width: 51px; height: 31px; border-radius: 16px; background: rgba(120,120,128,.16); position: relative; }
+  .toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.15); }
+</style>
+</head>
+<body>
+  <div class="glow"></div><div class="weave"></div>
+
+  <div class="hero">19<div class="caps">Pieces</div></div>
+  <div class="todayPiece">
+    <div class="t">
+      <div class="caps">Today · nine by nine<br>rose ground</div>
+      <div class="tier">Worked clean, in one thread</div>
+    </div>
+    <div class="piece"><svg id="todayLace"></svg></div>
+  </div>
+
+  <div class="cloth">
+    <div class="grid" id="grid"></div>
+    <div class="hem caps">19 pieces · 12 days running · largest 12 × 12</div>
+  </div>
+
+  <div class="month">
+    <div class="mh"><b>September</b><span class="caps">Twenty-two pinned</span></div>
+    <div class="days" id="days"></div>
+  </div>
+
+  <div class="status">
+    <span>9:41</span>
+    <span class="r">
+      <svg width="17" height="11" viewBox="0 0 17 11"><g fill="#2A2521"><rect y="7.5" width="3" height="3.5" rx=".7"/><rect x="4.5" y="5.5" width="3" height="5.5" rx=".7"/><rect x="9" y="3" width="3" height="8" rx=".7"/><rect x="13.5" width="3" height="11" rx=".7"/></g></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 9.6 5.2 6.7a4 4 0 0 1 5.6 0Z" fill="#2A2521"/><path d="M2.8 4.3a7.4 7.4 0 0 1 10.4 0" stroke="#2A2521" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M.6 1.6a10.6 10.6 0 0 1 14.8 0" stroke="#2A2521" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg width="25" height="11" viewBox="0 0 25 11"><rect x=".5" y=".5" width="20" height="10" rx="2.8" fill="none" stroke="#2A2521" opacity=".45"/><rect x="2" y="2" width="15" height="7" rx="1.6" fill="#2A2521"/><path d="M22.2 3.6v3.8a2.2 2.2 0 0 0 0-3.8Z" fill="#2A2521" opacity=".45"/></svg>
+    </span>
+  </div>
+  <div class="nav"><span class="l"></span><span class="title">The sampler</span><span class="menu">
+    <svg width="20" height="22" viewBox="0 0 20 22" fill="none" stroke="#31497A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v13M6 6l4-4 4 4"/><path d="M4 10v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8"/></svg></span></div>
+
+  <div class="tabbar">
+    <div><svg width="26" height="20" viewBox="0 0 26 20"><rect x="2" y="3" width="22" height="14" rx="5" fill="none" stroke="#655B52" stroke-width="1.6" opacity=".75"/><path d="M7 12.5 10 8l3 5 3-5 3 4.5" fill="none" stroke="#655B52" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".75"/></svg>Pillow</div>
+    <div class="on"><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#31497A" stroke-width="1.6"><rect x="3" y="2" width="20" height="16" rx="1.5"/><path d="M3 6.5h20M7 10.5h3M12 10.5h3M17 10.5h3M7 14h3M12 14h3"/></svg>Sampler</div>
+    <div><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#655B52" stroke-width="1.6" opacity=".75"><path d="M4 3.5h8a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2z"/><path d="M22 3.5h-8a2 2 0 0 0-2 2v12h8a2 2 0 0 0 2-2z"/></svg>Book</div>
+    <div><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#655B52" stroke-width="1.6" opacity=".75"><rect x="3" y="7" width="20" height="11" rx="2"/><path d="M9 7V4.5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2V7M3 12h20"/></svg>Workbox</div>
+  </div>
+
+<script src="lace.js"></script>
+<script>
+  function small(N, seed, thread, w) {
+    const p = makePattern(N, seed, 0);
+    const o = drawLace({ ...p, pitch: 20, pinsOut: true, plaitAll: true, thread, twist: thread === '#C4586A' ? '#EFB4C0' : '#8FA5D6' });
+    return `<svg viewBox="0 0 ${o.size} ${o.size}" width="${w}" height="${w}">${o.svg}</svg>`;
+  }
+  // today's piece
+  const t = makePattern(9, 20260924, 0.28);
+  const to = drawLace({ ...t, pitch: 16, pinsOut: true, plaitAll: true });
+  const ts = document.getElementById('todayLace');
+  ts.setAttribute('viewBox', `0 0 ${to.size} ${to.size}`); ts.innerHTML = to.svg;
+  // the cloth: the last ten pieces, newest first
+  const pieces = [[9, 20260923, '#31497A', '23 Sep'], [9, 51, '#C4586A', 'Bk 51'], [8, 20260922, '#31497A', '22 Sep'],
+                  [9, 50, '#31497A', 'Bk 50'], [7, 20260921, '#C4586A', '21 Sep'], [8, 49, '#31497A', 'Bk 49'],
+                  [6, 20260920, '#31497A', '20 Sep'], [8, 48, '#C4586A', 'Bk 48'], [5, 20260919, '#31497A', '19 Sep'], [8, 47, '#31497A', 'Bk 47'],
+                  [9, 20260918, '#C4586A', '18 Sep'], [8, 46, '#31497A', 'Bk 46'], [7, 20260917, '#31497A', '17 Sep'], [7, 45, '#31497A', 'Bk 45'], [5, 20260916, '#31497A', '16 Sep']];
+  document.getElementById('grid').innerHTML = pieces.map(([n, s, c, d]) => `<div class="lace">${small(n, s, c, 56)}<div class="caps">${d}</div></div>`).join('');
+  // the month: September 2026 starts on a Tuesday; today is the 24th
+  const worked = new Set([1,2,3,4,5,6,8,9,10,11,13,14,15,16,17,18,19,20,21,22,23,24]);
+  const rose = new Set([9,14,18,21]);
+  let h = '<div></div>';
+  for (let d = 1; d <= 30; d++) h += `<div class="day${worked.has(d) ? ' pin' : ''}${rose.has(d) ? ' rose' : ''}${d === 24 ? ' today' : ''}"><i></i></div>`;
+  document.getElementById('days').innerHTML = h;
+</script>
+</body>
+</html>

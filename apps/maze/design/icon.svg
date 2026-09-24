@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Lacework: a pricking card pinned to the pillow, one indigo thread wound through every pin -->
+  <defs>
+    <radialGradient id="linen" cx="0.25" cy="0.1" r="1.1">
+      <stop offset="0" stop-color="#F0E9DA"/><stop offset="0.55" stop-color="#E8E0CF"/><stop offset="1" stop-color="#D5CAB2"/>
+    </radialGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FBF6EC"/><stop offset="0.6" stop-color="#F8F3E7"/><stop offset="1" stop-color="#ECE3D0"/>
+    </linearGradient>
+    <pattern id="weave" width="7" height="7" patternUnits="userSpaceOnUse">
+      <path d="M0 0H7M0 0V7" stroke="#2A2521" stroke-opacity="0.07" stroke-width="1.6"/>
+    </pattern>
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#2A2521" flood-opacity="0.28"/>
+    </filter>
+    <filter id="pinShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="4" dy="6" stdDeviation="3" flood-color="#2A2521" flood-opacity="0.35"/>
+    </filter>
+    <filter id="threadShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#1B2A4A" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <!-- the linen -->
+  <rect width="1024" height="1024" fill="url(#linen)"/>
+  <rect width="1024" height="1024" fill="url(#weave)"/>
+
+  <!-- the card, pinned at −3° -->
+  <g transform="rotate(-3 512 512)">
+    <rect x="86" y="86" width="852" height="852" rx="28" fill="url(#card)" filter="url(#cardShadow)"/>
+    <rect x="86" y="86" width="852" height="852" rx="28" fill="none" stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="3"/>
+
+    <!-- the gimp: three bars where the pattern would have them -->
+    <g stroke="#2A2521" stroke-opacity="0.7" stroke-width="16" stroke-linecap="round">
+      <path d="M287 302 V422"/>
+      <path d="M452 287 H572"/>
+      <path d="M737 602 V722"/>
+    </g>
+
+    <!-- the thread: one path through all twenty-five pins, winding in from the brass pin at
+         the lower left to the ringed pin at the centre -->
+    <g filter="url(#threadShadow)">
+      <path d="M212 812 V212 H812 V812 H362 V362 H662 V662 H512 V512"
+            fill="none" stroke="#31497A" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- the wraps: a ring of thread round every pin the thread turns on -->
+      <g fill="none" stroke="#31497A" stroke-width="12">
+        <circle cx="212" cy="212" r="38"/><circle cx="812" cy="212" r="38"/>
+        <circle cx="812" cy="812" r="38"/><circle cx="362" cy="812" r="38"/>
+        <circle cx="362" cy="362" r="38"/><circle cx="662" cy="362" r="38"/>
+        <circle cx="662" cy="662" r="38"/><circle cx="512" cy="662" r="38"/>
+      </g>
+      <!-- three plaited runs: the lighter strand -->
+      <g fill="none" stroke="#9DB2E0" stroke-width="7" stroke-dasharray="18 18" stroke-linecap="round">
+        <path d="M212 790 V234"/>
+        <path d="M234 212 H790"/>
+        <path d="M812 234 V790"/>
+      </g>
+    </g>
+
+    <!-- the pins: sunk under the thread -->
+    <g fill="#4E5966">
+      <circle cx="212" cy="212" r="14"/><circle cx="212" cy="362" r="14"/><circle cx="212" cy="512" r="14"/><circle cx="212" cy="662" r="14"/>
+      <circle cx="362" cy="212" r="14"/><circle cx="362" cy="362" r="14"/><circle cx="362" cy="512" r="14"/><circle cx="362" cy="662" r="14"/><circle cx="362" cy="812" r="14"/>
+      <circle cx="512" cy="212" r="14"/><circle cx="512" cy="362" r="14"/><circle cx="512" cy="662" r="14"/><circle cx="512" cy="812" r="14"/>
+      <circle cx="662" cy="212" r="14"/><circle cx="662" cy="362" r="14"/><circle cx="662" cy="512" r="14"/><circle cx="662" cy="662" r="14"/><circle cx="662" cy="812" r="14"/>
+      <circle cx="812" cy="212" r="14"/><circle cx="812" cy="362" r="14"/><circle cx="812" cy="512" r="14"/><circle cx="812" cy="662" r="14"/><circle cx="812" cy="812" r="14"/>
+    </g>
+    <!-- the brass start pin, and the ringed finish at the centre -->
+    <circle cx="212" cy="812" r="26" fill="#9C7A2E" filter="url(#pinShadow)"/>
+    <circle cx="204" cy="804" r="8" fill="#F0DDA3"/>
+    <circle cx="512" cy="512" r="42" fill="none" stroke="#9C7A2E" stroke-width="7" opacity="0.9"/>
+    <circle cx="512" cy="512" r="22" fill="#9C7A2E" filter="url(#pinShadow)"/>
+    <circle cx="505" cy="505" r="7" fill="#F0DDA3"/>
+
+    <!-- the four brass pins holding the card -->
+    <g filter="url(#pinShadow)">
+      <circle cx="128" cy="128" r="17" fill="#9C7A2E"/><circle cx="896" cy="128" r="17" fill="#9C7A2E"/>
+      <circle cx="128" cy="896" r="17" fill="#9C7A2E"/><circle cx="896" cy="896" r="17" fill="#9C7A2E"/>
+    </g>
+    <g fill="#F0DDA3">
+      <circle cx="122" cy="122" r="5.5"/><circle cx="890" cy="122" r="5.5"/><circle cx="122" cy="890" r="5.5"/><circle cx="890" cy="890" r="5.5"/>
+    </g>
+
+    <!-- the bobbin, lying across the corner where the thread begins -->
+    <g transform="translate(150 892) rotate(-34)" filter="url(#pinShadow)">
+      <rect x="-24" y="-92" width="48" height="184" rx="20" fill="#7A4E2E"/>
+      <rect x="-24" y="-92" width="18" height="184" rx="14" fill="#FFFFFF" fill-opacity="0.14"/>
+      <rect x="-24" y="-30" width="48" height="52" rx="6" fill="#31497A"/>
+      <rect x="-25" y="34" width="50" height="16" rx="6" fill="#A8413A"/>
+      <circle cx="0" cy="106" r="14" fill="#E8DCC0" stroke="#7A4E2E" stroke-width="4"/>
+    </g>
+  </g>
+</svg>
