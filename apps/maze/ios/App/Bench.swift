@@ -568,11 +568,14 @@ final class Bench: ObservableObject {
             }
             // Wind: fourteen pins with a wrong turn, its unpick, and the re-wind.
             var taken = 0
+            var strayed = false
             winding = true
             while taken < 14, let cur = current, cur.path.count < cur.pricking.pins - 1 {
                 let next = answer[cur.path.count]
-                if taken == 6, let head = cur.head,
+                // The first fork from the sixth pin on: a wrong turn, its unpick, the re-wind.
+                if taken >= 6, !strayed, let head = cur.head,
                    let wrong = cur.pricking.neighbours(head).first(where: { $0 != next && !cur.path.contains(UInt8($0)) }) {
+                    strayed = true
                     take(wrong)
                     try? await Task.sleep(nanoseconds: 520_000_000)
                     unpickLast()

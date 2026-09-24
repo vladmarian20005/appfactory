@@ -7,6 +7,7 @@ struct PillowView: View {
     @EnvironmentObject private var store: Store
     @Environment(\.brand) private var brand
     @State private var confirmPull = false
+    @ScaledMetric(relativeTo: .body) private var reserve: CGFloat = 230
 
     var body: some View {
         NavigationStack {
@@ -84,7 +85,8 @@ struct PillowView: View {
 
     private var winding: some View {
         GeometryReader { geo in
-            let cardSize = max(200, min(geo.size.width - 48, geo.size.height - 230))
+            // The room the head and the margin need grows with the text; the card gives way.
+            let cardSize = max(200, min(geo.size.width - 48, geo.size.height - min(reserve, geo.size.height * 0.6)))
             VStack(alignment: .leading, spacing: 14) {
                 head
                 PillowBolster {
@@ -107,12 +109,28 @@ struct PillowView: View {
 
     /// Two columns so nothing wraps: the shape and the count at the left, the day at the right.
     private var head: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .lastTextBaseline) {
+                count
+                Spacer(minLength: 8)
+                day.multilineTextAlignment(.trailing)
+            }
+            // Large text: the day goes under the count rather than crowding it.
+            VStack(alignment: .leading, spacing: 6) {
+                count
+                day
+            }
+        }
+    }
+
+    private var count: some View {
         let p = bench.current
         let pr = p?.pricking
-        return HStack(alignment: .lastTextBaseline) {
-            VStack(alignment: .leading, spacing: 4) {
+        return VStack(alignment: .leading, spacing: 4) {
                 if let pr {
-                    Text("\(Words.size(pr.side)) · \(pr.ground.name) ground").caps()
+                    Text("\(Words.size(pr.side)) · \(pr.ground.name) ground")
+                        .caps()
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 HStack(alignment: .lastTextBaseline, spacing: 8) {
                     Text("\(p?.path.count ?? 0)")
@@ -125,9 +143,11 @@ struct PillowView: View {
                 }
             }
             .accessibilityElement(children: .combine)
-            Spacer(minLength: 8)
-            VStack(alignment: .trailing, spacing: 4) {
-                switch p?.kind {
+    }
+
+    private var day: some View {
+        VStack(alignment: .trailing, spacing: 4) {
+                switch bench.current?.kind {
                 case .book(let rung)?:
                     Text("Pattern \(rung)").caps()
                     Text("The book").caps()
@@ -139,9 +159,7 @@ struct PillowView: View {
                     Text(Date.now.formatted(.dateTime.day().month(.wide))).caps()
                 }
             }
-            .multilineTextAlignment(.trailing)
             .accessibilityElement(children: .combine)
-        }
     }
 
     /// Under the pillow: the thread's caps, the lacemaker's latest line, and the run marks.
@@ -153,6 +171,7 @@ struct PillowView: View {
             if let p, !p.isEmpty {
                 Text(Voice.marginCaps(chain: p.run.chain, unpicks: p.run.misses, plaits: plaits.count))
                     .caps()
+                    .fixedSize(horizontal: false, vertical: true)
                     .contentTransition(.numericText())
             }
             lineView

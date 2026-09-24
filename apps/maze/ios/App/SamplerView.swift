@@ -123,7 +123,10 @@ struct SamplerView: View {
                     NavigationLink(value: piece) {
                         VStack(spacing: 6) {
                             SmallLace(piece: piece, size: 52)
+                            // Cross-stitch marks on a fixed grid of laces; VoiceOver reads the
+                            // whole piece from the label below, so these stop growing at xxxLarge.
                             Text(piece.mark).caps(.caption2, tracking: 1.2).lineLimit(1).minimumScaleFactor(0.7)
+                                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                         }
                     }
                     .buttonStyle(.pressable)

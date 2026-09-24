@@ -69,9 +69,9 @@
     {
       "name": "wind",
       "args": ["-onboarded", "-demo", "wind"],
-      "delay": 2.2,
-      "frames": 12,
-      "interval": 0.15,
+      "delay": 1.6,
+      "frames": 16,
+      "interval": 0.22,
       "note": "The signature interaction, played by the app: fourteen pins wound, each reaching, wrapping and sinking, the bobbin following; a wrong turn and its unpick with the pin springing back up."
     },
     {
