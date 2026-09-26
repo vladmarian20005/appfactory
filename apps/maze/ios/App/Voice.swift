@@ -34,6 +34,11 @@ enum Voice {
 
     static let deadEnd = "Nowhere to go from there. Unwind a little."
 
+    /// Said once each, the first time a pattern asks for something the first card did not show.
+    static let noStart = "No brass pin on this one. The thread may begin at any pin — find one with only one way in."
+    static let noFinish = "No ring on this card. The thread ends wherever the last bare pin is."
+    static let window = "Where the card is cut away there is no pin. The thread goes round the window."
+
     /// `{n}` is the pins in the bar.
     static let plait = [
         "A plait.",

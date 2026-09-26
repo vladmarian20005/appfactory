@@ -20,6 +20,8 @@ struct Record: Codable, Equatable {
     var todayDay = 0                        // dayNumber the daily pillow belongs to
     var tomorrow: Pricking?                 // tomorrow's pattern, pricked ahead when today's lifts
     var nextBook: Pricking?                 // the next book pattern, pricked ahead on every lift
+    var taught = false                      // the first card was worked through, or set aside
+    var hints: [String] = []                // the lacemaker's one-time notes already said: start, finish, window
 
     init(salt: UInt64) { self.salt = salt }
 
@@ -43,6 +45,8 @@ struct Record: Codable, Equatable {
         todayDay = try c.decodeIfPresent(Int.self, forKey: .todayDay) ?? 0
         tomorrow = try c.decodeIfPresent(Pricking.self, forKey: .tomorrow)
         nextBook = try c.decodeIfPresent(Pricking.self, forKey: .nextBook)
+        taught = try c.decodeIfPresent(Bool.self, forKey: .taught) ?? false
+        hints = try c.decodeIfPresent([String].self, forKey: .hints) ?? []
     }
 
     // MARK: - Derived, never stored

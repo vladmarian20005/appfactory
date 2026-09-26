@@ -34,6 +34,7 @@ struct PillowView: View {
     }
 
     private var title: String {
+        if bench.lesson != nil { return "The first card" }
         if let lift = bench.lift { return lift.pricking.ground.title }
         if bench.todayDone { return "The pillow" }
         return bench.current?.pricking.ground.title ?? "The pillow"
@@ -44,6 +45,12 @@ struct PillowView: View {
         ToolbarItem(placement: .principal) {
             Text(title).brandFont(.title3).foregroundStyle(brand.palette.ink)
                 .accessibilityAddTraits(.isHeader)
+        }
+        if bench.lesson != nil {
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Skip") { bench.endLesson() }
+                    .accessibilityLabel("Skip the first card")
+            }
         }
         ToolbarItem(placement: .topBarTrailing) {
             if let lift = bench.lift {
@@ -58,10 +65,15 @@ struct PillowView: View {
                             ForEach(availableThreads, id: \.self) { t in Text(t.name).tag(t) }
                         }
                     }
-                    if bench.which != .today {
-                        Button("Back to today's pattern") { bench.backToToday() }
-                    } else if bench.bookOpen {
-                        Button("Pin the next pattern") { bench.pinNext() }
+                    if bench.lesson != nil {
+                        Button("Skip the first card") { bench.endLesson() }
+                    } else {
+                        if bench.which != .today {
+                            Button("Back to today's pattern") { bench.backToToday() }
+                        } else if bench.bookOpen {
+                            Button("Pin the next pattern") { bench.pinNext() }
+                        }
+                        Button("The first card again") { bench.beginLesson() }
                     }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -98,7 +110,16 @@ struct PillowView: View {
                             .accessibilityLabel("The card is being pricked")
                     }
                 }
-                margin
+                // A handful of snips as each practice card comes clear.
+                .confetti(trigger: bench.lessonCheers,
+                          colors: [AppBrand.Workbox.steel, bench.record.threadInHand.color, AppBrand.Workbox.brass],
+                          from: UnitPoint(x: 0.5, y: 0.45),
+                          count: 26, power: 0.5)
+                if let lesson = bench.lesson {
+                    lessonMargin(lesson)
+                } else {
+                    margin
+                }
                 Spacer(minLength: 0)
             }
             .padding(.horizontal, 16)
@@ -128,7 +149,7 @@ struct PillowView: View {
         let pr = p?.pricking
         return VStack(alignment: .leading, spacing: 4) {
                 if let pr {
-                    Text("\(Words.size(pr.side)) · \(pr.ground.name) ground")
+                    Text(bench.lesson != nil ? Words.size(pr.side) : "\(Words.size(pr.side)) · \(pr.ground.name) ground")
                         .caps()
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -147,11 +168,14 @@ struct PillowView: View {
 
     private var day: some View {
         VStack(alignment: .trailing, spacing: 4) {
-                switch bench.current?.kind {
-                case .book(let rung)?:
+                switch (bench.lesson?.step, bench.current?.kind) {
+                case (let step?, _):
+                    Text("Practice").caps()
+                    Text("\(Words.capitalised(step + 1)) of \(Words.number(FirstCard.cards.count))").caps()
+                case (nil, .book(let rung)?):
                     Text("Pattern \(rung)").caps()
                     Text("The book").caps()
-                case .loose(let n)?:
+                case (nil, .loose(let n)?):
                     Text("Loose work").caps()
                     Text("Piece \(n)").caps()
                 default:
@@ -181,12 +205,43 @@ struct PillowView: View {
         .padding(.horizontal, 6)
     }
 
+    /// On a practice card the margin is the lacemaker's note: the rule upright in New York,
+    /// the rest in italic under it. The last card's note ends on the way into the book.
+    private func lessonMargin(_ lesson: Bench.Lesson) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(lesson.note.title)
+                .brandFont(.title3)
+                .foregroundStyle(lesson.cleared ? brand.palette.success : brand.palette.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            Text(lesson.note.detail)
+                .font(.body.italic())
+                .foregroundStyle(brand.palette.inkSoft)
+                .fixedSize(horizontal: false, vertical: true)
+            if lesson.cleared && lesson.isLast {
+                Button {
+                    Haptics.tap()
+                    bench.endLesson()
+                } label: {
+                    Text("Pin the first pattern").font(.headline).frame(maxWidth: .infinity).padding(.vertical, 4)
+                }
+                .brandProminent()
+                .padding(.top, 10)
+                .transition(.opacity.combined(with: .offset(y: 6)))
+            }
+        }
+        .id(lesson.note)
+        .transition(.opacity.combined(with: .offset(y: 4)))
+        .padding(.horizontal, 6)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     @ViewBuilder
     private var lineView: some View {
         if let line = bench.line {
-            let parts = split(line.text)
+            let parts = split(line.text, head: line.kind == .hint ? 48 : 24)
             (Text(parts.0)
-                .foregroundStyle(line.kind == .plait ? brand.palette.success : brand.palette.miss)
+                .foregroundStyle(line.kind == .plait ? brand.palette.success
+                                 : line.kind == .hint ? brand.palette.ink : brand.palette.miss)
              + Text(parts.1).italic().foregroundStyle(brand.palette.inkSoft))
                 .font(.body)
                 .id(line.id)
@@ -195,8 +250,8 @@ struct PillowView: View {
     }
 
     /// The word before the first full stop is set upright in its colour; the rest in italic.
-    private func split(_ s: String) -> (String, String) {
-        guard let dot = s.firstIndex(of: "."), s.distance(from: s.startIndex, to: dot) < 24 else { return ("", s) }
+    private func split(_ s: String, head limit: Int = 24) -> (String, String) {
+        guard let dot = s.firstIndex(of: "."), s.distance(from: s.startIndex, to: dot) < limit else { return ("", s) }
         let head = String(s[...dot])
         return (head, String(s[s.index(after: dot)...]))
     }

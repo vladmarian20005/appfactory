@@ -37,10 +37,28 @@ Lacework is built from SPEC.md in DESIGN.md's direction, on ARCHITECTURE.md's st
   with the book art and pin-head bullets, onboarding with the three drawn pages.
 - The swatch share card (the central 5×5 only, spoils nothing) via `ShareImage`.
 - Launch flags: `-onboarded -reset -sampleData -pro -fakeProducts -screen -board -rung/-level
-  -wound -fresh -thread -won -demo wind|lift`.
+  -wound -fresh -thread -won -demo wind|lift|first -lesson [1|2|3]`.
 - `verify-app.sh maze`: 8 screens built, launched and rendered, no crash reports.
 - `tells.mjs`: 0 hard tells, 0 smells. Listing files written and inside their limits.
   `products.mjs` flags only the missing review screenshot, which app-shots composes.
+
+## The first card (26 Sep, after the owner's TestFlight pass)
+
+"I had no idea what to do with it." A Saturday install opened on today's pattern, an eleven by
+eleven honeycomb medallion of 103 pins, with nothing on screen but a breathing pin. Added, as
+DESIGN.md's *The first card* now describes:
+
+- `FirstCard.swift`: three hand-made practice patterns (3×3 lane, 4×4 with forks, 4×4 wound
+  into a corner), each proved by brute force to have exactly one way through, and `GhostHand`.
+- `Bench`: the lesson over the board (never saved), dead-end coaching with the hand, the
+  newcomer's first pattern is the book's first, one-time notes for no brass pin, no ring and
+  windows (`Record.taught`, `Record.hints`, both decoded with defaults).
+- `PillowView`: the lacemaker's note in the margin, Skip in the toolbar, "The first card
+  again" in the menu. `qa.json`: 05-first-pattern now shows card 1; new `first` moment.
+- Checked on the simulator: `-demo first` works all three cards through the real take,
+  dead-end, unpick and clear paths; after the lesson a fresh record lands on book pattern 1
+  (5×5); a record past the lesson with a medallion today gets the window note once; dark mode
+  and AX5 hold. `tells.mjs --strict`: 0 hard tells, 0 smells.
 
 ## Not checked here
 

@@ -25,7 +25,7 @@
     {
       "name": "05-first-pattern",
       "args": ["-onboarded", "-reset"],
-      "note": "A first launch's pillow: today's pattern unwound, the brass start pin breathing and the ghost thread showing the first move without a word."
+      "note": "A first launch's pillow: the first card's three-by-three practice pattern, the ghost hand coming down on the brass pin and leading the thread into the gimp's lane, and the lacemaker's line under it."
     },
     {
       "name": "06-paywall",
@@ -81,6 +81,14 @@
       "frames": 12,
       "interval": 0.14,
       "note": "The last three pins and the lift: the thread tightens in a wave, the pins come out, the lace rises with its shadow, the numeral counts, the snips fall, the headline and the margin card arrive."
+    },
+    {
+      "name": "first",
+      "args": ["-onboarded", "-demo", "first"],
+      "delay": 1.0,
+      "frames": 16,
+      "interval": 0.4,
+      "note": "The first card's first practice pattern, worked by the app: the ghost hand leading from the brass pin, gone at the first pin as the line changes to the rule, the thread down the lane, and the card clearing with its handful of snips."
     }
   ]
 }

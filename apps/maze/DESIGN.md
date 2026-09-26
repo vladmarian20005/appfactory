@@ -320,13 +320,46 @@ text. Every pin is an accessibility element — "Pin, row 3 column 7, bare" / "o
 "start" — and the thread's end carries the hint: "Drag or double tap a neighbouring pin to
 wind the thread onto it. Every pin, once."
 
-### Teaching the first one with no text
+### The first card
 
-On a pattern with no thread on it, the brass start pin's head **breathes** —
+Decided 26 Sep 2026 on the owner's TestFlight pass: "I had no idea what to do with it." The
+breathing pin and ghost thread alone did not teach the rules, and a Saturday install handed a
+newcomer an eleven-by-eleven medallion as the first pattern ever. So before the book's first,
+the lacemaker pins **the first card** (`FirstCard.swift`): three small practice patterns, each
+teaching one thing, in about half a minute. A **ghost hand** — a fingertip's circle at the
+ink's 10 %, pressing down and leading, with a faint thread behind it — shows the gesture; her
+line in the margin names the rule, the rule upright in New York and the rest in italic. Both
+go the moment the teaching has worked. Nothing on it goes in the sampler.
+
+| Card | Pattern | Teaches | Ghost hand | Her line, then |
+| --- | --- | --- | --- | --- |
+| 1 | 3 × 3, walled into one lane | The gesture and the goal | Down on the brass pin, along three pins | "Begin at the brass pin." → at the first pin, "Every pin, once." (gimp, and the ring) |
+| 2 | 4 × 4, five walls, forks from the first pin | Reading the gimp; a choice | none | "Now there is a choice." |
+| 3 | 4 × 4, one wall, **arrives wound into a corner** | Picking out | Back along the thread from its end to the turn, the stretch it passes marked in `miss` | "Wound into a corner." → at the unpick, "Picked out, and nothing lost." (corners first) |
+
+A dead end on any practice card brings the hand back, running along the thread to the last
+pin that had another way, with "Nowhere to go from there." Cards 1 and 2 clear with a handful
+of snips (`.confetti`, 26 at 0.5), `Haptics.celebrate()` and `.success`, and the next is pinned
+2.2 s later; card 3 clears with `.fanfare` and waits for "Pin the first pattern". **Skip** sits
+in the toolbar the whole time, and "The first card again" is in the pillow's menu for anyone
+who wants it back. Every line is announced to VoiceOver as it changes. The words "drag",
+"swipe" and "tap" still appear nowhere on the pillow: the hand shows the gesture and the words
+name the lace.
+
+Someone with nothing in the sampler then starts on **the book's first pattern** — five by five,
+both ends pinned — whatever today's weekday is, and goes to today's from there.
+
+**The first time a pattern asks for something the first card did not show**, she says so once,
+in the margin, on that pattern's arrival: no brass pin ("No brass pin on this one. The thread
+may begin at any pin — find one with only one way in."), no ring ("No ring on this card. The
+thread ends wherever the last bare pin is."), a window ("Where the card is cut away there is no
+pin. The thread goes round the window."). Each is said once in the record's life.
+
+On every later pattern with no thread on it, the brass start pin's head **breathes** —
 `.breathing(amount: 0.08, period: 2.4)` — and a **ghost thread** runs from it into the first
 forced pin at the thread colour's 22 % opacity, `.trim` 0 → 1 over 1.2 s then gone, looping
 every 2 s through a `TimelineView` that checks `Motion.isStill`. Both stop at the first pin
-taken and never come back. The words "drag", "swipe" and "tap" appear nowhere on the pillow.
+taken and never come back.
 
 ## The reward
 
@@ -633,7 +666,7 @@ about the world rather than as a pitch.
 | Pillow, today's already lifted | `bobbins.svg` | **Today's is in the sampler** | "The next pattern in the book is pinned and waiting." | "Pin the next pattern" |
 | Book, free, past sixty | `book.svg` | **The book goes on** | "Past the sixtieth the patterns go to fourteen pins a side, medallions and windows, pricked and proved the same way." | "See the whole book" |
 | Month card, no days | — | **Nothing pinned this month yet** | "A day you work a piece gets a pin here." | — |
-| A pattern with no thread | — | — | Nothing at all: the breathing start pin and the ghost thread do the teaching. | — |
+| A pattern with no thread | — | — | Nothing, but a one-time note the first time it has no brass pin, no ring or a window; the breathing start pin and the ghost thread do the teaching. On the first card, the lacemaker's line for that card. | — |
 
 ### What remembers you, instead of a streak
 
@@ -746,8 +779,11 @@ Nothing else.
 `DragGesture(minimumDistance: 0)` over it and a transparent accessibility grid so every pin is
 an element with a label and the tap-to-take fallback.
 
-**Empty (a pattern with no thread):** nothing is written. The start pin breathes and the ghost
-thread runs into the first forced pin.
+**Empty (a pattern with no thread):** nothing is written, but a one-time note (see *The first
+card*). The start pin breathes and the ghost thread runs into the first forced pin.
+
+**First launch:** the first card's three practice patterns, then the book's first. See *The
+first card*.
 
 ### 2. The sampler — Progress (tab 2) · mock 4
 

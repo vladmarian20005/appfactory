@@ -38,6 +38,17 @@ enum LaunchOptions {
     /// `-won` (or `-screen win`) lands on the lift, finished.
     static var won: Bool { args.contains("-won") || screen == "win" }
 
+    /// `-lesson [1|2|3]` pins the first card at that practice pattern, whatever the record.
+    static var lesson: Int? {
+        args.contains("-lesson") ? (value(for: "-lesson").flatMap(Int.init) ?? 1) : nil
+    }
+
+    /// A flag that seeds a record or a pattern for a capture. The first card and the
+    /// lacemaker's one-time notes stay out of those frames.
+    static var isCapture: Bool {
+        sampleData || rung != nil || demo != nil || wound != nil || won || board != nil
+    }
+
     /// `-demo wind|lift` makes the app perform the winding, and the lift, by itself: nothing
     /// on a runner can touch a screen.
     static var demo: String? { value(for: "-demo") }

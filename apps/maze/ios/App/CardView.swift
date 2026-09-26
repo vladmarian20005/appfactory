@@ -91,7 +91,14 @@ struct CardView: View {
                 plaitFlash
                 deadEndRing
                 sprungPin
-                if pillow.isEmpty { teaching }
+                if let hand = bench.lesson?.hand {
+                    GhostHand(points: hand.cells.map(layout.centre), backward: hand.backward,
+                              trail: hand.backward ? brand.palette.miss : thread.color,
+                              ink: brand.palette.ink, width: layout.threadWidth)
+                        .id(hand.cells)
+                } else if pillow.isEmpty && bench.lesson == nil {
+                    teaching
+                }
                 markers
                 bobbin
             }
@@ -210,9 +217,10 @@ struct CardView: View {
         }
     }
 
-    // MARK: - Teaching the first one, with no text
+    // MARK: - Teaching a fresh pattern
 
     /// The start pin breathes, and a ghost thread runs from it into the first forced pin.
+    /// The first card's ghost hand takes this over while it is out.
     @ViewBuilder
     private var teaching: some View {
         let answer = bench.orientedAnswer(pr).map(Int.init)

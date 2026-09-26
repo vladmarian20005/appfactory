@@ -9,7 +9,7 @@ final class Bench: ObservableObject {
 
     /// A line in the margin, and what kind of moment set it.
     struct MarginLine: Equatable {
-        enum Kind { case plait, miss, deadEnd }
+        enum Kind { case plait, miss, deadEnd, hint }
         var kind: Kind
         var text: String
         var id = UUID()
@@ -35,7 +35,26 @@ final class Bench: ObservableObject {
 
     static let finalPhase = 7
 
+    /// The first card in progress: which practice pattern, the thread on it, and what the
+    /// lacemaker and the ghost hand are showing. Never saved; quitting half way through
+    /// starts it again, which costs half a minute.
+    struct Lesson: Equatable {
+        var step: Int
+        var pillow: SavedPillow
+        var note: FirstCard.Note
+        var hand: FirstCard.Hand?
+        var unpicked = false
+        /// The card is complete and the next is on its way, or the last waits for its button.
+        var cleared = false
+
+        var card: FirstCard.Card { FirstCard.cards[step] }
+        var isLast: Bool { step == FirstCard.cards.count - 1 }
+    }
+
     @Published private(set) var record: Record
+    @Published private(set) var lesson: Lesson?
+    /// Bumped as each practice card clears, for its handful of snips.
+    @Published private(set) var lessonCheers = 0
     @Published private(set) var which: Which = .today
     @Published private(set) var generating = false
     @Published var lift: Lift?
@@ -58,6 +77,7 @@ final class Bench: ObservableObject {
     private var saveTask: Task<Void, Never>?
     private var liftTask: Task<Void, Never>?
     private var lineTask: Task<Void, Never>?
+    private var lessonTask: Task<Void, Never>?
 
     init() {
         if LaunchOptions.resetData { try? FileManager.default.removeItem(at: Record.url) }
@@ -68,22 +88,42 @@ final class Bench: ObservableObject {
         if LaunchOptions.board == "book" { which = .book }
         if LaunchOptions.board == "loose" { which = .loose }
         if LaunchOptions.rung != nil && LaunchOptions.board == nil { which = .book }
+        openForNewcomer()
         rollDay()
         ensurePillow(sync: LaunchOptions.sampleData || LaunchOptions.rung != nil || LaunchOptions.demo != nil)
         if let wound = LaunchOptions.wound { wind(upTo: wound) }
         if LaunchOptions.won { finishAndLift() }
+        if let step = LaunchOptions.lesson {
+            beginLesson(at: step - 1)
+        } else if !LaunchOptions.isCapture && !record.taught && record.pieces.isEmpty {
+            beginLesson()
+        } else {
+            noteFirsts()
+        }
+    }
+
+    /// Someone with nothing in the sampler starts on the book's first pattern — five by five,
+    /// both ends pinned — not on whatever today's weekday is. Sunday's is fourteen by
+    /// fourteen with a window and a loose end.
+    private func openForNewcomer() {
+        if !LaunchOptions.isCapture && record.pieces.isEmpty && record.rung == 1 { which = .book }
     }
 
     // MARK: - Reading
 
-    var current: SavedPillow? {
+    /// The pattern the finger is on: a practice card while the first card is out, else the
+    /// board's.
+    var current: SavedPillow? { lesson?.pillow ?? board }
+
+    /// Today's pattern, or the book's or loose work's, whichever the pillow is showing.
+    private var board: SavedPillow? {
         which == .today ? record.todayPillow : record.pillow
     }
 
     var todayPiece: Piece? { record.todayPiece() }
 
     /// Today's pattern is already in the sampler and nothing is being lifted.
-    var todayDone: Bool { which == .today && todayPiece != nil && lift == nil }
+    var todayDone: Bool { lesson == nil && which == .today && todayPiece != nil && lift == nil }
 
     var bookOpen: Bool { isPro || LaunchOptions.forcePro || record.rung <= Play.freePatterns }
 
@@ -137,6 +177,7 @@ final class Bench: ObservableObject {
             record.pillow = nil
         }
         ensurePillow()
+        noteFirsts()
     }
 
     func pinNext() { show(.book) }
@@ -145,7 +186,7 @@ final class Bench: ObservableObject {
 
     /// The pricking is generated off the main actor; the pins arriving in a wave covers it.
     func ensurePillow(sync: Bool = false) {
-        guard current == nil, !generating else { return }
+        guard board == nil, !generating else { return }
         if which == .today && todayPiece != nil { return }
         let day = Play.dayNumber()
         let rung = record.rung
@@ -175,10 +216,11 @@ final class Bench: ObservableObject {
             let (p, kind) = make()
             await MainActor.run {
                 self.generating = false
-                guard self.which == which, self.current == nil else { return }
+                guard self.which == which, self.board == nil else { return }
                 withMotion(Motion.gentle) {
                     self.place(SavedPillow(pricking: p, kind: kind), for: which)
                 }
+                self.noteFirsts()
             }
         }
     }
@@ -189,7 +231,33 @@ final class Bench: ObservableObject {
         scheduleSave()
     }
 
+    /// The first pattern with no brass pin, no ring, or a window cut in it: the lacemaker
+    /// names it once, in the margin, and never again.
+    private func noteFirsts() {
+        guard lesson == nil, lift == nil, !LaunchOptions.isCapture, let p = board, p.isEmpty else { return }
+        let pr = p.pricking
+        let note: (keys: [String], text: String)?
+        if pr.start == nil && !record.hints.contains("start") {
+            // A card with no brass pin has no ring either; one note covers both.
+            note = (["start", "finish"], Voice.noStart)
+        } else if pr.finish == nil && !record.hints.contains("finish") {
+            note = (["finish"], Voice.noFinish)
+        } else if pr.open.contains(false) && !record.hints.contains("window") {
+            note = (["window"], Voice.window)
+        } else {
+            note = nil
+        }
+        guard let note else { return }
+        record.hints.append(contentsOf: note.keys.filter { !record.hints.contains($0) })
+        scheduleSave()
+        say(.hint, note.text, for: 0)
+    }
+
     private func mutate(_ change: (inout SavedPillow) -> Void) {
+        if lesson != nil {
+            change(&lesson!.pillow)
+            return
+        }
         if which == .today {
             guard var p = record.todayPillow else { return }
             change(&p)
@@ -206,7 +274,7 @@ final class Bench: ObservableObject {
 
     /// Whether the thread may take `cell` next.
     func canTake(_ cell: Int) -> Bool {
-        guard let p = current, lift == nil else { return false }
+        guard let p = current, lift == nil, lesson?.cleared != true else { return false }
         let pr = p.pricking
         guard cell >= 0, cell < pr.open.count, pr.open[cell], !p.path.contains(UInt8(cell)) else { return false }
         guard let head = p.head else {
@@ -263,20 +331,24 @@ final class Bench: ObservableObject {
             }
             Haptics.tap()
             Tones.shared.play(.pop, volume: 0.5)
-            say(.plait, Voice.plaitLine(pins: plaited.count), for: 1.5)
+            // On a practice card the lacemaker's note keeps the margin.
+            if lesson == nil { say(.plait, Voice.plaitLine(pins: plaited.count), for: 1.5) }
         }
         if complete {
-            startLift()
+            if lesson != nil { clearLessonCard() } else { startLift() }
         } else if stuck {
             deadEnd = cell
             tugs += 1
             Haptics.rigid()
             Tones.shared.play(.miss, volume: 0.4)
-            say(.deadEnd, Voice.deadEnd, for: 2)
+            if lesson != nil { lessonDeadEnd() } else { say(.deadEnd, Voice.deadEnd, for: 2) }
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
                 if self.deadEnd == cell { withMotion(Motion.gentle) { self.deadEnd = nil } }
             }
+        } else if let l = lesson, l.pillow.path.count == 1, let next = l.card.underway, !l.unpicked {
+            // The first pin is in: the ghost hand has done its work.
+            setLesson { $0.hand = nil; $0.note = next }
         }
         return true
     }
@@ -284,7 +356,7 @@ final class Bench: ObservableObject {
     /// Unwind the thread back to `index` (the pin at `index` stays). One miss per gesture,
     /// however many pins come off.
     func unpick(to index: Int) {
-        guard let p = current, index >= 0, index < p.path.count - 1, lift == nil else { return }
+        guard let p = current, index >= 0, index < p.path.count - 1, lift == nil, lesson?.cleared != true else { return }
         let freed = Int(p.path[index + 1])
         mutate { p in
             p.path.removeSubrange((index + 1)...)
@@ -299,7 +371,11 @@ final class Bench: ObservableObject {
         reachTick += 1
         Haptics.soft()
         Tones.shared.play(.tap, volume: 0.3)
-        if first {
+        if first, let l = lesson {
+            // The card that arrives wound says its own line at its first unpick.
+            let note = !l.unpicked && !l.card.wound.isEmpty ? (l.card.underway ?? FirstCard.pickedOut) : FirstCard.pickedOut
+            setLesson { $0.hand = nil; $0.note = note; $0.unpicked = true }
+        } else if first {
             say(.miss, Voice.missLine(unpicks: current?.run.misses ?? 1), for: 2)
         }
     }
@@ -318,6 +394,10 @@ final class Bench: ObservableObject {
     /// "Pull the pins": the thread comes off and the pattern starts over. The piece will not
     /// be clean, and the lift will have no snips.
     func pullPins() {
+        if let l = lesson {
+            pinLessonCard(l.step)
+            return
+        }
         mutate { p in
             p.path = []
             p.plaits = []
@@ -357,6 +437,107 @@ final class Bench: ObservableObject {
                 withMotion(Motion.gentle) { self.line = nil }
             }
         }
+    }
+
+    // MARK: - The first card
+
+    /// Pin the first card's practice patterns over the board, from `step`.
+    func beginLesson(at step: Int = 0) {
+        lessonTask?.cancel()
+        lift = nil
+        line = nil
+        pinLessonCard(min(max(step, 0), FirstCard.cards.count - 1))
+    }
+
+    /// Put the first card away — worked through or skipped — and show the board under it.
+    func endLesson() {
+        lessonTask?.cancel()
+        record.taught = true
+        withMotion(Motion.gentle) {
+            lesson = nil
+            line = nil
+            deadEnd = nil
+        }
+        winding = false
+        scheduleSave()
+        ensurePillow()
+        noteFirsts()
+    }
+
+    private func pinLessonCard(_ step: Int) {
+        lessonTask?.cancel()
+        let card = FirstCard.cards[step]
+        var p = SavedPillow(pricking: card.pricking, kind: .today)
+        p.path = card.wound.map(UInt8.init)
+        deadEnd = nil
+        withMotion(Motion.gentle) {
+            lesson = Lesson(step: step, pillow: p, note: card.intro, hand: card.hand)
+        }
+        announce(card.intro)
+        guard let head = card.wound.last else { return }
+        // A card that arrives wound shows where it is stuck once its pins are in.
+        lessonTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            guard !Task.isCancelled, self.lesson?.step == step, self.current?.head == head else { return }
+            self.deadEnd = head
+            self.tugs += 1
+            Haptics.rigid()
+            Tones.shared.play(.miss, volume: 0.3)
+            try? await Task.sleep(nanoseconds: 1_400_000_000)
+            if self.deadEnd == head { withMotion(Motion.gentle) { self.deadEnd = nil } }
+        }
+    }
+
+    /// A dead end on a practice card: the lacemaker says so and the ghost hand runs back
+    /// along the thread to the last pin that had another way to go.
+    private func lessonDeadEnd() {
+        guard let l = lesson else { return }
+        let path = l.pillow.path.map(Int.init)
+        guard path.count >= 2 else { return }
+        let pr = l.pillow.pricking
+        var fork = path.count - 2
+        while fork > 0 {
+            let before = Set(path[...fork])
+            if pr.neighbours(path[fork]).contains(where: { !before.contains($0) && $0 != path[fork + 1] }) { break }
+            fork -= 1
+        }
+        setLesson {
+            $0.note = FirstCard.deadEnd
+            $0.hand = FirstCard.Hand(cells: Array(path[fork...].reversed()), backward: true)
+        }
+    }
+
+    private func clearLessonCard() {
+        guard let l = lesson else { return }
+        setLesson {
+            $0.cleared = true
+            $0.hand = nil
+            $0.note = l.card.done
+        }
+        deadEnd = nil
+        lessonCheers += 1
+        Haptics.celebrate()
+        Tones.shared.play(l.isLast ? .fanfare : .success, volume: 0.8)
+        // The last card waits for its button; the first two make way on their own.
+        guard !l.isLast else { return }
+        lessonTask?.cancel()
+        lessonTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 2_200_000_000)
+            guard !Task.isCancelled, self.lesson?.step == l.step else { return }
+            self.pinLessonCard(l.step + 1)
+        }
+    }
+
+    private func setLesson(_ change: (inout Lesson) -> Void) {
+        guard var l = lesson else { return }
+        let before = l.note
+        change(&l)
+        withMotion(Motion.gentle) { lesson = l }
+        if l.note != before { announce(l.note) }
+    }
+
+    private func announce(_ note: FirstCard.Note) {
+        AccessibilityNotification.Announcement("\(note.title) \(note.detail)").post()
     }
 
     // MARK: - The lift
@@ -482,9 +663,11 @@ final class Bench: ObservableObject {
         lift = nil
         line = nil
         which = .today
+        openForNewcomer()
         Reminder.cancel()
         scheduleSave()
         ensurePillow()
+        beginLesson()
     }
 
     // MARK: - Saving
@@ -551,6 +734,10 @@ final class Bench: ObservableObject {
 
     /// `-demo wind` and `-demo lift`: the app performs its own signature interaction.
     func demo(_ name: String) {
+        if name == "first" {
+            Task { @MainActor in await demoFirstCard() }
+            return
+        }
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 1_500_000_000)
             guard let p = current else { return }
@@ -589,6 +776,49 @@ final class Bench: ObservableObject {
             }
             endGesture()
         }
+    }
+
+    /// `-demo first`: the first card working itself — the first pattern straight through, the
+    /// second the wrong way from the brass pin into a dead end and back, and the third's wound
+    /// corner picked out and finished.
+    private func demoFirstCard() async {
+        func pause(_ s: Double) async { try? await Task.sleep(nanoseconds: UInt64(s * 1_000_000_000)) }
+        func wind(_ cells: some Sequence<Int>, step: Int) async {
+            winding = true
+            for c in cells where lesson?.step == step {
+                take(c)
+                await pause(0.34)
+            }
+            endGesture()
+        }
+        beginLesson()
+        await pause(2.6)
+        await wind(FirstCard.cards[0].pricking.answer.map(Int.init), step: 0)
+        await pause(3.2)
+        guard lesson?.step == 1, let second = current?.pricking else { return }
+        winding = true
+        take(Int(second.answer[0]))
+        await pause(0.34)
+        take(4)
+        while let p = current, let head = p.head,
+              let next = p.pricking.neighbours(head).first(where: { !p.path.contains(UInt8($0)) }) {
+            await pause(0.34)
+            take(next)
+        }
+        endGesture()
+        await pause(3.0)
+        winding = true
+        unpick(to: 0)
+        endGesture()
+        await pause(1.0)
+        await wind(second.answer.dropFirst().map(Int.init), step: 1)
+        await pause(5.0)
+        guard lesson?.step == 2, let third = current?.pricking else { return }
+        winding = true
+        unpick(to: 2)
+        endGesture()
+        await pause(1.4)
+        await wind(third.answer.dropFirst(3).map(Int.init), step: 2)
     }
 
     // MARK: - Seeded records
