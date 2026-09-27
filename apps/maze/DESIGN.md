@@ -1,5 +1,73 @@
 # Lacework · design
 
+## 1.1 · The daily is the point (27 Sep 2026, after the owner's second TestFlight pass)
+
+The owner, on the build with the first card: people do not know the daily one is the goal;
+the daily section does not show everyone the same lace; the pen does not work well — the
+animation and how the trace is done; the UX is muddled; the money needs thinking. What we
+changed, and why. Where this section and an older one disagree, this one wins.
+
+**Why nobody knew.** Three things said "the book" louder than "today": a newcomer was sent to
+book pattern 1 after the first card; the Pillow tab showed today, the book and loose work
+alike, titled by ground ("The tulle ground"); and every ending's button was "Pin the next
+pattern". Two people opening the "daily" tab saw different laces because one of them was in
+the book, which is seeded per person.
+
+**Today holds only today's lace.** Tab 1 is *Today*. It shows the day's lace, numbered from
+No. 1 (1 September 2026) and dated, and before the first pin one italic line: "Today's lace,
+the same one for everybody. Start at the gold pin, and every pin, once." The book, loose work
+and past days are worked *over* Today in a full-screen cover with a close button, and close
+back to it, so the Today tab can never show anything else. The first card ends on "Start
+today's lace · No. 27". Tabs: Today · Sampler · Patterns · Settings.
+
+**Done for today** replaces "Today's is in the sampler". What the day was for comes first: the
+piece on the pillow, the headline, "Done for today. Everybody who opens Lacework today works
+this same lace", days running beside the time to the next lace (to the minute, so a capture
+settles), tomorrow's size, and *Send a swatch* full width. Under a pin rule, "More lace
+today — the one that counts is done; these are for the evening": the pattern book and past
+days, each marked *Pro* when locked. The lift's button after today's lace is "Done for
+today", not the book.
+
+**One lace for everyone.** The daily was already a pure function of the local date. What could
+still differ was a pattern pricked ahead by an older build, so every pricking carries
+`Generator.engine` and anything cached from another engine is pricked again. The swatch's
+text names the lace by number — "Lacework No. 27 · 9×9 · worked clean, 81 pins in one
+thread" — so whoever receives it knows it is the one they have. The month card pins only days
+whose own lace was worked on the day. Sunday is rung 120, not 131: still fourteen by fourteen
+with a window, but both ends pinned, so the daily never asks for a rule the first card did
+not teach, and the lacemaker says once "A big one. Sundays are."
+
+**The pen.** What was wrong: the newest segment grew after the finger on a spring and a ring
+popped at 1.5×, so the thread always trailed; the bobbin hung 22 pt off the finger on a
+spring, lagging; a fast finger was walked towards its target greedily, taking pins it never
+passed and sometimes walking into a dead end the player did not choose; the switch zone was
+the inner 64 % of a cell, so small cards missed turns; every pin of a burst played its own
+detent and note. Now: the thread is drawn to a pin the instant it is taken; a slack strand
+runs from its end towards the fingertip (at most 0.9 pitch, madder while pressing into a pin
+the thread cannot take, with one rigid detent); the stroke since the last reading is walked
+in fifth-of-a-pitch steps along the way the finger actually went, taking only pins it passed
+well inside of (80 % zone), picking out the pin behind the end, going round a cut corner only
+when exactly one pin between leads there, and stopping at the first refusal; the end is
+grabbed from anywhere within 0.95 pitch; a touch that cannot start rings the gold pin; one
+tick per burst; a bead of thread marks the end, with a halo while held; the bobbin lies beside
+the end and is gone while the finger holds the thread.
+
+**The first card, in plain words.** Same three practice cards; the words now say gold pin,
+walls and "drag back to undo" instead of brass, gimp and picking out, and its last line says
+there is a new lace every morning, the same for everybody. Onboarding is one page, "One lace a
+day", whose button is "Show me how" — the pillow teaches the rest.
+
+**The money.** One payment, no subscription, same product (`com.starhiveconcept.maze.pro`,
+$4.99). Today's lace is free forever — the promise and the reason to open the app. The unlock,
+"Open the whole book", adds: *every past day's lace back to No. 1* (the one thing a daily
+player who missed a day wants, and cheap for us: it is `todayPricking(day:)` for an earlier
+day), the book past pattern 20 (was 60 — sixty was two months of evenings before anyone met
+the door), loose work and the ledger. Past days count into the sampler but never into days
+running, which only the day itself can. The paywall shows where the want is: a locked past
+day in the Patterns tab, the book at 21, and the *Pro* marks on Done for today. Not a
+subscription, because the wedge is honesty in a category whose reviews punish weekly plans,
+and because the product already exists in App Store Connect with no 3.1.2 exposure.
+
 ## The idea
 
 **A lacemaker's pillow by a window: a pattern pricked into a card and pinned to the bolster,

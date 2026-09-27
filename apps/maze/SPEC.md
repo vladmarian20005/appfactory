@@ -61,10 +61,11 @@ Local-first: `@AppStorage` for streak and settings, SwiftData for solved boards.
 
 ## Monetization
 
-**One-time unlock, $4.99.** StoreKit 2. Product id `com.factory.maze.pro`.
+**One-time unlock, $4.99.** StoreKit 2. Product id `com.starhiveconcept.maze.pro`.
 Not a subscription, so guideline 3.1.2's Terms-of-Use block does not apply.
-Pro unlocks the graded packs, endless mode and per-size stats. The daily maze and the first pack
-of 60 boards stay free forever, with no ads.
+Pro unlocks every past day's maze (the archive, back to No. 1), the graded book past pattern
+20, endless mode and per-size stats. Today's maze stays free forever, with no ads.
+(Revised 27 Sep 2026 from "first 60 free"; see DESIGN.md §1.1.)
 
 ## Needs from the owner
 
