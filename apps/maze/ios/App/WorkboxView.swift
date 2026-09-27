@@ -12,8 +12,8 @@ struct WorkboxView: View {
             SettingsView(store: store,
                          config: AppInfo.config,
                          onUpgrade: { showPaywall = true },
-                         upgradeTitle: "Open the pattern book",
-                         activeTitle: "The pattern book is open") {
+                         upgradeTitle: "Open the whole book",
+                         activeTitle: "The whole book is open") {
                 WorkboxRows()
             }
             .serifTitle("The workbox")

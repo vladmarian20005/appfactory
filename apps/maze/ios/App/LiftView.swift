@@ -11,6 +11,15 @@ struct LiftView: View {
     @State private var wave: CGFloat = Motion.isStill ? 1 : 0
 
     private var piece: Piece { lift.piece }
+
+    /// "Today's lace · No. 27", "No. 26", "Pattern 12".
+    private var mark: String {
+        switch piece.kind {
+        case .today: "Today's lace · No. \(Play.dailyNumber(day: piece.day))"
+        case .book(let rung): "Pattern \(rung)"
+        default: piece.mark
+        }
+    }
     private var tier: Run.Tier { lift.tier }
 
     /// How far the lace rises: 28 for a best, 14 for a clean, 10 otherwise.
@@ -36,10 +45,16 @@ struct LiftView: View {
             let cardSize = max(200, min(geo.size.width - 48, geo.size.height * 0.4))
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
-                    HStack {
-                        Text("\(Words.size(piece.side)) · \(piece.ground.name) ground").caps()
-                        Spacer()
-                        Text(piece.isToday ? Date.now.formatted(.dateTime.day().month(.wide)) : piece.mark).caps()
+                    ViewThatFits(in: .horizontal) {
+                        HStack {
+                            Text(Words.size(piece.side)).caps()
+                            Spacer()
+                            Text(mark).caps()
+                        }
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(Words.size(piece.side)).caps()
+                            Text(mark).caps()
+                        }
                     }
                     PillowBolster(dim: lift.phase >= 3 ? 0.08 : 0) {
                         card(size: cardSize)
@@ -54,7 +69,7 @@ struct LiftView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
-                .padding(.bottom, 24)
+                .padding(.bottom, 96)
             }
         }
         .onChange(of: lift.phase) { _, phase in
@@ -184,8 +199,11 @@ struct LiftView: View {
                 .foregroundStyle(brand.palette.inkSoft)
                 .fixedSize(horizontal: false, vertical: true)
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: 10) { nextButton; SwatchShareLink(piece: piece, record: bench.record) }
-                VStack(spacing: 10) { nextButton; SwatchShareLink(piece: piece, record: bench.record) }
+                HStack(spacing: 10) {
+                    nextButton
+                    SwatchShareLink(piece: piece, record: bench.record).layoutPriority(1)
+                }
+                VStack(spacing: 10) { nextButton; SwatchShareLink(piece: piece, record: bench.record, wide: true) }
             }
             .padding(.top, 4)
         }
@@ -193,12 +211,19 @@ struct LiftView: View {
         .brandSurface(padding: 18)
     }
 
+    /// Where to go from here. Today's lace is the day's point, so after it: done. After the
+    /// book, the next in the book; after loose work, another; after a past day, back.
     private var nextButton: some View {
         Button {
             Haptics.tap()
-            bench.pinNext()
+            switch piece.kind {
+            case .today: bench.closeLift()
+            case .book: bench.pinNext()
+            case .loose: bench.workLoose()
+            case .past: bench.backToToday()
+            }
         } label: {
-            Text(bench.bookOpen ? "Pin the next pattern" : "See the whole book")
+            Text(nextTitle)
                 .font(.headline)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -206,5 +231,14 @@ struct LiftView: View {
                 .padding(.vertical, 4)
         }
         .brandProminent()
+    }
+
+    private var nextTitle: String {
+        switch piece.kind {
+        case .today: "Done for today"
+        case .book: bench.bookOpen ? "Next pattern" : "Open the whole book"
+        case .loose: "Another loose one"
+        case .past: "Back to today"
+        }
     }
 }

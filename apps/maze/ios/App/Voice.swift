@@ -16,7 +16,7 @@ enum Voice {
         "Into the sampler with that one.",
         "Not a knot in it.",
         "The card is empty and the piece is whole.",
-        "Neat work. The gimp hardly had to hold you.",
+        "Neat work. The walls hardly had to hold you.",
         "Lift it. It is yours now.",
     ]
 
@@ -27,7 +27,7 @@ enum Voice {
         "The thread came back on itself. It happens on every pillow.",
         "Wound short. Count the bare pins on that side before you go on.",
         "A pin skipped now is a pin bare later. Back up.",
-        "The gimp says no. The thread goes round it, not through.",
+        "That wall says no. The thread goes round it, not through.",
         "Picked out twice. Look at the corners first — they only have one way in.",
         "Back a few. The pattern has not changed; only the thread has.",
     ]
@@ -35,9 +35,10 @@ enum Voice {
     static let deadEnd = "Nowhere to go from there. Unwind a little."
 
     /// Said once each, the first time a pattern asks for something the first card did not show.
-    static let noStart = "No brass pin on this one. The thread may begin at any pin — find one with only one way in."
+    static let noStart = "No gold pin on this one. Start anywhere — a pin with only one way in is a good place."
     static let noFinish = "No ring on this card. The thread ends wherever the last bare pin is."
     static let window = "Where the card is cut away there is no pin. The thread goes round the window."
+    static let bigSunday = "A big one. Sundays are. Corners and edges first; the middle looks after itself."
 
     /// `{n}` is the pins in the bar.
     static let plait = [
@@ -82,7 +83,8 @@ enum Voice {
     }
 
     /// The margin card's two lines: what was done, and what is waiting.
-    static func ending(for piece: Piece, record: Record, next: (side: Int, ground: Ground)?) -> (String, String) {
+    static func ending(for piece: Piece, record: Record, next: (side: Int, ground: Ground)?,
+                       tomorrow: Int) -> (String, String) {
         let pieces = record.pieces.count
         let first: String
         if pieces == 1 {
@@ -99,11 +101,15 @@ enum Voice {
         }
         let second: String
         if piece.isToday {
-            second = "Today's is in the sampler. Tomorrow's is pricked at midnight."
+            let days = record.daysRunning()
+            let run = days > 1 ? "\(Words.capitalised(days)) days running. " : ""
+            second = "\(run)Tomorrow's is \(Words.size(tomorrow)), pricked at midnight — the same one for everybody."
+        } else if case .past(let d) = piece.kind {
+            second = "No. \(Play.dailyNumber(day: d)) is in the sampler with the rest."
         } else if let next {
             second = "Next in the book: \(Words.size(next.side)), the \(next.ground.name) ground."
         } else {
-            second = "The book goes on past the sixtieth."
+            second = "The book goes on past the twentieth."
         }
         return (first, second)
     }
@@ -116,5 +122,5 @@ enum Voice {
         return parts.joined(separator: " · ")
     }
 
-    static let reminder = "Today's pattern is pricked and pinned."
+    static let reminder = "Today's lace is pricked and pinned — the same one for everybody."
 }

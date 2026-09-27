@@ -5,7 +5,12 @@ import SwiftUI
 /// every beat of the winding and the lift.
 @MainActor
 final class Bench: ObservableObject {
-    enum Which: String, Equatable { case today, book, loose }
+    /// What the finger is on. Today's lace lives on the Today tab; everything else — the book,
+    /// loose work, a past day from the archive — is worked over it, and closes back to it.
+    enum Which: Equatable, Hashable {
+        case today, book, loose
+        case past(Int)
+    }
 
     /// A line in the margin, and what kind of moment set it.
     struct MarginLine: Equatable {
@@ -69,6 +74,8 @@ final class Bench: ObservableObject {
     @Published private(set) var plaitTick = 0
     /// Each pin taken bumps this, so the newest segment's reach replays.
     @Published private(set) var reachTick = 0
+    /// A touch that could not start the thread: the pin it should start from pulses.
+    @Published private(set) var nudges = 0
     @Published var winding = false
     @Published var wantsPaywall = false
 
@@ -78,6 +85,8 @@ final class Bench: ObservableObject {
     private var liftTask: Task<Void, Never>?
     private var lineTask: Task<Void, Never>?
     private var lessonTask: Task<Void, Never>?
+    /// When the last pin was taken, so a fast finger's burst of pins is one tick, not ten.
+    private var lastStepSound = Date.distantPast
 
     init() {
         if LaunchOptions.resetData { try? FileManager.default.removeItem(at: Record.url) }
@@ -87,12 +96,14 @@ final class Bench: ObservableObject {
         if let t = LaunchOptions.thread.flatMap(ThreadColour.init(rawValue:)) { record.thread = t }
         if LaunchOptions.board == "book" { which = .book }
         if LaunchOptions.board == "loose" { which = .loose }
+        if LaunchOptions.board == "past" { which = .past(Play.dayNumber() - 1) }
         if LaunchOptions.rung != nil && LaunchOptions.board == nil { which = .book }
-        openForNewcomer()
+        forgetOtherEngines()
         rollDay()
         ensurePillow(sync: LaunchOptions.sampleData || LaunchOptions.rung != nil || LaunchOptions.demo != nil)
         if let wound = LaunchOptions.wound { wind(upTo: wound) }
-        if LaunchOptions.won { finishAndLift() }
+        if LaunchOptions.won || LaunchOptions.done { finishAndLift() }
+        if LaunchOptions.done { lift = nil }
         if let step = LaunchOptions.lesson {
             beginLesson(at: step - 1)
         } else if !LaunchOptions.isCapture && !record.taught && record.pieces.isEmpty {
@@ -102,11 +113,13 @@ final class Bench: ObservableObject {
         }
     }
 
-    /// Someone with nothing in the sampler starts on the book's first pattern — five by five,
-    /// both ends pinned — not on whatever today's weekday is. Sunday's is fourteen by
-    /// fourteen with a window and a loose end.
-    private func openForNewcomer() {
-        if !LaunchOptions.isCapture && record.pieces.isEmpty && record.rung == 1 { which = .book }
+    /// A pattern pricked by a build with a different generator is not the lace everyone else
+    /// has today. Throw it away and prick it again, so the daily is one lace for everybody.
+    private func forgetOtherEngines() {
+        if record.todayPillow.map({ $0.pricking.engine != Generator.engine }) == true { record.todayPillow = nil }
+        if record.pastPillow.map({ $0.pricking.engine != Generator.engine }) == true { record.pastPillow = nil }
+        if record.tomorrow.map({ $0.engine != Generator.engine }) == true { record.tomorrow = nil }
+        if record.nextBook.map({ $0.engine != Generator.engine }) == true { record.nextBook = nil }
     }
 
     // MARK: - Reading
@@ -117,8 +130,15 @@ final class Bench: ObservableObject {
 
     /// Today's pattern, or the book's or loose work's, whichever the pillow is showing.
     private var board: SavedPillow? {
-        which == .today ? record.todayPillow : record.pillow
+        switch which {
+        case .today: record.todayPillow
+        case .past: record.pastPillow
+        case .book, .loose: record.pillow
+        }
     }
+
+    /// Something other than today's lace is on the pillow, over the Today tab.
+    var awayFromToday: Bool { which != .today }
 
     var todayPiece: Piece? { record.todayPiece() }
 
@@ -126,6 +146,14 @@ final class Bench: ObservableObject {
     var todayDone: Bool { lesson == nil && which == .today && todayPiece != nil && lift == nil }
 
     var bookOpen: Bool { isPro || LaunchOptions.forcePro || record.rung <= Play.freePatterns }
+
+    var archiveOpen: Bool { isPro || LaunchOptions.forcePro }
+
+    /// Today's lace number, "No. 27".
+    var todayNumber: Int { Play.dailyNumber(day: Play.dayNumber()) }
+
+    /// Book patterns still free before the door.
+    var freeLeft: Int { max(0, Play.freePatterns - record.rung + 1) }
 
     var nextBookGround: Ground { Play.nextGround(rung: record.rung, record: record) }
 
@@ -144,7 +172,7 @@ final class Bench: ObservableObject {
         record.todayDay = today
         record.todayPillow = nil
         if which == .today { lift = nil }
-        if let t = record.tomorrow, t.seed == Play.daySeed(today) {
+        if let t = record.tomorrow, t.seed == Play.daySeed(today), t.engine == Generator.engine {
             record.todayPillow = SavedPillow(pricking: t, kind: .today)
             record.tomorrow = nil
         }
@@ -162,6 +190,15 @@ final class Bench: ObservableObject {
         if w == .loose && !(isPro || LaunchOptions.forcePro) {
             wantsPaywall = true
             return
+        }
+        if case .past(let d) = w {
+            if !archiveOpen {
+                wantsPaywall = true
+                return
+            }
+            // A past lace already in the sampler is kept, not worked twice.
+            if record.piece(forLace: d) != nil { return }
+            if let p = record.pastPillow, p.kind != .past(day: d) { record.pastPillow = nil }
         }
         if w != which || lift != nil {
             withMotion(Motion.gentle) {
@@ -195,10 +232,13 @@ final class Bench: ObservableObject {
         let which = self.which
         let ground = nextBookGround
         let cached = record.nextBook
+        if case .past(let d) = which, record.piece(forLace: d) != nil { return }
         let make: @Sendable () -> (Pricking, Piece.Kind) = {
             switch which {
             case .today:
                 return (Play.todayPricking(day: day), .today)
+            case .past(let d):
+                return (Play.todayPricking(day: d), .past(day: d))
             case .book:
                 if let cached, cached.rung == rung, cached.ground == ground { return (cached, .book(rung: rung)) }
                 return (Play.bookPricking(rung: rung, ground: ground, salt: salt), .book(rung: rung))
@@ -226,7 +266,11 @@ final class Bench: ObservableObject {
     }
 
     private func place(_ pillow: SavedPillow, for which: Which) {
-        if which == .today { record.todayPillow = pillow } else { record.pillow = pillow }
+        switch which {
+        case .today: record.todayPillow = pillow
+        case .past: record.pastPillow = pillow
+        case .book, .loose: record.pillow = pillow
+        }
         if which == .book { record.nextBook = nil }
         scheduleSave()
     }
@@ -244,6 +288,8 @@ final class Bench: ObservableObject {
             note = (["finish"], Voice.noFinish)
         } else if pr.open.contains(false) && !record.hints.contains("window") {
             note = (["window"], Voice.window)
+        } else if pr.side >= 14 && which == .today && !record.hints.contains("big") {
+            note = (["big"], Voice.bigSunday)
         } else {
             note = nil
         }
@@ -258,11 +304,16 @@ final class Bench: ObservableObject {
             change(&lesson!.pillow)
             return
         }
-        if which == .today {
+        switch which {
+        case .today:
             guard var p = record.todayPillow else { return }
             change(&p)
             record.todayPillow = p
-        } else {
+        case .past:
+            guard var p = record.pastPillow else { return }
+            change(&p)
+            record.pastPillow = p
+        case .book, .loose:
             guard var p = record.pillow else { return }
             change(&p)
             record.pillow = p
@@ -322,8 +373,12 @@ final class Bench: ObservableObject {
         }
         reachTick += 1
         deadEnd = nil
-        Haptics.selection()
-        Tones.shared.play(.step(runLength % 5), volume: 0.35)
+        // A fast finger takes several pins in one frame: one detent and one note for the burst.
+        if Date.now.timeIntervalSince(lastStepSound) > 0.045 {
+            lastStepSound = .now
+            Haptics.selection()
+            Tones.shared.play(.step(runLength % 5), volume: 0.35)
+        }
         if let plaited {
             withMotion(Motion.pop) {
                 plaitFlash = plaited
@@ -378,6 +433,12 @@ final class Bench: ObservableObject {
         } else if first {
             say(.miss, Voice.missLine(unpicks: current?.run.misses ?? 1), for: 2)
         }
+    }
+
+    /// A touch that cannot start or continue the thread: show where it can.
+    func nudge() {
+        nudges += 1
+        Haptics.soft()
     }
 
     func unpickLast() {
@@ -457,6 +518,8 @@ final class Bench: ObservableObject {
             lesson = nil
             line = nil
             deadEnd = nil
+            // The first card always ends on today's lace: that is the point of the app.
+            which = .today
         }
         winding = false
         scheduleSave()
@@ -574,22 +637,31 @@ final class Bench: ObservableObject {
         case .loose:
             record.loosePiecesWorked += 1
             record.pillow = nil
+        case .past:
+            record.pastPillow = nil
         }
         scheduleSave()
 
         let next: (Int, Ground)? = bookOpen ? (Play.dials(at: record.rung).side, nextBookGround) : nil
+        let tomorrow = Play.dials(at: Play.dailyRung(day: Play.dayNumber() + 1)).side
         let unlocked = Play.earned.justUnlocked(from: before, to: record.pieces.count)
         var praise = Voice.praiseLine()
         if let m = unlocked.last { praise = m.blurb }
         let lift = Lift(piece: piece, pricking: p.pricking, tier: tier,
                         headline: Voice.headline(tier, unpicks: piece.unpicks),
                         praise: praise,
-                        ending: Voice.ending(for: piece, record: record, next: next),
+                        ending: Voice.ending(for: piece, record: record, next: next, tomorrow: tomorrow),
                         unlocked: unlocked,
                         phase: Motion.isStill ? Self.finalPhase : 0)
         self.lift = lift
         prickAhead(after: p.kind)
         if !Motion.isStill { runLift(tier: tier) }
+    }
+
+    /// The margin card's "Done for today": the lift is put away and today's done page shows.
+    func closeLift() {
+        liftTask?.cancel()
+        withMotion(Motion.gentle) { lift = nil }
     }
 
     /// DESIGN.md's timeline, beat by beat. Under `-stillFrames` the lift is set at its last
@@ -635,7 +707,8 @@ final class Bench: ObservableObject {
     private func prickAhead(after kind: Piece.Kind) {
         let rung = record.rung, salt = record.salt, ground = nextBookGround
         let tomorrow = Play.dayNumber() + 1
-        let wantTomorrow = kind == .today && record.tomorrow?.seed != Play.daySeed(tomorrow)
+        let wantTomorrow = kind == .today
+            && (record.tomorrow?.seed != Play.daySeed(tomorrow) || record.tomorrow?.engine != Generator.engine)
         let wantBook = bookOpen && record.nextBook?.rung != rung
         guard wantTomorrow || wantBook else { return }
         Task.detached(priority: .utility) {
@@ -663,7 +736,6 @@ final class Bench: ObservableObject {
         lift = nil
         line = nil
         which = .today
-        openForNewcomer()
         Reminder.cancel()
         scheduleSave()
         ensurePillow()
@@ -867,7 +939,7 @@ final class Bench: ObservableObject {
             if let p = current {
                 // Picked out once, a third of the way in, so the thread standing is the rest.
                 let target = p.pricking.pins * 2 / 3
-                if LaunchOptions.demo == nil && !LaunchOptions.won {
+                if LaunchOptions.demo == nil && !LaunchOptions.won && !LaunchOptions.done {
                     wind(upTo: target / 3)
                     mutate { $0.run.miss() }
                 }

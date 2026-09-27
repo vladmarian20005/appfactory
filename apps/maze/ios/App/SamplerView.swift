@@ -78,7 +78,7 @@ struct SamplerView: View {
             NavigationLink(value: piece) {
                 HStack(alignment: .top, spacing: 12) {
                     VStack(alignment: .trailing, spacing: 6) {
-                        Text("Today · \(Words.size(piece.side)) · \(piece.ground.name) ground")
+                        Text("Today · No. \(Play.dailyNumber(day: piece.day)) · \(Words.size(piece.side))")
                             .caps()
                             .multilineTextAlignment(.trailing)
                         Text(Voice.headline(piece.runTier, unpicks: piece.unpicks))
@@ -95,13 +95,13 @@ struct SamplerView: View {
             .accessibilityLabel("Today's piece, \(Words.size(piece.side)), the \(piece.ground.name) ground")
         } else {
             VStack(alignment: .trailing, spacing: 10) {
-                Text("Today's pattern").caps()
+                Text("Today's lace · No. \(bench.todayNumber)").caps()
                 Button {
                     Haptics.tap()
                     bench.backToToday()
-                    tab = .pillow
+                    tab = .today
                 } label: {
-                    Text(record.todayPillow?.isEmpty == false ? "Back to the pillow" : "Pick up the bobbin")
+                    Text(record.todayPillow?.isEmpty == false ? "Back to today's lace" : "Start today's lace")
                         .font(.headline)
                 }
                 .brandProminent()
@@ -186,16 +186,16 @@ struct SamplerView: View {
             Text("The sampler is bare")
                 .brandFont(.largeTitle)
                 .foregroundStyle(brand.palette.ink)
-            Text("Today's pattern is pricked and pinned on the pillow. The first piece goes here.")
+            Text("Today's lace is pinned and waiting — the same one for everybody. The first piece goes here.")
                 .font(.title3)
                 .foregroundStyle(brand.palette.inkSoft)
                 .multilineTextAlignment(.center)
             Button {
                 Haptics.tap()
                 bench.backToToday()
-                tab = .pillow
+                tab = .today
             } label: {
-                Text("To the pillow").font(.headline).frame(maxWidth: .infinity).padding(.vertical, 4)
+                Text("Start today's lace").font(.headline).frame(maxWidth: .infinity).padding(.vertical, 4)
             }
             .brandProminent()
         }
@@ -269,7 +269,8 @@ struct MonthCard: View {
         let today = Play.dayNumber(now)
         let firstDay = Play.dayNumber(first)
         var threads: [Int: ThreadColour] = [:]
-        for p in record.pieces where p.day >= firstDay && p.day < firstDay + days { threads[p.day] = p.thread }
+        // Only a day's own lace, worked on the day, pins it: that is what the month is counting.
+        for p in record.pieces where p.kind == .today && p.day >= firstDay && p.day < firstDay + days { threads[p.day] = p.thread }
         let pinned = threads.count
 
         return VStack(alignment: .leading, spacing: 16) {
@@ -283,7 +284,7 @@ struct MonthCard: View {
             if pinned == 0 {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Nothing pinned this month yet").font(.headline).foregroundStyle(brand.palette.ink)
-                    Text("A day you work a piece gets a pin here.").font(.subheadline).foregroundStyle(brand.palette.inkSoft)
+                    Text("A day you work that day's lace gets a pin here.").font(.subheadline).foregroundStyle(brand.palette.inkSoft)
                 }
             }
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 18) {
@@ -327,7 +328,7 @@ struct PieceView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                Text("\(piece.isToday ? "Today's pattern" : piece.mark) · \(Play.date(ofDay: piece.day).formatted(.dateTime.day().month(.wide)))")
+                Text("\(piece.mark) · \(Play.date(ofDay: piece.laceDay ?? piece.day).formatted(.dateTime.day().month(.wide)))")
                     .caps()
                 PillowBolster {
                     PieceCard(piece: piece, size: 300)

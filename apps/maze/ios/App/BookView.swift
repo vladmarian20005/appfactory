@@ -19,6 +19,8 @@ struct BookView: View {
                     stack
                     actions
                     PinRule()
+                    pastDays
+                    PinRule()
                     chapters
                     PinRule()
                     Cushion(pieces: record.pieces.count)
@@ -29,7 +31,7 @@ struct BookView: View {
                 .padding(.vertical, 12)
             }
             .linen(ticking: record.ticking)
-            .serifTitle("The book")
+            .serifTitle("The pattern book")
             .navigationDestination(for: Piece.self) { PieceView(piece: $0) }
         }
     }
@@ -116,7 +118,6 @@ struct BookView: View {
                 Button {
                     Haptics.tap()
                     bench.workLoose()
-                    tab = .pillow
                 } label: {
                     Text("Work a loose pattern").font(.headline).frame(maxWidth: .infinity).padding(.vertical, 4)
                 }
@@ -129,7 +130,37 @@ struct BookView: View {
 
     private func pin() {
         bench.pinNext()
-        tab = .pillow
+    }
+
+    // MARK: - Past days
+
+    /// The last ten days' laces, and the way to all of them.
+    private var pastDays: some View {
+        let days = Play.pastDays()
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Past days").brandFont(.title2).foregroundStyle(brand.palette.ink)
+                Spacer()
+                if days.count > 10 {
+                    NavigationLink { ArchiveView() } label: {
+                        Text("All \(days.count)").font(.subheadline.weight(.semibold))
+                    }
+                }
+            }
+            Text(bench.archiveOpen
+                 ? "Every day's lace since No. 1, the same ones everybody had. Work the ones you missed."
+                 : "Every day's lace since No. 1, the same ones everybody had. They open with the whole book.")
+                .font(.subheadline)
+                .foregroundStyle(brand.palette.inkSoft)
+                .fixedSize(horizontal: false, vertical: true)
+            if days.isEmpty {
+                Text("No. 1 is today's. Tomorrow it will be here.")
+                    .font(.subheadline.italic())
+                    .foregroundStyle(brand.palette.inkSoft)
+            } else {
+                PastDaysGrid(days: Array(days.prefix(10)))
+            }
+        }
     }
 
     // MARK: - Chapters

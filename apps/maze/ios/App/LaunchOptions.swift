@@ -19,7 +19,7 @@ enum LaunchOptions {
     /// `-screen pillow|sampler|book|workbox|paywall|win`
     static var screen: String? { value(for: "-screen") }
 
-    /// `-board today|book|loose` — which pattern the pillow shows.
+    /// `-board today|book|loose|past` — which pattern the pillow shows; past is yesterday's.
     static var board: String? { value(for: "-board") }
 
     /// `-rung 150` (or `-level 150`) seeds the book at that rung, with a sampler to match, so
@@ -35,6 +35,9 @@ enum LaunchOptions {
     /// `-thread rose|gold`
     static var thread: String? { value(for: "-thread") }
 
+    /// `-done` lifts today's lace and puts the lift away: Today's done page.
+    static var done: Bool { args.contains("-done") }
+
     /// `-won` (or `-screen win`) lands on the lift, finished.
     static var won: Bool { args.contains("-won") || screen == "win" }
 
@@ -46,7 +49,7 @@ enum LaunchOptions {
     /// A flag that seeds a record or a pattern for a capture. The first card and the
     /// lacemaker's one-time notes stay out of those frames.
     static var isCapture: Bool {
-        sampleData || rung != nil || demo != nil || wound != nil || won || board != nil
+        sampleData || rung != nil || demo != nil || wound != nil || won || done || board != nil
     }
 
     /// `-demo wind|lift` makes the app perform the winding, and the lift, by itself: nothing

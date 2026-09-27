@@ -1,21 +1,27 @@
 import FactoryKit
 import SwiftUI
 
-/// Screen 1 · Today. The pattern, the thread, and the winding.
+/// Screen 1 · Today — today's lace and nothing else, the one everybody has. The same view,
+/// `over` the Today tab, works the book, loose work or a past day, and closes back to it.
 struct PillowView: View {
+    @Binding var tab: RootView.Tab
+    var over = false
     @EnvironmentObject private var bench: Bench
     @EnvironmentObject private var store: Store
     @Environment(\.brand) private var brand
     @State private var confirmPull = false
-    @ScaledMetric(relativeTo: .body) private var reserve: CGFloat = 230
+    @ScaledMetric(relativeTo: .body) private var reserve: CGFloat = 250
 
     var body: some View {
         NavigationStack {
             Group {
-                if let lift = bench.lift {
+                if !over && bench.awayFromToday {
+                    // Under the cover: nothing here while another pattern is on the pillow.
+                    Color.clear
+                } else if let lift = bench.lift {
                     LiftView(lift: lift)
-                } else if bench.todayDone {
-                    doneForToday
+                } else if !over && bench.todayDone {
+                    DoneToday(tab: $tab)
                 } else {
                     winding
                 }
@@ -34,10 +40,13 @@ struct PillowView: View {
     }
 
     private var title: String {
-        if bench.lesson != nil { return "The first card" }
-        if let lift = bench.lift { return lift.pricking.ground.title }
-        if bench.todayDone { return "The pillow" }
-        return bench.current?.pricking.ground.title ?? "The pillow"
+        if bench.lesson != nil { return "Learn to wind" }
+        switch bench.current?.kind ?? bench.lift?.piece.kind {
+        case .book(let rung)?: return "Pattern \(rung)"
+        case .loose?: return "Loose work"
+        case .past(let d)?: return "Lace No. \(Play.dailyNumber(day: d))"
+        default: return "Today"
+        }
     }
 
     @ToolbarContentBuilder
@@ -46,16 +55,26 @@ struct PillowView: View {
             Text(title).brandFont(.title3).foregroundStyle(brand.palette.ink)
                 .accessibilityAddTraits(.isHeader)
         }
-        if bench.lesson != nil {
+        if over {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    Haptics.tap()
+                    bench.backToToday()
+                } label: {
+                    Image(systemName: "xmark")
+                }
+                .accessibilityLabel("Back to today's lace")
+            }
+        } else if bench.lesson != nil {
             ToolbarItem(placement: .topBarLeading) {
                 Button("Skip") { bench.endLesson() }
-                    .accessibilityLabel("Skip the first card")
+                    .accessibilityLabel("Skip the practice")
             }
         }
         ToolbarItem(placement: .topBarTrailing) {
             if let lift = bench.lift {
                 SwatchShareLink(piece: lift.piece, record: bench.record, compact: true)
-            } else {
+            } else if bench.lesson != nil || bench.current != nil {
                 Menu {
                     if bench.current?.isEmpty == false {
                         Button("Pull the pins", role: .destructive) { confirmPull = true }
@@ -66,14 +85,9 @@ struct PillowView: View {
                         }
                     }
                     if bench.lesson != nil {
-                        Button("Skip the first card") { bench.endLesson() }
-                    } else {
-                        if bench.which != .today {
-                            Button("Back to today's pattern") { bench.backToToday() }
-                        } else if bench.bookOpen {
-                            Button("Pin the next pattern") { bench.pinNext() }
-                        }
-                        Button("The first card again") { bench.beginLesson() }
+                        Button("Skip the practice") { bench.endLesson() }
+                    } else if !over {
+                        Button("How to play") { bench.beginLesson() }
                     }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -128,19 +142,41 @@ struct PillowView: View {
         .dynamicTypeSize(...DynamicTypeSize.accessibility2)
     }
 
-    /// Two columns so nothing wraps: the shape and the count at the left, the day at the right.
+    /// Two columns so nothing wraps: the pins at the left, whose lace it is at the right. Under
+    /// them, before the first pin, one line on what this pattern is.
     private var head: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(alignment: .lastTextBaseline) {
-                count
-                Spacer(minLength: 8)
-                day.multilineTextAlignment(.trailing)
+        VStack(alignment: .leading, spacing: 8) {
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .lastTextBaseline) {
+                    count
+                    Spacer(minLength: 8)
+                    day.multilineTextAlignment(.trailing)
+                }
+                // Large text: the day goes under the count rather than crowding it.
+                VStack(alignment: .leading, spacing: 6) {
+                    count
+                    day
+                }
             }
-            // Large text: the day goes under the count rather than crowding it.
-            VStack(alignment: .leading, spacing: 6) {
-                count
-                day
+            if bench.lesson == nil, let p = bench.current, p.isEmpty {
+                Text(goal(for: p))
+                    .font(.subheadline.italic())
+                    .foregroundStyle(brand.palette.inkSoft)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .transition(.opacity)
             }
+        }
+        .animation(Motion.resolved(Motion.gentle), value: bench.current?.isEmpty)
+    }
+
+    /// What this pattern is, said once, before the first pin.
+    private func goal(for p: SavedPillow) -> String {
+        let start = p.pricking.start == nil ? "Start at any pin" : "Start at the gold pin"
+        switch p.kind {
+        case .today: return "Today's lace, the same one for everybody. \(start), and every pin, once."
+        case .past: return "A past day's lace, the one everybody had. \(start), and every pin, once."
+        case .book: return "From the pattern book. \(start), and every pin, once."
+        case .loose: return "Loose work, never the same twice. \(start), and every pin, once."
         }
     }
 
@@ -149,7 +185,7 @@ struct PillowView: View {
         let pr = p?.pricking
         return VStack(alignment: .leading, spacing: 4) {
                 if let pr {
-                    Text(bench.lesson != nil ? Words.size(pr.side) : "\(Words.size(pr.side)) · \(pr.ground.name) ground")
+                    Text(Words.size(pr.side))
                         .caps()
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -173,14 +209,18 @@ struct PillowView: View {
                     Text("Practice").caps()
                     Text("\(Words.capitalised(step + 1)) of \(Words.number(FirstCard.cards.count))").caps()
                 case (nil, .book(let rung)?):
-                    Text("Pattern \(rung)").caps()
-                    Text("The book").caps()
+                    Text("Pattern \(rung)").brandFont(.title3).foregroundStyle(brand.palette.ink)
+                    Text(bench.archiveOpen || bench.freeLeft == 0 ? "The book"
+                         : "The book · \(Words.number(bench.freeLeft)) free").caps()
                 case (nil, .loose(let n)?):
-                    Text("Loose work").caps()
+                    Text("Loose work").brandFont(.title3).foregroundStyle(brand.palette.ink)
                     Text("Piece \(n)").caps()
+                case (nil, .past(let d)?):
+                    Text("No. \(Play.dailyNumber(day: d))").brandFont(.title3).foregroundStyle(brand.palette.ink)
+                    Text(Play.date(ofDay: d).formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))).caps()
                 default:
-                    Text("Today's pattern").caps()
-                    Text(Date.now.formatted(.dateTime.day().month(.wide))).caps()
+                    Text("No. \(bench.todayNumber)").brandFont(.title3).foregroundStyle(brand.palette.ink)
+                    Text(Date.now.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))).caps()
                 }
             }
             .accessibilityElement(children: .combine)
@@ -222,7 +262,7 @@ struct PillowView: View {
                     Haptics.tap()
                     bench.endLesson()
                 } label: {
-                    Text("Pin the first pattern").font(.headline).frame(maxWidth: .infinity).padding(.vertical, 4)
+                    Text("Start today's lace · No. \(bench.todayNumber)").font(.headline).frame(maxWidth: .infinity).padding(.vertical, 4)
                 }
                 .brandProminent()
                 .padding(.top, 10)
@@ -254,45 +294,6 @@ struct PillowView: View {
         guard let dot = s.firstIndex(of: "."), s.distance(from: s.startIndex, to: dot) < limit else { return ("", s) }
         let head = String(s[...dot])
         return (head, String(s[s.index(after: dot)...]))
-    }
-
-    // MARK: - Today's is in the sampler
-
-    private var doneForToday: some View {
-        ScrollView {
-            VStack(spacing: 18) {
-                Image("Bobbins")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: 280)
-                    .ambientFloat(distance: 4, period: 4.4)
-                    .accessibilityHidden(true)
-                    .padding(.top, 24)
-                Text("Today's is in the sampler")
-                    .brandFont(.largeTitle)
-                    .foregroundStyle(brand.palette.ink)
-                    .multilineTextAlignment(.center)
-                Text(bench.bookOpen ? "The next pattern in the book is pinned and waiting."
-                                    : "The book goes on past the sixtieth, and today's is kept.")
-                    .font(.title3)
-                    .foregroundStyle(brand.palette.inkSoft)
-                    .multilineTextAlignment(.center)
-                if let piece = bench.todayPiece {
-                    Text("Today · \(Words.size(piece.side)) · \(piece.ground.name) ground · \(piece.isClean ? "worked clean" : "picked out \(Words.times(piece.unpicks))")")
-                        .caps()
-                        .multilineTextAlignment(.center)
-                }
-                Button {
-                    Haptics.tap()
-                    bench.pinNext()
-                } label: {
-                    Text("Pin the next pattern").font(.headline).frame(maxWidth: .infinity).padding(.vertical, 4)
-                }
-                .brandProminent()
-                .padding(.top, 8)
-            }
-            .padding(24)
-        }
     }
 }
 

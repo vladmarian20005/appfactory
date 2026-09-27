@@ -19,7 +19,7 @@ struct ShareCard: View {
                     PinHead(size: 5)
                     Rectangle().fill(brand.palette.ink.opacity(0.3)).frame(height: 0.6)
                 }
-                Text("\(Play.date(ofDay: piece.day).formatted(.dateTime.day().month(.wide))) · \(Words.size(piece.side)) · \(piece.ground.name) ground")
+                Text("\(piece.mark) · \(Play.date(ofDay: piece.laceDay ?? piece.day).formatted(.dateTime.day().month(.wide))) · \(Words.size(piece.side))")
                     .caps(.caption2, tracking: 1.6)
                     .multilineTextAlignment(.center)
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
@@ -87,9 +87,15 @@ struct ShareCard: View {
         .overlay { Rectangle().stroke(brand.palette.ink.opacity(0.25), lineWidth: 0.6) }
     }
 
+    /// "Lacework No. 27 · 9×9 · worked clean, 81 pins in one thread." A day's lace is named by
+    /// its number, so whoever gets it knows it is the same one they have.
     static func text(for piece: Piece) -> String {
-        let day = Play.date(ofDay: piece.day).formatted(.dateTime.day().month(.wide))
-        return "Lacework · \(day) · \(piece.longestThread) pins in one thread\(piece.isClean ? ", worked clean" : "")."
+        let how = piece.isClean ? "worked clean" : "picked out \(Words.times(piece.unpicks))"
+        let size = "\(piece.side)×\(piece.side)"
+        if let d = piece.laceDay {
+            return "Lacework No. \(Play.dailyNumber(day: d)) · \(size) · \(how), \(piece.pins) pins in one thread."
+        }
+        return "Lacework · \(piece.mark) · \(size) · \(how), \(piece.pins) pins in one thread."
     }
 }
 
@@ -98,6 +104,8 @@ struct SwatchShareLink: View {
     let piece: Piece
     let record: Record
     var compact = false
+    /// Full width, for the one place sharing is the thing to do next.
+    var wide = false
     @Environment(\.colorScheme) private var scheme
 
     var body: some View {
@@ -127,6 +135,7 @@ struct SwatchShareLink: View {
                 .lineLimit(1)
                 .padding(.vertical, 4)
                 .padding(.horizontal, 6)
+                .frame(maxWidth: wide ? .infinity : nil)
         }
     }
 }

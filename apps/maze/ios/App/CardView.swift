@@ -61,8 +61,8 @@ struct PrickingCard<Content: View>: View {
     }
 }
 
-/// The card while winding: one Canvas for pricks, pins, gimp and thread, the newest segment
-/// reaching on its own spring, and a drag over all of it.
+/// The card while winding: one Canvas for pricks, pins, gimp and thread, the thread's end and
+/// its slack to the finger, and a drag over all of it.
 struct CardView: View {
     @EnvironmentObject private var bench: Bench
     let pillow: SavedPillow
@@ -70,9 +70,13 @@ struct CardView: View {
 
     @Environment(\.brand) private var brand
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var reach: CGFloat = 1
-    @State private var ringPop: CGFloat = 1
     @State private var finger: CGPoint?
+    /// Where the finger was last read, in card space: the next move is walked from here, so a
+    /// fast stroke takes exactly the pins it passed over, and never ones it did not.
+    @State private var lastPoint: CGPoint?
+    /// The pin the finger is pressing into that the thread cannot take — gimp or already
+    /// wound. The slack goes madder while it is there, and the detent fires once.
+    @State private var blocked: Int?
     @State private var arrived: CGFloat = Motion.isStill ? 1 : 0
     @State private var holdTask: Task<Void, Never>?
     @State private var began = false
@@ -87,7 +91,9 @@ struct CardView: View {
             ZStack {
                 PinsLayer(pillow: pillow, layout: layout, arrived: arrived, thread: thread,
                           ink: brand.palette.ink, canvas: AppBrand.Pillow.cloth)
+                slack
                 newestSegment
+                headMark
                 plaitFlash
                 deadEndRing
                 sprungPin
@@ -99,6 +105,7 @@ struct CardView: View {
                 } else if pillow.isEmpty && bench.lesson == nil {
                     teaching
                 }
+                if !pillow.isEmpty { nudgeRing }
                 markers
                 bobbin
             }
@@ -109,13 +116,6 @@ struct CardView: View {
         }
         .onAppear { arrive() }
         .onChange(of: pr.seed) { _, _ in arrived = 0; arrive() }
-        .onChange(of: pillow.path.count) { old, new in
-            guard new > old else { reach = 1; return }
-            reach = 0
-            ringPop = 1.5
-            withAnimation(Motion.resolved(Lace.wind)) { reach = 1 }
-            withAnimation(Motion.resolved(Motion.pop)?.delay(0.04)) { ringPop = 1 }
-        }
     }
 
     private func arrive() {
@@ -124,8 +124,58 @@ struct CardView: View {
         withAnimation(.easeOut(duration: 0.5)) { arrived = 1 }
     }
 
-    // MARK: - The newest pin's three beats
+    // MARK: - The thread's end
 
+    /// The thread is drawn to the pin the moment it is taken — under the finger, not after
+    /// it. What connects the last pin to the finger is the slack: a lighter strand from the
+    /// thread's end towards the fingertip, a pitch long at most, so the thread always looks
+    /// held. Madder while the finger presses into a pin the thread cannot take.
+    @ViewBuilder
+    private var slack: some View {
+        if bench.winding, let f = finger, let head = pillow.head, bench.lift == nil {
+            let c = layout.centre(head)
+            let dx = f.x - c.x, dy = f.y - c.y
+            let d = max(hypot(dx, dy), 0.001)
+            let reach = min(d, layout.pitch * 0.9)
+            let end = CGPoint(x: c.x + dx / d * reach, y: c.y + dy / d * reach)
+            Path { p in p.move(to: c); p.addLine(to: end) }
+                .stroke((blocked == nil ? thread.color : brand.palette.miss).opacity(0.5),
+                        style: StrokeStyle(lineWidth: layout.threadWidth * 0.8, lineCap: .round))
+                .allowsHitTesting(false)
+        }
+    }
+
+    /// Where the thread is: a bead of thread on the last pin, with a soft halo while a finger
+    /// holds it, and a small press as each pin sinks.
+    @ViewBuilder
+    private var headMark: some View {
+        if let head = pillow.head {
+            let c = layout.centre(head)
+            let r = max(layout.threadWidth * 1.15, 3)
+            ZStack {
+                Circle()
+                    .fill(thread.color.opacity(0.16))
+                    .frame(width: layout.pitch * 0.78, height: layout.pitch * 0.78)
+                    .opacity(bench.winding ? 1 : 0)
+                    .animation(Motion.resolved(.easeOut(duration: 0.15)), value: bench.winding)
+                Circle()
+                    .fill(thread.color)
+                    .frame(width: 2 * r, height: 2 * r)
+            }
+            .keyframeAnimator(initialValue: CGFloat(1), trigger: bench.reachTick) { v, s in
+                v.scaleEffect(s)
+            } keyframes: { _ in
+                KeyframeTrack {
+                    CubicKeyframe(1.25, duration: 0.05)
+                    SpringKeyframe(1, duration: 0.16, spring: .snappy)
+                }
+            }
+            .position(c)
+            .allowsHitTesting(false)
+        }
+    }
+
+    /// The last segment, drawn apart from the rest only so a dead end can tug it.
     @ViewBuilder
     private var newestSegment: some View {
         if path.count >= 2 {
@@ -133,7 +183,6 @@ struct CardView: View {
             let dir = CGVector(dx: (b.x - a.x) / layout.pitch, dy: (b.y - a.y) / layout.pitch)
             ZStack {
                 Path { p in p.move(to: a); p.addLine(to: b) }
-                    .trim(from: 0, to: reach)
                     .stroke(thread.color, style: StrokeStyle(lineWidth: layout.threadWidth, lineCap: .round))
                 // The wrap round the pin before, if the thread turned there.
                 if path.count >= 3, (path[path.count - 1] - path[path.count - 2]) != (path[path.count - 2] - path[path.count - 3]) {
@@ -141,7 +190,6 @@ struct CardView: View {
                     Circle()
                         .stroke(thread.color, lineWidth: layout.ringWidth)
                         .frame(width: 2 * r, height: 2 * r)
-                        .scaleEffect(ringPop)
                         .position(a)
                 }
             }
@@ -242,6 +290,29 @@ struct CardView: View {
                     .allowsHitTesting(false)
             }
         }
+        nudgeRing
+    }
+
+    /// A touch that could not start the thread rings the pin it has to start from.
+    @ViewBuilder
+    private var nudgeRing: some View {
+        let at: Int? = pillow.head ?? pr.start.map(Int.init)
+        if let at {
+            // At rest the ring is spent (t = 1, invisible); a nudge runs it from 0 again.
+            Circle()
+                .stroke(AppBrand.Workbox.brass, lineWidth: 2)
+                .frame(width: layout.pitch * 0.8, height: layout.pitch * 0.8)
+                .keyframeAnimator(initialValue: CGFloat(1), trigger: bench.nudges) { v, t in
+                    v.scaleEffect(0.6 + t * 0.9).opacity(Double(1 - t))
+                } keyframes: { _ in
+                    KeyframeTrack {
+                        CubicKeyframe(0, duration: 0.01)
+                        CubicKeyframe(1, duration: 0.55)
+                    }
+                }
+                .position(layout.centre(at))
+                .allowsHitTesting(false)
+        }
     }
 
     @ViewBuilder
@@ -257,18 +328,20 @@ struct CardView: View {
 
     // MARK: - The bobbin
 
-    /// A small walnut bobbin, hanging below and to the right of the finger while winding; lying
-    /// beside the last pin when the finger lifts.
+    /// A small walnut bobbin lying beside the last pin while the thread is set down: where to
+    /// pick it up again. In the hand it is gone — the finger is the bobbin, and nothing trails
+    /// behind it.
     @ViewBuilder
     private var bobbin: some View {
         if let head = pillow.head {
             let c = layout.centre(head)
-            let held = bench.winding && finger != nil
-            let at = held ? CGPoint(x: finger!.x + 22, y: finger!.y + 22) : CGPoint(x: c.x + 11, y: c.y + 16)
             Bobbin()
-                .rotationEffect(.degrees(held ? 8 : 20))
-                .position(at)
-                .animation(Motion.resolved(held ? Motion.gentle : Motion.bouncy), value: at)
+                .rotationEffect(.degrees(20))
+                .scaleEffect(min(1, layout.pitch / 30))
+                .position(x: c.x + layout.pitch * 0.42, y: c.y + layout.pitch * 0.55)
+                .opacity(bench.winding ? 0 : 1)
+                .animation(Motion.resolved(.easeOut(duration: 0.18)), value: bench.winding)
+                .animation(Motion.resolved(Motion.gentle), value: head)
                 .allowsHitTesting(false)
         }
     }
@@ -289,64 +362,133 @@ struct CardView: View {
                 began = false
                 holdTask?.cancel()
                 finger = nil
+                lastPoint = nil
+                blocked = nil
                 bench.endGesture()
             }
     }
 
+    private func distance(_ a: CGPoint, _ b: CGPoint) -> CGFloat { hypot(a.x - b.x, a.y - b.y) }
+
+    /// A fingertip is wider than a pin, so a touch anywhere near the thread's end picks it
+    /// up, and a touch near the brass pin on a fresh card starts there.
     private func touchDown(at p: CGPoint) {
-        guard let cell = layout.cell(at: p), pr.open[cell] else { return }
-        if let i = path.firstIndex(of: cell) {
-            if i == path.count - 1 {
-                Haptics.soft()
-            } else {
-                // A touch on an earlier pin of the thread cuts it back there — one miss.
-                bench.unpick(to: i)
-            }
-            bench.winding = true
-        } else if bench.canTake(cell) {
+        let grab = layout.pitch * 0.95
+        if let head = pillow.head, distance(p, layout.centre(head)) <= grab {
             Haptics.soft()
             bench.winding = true
+            lastPoint = layout.centre(head)
+            return
+        }
+        if pillow.isEmpty, let s = pr.start.map(Int.init), distance(p, layout.centre(s)) <= grab {
+            bench.winding = true
+            bench.take(s)
+            lastPoint = layout.centre(s)
+            return
+        }
+        guard let cell = layout.cell(at: p), pr.open[cell] else { return }
+        if let i = path.firstIndex(of: cell) {
+            // A touch on an earlier pin of the thread cuts it back there, and winds on from it.
+            bench.unpick(to: i)
+            bench.winding = true
+            lastPoint = layout.centre(cell)
+        } else if bench.canTake(cell) {
+            bench.winding = true
             bench.take(cell)
+            lastPoint = layout.centre(cell)
         } else if bench.record.hasEarned("pin") {
             // Press and hold a bare pin for a marking pin.
             holdTask?.cancel()
             holdTask = Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 450_000_000)
-                guard !Task.isCancelled, began, let f = finger, layout.cell(at: f) == cell else { return }
+                guard !Task.isCancelled, began, let f = finger, layout.cell(at: f) == cell else {
+                    return
+                }
                 withMotion(Motion.pop) { bench.toggleMarker(cell) }
             }
+            nudgeLater(for: cell)
+        } else {
+            bench.nudge()
         }
     }
 
-    /// Follow the finger: back onto the previous pin unwinds it; into a bare neighbour takes
-    /// it; a fast finger that skipped cells is walked there one legal step at a time.
-    private func follow(to p: CGPoint) {
-        guard bench.winding, let target = layout.innerCell(at: p) else { return }
-        guard let cur = bench.current, let head = cur.head, target != head else { return }
-        let path = cur.path.map(Int.init)
-        if path.count >= 2, target == path[path.count - 2] {
-            bench.unpickLast()
-            return
+    /// A bare pin pressed without holding: when the hold does not become a marking pin, the
+    /// thread's end rings, to say where to pick it up.
+    private func nudgeLater(for cell: Int) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 200_000_000)
+            if !began { bench.nudge() }
         }
-        var steps = 0
-        while steps < 28, let now = bench.current?.head, now != target {
-            steps += 1
-            let dr = target / pr.side - now / pr.side, dc = target % pr.side - now % pr.side
-            let vertical = now + (dr > 0 ? pr.side : -pr.side)
-            let horizontal = now + (dc > 0 ? 1 : -1)
-            let first = abs(dr) >= abs(dc) ? (dr != 0 ? vertical : nil) : (dc != 0 ? horizontal : nil)
-            let second = abs(dr) >= abs(dc) ? (dc != 0 ? horizontal : nil) : (dr != 0 ? vertical : nil)
-            if let first, bench.canTake(first) {
-                bench.take(first)
-            } else if let second, bench.canTake(second) {
-                bench.take(second)
-            } else {
-                break
-            }
+    }
+
+    /// Follow the finger along the way it actually went. The stroke since the last reading is
+    /// walked in fifth-of-a-pitch steps; each pin the finger passes well inside of is taken if
+    /// the thread can take it, the pin behind the end is picked out, and a pin the thread
+    /// cannot take stops the walk there — the thread never jumps ahead of the finger, and never
+    /// turns a corner the finger did not.
+    private func follow(to p: CGPoint) {
+        guard bench.winding, let from = lastPoint else { return }
+        let length = distance(from, p)
+        let steps = max(1, Int((length / (layout.pitch * 0.2)).rounded(.up)))
+        for k in 1...steps {
+            let t = CGFloat(k) / CGFloat(steps)
+            let q = CGPoint(x: from.x + (p.x - from.x) * t, y: from.y + (p.y - from.y) * t)
+            guard step(at: q) else { break }
             if bench.lift != nil { break }
         }
+        lastPoint = p
     }
 
+    /// One reading of the finger. False when the thread is stopped against something.
+    private func step(at q: CGPoint) -> Bool {
+        guard let cur = bench.current, let head = cur.head else { return true }
+        guard let cell = layout.cell(at: q), pr.open[cell], cell != head else {
+            blocked = nil
+            return true
+        }
+        // Well inside the pin's square before it counts: a finger on a border does not
+        // flicker between two pins.
+        let c = layout.centre(cell)
+        guard abs(q.x - c.x) <= layout.pitch * 0.4, abs(q.y - c.y) <= layout.pitch * 0.4 else { return true }
+        let path = cur.path.map(Int.init)
+        if path.count >= 2, cell == path[path.count - 2] {
+            blocked = nil
+            bench.unpickLast()
+            return true
+        }
+        let dr = cell / pr.side - head / pr.side, dc = cell % pr.side - head % pr.side
+        if abs(dr) + abs(dc) == 1 {
+            if bench.canTake(cell) {
+                blocked = nil
+                bench.take(cell)
+                return true
+            }
+            refuse(cell)
+            return false
+        }
+        if abs(dr) == 1 && abs(dc) == 1 {
+            // The finger cut a corner: go by whichever of the two pins between leads on to
+            // where it went.
+            let via = [head + dr * pr.side, head + dc].filter { v in
+                bench.canTake(v) && pr.canStep(from: v, to: cell) && !path.contains(cell)
+            }
+            if via.count == 1, let v = via.first {
+                bench.take(v)
+                if bench.canTake(cell) { bench.take(cell) }
+                blocked = nil
+                return true
+            }
+            // Both ways lead there, or neither: wait for the finger to say which.
+            return true
+        }
+        return true
+    }
+
+    private func refuse(_ cell: Int) {
+        guard blocked != cell else { return }
+        blocked = cell
+        Haptics.rigid()
+    }
     // MARK: - VoiceOver
 
     /// Every pin is an element with a label and the tap-to-take fallback.

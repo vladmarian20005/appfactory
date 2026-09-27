@@ -13,6 +13,9 @@ struct Pricking: Codable, Equatable, Hashable, Sendable {
     var rung: Int
     var seed: UInt64
     var answer: [UInt8]                     // the one path. Never shown; used to prove, to demo, and to plait the lift
+    /// `Generator.engine` when this was pricked. A pattern pricked ahead by an older build is
+    /// pricked again, so the daily is the same lace on every phone whichever build it runs.
+    var engine: Int? = nil
 
     var pins: Int { open.filter { $0 }.count }
     var loose: Int { start == nil ? 2 : (finish == nil ? 1 : 0) }
