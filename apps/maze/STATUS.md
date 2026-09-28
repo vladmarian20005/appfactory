@@ -1,6 +1,22 @@
-stage: built
-date: 2026-09-24
-next: app-verify
+stage: content ready
+date: 2026-09-28
+next: approval, then content/schedule.md
+
+## Launch kit (28 Sep)
+
+- `content/site/index.html`: the landing page in Lacework's own brand (linen, parchment,
+  indigo thread, New York Medium, the app's drawn art), three benefits mirroring the store
+  titles, the seven screenshots, "Coming soon" badge (no App Store id yet), FAQ from the
+  wedge, privacy link. Rendered in WebKit at 1280 and 430 with no failed requests. Publishing
+  it is a later step.
+- `content/videos.md`: five scripts with hooks from the leaders' reviews, beats, shots and
+  captions, and the launch flags that stage each shot.
+- `content/posts.md`: ten X posts, r/iOSGaming, r/iosapps, r/puzzles (no link), Product Hunt,
+  launch email, press blurb. `content/schedule.md`: day 0 to day 7.
+- **Not done: the footage.** Lacework was not installed on the runner's simulator, this run
+  could not build it (xcodegen, xcodebuild and `tools/sim.sh` needed approval it did not have),
+  and the runner has no ffmpeg. `videos.md` has the exact record-and-convert commands.
+- On approval: set `appStoreID` in `AppInfo.swift` and swap the page's badge for the link.
 
 Lacework is built from SPEC.md in DESIGN.md's direction, on ARCHITECTURE.md's structure
 (the changes are noted at the bottom of that file).
