@@ -70,6 +70,8 @@ struct Record: Codable, Equatable {
         pieces.last { $0.kind == .today && $0.day == day }
     }
 
+
+
     /// The thread a piece is worked in, as earned: gold falls back to indigo if not yet earned.
     var threadInHand: ThreadColour {
         switch thread {
@@ -144,10 +146,13 @@ struct Piece: Codable, Equatable, Identifiable, Hashable {
 
     var isToday: Bool { kind == .today }
 
-    /// "23 SEP" for a day's piece, "BK 51" for the book, "LOOSE 4" for loose work.
+    /// The day whose shared lace this was, for a day's piece.
+    var laceDay: Int? { kind == .today ? day : nil }
+
+    /// "NO. 27" for a day's lace, "BK 51" for the book, "LOOSE 4" for loose work.
     var mark: String {
         switch kind {
-        case .today: Play.date(ofDay: day).formatted(.dateTime.day().month(.abbreviated))
+        case .today: "No. \(Play.dailyNumber(day: day))"
         case .book(let rung): "Bk \(rung)"
         case .loose(let n): "Loose \(n)"
         }

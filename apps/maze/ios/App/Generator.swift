@@ -8,6 +8,10 @@ enum Generator {
     /// simply not made, which is what makes `open: 100` an honest ceiling.
     static let removalBudget = 12_000
 
+    /// Bumped whenever a change here would prick a different pattern from the same seed.
+    /// Anything cached from another engine is thrown away and pricked again.
+    static let engine = 2
+
     /// The pattern for a rung of the book, or a loose pattern, or today's.
     /// Same (dials, ground, seed) → same pattern, on every device, forever.
     static func pricking(side: Int, open: Int, shape: Int, loose: Int,
@@ -54,7 +58,7 @@ enum Generator {
         return Pricking(side: side, open: mask, gimp: walls,
                         start: pubStart.map { UInt8($0) }, finish: pubFinish.map { UInt8($0) },
                         ground: ground, shape: shape, rung: rung, seed: seed,
-                        answer: path.map { UInt8($0) })
+                        answer: path.map { UInt8($0) }, engine: engine)
     }
 
     /// A single thread through every cell of a mask, with nothing else to it — for the

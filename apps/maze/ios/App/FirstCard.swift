@@ -35,41 +35,41 @@ enum FirstCard {
         Card(pricking: pricking(side: 3, answer: [0, 1, 2, 5, 4, 3, 6, 7, 8],
                                 walls: [(0, 3), (1, 4), (4, 7), (5, 8)], seed: 0x1E55_0001),
              wound: [],
-             intro: Note(title: "Begin at the brass pin.",
-                         detail: "Keep a finger down and lead the thread from pin to pin."),
+             intro: Note(title: "Start at the gold pin.",
+                         detail: "Keep your finger down and draw the thread from pin to pin."),
              hand: Hand(cells: [0, 1, 2, 5]),
              underway: Note(title: "Every pin, once.",
-                            detail: "The dark stitches are gimp; the thread goes round them. It ends on the ringed pin."),
+                            detail: "The dark stitches are walls: the thread goes round them, and ends on the ringed pin."),
              done: Note(title: "That is lace.",
-                        detail: "One thread through every pin. The next card leaves more to you.")),
+                        detail: "One thread through every pin. On the next card, you choose the way.")),
         // Four by four with five walls: the gimp leads, but the first pin already forks.
         Card(pricking: pricking(side: 4, answer: [0, 1, 2, 3, 7, 11, 15, 14, 13, 12, 8, 4, 5, 6, 10, 9],
                                 walls: [(1, 5), (2, 6), (6, 7), (9, 13), (10, 14)], seed: 0x1E55_0002),
              wound: [],
-             intro: Note(title: "Now there is a choice.",
-                         detail: "Read the gimp before the thread goes in. Every pin, once, and home to the ring."),
+             intro: Note(title: "Now you choose the way.",
+                         detail: "Look at the walls before you start. Every pin, once, and home to the ring."),
              hand: nil,
              underway: nil,
-             done: Note(title: "Round the gimp and home.",
-                        detail: "One more. Somebody made a start on this one, and it went wrong.")),
+             done: Note(title: "Round the walls and home.",
+                        detail: "Last one. Somebody started this card and took a wrong turn.")),
         // Four by four, one wall, wound into the corner at the bottom left.
         Card(pricking: pricking(side: 4, answer: [0, 4, 8, 12, 13, 9, 5, 1, 2, 3, 7, 6, 10, 14, 15, 11],
                                 walls: [(4, 5)], seed: 0x1E55_0003),
              wound: [0, 4, 8, 9, 13, 12],
-             intro: Note(title: "Wound into a corner.",
-                         detail: "Nowhere to go from the last pin. Take the thread back along itself to where it turned."),
+             intro: Note(title: "Stuck? Go back.",
+                         detail: "Nowhere to go from the last pin. Drag back along the thread to undo it, as far as where it turned."),
              hand: Hand(cells: [12, 13, 9, 8], backward: true),
-             underway: Note(title: "Picked out, and nothing lost.",
-                            detail: "Corners first: the thread needs one way in and one way out."),
+             underway: Note(title: "Undone, and nothing lost.",
+                            detail: "A tip: a corner has one way in and one way out, so take corners early."),
              done: Note(title: "That is the whole of it.",
-                        detail: "Every pattern is one thread through every pin, and each has exactly one way through. The book's first is pinned.")),
+                        detail: "Every lace has exactly one way through, so you never have to guess. There is a new one every morning, the same for everybody.")),
     ]
 
     /// Said at a dead end on any practice card, while the ghost hand shows the way back.
     static let deadEnd = Note(title: "Nowhere to go from there.",
-                              detail: "Take the thread back along itself, to the last pin that had a choice.")
+                              detail: "Drag back along the thread to the last pin that had a choice.")
 
-    static let pickedOut = Note(title: "Picked out. The thread does not mind.",
+    static let pickedOut = Note(title: "Undone. The thread does not mind.",
                                 detail: "Try the other way from there.")
 
     /// A practice pattern: every pin on the card, both ends pinned, the answer's ends as the
