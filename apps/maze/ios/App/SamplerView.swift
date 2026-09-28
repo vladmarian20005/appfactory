@@ -4,6 +4,7 @@ import SwiftUI
 /// Screen 2 · Progress. The pieces, and the days.
 struct SamplerView: View {
     @Binding var tab: RootView.Tab
+    @Binding var showPaywall: Bool
     @EnvironmentObject private var bench: Bench
     @Environment(\.brand) private var brand
     @State private var reminderOn = false
@@ -23,18 +24,21 @@ struct SamplerView: View {
                         cloth
                     }
                     MonthCard(record: record)
-                    reminder
+                    Cushion(pieces: record.pieces.count)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
             .linen(ticking: record.ticking)
-            .serifTitle("The sampler")
+            .serifTitle("Me")
             .toolbar {
-                if let last = record.pieces.last {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        SwatchShareLink(piece: last, record: record, compact: true)
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        WorkboxView(showPaywall: $showPaywall)
+                    } label: {
+                        Image(systemName: "gearshape")
                     }
+                    .accessibilityLabel("Settings")
                 }
             }
             .navigationDestination(for: Piece.self) { PieceView(piece: $0) }

@@ -3,7 +3,7 @@ import SwiftUI
 
 /// Today's lace, once it is in the sampler. What the day was for is done, and the screen says
 /// so first: the piece, how it went, the days running and when the next one is pricked. Only
-/// under that, for anyone who wants more today, the book and the past days.
+/// under that, for anyone who wants more today, the book.
 struct DoneToday: View {
     @Binding var tab: RootView.Tab
     @EnvironmentObject private var bench: Bench
@@ -88,34 +88,20 @@ struct DoneToday: View {
 
     private var more: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("More lace today").brandFont(.title2).foregroundStyle(brand.palette.ink)
-            Text("Today's is the one that counts. These are for the evening.")
-                .font(.subheadline)
-                .foregroundStyle(brand.palette.inkSoft)
+            Text("Want more?").brandFont(.title2).foregroundStyle(brand.palette.ink)
             MoreRow(title: "The pattern book",
                     detail: bookDetail,
-                    mark: bench.bookOpen ? nil : "Pro") {
+                    mark: bench.bookOpen ? nil : "Unlock") {
                 bench.pinNext()
-            }
-            MoreRow(title: "Past days",
-                    detail: pastDetail,
-                    mark: bench.archiveOpen ? nil : "Pro") {
-                tab = .book
             }
         }
     }
 
     private var bookDetail: String {
         let d = Play.dials(at: record.rung)
-        if !bench.bookOpen { return "Twenty patterns worked. The rest of the book opens with the unlock." }
-        if bench.archiveOpen { return "Pattern \(record.rung) is next: \(Words.size(d.side))." }
-        return "Pattern \(record.rung) is next: \(Words.size(d.side)). \(Words.capitalised(bench.freeLeft)) of the first twenty still free."
-    }
-
-    private var pastDetail: String {
-        let missed = Play.pastDays().filter { record.piece(forLace: $0) == nil }.count
-        if missed == 0 { return "Every past lace is in your sampler." }
-        return "\(Words.capitalised(missed)) past \(missed == 1 ? "lace" : "laces") you have not worked, back to No. 1."
+        if !bench.bookOpen { return "Your three free patterns are worked. One payment opens the rest of the book." }
+        if bench.hasBook { return "Pattern \(record.rung) is next: \(Words.size(d.side))." }
+        return "Pattern \(record.rung) is next: \(Words.size(d.side)). \(Words.capitalised(bench.freeLeft)) of three free."
     }
 }
 

@@ -32,9 +32,9 @@ enum Play {
     /// asks a newcomer for a rule the first card did not teach.
     static let dailyWeek = [6, 14, 26, 40, 58, 82, 120]
 
-    /// The book's free patterns. The daily is free forever; the book is the practice beside
-    /// it, and twenty is about a week of an evening's extra play before the door.
-    static let freePatterns = 20
+    /// The book's free sample. The daily is free forever and never asks for money; the book is
+    /// what is sold, and three patterns are enough to know it is more of the same good thing.
+    static let freePatterns = 3
 
     /// Lace No. 1 was pricked on 1 September 2026. Everyone on the same calendar date holds
     /// the same number and the same lace, which is what lets two people compare.
@@ -67,12 +67,6 @@ enum Play {
 
     /// "No. 27" — the day's lace, numbered from the first.
     static func dailyNumber(day: Int) -> Int { day - firstDay + 1 }
-
-    /// Every past lace that can be worked from the archive, newest first.
-    static func pastDays(before today: Int = dayNumber()) -> [Int] {
-        guard today > firstDay else { return [] }
-        return Array((firstDay..<today).reversed())
-    }
 
     /// 1970-01-01 was a Thursday, so day 4 is the first Monday.
     static func dailyRung(day: Int) -> Int {
@@ -131,7 +125,7 @@ enum Play {
 
     // MARK: - Earned
 
-    /// What playing opens, on pieces worked. Never what paying opens: the book past sixty is
+    /// What playing opens, on pieces worked. Never what paying opens: the book past the third is
     /// behind the unlock, and that door cannot be the only one.
     static let earned = Earned([
         .init(id: "sampler", title: "The sampler",

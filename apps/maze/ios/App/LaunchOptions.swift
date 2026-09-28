@@ -19,7 +19,7 @@ enum LaunchOptions {
     /// `-screen pillow|sampler|book|workbox|paywall|win`
     static var screen: String? { value(for: "-screen") }
 
-    /// `-board today|book|loose|past` — which pattern the pillow shows; past is yesterday's.
+    /// `-board today|book|loose` — which pattern the pillow shows.
     static var board: String? { value(for: "-board") }
 
     /// `-rung 150` (or `-level 150`) seeds the book at that rung, with a sampler to match, so

@@ -16,16 +16,15 @@ the book, which is seeded per person.
 **Today holds only today's lace.** Tab 1 is *Today*. It shows the day's lace, numbered from
 No. 1 (1 September 2026) and dated, and before the first pin one italic line: "Today's lace,
 the same one for everybody. Start at the gold pin, and every pin, once." The book, loose work
-and past days are worked *over* Today in a full-screen cover with a close button, and close
+are worked *over* Today in a full-screen cover with a close button, and close
 back to it, so the Today tab can never show anything else. The first card ends on "Start
-today's lace · No. 27". Tabs: Today · Sampler · Patterns · Settings.
+today's lace · No. 27". Tabs: see *Three tabs* below.
 
 **Done for today** replaces "Today's is in the sampler". What the day was for comes first: the
 piece on the pillow, the headline, "Done for today. Everybody who opens Lacework today works
 this same lace", days running beside the time to the next lace (to the minute, so a capture
-settles), tomorrow's size, and *Send a swatch* full width. Under a pin rule, "More lace
-today — the one that counts is done; these are for the evening": the pattern book and past
-days, each marked *Pro* when locked. The lift's button after today's lace is "Done for
+settles), tomorrow's size, and *Send a swatch* full width. Under a pin rule, "Want more?" and
+one row: the pattern book, marked *Unlock* when the free three are worked. The lift's button after today's lace is "Done for
 today", not the book.
 
 **One lace for everyone.** The daily was already a pure function of the local date. What could
@@ -57,16 +56,17 @@ walls and "drag back to undo" instead of brass, gimp and picking out, and its la
 there is a new lace every morning, the same for everybody. Onboarding is one page, "One lace a
 day", whose button is "Show me how" — the pillow teaches the rest.
 
-**The money.** One payment, no subscription, same product (`com.starhiveconcept.maze.pro`,
-$4.99). Today's lace is free forever — the promise and the reason to open the app. The unlock,
-"Open the whole book", adds: *every past day's lace back to No. 1* (the one thing a daily
-player who missed a day wants, and cheap for us: it is `todayPricking(day:)` for an earlier
-day), the book past pattern 20 (was 60 — sixty was two months of evenings before anyone met
-the door), loose work and the ledger. Past days count into the sampler but never into days
-running, which only the day itself can. The paywall shows where the want is: a locked past
-day in the Patterns tab, the book at 21, and the *Pro* marks on Done for today. Not a
-subscription, because the wedge is honesty in a category whose reviews punish weekly plans,
-and because the product already exists in App Store Connect with no 3.1.2 exposure.
+**The money (revised 28 Sep, the owner's call).** One rule anyone can say back: *today's lace
+is free; the book is what we sell.* The daily never mentions money. The book's first three
+patterns are the sample; pattern 4 opens the paywall — "The whole pattern book", one payment
+of $4.99, no subscription, same product (`com.starhiveconcept.maze.pro`). The unlock is the
+book, loose work and the ledger. There are no past days: an archive was a second thing for
+sale, and two things for sale is how "there is no clear monetisation" happens. The paywall
+appears in exactly two places — the Book tab and the book's own "next" button — and the
+Book tab says the price on its face ("$4.99 · once", "Unlock the whole book · $4.99").
+
+**Three tabs.** Today · Book · Me. *Me* is the sampler, the month card, the cushion, and a
+gear to Settings (the kit's, with the pillow's rows). The reminder lives only in Settings.
 
 ## The idea
 

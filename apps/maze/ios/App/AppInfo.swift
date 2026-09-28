@@ -25,16 +25,16 @@ enum AppInfo {
                        artHeight: 360) { OnboardingArt(image: "Pillow") },
     ]
 
-    static let paywallHeadline = "Open the whole book"
-    static let paywallSubhead = "One payment, no subscription. It is yours, like the pillow."
+    static let paywallHeadline = "The whole pattern book"
+    static let paywallSubhead = "One payment, no subscription. Yours to keep, like the pillow."
     static let paywallBullets = [
-        "Every past day's lace, back to No. 1 — work the days you missed, the same laces everyone had.",
-        "The pattern book past the twentieth, climbing to fourteen pins a side, medallions and windows, each proved to have one way through.",
+        "Every pattern in the book, from five by five to fourteen by fourteen — medallions, windows, loose ends — each proved to have exactly one way through.",
+        "Chosen for you: the next pattern is pricked in the ground you find hardest.",
         "Loose work: a fresh pattern whenever you want one, never the same twice.",
         "The ledger: your pieces by size and by ground.",
     ]
-    static let paywallPromise = "Today's lace stays free, every day, for everyone. No ads, ever, and every piece you have worked stays in the sampler."
-    static let paywallCTA = "Open the whole book"
+    static let paywallPromise = "Today's lace stays free for everyone, every day. No ads, ever."
+    static let paywallCTA = "Unlock the whole book"
 }
 
 /// Onboarding's art under the masthead: `LACEWORK` in the caps between two hairlines and a

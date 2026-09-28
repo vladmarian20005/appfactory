@@ -2,7 +2,7 @@ import FactoryKit
 import SwiftUI
 
 /// Screen 1 · Today — today's lace and nothing else, the one everybody has. The same view,
-/// `over` the Today tab, works the book, loose work or a past day, and closes back to it.
+/// `over` the Today tab, works the book or loose work, and closes back to it.
 struct PillowView: View {
     @Binding var tab: RootView.Tab
     var over = false
@@ -44,7 +44,6 @@ struct PillowView: View {
         switch bench.current?.kind ?? bench.lift?.piece.kind {
         case .book(let rung)?: return "Pattern \(rung)"
         case .loose?: return "Loose work"
-        case .past(let d)?: return "Lace No. \(Play.dailyNumber(day: d))"
         default: return "Today"
         }
     }
@@ -174,7 +173,6 @@ struct PillowView: View {
         let start = p.pricking.start == nil ? "Start at any pin" : "Start at the gold pin"
         switch p.kind {
         case .today: return "Today's lace, the same one for everybody. \(start), and every pin, once."
-        case .past: return "A past day's lace, the one everybody had. \(start), and every pin, once."
         case .book: return "From the pattern book. \(start), and every pin, once."
         case .loose: return "Loose work, never the same twice. \(start), and every pin, once."
         }
@@ -210,14 +208,11 @@ struct PillowView: View {
                     Text("\(Words.capitalised(step + 1)) of \(Words.number(FirstCard.cards.count))").caps()
                 case (nil, .book(let rung)?):
                     Text("Pattern \(rung)").brandFont(.title3).foregroundStyle(brand.palette.ink)
-                    Text(bench.archiveOpen || bench.freeLeft == 0 ? "The book"
+                    Text(bench.hasBook || bench.freeLeft == 0 ? "The book"
                          : "The book · \(Words.number(bench.freeLeft)) free").caps()
                 case (nil, .loose(let n)?):
                     Text("Loose work").brandFont(.title3).foregroundStyle(brand.palette.ink)
                     Text("Piece \(n)").caps()
-                case (nil, .past(let d)?):
-                    Text("No. \(Play.dailyNumber(day: d))").brandFont(.title3).foregroundStyle(brand.palette.ink)
-                    Text(Play.date(ofDay: d).formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))).caps()
                 default:
                     Text("No. \(bench.todayNumber)").brandFont(.title3).foregroundStyle(brand.palette.ink)
                     Text(Date.now.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))).caps()

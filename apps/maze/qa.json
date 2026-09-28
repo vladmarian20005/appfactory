@@ -29,7 +29,7 @@
         "-sampleData",
         "-done"
       ],
-      "note": "Today's lace once it is worked: TODAY'S LACE \u00b7 NO. at the top, the piece on the pillow, the headline, 'Done for today', days running beside the time until the next lace, tomorrow's size, Send a swatch, then More lace today \u2014 the pattern book and past days, each marked Pro when locked."
+      "note": "Today's lace once it is worked: TODAY'S LACE \u00b7 NO. at the top, the piece on the pillow, the headline, 'Done for today', days running beside the time until the next lace, tomorrow's size, Send a swatch, then 'Want more?' with the one row to the pattern book."
     },
     {
       "name": "03-pillow",
@@ -44,11 +44,11 @@
       "args": [
         "-onboarded",
         "-sampleData",
-        "-pro",
+        "-fakeProducts",
         "-screen",
         "book"
       ],
-      "note": "The Patterns tab: the pattern book's next card, then Past days \u2014 the last ten days' laces, worked ones as small laces and the rest as numbered cards \u2014 the chapters and the cushion."
+      "note": "The Book tab, the one thing for sale: a plain line on what is free and what the book is, 'the free patterns are worked \u00b7 $4.99 \u00b7 once', the next pattern's card, 'Unlock the whole book \u00b7 $4.99', and the chapters."
     },
     {
       "name": "05-first-pattern",
@@ -70,14 +70,14 @@
       "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch. The book art, the pin-head bullets, one payment."
     },
     {
-      "name": "07-workbox",
+      "name": "07-me",
       "args": [
         "-onboarded",
         "-sampleData",
         "-screen",
         "workbox"
       ],
-      "note": "The kit's settings on the linen: the pillow's counts, sounds, the reminder, the thread picker once silk is earned."
+      "note": "The Me tab: pieces at 112 pt, the sampler cloth, the month card pinned on days the day's lace was worked, the cushion of what playing has earned, and the gear to Settings."
     },
     {
       "name": "08-onboarding",
@@ -85,17 +85,6 @@
         "-reset"
       ],
       "note": "The only onboarding page: LACEWORK between hairlines, the pillow drawn, 'One lace a day', the line saying it is the same one for everybody, and 'Show me how', which pins the first practice card."
-    },
-    {
-      "name": "09-past-day",
-      "args": [
-        "-onboarded",
-        "-sampleData",
-        "-pro",
-        "-board",
-        "past"
-      ],
-      "note": "Yesterday's lace opened from Past days over the Today tab: the close button, LACE NO. in the title, the day at the right, the goal line saying it is the one everybody had."
     }
   ],
   "ladder": [

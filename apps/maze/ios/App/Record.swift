@@ -17,7 +17,6 @@ struct Record: Codable, Equatable {
     var reminderHour: Int? = nil            // nil = not pinned; else 0…23
     var pillow: SavedPillow?                // the book or loose pattern in progress, if any
     var todayPillow: SavedPillow?           // today's pattern in progress, if any
-    var pastPillow: SavedPillow?            // a past day's lace from the archive, in progress
     var todayDay = 0                        // dayNumber the daily pillow belongs to
     var tomorrow: Pricking?                 // tomorrow's pattern, pricked ahead when today's lifts
     var nextBook: Pricking?                 // the next book pattern, pricked ahead on every lift
@@ -43,7 +42,6 @@ struct Record: Codable, Equatable {
         reminderHour = try c.decodeIfPresent(Int.self, forKey: .reminderHour)
         pillow = try c.decodeIfPresent(SavedPillow.self, forKey: .pillow)
         todayPillow = try c.decodeIfPresent(SavedPillow.self, forKey: .todayPillow)
-        pastPillow = try c.decodeIfPresent(SavedPillow.self, forKey: .pastPillow)
         todayDay = try c.decodeIfPresent(Int.self, forKey: .todayDay) ?? 0
         tomorrow = try c.decodeIfPresent(Pricking.self, forKey: .tomorrow)
         nextBook = try c.decodeIfPresent(Pricking.self, forKey: .nextBook)
@@ -72,10 +70,7 @@ struct Record: Codable, Equatable {
         pieces.last { $0.kind == .today && $0.day == day }
     }
 
-    /// The piece worked from a day's lace, on the day or later from the archive.
-    func piece(forLace day: Int) -> Piece? {
-        pieces.last { $0.laceDay == day }
-    }
+
 
     /// The thread a piece is worked in, as earned: gold falls back to indigo if not yet earned.
     var threadInHand: ThreadColour {
@@ -126,9 +121,6 @@ struct Piece: Codable, Equatable, Identifiable, Hashable {
         case today
         case book(rung: Int)
         case loose(n: Int)
-        /// A past day's lace, worked later from the archive. It goes in the sampler; it
-        /// never counts towards days running, which only the day itself can.
-        case past(day: Int)
     }
 
     var id: Int                             // 1-based, the order it was lifted
@@ -154,20 +146,13 @@ struct Piece: Codable, Equatable, Identifiable, Hashable {
 
     var isToday: Bool { kind == .today }
 
-    /// The day whose shared lace this was, for a day's piece or an archive one.
-    var laceDay: Int? {
-        switch kind {
-        case .today: day
-        case .past(let d): d
-        default: nil
-        }
-    }
+    /// The day whose shared lace this was, for a day's piece.
+    var laceDay: Int? { kind == .today ? day : nil }
 
     /// "NO. 27" for a day's lace, "BK 51" for the book, "LOOSE 4" for loose work.
     var mark: String {
         switch kind {
         case .today: "No. \(Play.dailyNumber(day: day))"
-        case .past(let d): "No. \(Play.dailyNumber(day: d))"
         case .book(let rung): "Bk \(rung)"
         case .loose(let n): "Loose \(n)"
         }

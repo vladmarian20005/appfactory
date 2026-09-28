@@ -8,17 +8,16 @@ struct WorkboxView: View {
     @EnvironmentObject private var bench: Bench
 
     var body: some View {
-        NavigationStack {
-            SettingsView(store: store,
-                         config: AppInfo.config,
-                         onUpgrade: { showPaywall = true },
-                         upgradeTitle: "Open the whole book",
-                         activeTitle: "The whole book is open") {
-                WorkboxRows()
-            }
-            .serifTitle("The workbox")
-            .background { Linen(ticking: bench.record.ticking) }
+        // Pushed from Me, so it lives in Me's navigation stack.
+        SettingsView(store: store,
+                     config: AppInfo.config,
+                     onUpgrade: { showPaywall = true },
+                     upgradeTitle: "Unlock the whole book",
+                     activeTitle: "The whole book is yours") {
+            WorkboxRows()
         }
+        .serifTitle("Settings")
+        .background { Linen(ticking: bench.record.ticking) }
     }
 }
 

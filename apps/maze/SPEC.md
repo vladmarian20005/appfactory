@@ -63,9 +63,9 @@ Local-first: `@AppStorage` for streak and settings, SwiftData for solved boards.
 
 **One-time unlock, $4.99.** StoreKit 2. Product id `com.starhiveconcept.maze.pro`.
 Not a subscription, so guideline 3.1.2's Terms-of-Use block does not apply.
-Pro unlocks every past day's maze (the archive, back to No. 1), the graded book past pattern
-20, endless mode and per-size stats. Today's maze stays free forever, with no ads.
-(Revised 27 Sep 2026 from "first 60 free"; see DESIGN.md §1.1.)
+Pro unlocks the pattern book past its first three patterns, endless mode and per-size stats.
+Today's maze stays free forever, with no ads, and never mentions money.
+(Revised 28 Sep 2026 from "first 60 free"; see DESIGN.md §1.1.)
 
 ## Needs from the owner
 

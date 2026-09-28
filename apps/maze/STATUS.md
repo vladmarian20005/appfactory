@@ -60,28 +60,30 @@ DESIGN.md's *The first card* now describes:
   (5×5); a record past the lesson with a medallion today gets the window note once; dark mode
   and AX5 hold. `tells.mjs --strict`: 0 hard tells, 0 smells.
 
-## 1.1 · The daily is the point (27 Sep, after the owner's second pass)
+## 1.1 · The daily is the point (27–28 Sep, after the owner's second pass)
 
 "People do not know that the daily one is the goal. Make sure everyone gets the same lace in the
 daily section. The pen does not work great. A good tutorial, a clean UX, a good way to
-monetize." DESIGN.md §1.1 has the reasoning; in the code:
+monetize." Then: "no clear monetisation — keep the book monetised, only the daily free", and
+three tabs. DESIGN.md §1.1 has the reasoning; in the code:
 
-- `RootView`: tabs Today · Sampler · Patterns · Settings. Book, loose and past-day patterns
-  open in a full-screen cover over Today (`Bench.awayFromToday`), with their own paywall sheet.
-- `PillowView`: numbered, dated head ("No. 27"), the goal line before the first pin, close
-  button over Today, "How to play" in the menu. `DoneToday.swift`: the done page.
-- `Bench`: `Which.past(day)`, `Record.pastPillow`, `Piece.Kind.past(day:)` (never counts to days
-  running), `forgetOtherEngines()`, first card → today, `closeLift()`, `nudge()`, burst-throttled
-  detent and tone, `-done` and `-board past` launch flags.
+- `RootView`: tabs Today · Book · Me. Book and loose patterns open in a full-screen cover over
+  Today (`Bench.awayFromToday`), with their own paywall sheet. Settings is pushed from Me.
+- `PillowView`: numbered, dated head ("No. 28"), the goal line before the first pin, close
+  button over Today, "How to play" in the menu. `DoneToday.swift`: the done page, one row to
+  the book.
+- `Bench`: first card → today, `forgetOtherEngines()`, `closeLift()`, `nudge()`, burst-throttled
+  detent and tone, `-done` launch flag.
 - `CardView`: the pen — trajectory walk, slack strand, head bead and halo, 0.95-pitch grab,
   refusal detent, nudge ring, resting bobbin; no trailing spring on the newest segment.
-- `Play`: `firstDay` (No. 1 = 1 Sep 2026), `dailyNumber`, `pastDays`, `freePatterns` 20, Sunday
-  rung 120. `Generator.engine` = 2, stamped on every `Pricking`.
-- `ArchiveView.swift` and Past days in the Patterns tab; paywall copy and all ten listings say
-  what the unlock now holds. `qa.json`: `02b-done-today`, `09-past-day`, `-won` on the sampler.
-- `tells.mjs --strict`: 0 hard tells, 0 smells. `listing-check.sh`: clean.
-- **Not yet built.** This session had no macOS runner access, so nothing above has been
-  compiled or seen on a simulator. `app-verify` on the branch is the next step.
+- `Play`: `firstDay` (No. 1 = 1 Sep 2026), `dailyNumber`, `freePatterns` 3, Sunday rung 120.
+  `Generator.engine` = 2, stamped on every `Pricking`.
+- `BookView`: the offer line with the price, the next pattern always shown, "Play pattern N" /
+  "Unlock the whole book · $4.99"; the ledger only once bought. Paywall copy and all ten
+  listings say the book is what is sold.
+- `tells.mjs --strict` and `listing-check.sh` run clean.
+- **Not yet built.** This session cannot start workflows, so nothing above has been compiled
+  or seen on a simulator. `app-verify` on the branch is the next step.
 
 ## Not checked here
 

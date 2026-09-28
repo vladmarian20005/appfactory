@@ -104,12 +104,10 @@ enum Voice {
             let days = record.daysRunning()
             let run = days > 1 ? "\(Words.capitalised(days)) days running. " : ""
             second = "\(run)Tomorrow's is \(Words.size(tomorrow)), pricked at midnight — the same one for everybody."
-        } else if case .past(let d) = piece.kind {
-            second = "No. \(Play.dailyNumber(day: d)) is in the sampler with the rest."
         } else if let next {
             second = "Next in the book: \(Words.size(next.side)), the \(next.ground.name) ground."
         } else {
-            second = "The book goes on past the twentieth."
+            second = "That was the last of the free patterns. The rest of the book is one payment."
         }
         return (first, second)
     }

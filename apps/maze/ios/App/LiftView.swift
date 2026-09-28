@@ -212,7 +212,7 @@ struct LiftView: View {
     }
 
     /// Where to go from here. Today's lace is the day's point, so after it: done. After the
-    /// book, the next in the book; after loose work, another; after a past day, back.
+    /// book, the next in the book; after loose work, another.
     private var nextButton: some View {
         Button {
             Haptics.tap()
@@ -220,7 +220,6 @@ struct LiftView: View {
             case .today: bench.closeLift()
             case .book: bench.pinNext()
             case .loose: bench.workLoose()
-            case .past: bench.backToToday()
             }
         } label: {
             Text(nextTitle)
@@ -236,9 +235,8 @@ struct LiftView: View {
     private var nextTitle: String {
         switch piece.kind {
         case .today: "Done for today"
-        case .book: bench.bookOpen ? "Next pattern" : "Open the whole book"
+        case .book: bench.bookOpen ? "Next pattern" : "Unlock the whole book"
         case .loose: "Another loose one"
-        case .past: "Back to today"
         }
     }
 }

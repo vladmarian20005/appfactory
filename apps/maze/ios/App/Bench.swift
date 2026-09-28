@@ -5,12 +5,9 @@ import SwiftUI
 /// every beat of the winding and the lift.
 @MainActor
 final class Bench: ObservableObject {
-    /// What the finger is on. Today's lace lives on the Today tab; everything else — the book,
-    /// loose work, a past day from the archive — is worked over it, and closes back to it.
-    enum Which: Equatable, Hashable {
-        case today, book, loose
-        case past(Int)
-    }
+    /// What the finger is on. Today's lace lives on the Today tab; the book and loose work
+    /// are worked over it, and close back to it.
+    enum Which: Equatable, Hashable { case today, book, loose }
 
     /// A line in the margin, and what kind of moment set it.
     struct MarginLine: Equatable {
@@ -96,7 +93,6 @@ final class Bench: ObservableObject {
         if let t = LaunchOptions.thread.flatMap(ThreadColour.init(rawValue:)) { record.thread = t }
         if LaunchOptions.board == "book" { which = .book }
         if LaunchOptions.board == "loose" { which = .loose }
-        if LaunchOptions.board == "past" { which = .past(Play.dayNumber() - 1) }
         if LaunchOptions.rung != nil && LaunchOptions.board == nil { which = .book }
         forgetOtherEngines()
         rollDay()
@@ -117,7 +113,6 @@ final class Bench: ObservableObject {
     /// has today. Throw it away and prick it again, so the daily is one lace for everybody.
     private func forgetOtherEngines() {
         if record.todayPillow.map({ $0.pricking.engine != Generator.engine }) == true { record.todayPillow = nil }
-        if record.pastPillow.map({ $0.pricking.engine != Generator.engine }) == true { record.pastPillow = nil }
         if record.tomorrow.map({ $0.engine != Generator.engine }) == true { record.tomorrow = nil }
         if record.nextBook.map({ $0.engine != Generator.engine }) == true { record.nextBook = nil }
     }
@@ -132,7 +127,6 @@ final class Bench: ObservableObject {
     private var board: SavedPillow? {
         switch which {
         case .today: record.todayPillow
-        case .past: record.pastPillow
         case .book, .loose: record.pillow
         }
     }
@@ -147,7 +141,7 @@ final class Bench: ObservableObject {
 
     var bookOpen: Bool { isPro || LaunchOptions.forcePro || record.rung <= Play.freePatterns }
 
-    var archiveOpen: Bool { isPro || LaunchOptions.forcePro }
+    var hasBook: Bool { isPro || LaunchOptions.forcePro }
 
     /// Today's lace number, "No. 27".
     var todayNumber: Int { Play.dailyNumber(day: Play.dayNumber()) }
@@ -191,15 +185,6 @@ final class Bench: ObservableObject {
             wantsPaywall = true
             return
         }
-        if case .past(let d) = w {
-            if !archiveOpen {
-                wantsPaywall = true
-                return
-            }
-            // A past lace already in the sampler is kept, not worked twice.
-            if record.piece(forLace: d) != nil { return }
-            if let p = record.pastPillow, p.kind != .past(day: d) { record.pastPillow = nil }
-        }
         if w != which || lift != nil {
             withMotion(Motion.gentle) {
                 which = w
@@ -232,13 +217,10 @@ final class Bench: ObservableObject {
         let which = self.which
         let ground = nextBookGround
         let cached = record.nextBook
-        if case .past(let d) = which, record.piece(forLace: d) != nil { return }
         let make: @Sendable () -> (Pricking, Piece.Kind) = {
             switch which {
             case .today:
                 return (Play.todayPricking(day: day), .today)
-            case .past(let d):
-                return (Play.todayPricking(day: d), .past(day: d))
             case .book:
                 if let cached, cached.rung == rung, cached.ground == ground { return (cached, .book(rung: rung)) }
                 return (Play.bookPricking(rung: rung, ground: ground, salt: salt), .book(rung: rung))
@@ -268,7 +250,6 @@ final class Bench: ObservableObject {
     private func place(_ pillow: SavedPillow, for which: Which) {
         switch which {
         case .today: record.todayPillow = pillow
-        case .past: record.pastPillow = pillow
         case .book, .loose: record.pillow = pillow
         }
         if which == .book { record.nextBook = nil }
@@ -309,10 +290,6 @@ final class Bench: ObservableObject {
             guard var p = record.todayPillow else { return }
             change(&p)
             record.todayPillow = p
-        case .past:
-            guard var p = record.pastPillow else { return }
-            change(&p)
-            record.pastPillow = p
         case .book, .loose:
             guard var p = record.pillow else { return }
             change(&p)
@@ -637,8 +614,6 @@ final class Bench: ObservableObject {
         case .loose:
             record.loosePiecesWorked += 1
             record.pillow = nil
-        case .past:
-            record.pastPillow = nil
         }
         scheduleSave()
 

@@ -1,11 +1,13 @@
 import FactoryKit
 import SwiftUI
 
-/// Screen 3 · Packs. The ladder, pattern by pattern, and what is waiting.
+/// Screen 2 · The book. The one thing Lacework sells: today's lace is free, the book is not.
+/// The first three patterns are the sample; one payment opens the rest.
 struct BookView: View {
     @Binding var tab: RootView.Tab
     @Binding var showPaywall: Bool
     @EnvironmentObject private var bench: Bench
+    @EnvironmentObject private var store: Store
     @Environment(\.brand) private var brand
 
     private var record: Record { bench.record }
@@ -16,16 +18,15 @@ struct BookView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 26) {
+                    if !pro { offer }
                     stack
                     actions
                     PinRule()
-                    pastDays
-                    PinRule()
                     chapters
-                    PinRule()
-                    Cushion(pieces: record.pieces.count)
-                    PinRule()
-                    ledger
+                    if pro {
+                        PinRule()
+                        ledger
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -55,13 +56,7 @@ struct BookView: View {
                 }
                 .opacity(0.9)
                 VStack(alignment: .leading, spacing: 8) {
-                    if locked {
-                        Spacer()
-                        Text("The book goes on")
-                            .caps(.headline, tracking: 4)
-                            .frame(maxWidth: .infinity)
-                        Spacer()
-                    } else {
+                    Group {
                         HStack(alignment: .top) {
                             Text("\(record.rung)")
                                 .brandDisplay(size: 76)
@@ -73,7 +68,7 @@ struct BookView: View {
                         Spacer(minLength: 0)
                         Text("Pattern \(record.rung) · \(Words.size(d.side)) · the \(ground.name) ground")
                             .caps()
-                        Text(looseLine(d.loose))
+                        Text(locked ? "Opens with the whole book." : looseLine(d.loose))
                             .font(.subheadline.italic())
                             .foregroundStyle(brand.palette.inkSoft)
                     }
@@ -92,8 +87,7 @@ struct BookView: View {
             .frame(height: 250)
         }
         .buttonStyle(.pressable(scale: 0.98))
-        .accessibilityLabel(locked ? "The book goes on. See the whole book." :
-                                "Pattern \(record.rung), \(Words.size(d.side)), the \(ground.name) ground")
+        .accessibilityLabel("Pattern \(record.rung), \(Words.size(d.side)), the \(ground.name) ground\(locked ? ", opens with the whole book" : "")")
     }
 
     private func looseLine(_ loose: Int) -> String {
@@ -110,7 +104,8 @@ struct BookView: View {
                 Haptics.tap()
                 if locked { showPaywall = true } else { pin() }
             } label: {
-                Text(locked ? "See the whole book" : "Pin the next pattern")
+                Text(locked ? "Unlock the whole book\(store.offers.first.map { " · \($0.priceText)" } ?? "")"
+                            : "Play pattern \(record.rung)")
                     .font(.headline).frame(maxWidth: .infinity).padding(.vertical, 4)
             }
             .brandProminent()
@@ -132,35 +127,27 @@ struct BookView: View {
         bench.pinNext()
     }
 
-    // MARK: - Past days
+    // MARK: - What the book is, and what it costs
 
-    /// The last ten days' laces, and the way to all of them.
-    private var pastDays: some View {
-        let days = Play.pastDays()
-        return VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("Past days").brandFont(.title2).foregroundStyle(brand.palette.ink)
-                Spacer()
-                if days.count > 10 {
-                    NavigationLink { ArchiveView() } label: {
-                        Text("All \(days.count)").font(.subheadline.weight(.semibold))
-                    }
-                }
-            }
-            Text(bench.archiveOpen
-                 ? "Every day's lace since No. 1, the same ones everybody had. Work the ones you missed."
-                 : "Every day's lace since No. 1, the same ones everybody had. They open with the whole book.")
+    /// Said once, plainly, at the top: what is free, what is for sale, and the price.
+    private var offer: some View {
+        let price = store.offers.first?.priceText
+        return VStack(alignment: .leading, spacing: 10) {
+            Text("Today's lace is free, every day. The book is for everything after it: hundreds of patterns from five by five to fourteen by fourteen, each proved to have one way through.")
                 .font(.subheadline)
                 .foregroundStyle(brand.palette.inkSoft)
                 .fixedSize(horizontal: false, vertical: true)
-            if days.isEmpty {
-                Text("No. 1 is today's. Tomorrow it will be here.")
-                    .font(.subheadline.italic())
-                    .foregroundStyle(brand.palette.inkSoft)
-            } else {
-                PastDaysGrid(days: Array(days.prefix(10)))
+            HStack(alignment: .firstTextBaseline) {
+                Text(bench.freeLeft > 0
+                     ? "\(Words.capitalised(bench.freeLeft)) of three free \(bench.freeLeft == 1 ? "pattern" : "patterns") left"
+                     : "The free patterns are worked")
+                    .caps()
+                Spacer(minLength: 8)
+                Text(price.map { "\($0) · once" } ?? "One payment").caps()
             }
         }
+        .padding(16)
+        .background(brand.palette.surface.opacity(0.8), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 
     // MARK: - Chapters
@@ -228,7 +215,7 @@ struct BookView: View {
             } else {
                 Text("Your pieces by size and by ground, ruled on parchment, open with the book.")
                     .foregroundStyle(brand.palette.inkSoft)
-                Button("See the whole book") { showPaywall = true }
+                Button("Unlock the whole book") { showPaywall = true }
                     .font(.headline)
             }
         }
