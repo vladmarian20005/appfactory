@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lacework — a one-line maze, a pattern a day, and never an ad</title>
+<meta name="description" content="Lacework is a one-line maze puzzle. Wind one thread through every pin on the card and the lace lifts off the pillow. One pattern a day, the same for everyone. Every board proved to have exactly one answer. No ads, no lives, no timer, fully offline.">
+<meta name="theme-color" content="#E8E0CF">
+<link rel="icon" href="icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lacework — one thread through every pin">
+<meta property="og:description" content="A one-line maze worked on a lacemaker's pillow. A pattern a day, each proved to have one answer. No ads, ever.">
+<meta property="og:image" content="shots/02.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* Lacework's own look, from apps/maze/DESIGN.md: a lacemaker's pillow by a window at ten in
+   the morning. Linen canvas, parchment card, walnut ink, indigo thread, madder for the second
+   voice, brass and steel for pins. Display face is New York Medium, as in the app and in the
+   store frames (screenshots.json "font": "serif"). Nothing here is a house style. */
+:root{
+  --linen:#E8E0CF;      /* canvas */
+  --card:#F8F3E7;       /* surface: the pricking card */
+  --ink:#2A2521;        /* walnut ink, and the gimp */
+  --ink-soft:#655B52;   /* the caps, the asides */
+  --thread:#31497A;     /* accent: indigo thread */
+  --on-thread:#F8F3E7;
+  --madder:#A8413A;     /* highlight: the second voice */
+  --sage:#4A7457;       /* success */
+  --steel:#6F7B88;
+  --brass:#9C7A2E;
+  --corner:10px;        /* stiff paper with its corners snipped */
+  --display:ui-serif,"New York",Georgia,serif;
+  --body:-apple-system,"SF Pro Text",BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:var(--body);
+  color:var(--ink);
+  background-color:var(--linen);
+  /* The weave: two fields of fine lines at 0° and 90° on a 2.6px pitch, and the window light
+     from the upper left, small enough to read as a window rather than a vignette. */
+  background-image:
+    repeating-linear-gradient(0deg, rgba(42,37,33,.035) 0 .75px, transparent .75px 2.6px),
+    repeating-linear-gradient(90deg, rgba(42,37,33,.035) 0 .75px, transparent .75px 2.6px),
+    radial-gradient(60% 44% at 22% 4%, #F6F0E3 0%, rgba(246,240,227,0) 100%);
+  line-height:1.55;
+  font-size:17px;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+a{color:var(--thread)}
+/* The width/height attributes are there to reserve space; without this they also fix the
+   height, and a screenshot sized by CSS width alone stretches to its 1434px attribute. */
+img{height:auto}
+h1,h2,h3{font-family:var(--display);font-weight:500;letter-spacing:-.005em;line-height:1.08;margin:0}
+p{margin:0 0 1em}
+
+/* The caps: small tracked uppercase, the letters cross-stitched along a sampler's hem. */
+.caps{font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* A rule of three pin-heads: the section divider. */
+.pins{display:flex;justify-content:center;align-items:center;gap:12px;margin:0 auto;padding:6px 0}
+.pins::before,.pins::after{content:"";flex:1;height:1px;background:rgba(42,37,33,.16)}
+.pins span{display:flex;gap:9px}
+.pins i{display:block;width:6px;height:6px;border-radius:50%;background:var(--steel);box-shadow:1px 1px 0 rgba(42,37,33,.22)}
+.pins i:nth-child(2){background:var(--brass)}
+
+/* Masthead */
+header.top{padding:26px 0 8px}
+.top .wrap{display:flex;align-items:center;gap:14px}
+.top img{width:44px;height:44px;border-radius:23%;display:block;box-shadow:0 6px 16px rgba(42,37,33,.22)}
+.wordmark{font-family:var(--display);font-size:24px;font-weight:500}
+.top nav{margin-left:auto;display:flex;gap:22px;font-size:14px}
+.top nav a{color:var(--ink-soft);text-decoration:none}
+.top nav a:hover{color:var(--thread)}
+
+/* Hero */
+.hero{padding:46px 0 30px}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}
+.hero h1{font-size:clamp(40px,5.4vw,64px);margin:14px 0 22px;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--thread)}
+.lede{font-size:19px;color:var(--ink-soft);max-width:30em}
+.lede strong{color:var(--ink);font-weight:600}
+.cta{margin-top:30px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.badge{
+  display:inline-flex;align-items:center;gap:11px;
+  background:var(--thread);color:var(--on-thread);
+  border-radius:var(--corner);padding:12px 20px;
+  box-shadow:0 10px 24px rgba(49,73,122,.28);
+}
+.badge svg{width:22px;height:22px;fill:var(--on-thread)}
+.badge .small{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;opacity:.8;line-height:1.4}
+.badge .big{display:block;font-size:16px;font-weight:600;line-height:1.2}
+.price-note{font-size:14px;color:var(--ink-soft);max-width:21em}
+.hero figure{margin:0}
+.hero figure img{display:block;width:100%;max-width:470px;margin:0 auto}
+.hero figcaption{text-align:center;margin-top:4px}
+
+/* Benefits */
+.benefits{padding:40px 0 10px}
+.benefit{display:grid;grid-template-columns:340px 1fr;gap:52px;align-items:center;padding:42px 0}
+.benefit:nth-child(even){grid-template-columns:1fr 340px}
+.benefit:nth-child(even) .art{order:2}
+.art{
+  background:var(--card);border-radius:var(--corner);padding:8px;
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 16px 34px rgba(42,37,33,.12);
+}
+.art img{display:block;width:100%;height:auto}
+.benefit h2{font-size:clamp(28px,3.4vw,40px);margin:10px 0 8px}
+.benefit .sub{font-family:var(--display);font-size:20px;color:var(--madder);margin:0 0 16px}
+.benefit p.body{color:var(--ink-soft);max-width:34em}
+.benefit p.body strong{color:var(--ink);font-weight:600}
+
+/* The lacemaker's line, set the way the margin sets it */
+.margin-line{font-style:italic;color:var(--ink-soft);font-size:17px;margin:4px 0 0}
+.margin-line b{font-style:normal;font-weight:500;color:var(--sage)}
+
+/* Shots */
+.shots{padding:48px 0 26px}
+.shots .head{display:flex;align-items:baseline;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.shots h2{font-size:clamp(26px,3vw,34px)}
+.strip{display:flex;gap:18px;overflow-x:auto;padding:6px 2px 22px;scroll-snap-type:x mandatory}
+.strip figure{margin:0;flex:0 0 232px;scroll-snap-align:start}
+.strip img{display:block;width:100%;border-radius:var(--corner);box-shadow:0 12px 26px rgba(42,37,33,.16)}
+
+/* The deal */
+.deal{padding:50px 0}
+.deal .wrap{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.card{
+  background:var(--card);border-radius:var(--corner);padding:30px 30px 24px;
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 14px 30px rgba(42,37,33,.10);
+  position:relative;
+}
+/* Four brass pins hold every card to the pillow. */
+.card::before,.card::after{
+  content:"";position:absolute;top:10px;width:7px;height:7px;border-radius:50%;
+  background:var(--brass);box-shadow:1px 1.5px 0 rgba(42,37,33,.25);
+}
+.card::before{left:10px}.card::after{right:10px}
+.card h3{font-size:26px;margin:8px 0 4px}
+.card .cost{font-family:var(--display);font-weight:500;font-size:44px;line-height:1;margin:6px 0 14px}
+.card.book .cost{color:var(--thread)}
+.card ul{list-style:none;margin:0;padding:0;color:var(--ink-soft);font-size:15.5px}
+.card li{padding:7px 0 7px 22px;position:relative;border-top:1px solid rgba(42,37,33,.08)}
+.card li:first-child{border-top:0}
+/* The pin-head, the app's one bullet. Never a checkmark. */
+.card li::before{
+  content:"";position:absolute;left:2px;top:15px;width:7px;height:7px;border-radius:50%;
+  background:var(--steel);box-shadow:1px 1px 0 rgba(42,37,33,.2);
+}
+.card.book li::before{background:var(--thread)}
+.deal .foot{grid-column:1/-1;font-size:14px;color:var(--ink-soft);text-align:center;margin-top:4px}
+
+/* Questions */
+.faq{padding:50px 0 20px}
+.faq h2{font-size:clamp(26px,3vw,34px);margin:8px 0 0}
+.faq .grid{display:grid;grid-template-columns:1fr 1fr;gap:30px 46px;margin-top:28px}
+.q{font-family:var(--display);font-weight:500;font-size:20px;margin:0 0 7px}
+.a{color:var(--ink-soft);font-size:15.5px;margin:0}
+
+footer{padding:46px 0 60px;color:var(--ink-soft);font-size:14px}
+footer .wrap{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+footer .spacer{margin-left:auto}
+
+@media (max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;gap:26px}
+  .benefit,.benefit:nth-child(even){grid-template-columns:1fr;gap:24px;padding:30px 0}
+  .benefit:nth-child(even) .art{order:0}
+  .art{max-width:420px}
+  .deal .wrap,.faq .grid{grid-template-columns:1fr}
+  .top nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <img src="icon.png" alt="Lacework app icon: an indigo thread wound through pins on a parchment card">
+    <span class="wordmark">Lacework</span>
+    <nav>
+      <a href="#pillow">The pillow</a>
+      <a href="#shots">Screens</a>
+      <a href="#questions">Questions</a>
+      <a href="https://starhiveconcept.com/maze-privacy-policy-terms/">Privacy</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="caps">A one-line maze · a pattern a day</span>
+      <h1>One thread through every pin, and <em>the lace lifts off.</em></h1>
+      <p class="lede">A pattern pricked into a card and pinned to a lacemaker's pillow. Wind one
+        thread from pin to pin until none is left bare — it never crosses itself, and it never has
+        to. Then the pins come out and the piece is yours.</p>
+      <p class="lede"><strong>No ads, ever.</strong> No lives, no timer, no hints to buy. Every
+        pattern is proved to have exactly one answer before it is pricked.</p>
+      <div class="cta">
+        <span class="badge">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 12.54c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.7-3.19-1.72-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.18-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.74 2.21 1.1-.05 1.52-.71 2.85-.71 1.33 0 1.71.71 2.88.69 1.19-.02 1.94-1.08 2.66-2.15.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.32-.89-2.34-3.54zM14.9 5.9c.6-.74 1.01-1.76.9-2.78-.87.04-1.93.58-2.56 1.31-.56.65-1.05 1.69-.92 2.68.97.08 1.96-.49 2.58-1.21z"/></svg>
+          <span>
+            <span class="small">Coming soon to the</span>
+            <span class="big">App Store</span>
+          </span>
+        </span>
+        <span class="price-note">Free, with today's pattern free every day. One optional $4.99
+          payment opens the whole book — not a subscription.</span>
+      </div>
+    </div>
+    <figure>
+      <img src="lace.svg" width="372" height="340" alt="A finished piece of lace lifted off its card: an indigo thread wound through every pin, a scalloped picot edge, and the pricks where the pins stood">
+      <figcaption class="caps">Off the pillow, and not a pin bare.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="wrap"><div class="pins" aria-hidden="true"><span><i></i><i></i><i></i></span></div></div>
+
+<section class="benefits" id="pillow">
+  <div class="wrap">
+
+    <article class="benefit">
+      <div class="art">
+        <img src="pillow.svg" width="372" height="340" alt="A lace pillow by a window: a pricking card pinned at its corners with brass pins, a thread wound part way through it, and a walnut bobbin beside the thread's end">
+      </div>
+      <div>
+        <span class="caps">Today's pattern</span>
+        <h2>A pattern a day, kept as lace</h2>
+        <p class="sub">The same pattern for everyone, every morning.</p>
+        <p class="body">Today's pattern is pricked from the date, so the card on your pillow is the
+          card on everyone's. It runs a week like a crossword: five pins a side on Monday, fourteen
+          with a window cut in it by Sunday. It is free every day, and it always will be.</p>
+        <p class="body">Every piece you finish goes into <strong>your sampler</strong>, drawn in the
+          thread you wound it with, newest first. It lives on your phone and it does not reset.
+          A day you work gets a pin on the month card; a day you don't is a prick with no pin in
+          it, and nothing is said about it.</p>
+      </div>
+    </article>
+
+    <article class="benefit">
+      <div class="art">
+        <img src="bobbins.svg" width="372" height="340" alt="Two walnut bobbins crossed on linen, one wound with indigo thread and one with rose silk">
+      </div>
+      <div>
+        <span class="caps">The winding</span>
+        <h2>One thread through every pin</h2>
+        <p class="sub">Never crossing, never twice. Just look.</p>
+        <p class="body">Draw the thread from the brass pin to a neighbour, and on, and on. It
+          wraps each pin it turns on and sinks it into the pillow; a straight run of four
+          tightens into a plait. Each pin has a small click under the finger, and a long bar
+          plays a rising phrase.</p>
+        <p class="body">Nothing hurries you. <strong>There is no clock.</strong> If the thread
+          goes wrong, pick it out — free, as often as you like. The only thing at stake is whether
+          tonight's piece was worked clean.</p>
+        <p class="margin-line"><b>Plaited.</b> Four pins in a bar.</p>
+      </div>
+    </article>
+
+    <article class="benefit">
+      <div class="art">
+        <img src="book.svg" width="372" height="340" alt="The pattern book open on the pillow: a stack of pricked cards, the top one a medallion, a ribbon marker and a pin cushion">
+      </div>
+      <div>
+        <span class="caps">The pattern book</span>
+        <h2>Proved to have one answer</h2>
+        <p class="sub">The book climbs to fourteen pins a side.</p>
+        <p class="body">Every pattern is made on your phone and checked by a solver before you
+          see it. A board the solver cannot prove has <strong>exactly one</strong> way through is
+          never pricked. You reach the answer by reading the card, not by guessing.</p>
+        <p class="body">The book starts at five pins a side and grows to fourteen, then cuts
+          medallions and windows, then lets go of its pinned ends so you have to find where the
+          thread begins. The next pattern is built in the lace ground your own record says you
+          find hardest.</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="shots" id="shots">
+  <div class="wrap">
+    <div class="head">
+      <h2>On the pillow</h2>
+      <span class="caps">Seven screens</span>
+    </div>
+    <div class="strip">
+      <figure><img src="shots/01.jpg" width="660" height="1434" alt="The sampler: 19 pieces worked, each a small lace in indigo or rose, with the dates under them and 19 pieces · 13 days running · largest 14 × 14 along the hem"></figure>
+      <figure><img src="shots/02.jpg" width="660" height="1434" alt="The lift: an eight by eight piece lifted off the card with a gold picot edge, under the headline Clean, and the longest thread you have wound"></figure>
+      <figure><img src="shots/03.jpg" width="660" height="1434" alt="The pillow mid-wind: 42 of 64 pins taken, the indigo thread wrapping each turn, the walnut bobbin at its end, and Plaited in the margin"></figure>
+      <figure><img src="shots/04.jpg" width="660" height="1434" alt="A fresh card on the pillow, no thread on it yet, under the caption No ads. Ever."></figure>
+      <figure><img src="shots/05.jpg" width="660" height="1434" alt="The pattern book: pattern 51, nine by nine, the tulle ground, with chapters of worked pieces below"></figure>
+      <figure><img src="shots/06.jpg" width="660" height="1434" alt="The whole pattern book: one payment of $4.99, with today's pattern free every day"></figure>
+      <figure><img src="shots/07.jpg" width="660" height="1434" alt="The workbox: pieces worked, longest thread and days running, sounds and a reminder toggle"></figure>
+    </div>
+  </div>
+</section>
+
+<section class="deal">
+  <div class="wrap">
+    <div class="card">
+      <span class="caps">Free, and it stays free</span>
+      <p class="cost">$0</p>
+      <h3>The pillow and the first sixty</h3>
+      <ul>
+        <li>Today's pattern, every day, forever</li>
+        <li>The first sixty patterns in the book</li>
+        <li>The sampler, the month card, and every piece you have worked</li>
+        <li>Rose silk, the marking pin and gold thread, earned by working, never bought</li>
+        <li>No account, no sign-up, no ads</li>
+      </ul>
+    </div>
+    <div class="card book">
+      <span class="caps">One payment, once</span>
+      <p class="cost">$4.99</p>
+      <h3>The whole pattern book</h3>
+      <ul>
+        <li>Every pattern past the sixtieth — up to fourteen pins a side, medallions and windows</li>
+        <li>Loose work: a fresh pattern whenever you want one, never the same twice</li>
+        <li>The ledger: your pieces by size and by lace ground</li>
+        <li>Restore on any device signed in to the same Apple Account</li>
+      </ul>
+    </div>
+    <p class="foot">It is not a subscription. It does not renew, there is no trial, and there is
+      nothing else to buy.</p>
+  </div>
+</section>
+
+<div class="wrap"><div class="pins" aria-hidden="true"><span><i></i><i></i><i></i></span></div></div>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <span class="caps">Questions</span>
+    <h2>What people ask about maze games</h2>
+    <div class="grid">
+
+      <div>
+        <p class="q">Will ads start showing up after level ten?</p>
+        <p class="a">No. There is no advertising SDK in the app at all, so there is nothing to
+          switch on later, and the check every release goes through fails the build if one ever
+          appears.</p>
+      </div>
+
+      <div>
+        <p class="q">Do I have to watch anything to keep playing?</p>
+        <p class="a">No. There are no lives, no energy, no coins and no hints to buy. Nothing
+          runs out, so nothing has to be refilled.</p>
+      </div>
+
+      <div>
+        <p class="q">Will my progress reset?</p>
+        <p class="a">Your sampler, your place in the book and a pattern half wound are saved on
+          your phone as you go. Today's pattern is worked out from the date, so it cannot drift or
+          reset, and a piece you have lifted stays lifted.</p>
+      </div>
+
+      <div>
+        <p class="q">Is there really only one answer?</p>
+        <p class="a">Yes. Every pattern is checked by a solver before you see it, and one that
+          cannot be proved to have exactly one way through is thrown away. A pattern with no pinned
+          ends counts a thread wound backwards as the same lace.</p>
+      </div>
+
+      <div>
+        <p class="q">Does it get hard?</p>
+        <p class="a">It starts gentle and it does not stay there. By the end of the week, and
+          deep in the book, a pattern is fourteen pins a side with windows cut in it and no end
+          pinned, so the first minute goes on finding where the thread can begin.</p>
+      </div>
+
+      <div>
+        <p class="q">I've never played one of these. Where do I start?</p>
+        <p class="a">The first time you open it, three small practice cards show you the idea in
+          about half a minute. Then you start on the book's first pattern, five pins a side,
+          whatever day it is.</p>
+      </div>
+
+      <div>
+        <p class="q">Is the $4.99 a subscription?</p>
+        <p class="a">No. It is a single purchase with no renewal and no trial. Today's pattern
+          and the first sixty in the book are free without it.</p>
+      </div>
+
+      <div>
+        <p class="q">Does it work offline?</p>
+        <p class="a">Completely. Lacework makes no network connection of any kind. It works the
+          same on a plane as it does in bed.</p>
+      </div>
+
+      <div>
+        <p class="q">Can I play with VoiceOver?</p>
+        <p class="a">Yes. Every pin reads out its row, column and whether it is bare, and a
+          double tap on a neighbouring pin winds the thread onto it.</p>
+      </div>
+
+      <div>
+        <p class="q">What do you collect about me?</p>
+        <p class="a">Nothing. No account, no analytics, no tracking. Everything lives on your
+          phone. The <a href="https://starhiveconcept.com/maze-privacy-policy-terms/">privacy
+          policy</a> says the same thing at greater length.</p>
+      </div>
+
+      <div>
+        <p class="q">When can I get it?</p>
+        <p class="a">Lacework is with App Review. This page will carry the App Store link the
+          day it is approved.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Lacework — a Starhive Concept app.</span>
+    <a href="https://starhiveconcept.com/maze-privacy-policy-terms/">Privacy policy &amp; terms</a>
+    <a href="https://starhiveconcept.com/maze-privacy-policy-terms/#support">Support</a>
+    <span class="spacer">Requires iOS 17 or later.</span>
+  </div>
+</footer>
+
+</body>
+</html>

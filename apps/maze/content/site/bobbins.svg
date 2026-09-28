@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 340">
+  <defs><pattern id="wv" width="2.6" height="2.6" patternUnits="userSpaceOnUse"><path d="M0 0H2.6M0 0V2.6" stroke="#2A2521" stroke-opacity=".06" stroke-width=".7"/></pattern></defs>
+  <ellipse cx="186" cy="290" rx="150" ry="16" fill="#2A2521" opacity=".07"/>
+  <path d="M40 300 Q186 262 332 300" fill="none" stroke="#31497A" stroke-width="3.4" stroke-linecap="round" opacity=".9"/>
+  <path d="M40 300 Q186 262 332 300" fill="none" stroke="#8FA5D6" stroke-width="1.1" stroke-dasharray="3 3" opacity=".9"/>
+  
+  <g transform="translate(150 160) rotate(-22)">
+    <ellipse cx="0" cy="118" rx="26" ry="7" fill="#2A2521" opacity=".14"/>
+    <rect x="-13" y="-100" width="26" height="200" rx="11" fill="#7A4E2E"/>
+    <rect x="-13" y="-100" width="10" height="200" rx="8" fill="#FFFFFF" fill-opacity=".14"/>
+    <rect x="-14" y="-104" width="28" height="18" rx="8" fill="#5E3A20"/>
+    <rect x="-13" y="-40" width="26" height="64" rx="4" fill="#31497A"/>
+    <path d="M-13 -30 H13 M-13 -18 H13 M-13 -6 H13 M-13 6 H13 M-13 18 H13" stroke="#FFFFFF" stroke-opacity=".18" stroke-width="2"/>
+    <rect x="-14" y="34" width="28" height="9" rx="4" fill="#A8413A"/>
+    <circle cx="0" cy="112" r="9" fill="#E8DCC0" stroke="#7A4E2E" stroke-width="2.5"/>
+    <g fill="#8FA5D6" stroke="#2A2521" stroke-opacity=".3" stroke-width=".6">
+      <circle cx="-9" cy="126" r="4"/><circle cx="0" cy="130" r="4.4"/><circle cx="9" cy="126" r="4"/><circle cx="-4" cy="137" r="3.4"/><circle cx="5" cy="137" r="3.4"/>
+    </g>
+    <path d="M-9 126 Q0 118 9 126" fill="none" stroke="#6F7B88" stroke-width="1.2"/>
+  </g>
+  
+  <g transform="translate(222 160) rotate(20)">
+    <ellipse cx="0" cy="118" rx="26" ry="7" fill="#2A2521" opacity=".14"/>
+    <rect x="-13" y="-100" width="26" height="200" rx="11" fill="#7A4E2E"/>
+    <rect x="-13" y="-100" width="10" height="200" rx="8" fill="#FFFFFF" fill-opacity=".14"/>
+    <rect x="-14" y="-104" width="28" height="18" rx="8" fill="#5E3A20"/>
+    <rect x="-13" y="-40" width="26" height="64" rx="4" fill="#C4586A"/>
+    <path d="M-13 -30 H13 M-13 -18 H13 M-13 -6 H13 M-13 6 H13 M-13 18 H13" stroke="#FFFFFF" stroke-opacity=".18" stroke-width="2"/>
+    <rect x="-14" y="34" width="28" height="9" rx="4" fill="#31497A"/>
+    <circle cx="0" cy="112" r="9" fill="#E8DCC0" stroke="#7A4E2E" stroke-width="2.5"/>
+    <g fill="#8FA5D6" stroke="#2A2521" stroke-opacity=".3" stroke-width=".6">
+      <circle cx="-9" cy="126" r="4"/><circle cx="0" cy="130" r="4.4"/><circle cx="9" cy="126" r="4"/><circle cx="-4" cy="137" r="3.4"/><circle cx="5" cy="137" r="3.4"/>
+    </g>
+    <path d="M-9 126 Q0 118 9 126" fill="none" stroke="#6F7B88" stroke-width="1.2"/>
+  </g>
+</svg>
