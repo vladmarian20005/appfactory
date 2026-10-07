@@ -1,6 +1,45 @@
-stage: uploaded, device pass failed
-date: 2026-09-13
+stage: content ready
+date: 2026-10-07
 plan: PLAN.md · spec: SPEC.md · design: DESIGN.md · pack source: pack/build.mjs · pack review: pack/REVIEW.md
+
+## The launch kit, 7 October
+
+Quizday is **live on the App Store**:
+https://apps.apple.com/us/app/quizday-daily-trivia-no-ads/id6810429464. The iTunes lookup on
+7 October gives version 1.0, released 29 September, free, iOS 17+, and no ratings yet.
+`state.json` has `device_tested` and `storekit_verified` set and `release` ok, so the device
+pass and the "blocked on the owner" list further down are history. Everything below this
+section was written before the release.
+
+Everything is in `content/`:
+
+- **Landing page**: `content/site/index.html`, built from `page.html` by `site/build.mjs`.
+  It wears the app's brand: newsprint, New York, stamp red, brass, the drawn press with its
+  flywheel turning. It has three benefits mirroring the screenshot titles, the six composed
+  screenshots, the late edition, the free/Pro deal with renewal terms, ten FAQs from the
+  wedge, and the privacy, support and EULA links. The badge links to the live listing.
+  **Every asset is inlined (868 KB)**, because `app-content` publishes `index.html` alone.
+  A page with relative `shots/` and `.svg` links (the way maze's is built) would publish
+  with holes in it. Rendered with WebKit at 1280 and 430 and checked.
+- **Clips**: five vertical 1080×1920 30 fps MP4s, 19–21 s each, in `content/clips/`.
+  `content/record.mjs` re-records them. The runner has no ffmpeg, so `content/vertical.swift`
+  does the conversion in AVFoundation, and `content/frames.swift` makes contact sheets.
+  The clips are silent: a CI simulator has no audio.
+- **Scripts**: `content/videos.md`. Five hooks from the leaders' reviews, beat lists timed to
+  the real footage, shots and on-screen text.
+- **Posts**: `content/posts.md`. Ten X posts, r/iOSGaming, r/iosapps, r/trivia (written for
+  a sub that may not allow links), Product Hunt, the launch email and a press blurb.
+- **Schedule**: `content/schedule.md`. Launch day, day 2 and day 7, counted from the day the
+  owner approves the kit. Posting is manual.
+
+Two things found while writing it, for whoever next touches the copy:
+
+- **The report mark keeps the question on the phone.** "Something wrong here?" saves the
+  question to Settings → Corrections with a code, and the reader has to send that code to
+  support. Nothing reaches the desk on its own. The kit never says "we read every report".
+  The listing's "you can report it from the same screen" is still literally true.
+- **`-screen share` drew nothing** in 17 s on the runner, so no clip shows the 1080×1350
+  share card. The result screen it's made from stands in.
 
 ## The device pass, 13 September
 
