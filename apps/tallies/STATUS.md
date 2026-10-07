@@ -1,6 +1,29 @@
-stage: polished
-date: 2026-09-13
+stage: content ready
+date: 2026-10-07
 spec: SPEC.md · direction: DESIGN.md · qa: qa.json · privacy source: privacy.json
+
+## Launch kit (7 Oct)
+
+- **Landing page:** `content/site/index.html`, in the bench's own brand: limewash, ash staves
+  at radius 5, SF Pro Compressed Heavy, stencil caps, the notch as the bullet, and a night
+  palette for dark mode. It covers the promise, three benefits that mirror screenshots 01–03,
+  all seven store shots, a "Coming soon" badge (no App Store id yet), an FAQ from the wedge,
+  the auto-renew terms and the privacy link. It was rendered in WebKit at 1280 and 430 and read
+  back. **It is one self-contained file**, with the art, icon and screenshots inlined (about
+  950 KB), because app-content publishes only `index.html` to the site repo, so sibling image
+  files would arrive broken. Edit `page.html`, then run `node apps/tallies/content/site/build.mjs`.
+- **Footage:** eight raw clips recorded on the simulator by `content/record.mjs`: cut, score,
+  bench, ledger, day 5, day 500, paywall, settings. They are in `content/raw/` (gitignored, so
+  in the run artifact only). **They are not converted to 1080×1920 MP4** because the runner has
+  no ffmpeg. The command is in `content/videos.md`.
+- **Scripts, posts, schedule:** `content/videos.md` (five scripts), `content/posts.md` (ten X
+  posts, r/iosapps, r/apphookup, r/SideProject, Product Hunt, launch email, press blurb),
+  `content/schedule.md`.
+- **The store listing is out of date.** `store/metadata/en-US/description.txt` and
+  `release_notes.txt` still describe the pre-direction app ("a goal ring", "a bar chart", "a
+  large plus on every row"). The landing page and posts describe the app as built. The listing
+  needs an `/aso tallies` pass before submission, or App Review will see text that doesn't
+  match the screenshots.
 
 ## Where it stands
 
