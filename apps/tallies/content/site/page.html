@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tallies — count anything, notched into a stave. No account, no ads.</title>
+<meta name="description" content="Tallies is a counter for iPhone. Every thing you count is a stave of pale ash: one notch per tap, five to a gate, fifty to a stave, then it is scored, dated and stood in the rack. No account, no ads, no network.">
+<meta name="theme-color" content="#C3B9A3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13161A" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="{{icon}}">
+<link rel="apple-touch-icon" href="{{icon}}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tallies — count anything, notched into a stave">
+<meta property="og:description" content="Five to a gate, fifty to a stave. No account, no ads, no network.">
+<meta name="twitter:card" content="summary">
+<style>
+/* Tallies' own look, from apps/tallies/DESIGN.md: a tally-stick carver's bench under a north
+   window at eleven in the morning. Limewash wall, pale ash staves, walnut cuts, chalk-line
+   blue for the one action, keel red for the second voice. Display face is SF Pro Compressed
+   Heavy — the lettering stencilled on timber ends — and the stencil caps are tracked mono.
+   Dark is the same bench at night under one clipped lamp: the wall goes blue-black and the
+   wood stays warm. Corner radius 5, as in the app. Nothing here is a house style. */
+:root{
+  --canvas:#C3B9A3;      /* limewash */
+  --glow:#D8CFBC;        /* the window, upper left */
+  --surface:#F0E5CC;     /* ash */
+  --ink:#221A0F;         /* walnut */
+  --ink-soft:#4C4334;
+  --accent:#17506A;      /* chalk-line blue */
+  --on-accent:#FFF3E8;
+  --highlight:#A2361B;   /* keel red */
+  --success:#2C6650;     /* verdigris */
+  --miss:#6B5C43;        /* wax */
+  --cut:#221A0F;         /* a notch is dark in both lights */
+  --stroke:rgba(34,26,15,.028);
+  --corner:5px;
+  --display:-apple-system,"SF Pro Display",BlinkMacSystemFont,"Helvetica Neue","Arial Narrow",sans-serif;
+  --body:-apple-system,"SF Pro Text",BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --canvas:#13161A; --glow:#232A30; --surface:#262117; --ink:#F1E7D3; --ink-soft:#A79C87;
+    --accent:#6FBADD; --on-accent:#1E0B05; --highlight:#F0885F; --success:#6FC0A0;
+    --miss:#9B8E76; --cut:#0E0B07; --stroke:rgba(255,255,255,.030);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:var(--body);color:var(--ink);font-size:17px;line-height:1.55;
+  background-color:var(--canvas);
+  /* The limewash: short horizontal brush strokes, fixed, never moving; and the window over
+     the left shoulder, off-centre so it reads as a light in a room rather than a vignette. */
+  background-image:
+    repeating-linear-gradient(1.5deg, var(--stroke) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(-2deg, var(--stroke) 0 1px, transparent 1px 11px),
+    radial-gradient(58% 42% at 24% 2%, var(--glow) 0%, transparent 100%);
+  background-attachment:scroll;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+a{color:var(--accent)}
+img{height:auto}
+p{margin:0 0 1em}
+h1,h2,h3,.num{
+  font-family:var(--display);font-weight:900;font-stretch:62.5%;
+  letter-spacing:-.005em;line-height:.98;margin:0;text-transform:none;
+}
+
+/* The stencil caps: the marking on the wood. Never a sentence. */
+.caps{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* The bench edge: the app's horizon. A 3px band with a keel-red line along its top. */
+.edge{height:3px;background:color-mix(in srgb, var(--ink) 10%, transparent);border-top:1px solid color-mix(in srgb, var(--highlight) 25%, transparent);margin:0}
+
+/* The notch: a V, two facets at different depths. The app's one shape, used as the bullet. */
+.notch{display:inline-block;width:9px;height:13px;position:relative;flex:0 0 9px}
+.notch::before,.notch::after{content:"";position:absolute;top:0;width:4.5px;height:13px}
+.notch::before{left:0;background:color-mix(in srgb, var(--cut) 58%, transparent);clip-path:polygon(0 0,100% 0,100% 100%)}
+.notch::after{right:0;background:color-mix(in srgb, var(--cut) 24%, transparent);clip-path:polygon(0 0,100% 0,0 100%)}
+.notch.wax::before,.notch.wax::after{background:var(--miss);opacity:.55}
+
+/* A rule of three notches: the section divider. */
+.rule3{display:flex;align-items:center;gap:14px;padding:8px 0}
+.rule3::before,.rule3::after{content:"";flex:1;height:1px;background:color-mix(in srgb, var(--ink) 16%, transparent)}
+.rule3 span{display:flex;gap:7px}
+
+/* Masthead */
+header.top{padding:24px 0 14px}
+.top .wrap{display:flex;align-items:center;gap:14px}
+.top img{width:46px;height:46px;border-radius:23%;display:block;box-shadow:0 6px 16px rgba(34,26,15,.24)}
+.wordmark{font-family:var(--display);font-weight:900;font-stretch:62.5%;font-size:30px;letter-spacing:.01em}
+.top nav{margin-left:auto;display:flex;gap:22px;font-size:14px}
+.top nav a{color:var(--ink-soft);text-decoration:none}
+.top nav a:hover{color:var(--accent)}
+
+/* Hero */
+.hero{padding:40px 0 34px}
+.hero .wrap{display:grid;grid-template-columns:1.08fr .92fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(52px,7.4vw,92px);margin:14px 0 22px;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--highlight)}
+.lede{font-size:19px;color:var(--ink-soft);max-width:31em}
+.lede strong{color:var(--ink);font-weight:600}
+.cta{margin-top:28px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.badge{
+  display:inline-flex;align-items:center;gap:11px;
+  background:var(--accent);color:var(--on-accent);
+  border-radius:var(--corner);padding:12px 20px;
+  box-shadow:0 1.5px 0 color-mix(in srgb, var(--cut) 40%, transparent), 0 10px 22px rgba(23,80,106,.24);
+}
+.badge svg{width:22px;height:22px;fill:var(--on-accent)}
+.badge .small{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;opacity:.82;line-height:1.4}
+.badge .big{display:block;font-size:16px;font-weight:600;line-height:1.2}
+.price-note{font-size:14px;color:var(--ink-soft);max-width:22em}
+.hero figure{margin:0}
+.hero figure img{display:block;width:100%;max-width:440px;margin:0 auto}
+.hero figcaption{text-align:center;margin-top:6px}
+
+/* The stave: an ash board with thickness, not a card with a shadow. */
+.stave{
+  background:var(--surface);border-radius:var(--corner);position:relative;
+  box-shadow:0 .5px 0 rgba(255,255,255,.55) inset, 0 -1.5px 0 color-mix(in srgb, var(--cut) 22%, transparent) inset, 0 10px 24px rgba(34,26,15,.12);
+}
+.stave.band{padding-left:14px}
+.stave.band::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;border-radius:var(--corner) 0 0 var(--corner);background:var(--band,var(--highlight))}
+
+/* Benefits */
+.benefits{padding:26px 0 10px}
+.benefit{display:grid;grid-template-columns:300px 1fr;gap:56px;align-items:center;padding:40px 0}
+.benefit:nth-child(even){grid-template-columns:1fr 300px}
+.benefit:nth-child(even) .shot{order:2}
+.benefit .shot img{display:block;width:100%;border-radius:12px;box-shadow:0 18px 38px rgba(34,26,15,.22)}
+.benefit h2{font-size:clamp(38px,4.6vw,56px);margin:10px 0 10px;text-wrap:balance}
+.benefit .sub{font-size:20px;color:var(--highlight);margin:0 0 18px;font-weight:500}
+.benefit p.body{color:var(--ink-soft);max-width:34em}
+.benefit p.body strong{color:var(--ink);font-weight:600}
+
+/* The carver's line, set on an ash panel the way the sitting card sets it. */
+.reading{margin:6px 0 0;padding:14px 18px 14px 26px;max-width:32em}
+.reading .caps{display:block;margin-bottom:4px}
+.reading p{margin:0;font-family:var(--display);font-stretch:75%;font-weight:600;font-size:21px;line-height:1.25;color:var(--ink)}
+
+/* Shots */
+.shots{padding:46px 0 22px}
+.shots .head{display:flex;align-items:baseline;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.shots h2{font-size:clamp(36px,4vw,48px)}
+.strip{display:flex;gap:18px;overflow-x:auto;padding:6px 2px 22px;scroll-snap-type:x mandatory}
+.strip figure{margin:0;flex:0 0 232px;scroll-snap-align:start}
+.strip img{display:block;width:100%;border-radius:10px;box-shadow:0 12px 26px rgba(34,26,15,.18)}
+
+/* The deal: two staves on the bench. */
+.deal{padding:46px 0}
+.deal .wrap{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.deal .stave{padding:26px 28px 22px 34px}
+.deal .stave.pro{--band:var(--accent)}
+.deal h3{font-size:34px;margin:8px 0 4px}
+.deal .num{font-size:64px;line-height:1;margin:8px 0 12px}
+.deal .pro .num{color:var(--accent)}
+.deal .num small{font-size:24px;color:var(--ink-soft);font-stretch:75%;font-weight:700}
+.deal ul{list-style:none;margin:0;padding:0;color:var(--ink-soft);font-size:15.5px}
+.deal li{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-top:1px solid color-mix(in srgb, var(--ink) 8%, transparent)}
+.deal li:first-child{border-top:0}
+.deal li .notch{margin-top:4px}
+.deal .foot{grid-column:1/-1;font-size:13.5px;color:var(--ink-soft);margin:6px 0 0;max-width:62em}
+
+/* Questions */
+.faq{padding:46px 0 20px}
+.faq h2{font-size:clamp(36px,4vw,48px);margin:8px 0 0}
+.faq .grid{display:grid;grid-template-columns:1fr 1fr;gap:30px 46px;margin-top:28px}
+.q{font-family:var(--display);font-weight:800;font-stretch:75%;font-size:23px;line-height:1.15;margin:0 0 7px}
+.a{color:var(--ink-soft);font-size:15.5px;margin:0}
+
+footer{padding:30px 0 56px;color:var(--ink-soft);font-size:14px}
+footer .wrap{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+footer .spacer{margin-left:auto}
+
+@media (max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;gap:20px}
+  .benefit,.benefit:nth-child(even){grid-template-columns:1fr;gap:26px;padding:30px 0}
+  .benefit:nth-child(even) .shot{order:0}
+  .benefit .shot{max-width:280px}
+  .deal .wrap,.faq .grid{grid-template-columns:1fr}
+  .top nav{display:none}
+}
+@media (prefers-reduced-motion: no-preference){
+  html{scroll-behavior:smooth}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <img src="{{icon}}" alt="Tallies app icon: a pale ash board with four deep notches and a stroke cut across them, and a red band at its end">
+    <span class="wordmark">TALLIES</span>
+    <nav>
+      <a href="#bench">The bench</a>
+      <a href="#shots">Screens</a>
+      <a href="#questions">Questions</a>
+      <a href="https://starhiveconcept.com/tallies-privacy-policy-terms/">Privacy</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap"><div class="edge" aria-hidden="true"></div></div>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="caps">A counter for iPhone · five to a gate</span>
+      <h1>Count anything. <em>Cut it into the wood.</em></h1>
+      <p class="lede">Every thing you count is a stave of pale ash. Press, and a notch is cut
+        into it under your thumb — four uprights, then a stroke across them, five to a gate.
+        At fifty the stave is scored, dated on the end and stood in the rack.</p>
+      <p class="lede"><strong>No account. No ads. No network.</strong> Several counters side by
+        side, and a record you can read back a year from now.</p>
+      <div class="cta">
+        <span class="badge">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 12.54c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.7-3.19-1.72-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.18-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.74 2.21 1.1-.05 1.52-.71 2.85-.71 1.33 0 1.71.71 2.88.69 1.19-.02 1.94-1.08 2.66-2.15.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.32-.89-2.34-3.54zM14.9 5.9c.6-.74 1.01-1.76.9-2.78-.87.04-1.93.58-2.56 1.31-.56.65-1.05 1.69-.92 2.68.97.08 1.96-.49 2.58-1.21z"/></svg>
+          <span>
+            <span class="small">Coming soon to the</span>
+            <span class="big">App Store</span>
+          </span>
+        </span>
+        <span class="price-note">Free for three staves and a week of strip, for good. Pro is
+          optional, with a 3-day free trial.</span>
+      </div>
+    </div>
+    <figure>
+      <img src="{{bench}}" width="400" height="410" alt="The bench: a bare stave of pale ash lying on it with a red painted end, a chisel with a brass ferrule resting on its shoulder, shavings curled below and an empty rack on the wall behind">
+      <figcaption class="caps">Ash cut to length, and a chisel on the rail.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="wrap"><div class="rule3" aria-hidden="true"><span><i class="notch"></i><i class="notch"></i><i class="notch"></i></span></div></div>
+
+<section class="benefits" id="bench">
+  <div class="wrap">
+
+    <article class="benefit">
+      <div class="shot">
+        <img src="{{shot01}}" width="460" height="1000" alt="A stave of pull-ups scored at fifty notches: ten closed gates, one long stroke cut corner to corner, Sep 13 stamped on its end, and the headline Not one wax, and your best">
+      </div>
+      <div>
+        <span class="caps">The reward</span>
+        <h2>Fifty notches, and it is scored</h2>
+        <p class="sub">A full stave is dated and stood in the rack.</p>
+        <p class="body">A stave is ten gates long. When the fiftieth notch lands, the gates light
+          one after another, a single stroke is cut corner to corner across the whole board, the
+          date is stamped into its end and it stands up in the rack behind the bench. A bare one
+          slides on in its place.</p>
+        <p class="body">For reps that might be one evening. For glasses of water, about a week.
+          <strong>The rack keeps every one</strong>, oldest at the back, in the colour you painted
+          its end.</p>
+        <div class="reading stave band">
+          <span class="caps">This sitting</span>
+          <p>Eight cut, none waxed. Fifty into this stave, and it is scored. Eleven in the rack.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="benefit">
+      <div class="shot">
+        <img src="{{shot02}}" width="460" height="1000" alt="One stave in close-up: the running total 534 in tall compressed numerals, a brass gauge filling toward the day's goal of twelve, the chisel resting at the next notch, and a strip of the last 56 days below">
+      </div>
+      <div>
+        <span class="caps">The cut</span>
+        <h2>Count anything, no account</h2>
+        <p class="sub">One stave, one thumb, and the number is right.</p>
+        <p class="body">The chisel rests on the stave's shoulder at the next notch. Press and the
+          blade bites, the V opens, a chip flies, and the blade walks one step along — so your
+          thumb always knows where the next one lands, and you can count without looking down.
+          Every fifth cut strikes the gate closed, and you can hear the gate fill: the tone climbs
+          through four and resets on the fifth.</p>
+        <p class="body">Took one too many? <strong>The wax stick</strong> fills the last notch. The
+          number goes back; a paler mark stays on the wood, the way it does on a real tally
+          stick. Nobody minds a wax.</p>
+      </div>
+    </article>
+
+    <article class="benefit">
+      <div class="shot">
+        <img src="{{shot03}}" width="460" height="1000" alt="The bench: three staves laid across the screen at slight angles — pull-ups 534, glasses of water 154, cars past the window 104 — each with a painted end and a chisel, and the rack of scored staves at the foot">
+      </div>
+      <div>
+        <span class="caps">The bench</span>
+        <h2>A stave for each thing you keep</h2>
+        <p class="sub">Reps, birds, glasses, cars past the window.</p>
+        <p class="body">Every counter is a stave on one screen, each with its own pigment painted
+          on the end and its running total burned into the wood. The chisel on each one cuts
+          without opening anything. Set a goal and a chalk line goes on a brass gauge; leave it
+          off and the stave just fills.</p>
+        <p class="body">Under each stave the carver reads your record back in one sentence —
+          <em>"Thursdays run a third above the rest."</em> — and only ever says something that is
+          already true. <strong>There is no streak, no flame, and nothing that resets to
+          zero.</strong> A day you did not count is simply a gap in the strip.</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="shots" id="shots">
+  <div class="wrap">
+    <div class="head">
+      <h2>On the bench</h2>
+      <span class="caps">Seven screens</span>
+    </div>
+    <div class="strip">
+      <figure><img src="{{shot01}}" width="460" height="1000" alt="Fifty notches, and it is scored: a full stave dated Sep 13 and stood in the rack"></figure>
+      <figure><img src="{{shot02}}" width="460" height="1000" alt="Count anything, no account: one stave, the total 534, and the chisel at the next notch"></figure>
+      <figure><img src="{{shot03}}" width="460" height="1000" alt="A stave for each thing you keep: pull-ups, glasses of water and cars past the window on one bench"></figure>
+      <figure><img src="{{shot04}}" width="460" height="1000" alt="Every cut, by the day you made it: the ledger, each day a rule with its cuts notched where in the day they landed"></figure>
+      <figure><img src="{{shot05}}" width="460" height="1000" alt="Three staves stay free, always: the Pro screen, with the rack of scored staves above the plans"></figure>
+      <figure><img src="{{shot06}}" width="460" height="1000" alt="No ads. No sign-in. No network. Settings, with staves, notches cut and days kept"></figure>
+      <figure><img src="{{shot07}}" width="460" height="1000" alt="Name it, pick its pigment, cut: laying a new stave, with six painted pigments to choose from"></figure>
+    </div>
+  </div>
+</section>
+
+<section class="deal">
+  <div class="wrap">
+    <div class="stave band">
+      <span class="caps">Free, and it stays free</span>
+      <p class="num">$0</p>
+      <h3>Three staves on the bench</h3>
+      <ul>
+        <li><i class="notch"></i><span>Three counters, each with its goal and its gauge</span></li>
+        <li><i class="notch"></i><span>The last seven days of strip on every stave</span></li>
+        <li><i class="notch"></i><span>Scoring, the rack and every reading the carver has earned</span></li>
+        <li><i class="notch"></i><span>No account, no sign-up, no ads</span></li>
+      </ul>
+    </div>
+    <div class="stave band pro">
+      <span class="caps">Tallies Pro · 3 days free</span>
+      <p class="num">$19.99<small> a year</small></p>
+      <h3>The rack and the ledger</h3>
+      <ul>
+        <li><i class="notch"></i><span>As many staves on the bench as you want, not three</span></li>
+        <li><i class="notch"></i><span>The ledger: every cut you have made, by the day, with the week and the month beside it</span></li>
+        <li><i class="notch"></i><span>The strip reaches back as far as your record goes, not seven days</span></li>
+        <li><i class="notch"></i><span>Or $2.99 a week. Restore on any device signed in to the same Apple Account</span></li>
+      </ul>
+    </div>
+    <p class="foot">Tallies Pro is an auto-renewing subscription, $2.99 per week or $19.99 per year,
+      each with a 3-day free trial. Payment is charged to your Apple Account when you confirm the
+      purchase. It renews automatically unless you cancel at least 24 hours before the end of the
+      current period, and you can manage or cancel it in your Apple Account settings. Nothing you
+      have already cut is ever taken back down if you stop.</p>
+  </div>
+</section>
+
+<div class="wrap"><div class="rule3" aria-hidden="true"><span><i class="notch"></i><i class="notch"></i><i class="notch"></i></span></div></div>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <span class="caps">Questions</span>
+    <h2>What people ask about counter apps</h2>
+    <div class="grid">
+
+      <div>
+        <p class="q">Is there a banner ad across the bottom?</p>
+        <p class="a">No. There is no advertising SDK in the app at all, so there is nothing to
+          switch on later. The check every release goes through fails the build if one ever
+          appears.</p>
+      </div>
+
+      <div>
+        <p class="q">Do I need an account to count to three?</p>
+        <p class="a">No. There is no sign-up screen, because there is no server behind this. You
+          open it, lay a stave on the bench, and cut.</p>
+      </div>
+
+      <div>
+        <p class="q">Does it work offline?</p>
+        <p class="a">Completely. Tallies never makes a network connection of any kind. It counts
+          the same in airplane mode, in a basement gym, or at the far end of a field.</p>
+      </div>
+
+      <div>
+        <p class="q">Can I count without looking at the screen?</p>
+        <p class="a">That is what it is built for. The chisel always rests where the next notch
+          will land, each cut is a bite and then a release under your thumb, and the tone resets
+          every fifth, so you can feel and hear a gate close.</p>
+      </div>
+
+      <div>
+        <p class="q">What if I tap one too many?</p>
+        <p class="a">Press the wax stick. The last notch is filled and the number goes back by
+          one. The wax stays visible on the stave as a paler mark, so the record is right and it
+          is honest about how it got there.</p>
+      </div>
+
+      <div>
+        <p class="q">Is this a habit tracker? Will it nag me?</p>
+        <p class="a">No. There are no streaks, no reminders and no notifications. Tallies never
+          asks for a permission. A day you did not count is a gap in the strip, and nothing is said
+          about it.</p>
+      </div>
+
+      <div>
+        <p class="q">Can I read back what the week looked like?</p>
+        <p class="a">Every stave has a strip of recent days under it, a gate for each day cut as
+          deep as that day's count. With Pro, the ledger shows every cut on every stave, by the day,
+          with a total for the week and the month.</p>
+      </div>
+
+      <div>
+        <p class="q">What happens if Pro lapses?</p>
+        <p class="a">Nothing you have cut is taken back down. Every stave, every notch and the whole
+          rack stay on your phone. Three staves and a week of strip stay free for good.</p>
+      </div>
+
+      <div>
+        <p class="q">What do you collect about me?</p>
+        <p class="a">Nothing. No account, no analytics, no tracking. Everything you count is on
+          your phone and nowhere else. The <a href="https://starhiveconcept.com/tallies-privacy-policy-terms/">privacy
+          policy</a> says the same thing at greater length.</p>
+      </div>
+
+      <div>
+        <p class="q">When can I get it?</p>
+        <p class="a">Tallies is with App Review. This page will carry the App Store link the day it
+          is approved. It needs iOS 17 or later.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="edge" aria-hidden="true"></div></div>
+<footer>
+  <div class="wrap">
+    <span>Tallies — a Starhive Concept app.</span>
+    <a href="https://starhiveconcept.com/tallies-privacy-policy-terms/">Privacy policy &amp; terms</a>
+    <a href="https://starhiveconcept.com/tallies-privacy-policy-terms/#support">Support</a>
+    <span class="spacer">Requires iOS 17 or later.</span>
+  </div>
+</footer>
+
+</body>
+</html>
