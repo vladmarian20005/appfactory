@@ -44,7 +44,15 @@ who's awake to answer for the first four hours, so it's scheduled for day 2.
 | 17:00 | X | Post 6 (before/after), with screenshot 02. |
 | — | Retro | Day-7 bar check: 100 downloads, 3 paying, rating at or above 4.5 (SPEC.md). Run `/retro quizday`. |
 
-Posts 4, 9 and 10, and clips 03–05, are the reserve. Use them after day 7, one every two or
+## Short video (TikTok, Reels, Shorts)
+
+Captioned per `videos.md`, one clip at a time, the same clip on all three on the same day:
+clip 1 on launch day, clip 2 on day 2, clip 3 on day 4, clip 4 on day 7, clip 5 on day 9.
+The link goes in the bio, never in the video.
+
+## Reserve
+
+Posts 4, 9 and 10, and clips 03–05 on X, are the reserve. Use them after day 7, one every two or
 three days, or to reply in a thread where one fits.
 
 ## Don't
