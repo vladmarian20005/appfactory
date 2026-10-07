@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quizday — ten trivia questions a day, every answer explained, and no ads</title>
+<meta name="description" content="Quizday is a daily trivia edition: ten questions, dated and set each morning, every answer explained with a source you can check. No ads, no lives, no coins. Free on the App Store for iPhone.">
+<meta name="theme-color" content="#F5EFE2">
+<link rel="icon" href="{{icon}}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Quizday — a new edition every morning">
+<meta property="og:description" content="Ten trivia questions a day, each answer explained with its source. No ads, no lives, no coins.">
+<meta name="twitter:card" content="summary">
+<style>
+/* Quizday's own look, from apps/quizday/DESIGN.md: a one-sheet morning newspaper. Newsprint
+   ivory, press-black ink, stamp red, brass for the run, proof green for a right answer.
+   New York throughout, as in the app and in the store frames (screenshots.json "font":
+   "serif"), with tracked mono for datelines. Rules do the work borders and shadows do
+   elsewhere; the one shape is the ruled box at a 6 px corner. */
+:root{
+  --canvas:#F5EFE2;     /* newsprint */
+  --surface:#FBF7EC;    /* a fresh sheet */
+  --ink:#1B2027;        /* press black */
+  --ink-soft:#5E6470;   /* datelines, the pencil */
+  --accent:#C1362C;     /* stamp red */
+  --on-accent:#FFF8EC;
+  --brass:#8E6214;      /* the run, the ribbon */
+  --proof:#2F6B4F;      /* a right answer's ink */
+  --graphite:#6F6A60;   /* a wrong one, pencilled out */
+  --corner:6px;
+  --serif:ui-serif,"New York",Georgia,serif;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:var(--serif);
+  color:var(--ink);
+  background-color:var(--canvas);
+  /* Paper lit from a lamp above the top edge, with a faint fibre, the way the app's canvas is
+     drawn: BrandCanvas.glow at (0.5, 0.10) and a grain that never moves. */
+  background-image:
+    radial-gradient(70% 40% at 50% 0%, #FFFDF6 0%, rgba(255,253,246,0) 100%),
+    repeating-linear-gradient(102deg, rgba(27,32,39,.018) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(78deg, rgba(27,32,39,.014) 0 1px, transparent 1px 7px);
+  background-repeat:no-repeat,repeat,repeat;
+  line-height:1.55;
+  font-size:18px;
+}
+.wrap{max-width:1040px;margin:0 auto;padding:0 28px;position:relative}
+/* Two hairline column rules down the page, as on every screen of the app. */
+.page{position:relative}
+.page::before,.page::after{
+  content:"";position:absolute;top:0;bottom:0;width:1px;background:rgba(27,32,39,.07);pointer-events:none;
+}
+.page::before{left:max(12px,calc(50% - 532px))}
+.page::after{right:max(12px,calc(50% - 532px))}
+a{color:var(--accent)}
+img{height:auto}
+h1,h2,h3{font-family:var(--serif);font-weight:700;letter-spacing:-.01em;line-height:1.06;margin:0}
+p{margin:0 0 1em}
+
+/* The dateline: SF Mono, uppercase, tracked. Never a sentence. */
+.mono{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* The printer's ornament that closes a column: two hairlines and a lozenge. */
+.ornament{display:flex;justify-content:center;align-items:center;gap:12px;padding:10px 0}
+.ornament::before,.ornament::after{content:"";width:64px;height:1px;background:rgba(27,32,39,.28)}
+.ornament i{display:block;width:6px;height:6px;background:rgba(27,32,39,.4);transform:rotate(45deg)}
+
+/* Masthead */
+.masthead{padding:30px 0 0;text-align:center}
+.masthead .rule-hair{height:.5px;background:var(--ink);opacity:.5}
+.masthead .rule-heavy{height:3px;background:var(--ink)}
+.masthead .name{display:flex;align-items:center;justify-content:center;gap:16px;padding:14px 0 12px}
+.masthead img{width:40px;height:40px;border-radius:22%;display:block;box-shadow:0 0 0 .5px rgba(27,32,39,.25)}
+.masthead .word{font-size:clamp(32px,4.4vw,44px);font-weight:700;letter-spacing:.24em;margin-right:-.24em}
+.masthead .strap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:9px 2px 0}
+.masthead nav{display:flex;gap:22px}
+.masthead nav a{color:var(--ink-soft);text-decoration:none}
+.masthead nav a:hover{color:var(--accent)}
+
+/* Hero */
+.hero{padding:44px 0 34px}
+.hero .wrap{display:grid;grid-template-columns:1.08fr .92fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(42px,5.6vw,68px);margin:14px 0 22px;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--accent);font-weight:700}
+.lede{font-size:20px;color:var(--ink-soft);max-width:29em}
+.lede strong{color:var(--ink)}
+.cta{margin-top:30px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.badge{
+  display:inline-flex;align-items:center;gap:12px;text-decoration:none;
+  background:var(--ink);color:var(--canvas);
+  border-radius:var(--corner);padding:11px 20px 11px 16px;
+  box-shadow:0 0 0 3px var(--canvas),0 0 0 4.2px var(--ink);
+}
+.badge:hover{background:#000}
+.badge svg{width:24px;height:24px;fill:var(--canvas)}
+.badge .small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;opacity:.8;line-height:1.5}
+.badge .big{display:block;font-size:19px;font-weight:700;line-height:1.15}
+.price-note{font-size:15px;color:var(--ink-soft);max-width:21em;line-height:1.45}
+
+/* The press, with its flywheel composited at the hub as the app does it. */
+.press{position:relative;max-width:440px;margin:0 auto}
+.press svg{display:block;width:100%;height:auto}
+.press .wheel{position:absolute;left:67.5%;top:36.25%;width:30%}
+.press .wheel svg{animation:turn 20s linear infinite}
+@keyframes turn{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.press .wheel svg{animation:none}}
+.hero figcaption{text-align:center;margin-top:14px;font-style:italic;font-size:19px}
+
+/* Front page fold: three benefits in columns, the way a paper sets its contents. */
+.fold{padding:16px 0 10px}
+.fold .wrap > .rule-heavy{height:2.5px;background:var(--ink)}
+.cols{display:grid;grid-template-columns:repeat(3,1fr)}
+.col{padding:30px 26px 34px}
+.col + .col{border-left:.5px solid rgba(27,32,39,.25)}
+.col:first-child{padding-left:0}.col:last-child{padding-right:0}
+.col .art{height:180px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:22px}
+.col .art svg{height:100%;width:auto;max-width:100%}
+.col h2{font-size:clamp(26px,2.7vw,32px);margin:10px 0 6px}
+.col .sub{color:var(--accent);font-size:19px;margin:0 0 14px}
+.col p.body{color:var(--ink-soft);font-size:16.5px}
+.col p.body strong{color:var(--ink)}
+
+/* The verdict stamp: a double-ruled box in stamp red, off the axis. */
+.stamp{
+  display:inline-block;color:var(--accent);font-weight:700;font-style:italic;
+  letter-spacing:.12em;text-transform:uppercase;font-size:13px;
+  border:2px solid var(--accent);border-radius:3px;padding:3px;transform:rotate(-5deg);
+  background:rgba(245,239,226,.86);
+}
+.stamp span{display:block;border:.8px solid var(--accent);padding:4px 10px}
+
+/* A printed answer line, as the app sets them. */
+.answer{display:flex;align-items:stretch;border:1.2px solid var(--ink);border-radius:var(--corner);background:var(--surface);margin:0 0 8px;font-size:16px;overflow:hidden}
+.answer b{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.16em;width:28px;display:flex;align-items:center;justify-content:center;border-right:.5px solid rgba(27,32,39,.3);color:var(--ink-soft)}
+.answer span{padding:7px 12px}
+.answer.right{background:var(--proof);color:var(--on-accent);border-color:var(--ink)}
+.answer.right b{color:rgba(255,248,236,.8);border-color:rgba(255,248,236,.3)}
+.answer.wrong{background:var(--graphite);color:var(--on-accent)}
+.answer.wrong b{color:rgba(255,248,236,.8);border-color:rgba(255,248,236,.3)}
+.answer.wrong span{text-decoration:line-through;text-decoration-thickness:1px}
+.col .art .sample{position:relative;width:100%;align-self:flex-end}
+.sample .stamp{position:absolute;right:-6px;top:-8px}
+.footnote{border-top:.5px solid rgba(27,32,39,.35);padding-top:9px;font-size:15.5px}
+.footnote .mono{font-size:9.5px;letter-spacing:.12em;display:flex;justify-content:space-between;gap:10px;margin-top:6px;white-space:nowrap}
+.footnote .mono em{font-style:normal;color:var(--accent)}
+
+/* Screens */
+.shots{padding:46px 0 26px}
+.shots .head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap;border-bottom:.5px solid rgba(27,32,39,.35);padding-bottom:12px}
+.shots h2{font-size:clamp(28px,3vw,36px)}
+.strip{display:flex;gap:18px;overflow-x:auto;padding:4px 2px 22px;scroll-snap-type:x mandatory}
+.strip figure{margin:0;flex:0 0 238px;scroll-snap-align:start}
+.strip img{display:block;width:100%;border-radius:var(--corner);border:1.2px solid rgba(27,32,39,.85)}
+
+/* The late edition: what playing opens, and the paywall can't. */
+.late{padding:40px 0}
+.late .box{display:grid;grid-template-columns:200px 1fr;gap:40px;align-items:center;
+  border:1.2px solid var(--brass);border-radius:var(--corner);background:var(--surface);padding:30px 36px}
+.late .box svg{width:100%;height:auto;display:block}
+.late h2{font-size:clamp(26px,3vw,34px);margin:10px 0 10px}
+.late .mono{color:var(--brass)}
+.late p{color:var(--ink-soft);margin:0 0 .6em}
+.late table{border-collapse:collapse;margin-top:12px;font-size:16px}
+.late td{padding:6px 18px 6px 0;border-top:.5px solid rgba(27,32,39,.2);vertical-align:top}
+.late td:first-child{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--brass);white-space:nowrap;padding-top:9px}
+
+/* The deal */
+.deal{padding:40px 0}
+.deal .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.card{border:1.2px solid var(--ink);border-radius:var(--corner);background:var(--surface);padding:28px 30px 22px}
+.card h3{font-size:26px;margin:10px 0 4px}
+.card .cost{font-size:52px;font-weight:700;line-height:1;margin:8px 0 14px}
+.card .cost small{font-size:20px;color:var(--ink-soft);font-weight:400}
+.card.pro .cost{color:var(--accent)}
+.card ul{list-style:none;margin:0;padding:0;color:var(--ink-soft);font-size:16px}
+.card li{padding:8px 0 8px 26px;position:relative;border-top:.5px solid rgba(27,32,39,.18)}
+.card li:first-child{border-top:0}
+/* The printer's fist, the app's bullet. Never a checkmark. */
+.card li::before{content:"☞";position:absolute;left:0;top:7px;color:var(--ink-soft)}
+.card.pro li::before{color:var(--accent)}
+.deal .foot{font-size:14.5px;color:var(--ink-soft);text-align:center;margin:18px auto 0;max-width:44em}
+
+/* Questions, set as a correspondence column */
+.faq{padding:44px 0 20px}
+.faq h2{font-size:clamp(28px,3vw,36px);margin:8px 0 0}
+.faq .grid{columns:2;column-gap:52px;column-rule:.5px solid rgba(27,32,39,.22);margin-top:26px}
+.faq .grid > div{break-inside:avoid;padding:0 0 22px}
+.q{font-weight:700;font-size:20px;margin:0 0 6px;line-height:1.25}
+.a{color:var(--ink-soft);font-size:16px;margin:0}
+
+footer{padding:30px 0 60px;color:var(--ink-soft);font-size:14.5px}
+footer .rule-heavy{height:2.5px;background:var(--ink);margin-bottom:16px}
+footer .row{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+footer .spacer{margin-left:auto}
+
+@media (max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;gap:20px}
+  .press{max-width:360px}
+  .cols{grid-template-columns:1fr}
+  .col,.col:first-child,.col:last-child{padding:28px 0}
+  .col + .col{border-left:0;border-top:.5px solid rgba(27,32,39,.25)}
+  .late .box{grid-template-columns:1fr;gap:18px;padding:26px 22px}
+  .late .box svg{max-width:170px}
+  .deal .grid{grid-template-columns:1fr}
+  .faq .grid{columns:1}
+  .masthead nav{display:none}
+  .masthead .strap{justify-content:center}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="rule-hair"></div>
+    <div class="name">
+      <img src="{{icon}}" width="40" height="40" alt="Quizday app icon: a red rubber stamp with a tick, pressed over a newspaper masthead on ivory paper">
+      <span class="word">QUIZDAY</span>
+    </div>
+    <div class="rule-heavy"></div>
+    <div class="strap mono">
+      <span>A new edition every morning</span>
+      <nav>
+        <a href="#edition">The edition</a>
+        <a href="#screens">Screens</a>
+        <a href="#questions">Questions</a>
+        <a href="https://starhiveconcept.com/quizday-privacy-policy-terms/">Privacy</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="mono">Daily trivia · for iPhone</span>
+      <h1>Ten questions a day, and <em>the reason under every answer.</em></h1>
+      <p class="lede">Quizday is a one-sheet morning paper. Each day it prints a dated edition of
+        ten trivia questions. Press an answer and the ink lands, with a short explanation and its
+        source set underneath. Two minutes with your coffee, then you're done until tomorrow.</p>
+      <p class="lede"><strong>No ads, anywhere.</strong> No lives to wait for, no coins to buy,
+        and nothing runs out.</p>
+      <div class="cta">
+        <a class="badge" href="https://apps.apple.com/us/app/quizday-daily-trivia-no-ads/id6810429464">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 12.54c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.7-3.19-1.72-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.18-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.74 2.21 1.1-.05 1.52-.71 2.85-.71 1.33 0 1.71.71 2.88.69 1.19-.02 1.94-1.08 2.66-2.15.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.32-.89-2.34-3.54zM14.9 5.9c.6-.74 1.01-1.76.9-2.78-.87.04-1.93.58-2.56 1.31-.56.65-1.05 1.69-.92 2.68.97.08 1.96-.49 2.58-1.21z"/></svg>
+          <span>
+            <span class="small">Download on the</span>
+            <span class="big">App Store</span>
+          </span>
+        </a>
+        <span class="price-note">Free. The daily edition is free and stays free. Pro is an
+          optional subscription for unlimited practice.</span>
+      </div>
+    </div>
+    <figure style="margin:0">
+      <div class="press">
+        {{art:press-body}}
+        <div class="wheel">{{art:press-wheel}}</div>
+      </div>
+      <figcaption>Ten questions, set this morning.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="fold" id="edition">
+  <div class="wrap">
+    <div class="rule-heavy"></div>
+    <div class="cols">
+
+      <article class="col">
+        <div class="art">{{art:stamp}}</div>
+        <span class="mono">Today's edition</span>
+        <h2>Ten questions a day</h2>
+        <p class="sub">Dated, and set for you.</p>
+        <p class="body">Each edition has today's date on it and starts at midnight. Your first
+          edition is four easy questions, four medium and two hard. After that the paper
+          <strong>remembers what got past you</strong> and sets the next edition from it, and the
+          sheet gets harder as you file more.</p>
+        <p class="body">Finish and it prints a front page: your score, a row of ten squares, a
+          headline, and your streak. Share it if you like. It doesn't give the answers away.</p>
+      </article>
+
+      <article class="col">
+        <div class="art"><div class="sample" aria-hidden="true">
+          <div class="answer wrong"><b>A</b><span>100</span></div>
+          <div class="stamp"><span>That one got away.</span></div>
+          <div class="answer right"><b>D</b><span>60</span></div>
+          <div class="footnote">Sixty seconds make a minute, and sixty minutes an hour.
+            <div class="mono"><span>Source · Britannica</span><em>¶ something wrong?</em></div>
+          </div>
+        </div></div>
+        <span class="mono">The footnote</span>
+        <h2>Every answer explained</h2>
+        <p class="sub">With a source you can check.</p>
+        <p class="body">Right or wrong, every question tells you <strong>why</strong> in a line
+          and names where the fact came from. If you think an answer is wrong, you can flag it
+          from the same screen. All 450 questions were written for Quizday, not scraped.</p>
+      </article>
+
+      <article class="col">
+        <div class="art">{{art:desk}}</div>
+        <span class="mono">The quiet</span>
+        <h2>There are no ads in Quizday</h2>
+        <p class="sub">And no lives or coins to buy.</p>
+        <p class="body">No video after a wrong answer, no banner between questions. There is no
+          advertising SDK in the app at all. No energy, no gems, nothing that runs out and asks
+          you to pay to keep going. <strong>No account</strong>, and your scores stay on your
+          phone.</p>
+      </article>
+
+    </div>
+    <div class="ornament" aria-hidden="true"><i></i></div>
+  </div>
+</section>
+
+<section class="shots" id="screens">
+  <div class="wrap">
+    <div class="head">
+      <h2>From the press</h2>
+      <span class="mono">Six screens</span>
+    </div>
+    <div class="strip">
+      <figure><img src="{{shot:01}}" width="600" height="1304" loading="lazy" alt="Finish and it prints: the day's front page, 8 out of 10, a row of ten tally squares with two struck through, a red STOP THE PRESS stamp, and a brass ribbon reading 20 days running"></figure>
+      <figure><img src="{{shot:02}}" width="600" height="1304" loading="lazy" alt="Every answer explained: a question, How many seconds are in a minute?, with the wrong answer pencilled out under a red stamp, the right one inked green and circled, and the explanation with its source, Britannica"></figure>
+      <figure><img src="{{shot:03}}" width="600" height="1304" loading="lazy" alt="Ten questions a day: today's edition under the Quizday masthead, a drawn hand press, today's sections, and four easy, four medium, two hard"></figure>
+      <figure><img src="{{shot:04}}" width="600" height="1304" loading="lazy" alt="File seven editions, earn the late one: the late edition, five questions set from the ones you missed, under a spike of filed back issues"></figure>
+      <figure><img src="{{shot:05}}" width="600" height="1304" loading="lazy" alt="There are no ads in Quizday: the file, 13 days running, and a printed September calendar with every played day's score"></figure>
+      <figure><img src="{{shot:06}}" width="600" height="1304" loading="lazy" alt="The daily edition stays free: the composing room, Quizday Pro, with weekly and yearly plans and a three-day free trial"></figure>
+    </div>
+  </div>
+</section>
+
+<section class="late">
+  <div class="wrap">
+    <div class="box">
+      {{art:spike}}
+      <div>
+        <span class="mono">Earned, not bought</span>
+        <h2>File seven editions, earn the late one</h2>
+        <p>The late edition is five more questions, pulled back off the spike from the ones that
+          caught you. It opens by playing. It can't be bought, and skipping it costs nothing.</p>
+        <table>
+          <tr><td>7 filed</td><td>The late edition opens: five of your own misses, any evening.</td></tr>
+          <tr><td>25 filed</td><td>It runs to eight.</td></tr>
+          <tr><td>60 filed</td><td>You choose the section it's set from.</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="deal">
+  <div class="wrap">
+    <div class="grid">
+      <div class="card">
+        <span class="mono">Free, and it stays free</span>
+        <p class="cost">$0</p>
+        <h3>The daily edition</h3>
+        <ul>
+          <li>Ten questions every day, each with its explanation and source</li>
+          <li>The front page, the streak, and a printed calendar of every day you've played</li>
+          <li>The late edition, earned at seven editions filed</li>
+          <li>One daily reminder, if you want it</li>
+          <li>No account, no ads, works offline</li>
+        </ul>
+      </div>
+      <div class="card pro">
+        <span class="mono">Optional · Quizday Pro</span>
+        <p class="cost">$2.99<small> per week</small></p>
+        <h3>The composing room</h3>
+        <ul>
+          <li>Set your own rounds: any section, any night, as many as you like</li>
+          <li>Choose the difficulty: easy, medium or hard</li>
+          <li>See which sections you own and which keep catching you</li>
+          <li>Or $19.99 per year. Both start with a 3-day free trial</li>
+        </ul>
+      </div>
+    </div>
+    <p class="foot">Pro renews automatically unless you cancel at least 24 hours before the end
+      of the current period. Manage or cancel it any time in your Apple Account settings. Practice
+      rounds come from the Open Trivia Database, and they're the only part of Quizday that uses
+      the network.</p>
+  </div>
+</section>
+
+<div class="wrap"><div class="ornament" aria-hidden="true"><i></i></div></div>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <span class="mono">Letters to the desk</span>
+    <h2>What people ask about trivia apps</h2>
+    <div class="grid">
+
+      <div>
+        <p class="q">Will ads show up after a few days?</p>
+        <p class="a">No. There is no advertising SDK in the app, so there is nothing to switch on
+          later. Every release is checked against the binary before it ships.</p>
+      </div>
+
+      <div>
+        <p class="q">I paid for another trivia app and the ads got worse. Is Pro like that?</p>
+        <p class="a">There are no ads to remove, so Pro doesn't remove any. It adds practice
+          rounds and your accuracy by section. The daily edition is the same with or without it.</p>
+      </div>
+
+      <div>
+        <p class="q">Do I run out of lives or need coins?</p>
+        <p class="a">No. There are no lives, no energy, no coins and no gems. Nothing runs out,
+          so there is nothing to wait for or buy back.</p>
+      </div>
+
+      <div>
+        <p class="q">What if an answer is wrong?</p>
+        <p class="a">Every question shows its explanation and its source, so you can check it
+          yourself. If it still looks wrong, tap "something wrong here?" on that screen and it's
+          reported.</p>
+      </div>
+
+      <div>
+        <p class="q">Does everyone get the same ten?</p>
+        <p class="a">Your first edition is the day's ten, the same as anyone else's first. After
+          that Quizday sets your editions from the questions that caught you, and the mix gets
+          harder as you file more, so yours becomes your own.</p>
+      </div>
+
+      <div>
+        <p class="q">What kinds of questions are there?</p>
+        <p class="a">Geography, history, science, nature, art and literature, music, film and TV,
+          sport, food and drink, technology, space, language and general knowledge.</p>
+      </div>
+
+      <div>
+        <p class="q">Is there a timer?</p>
+        <p class="a">No. Take as long as you like over each question. A round usually takes a
+          couple of minutes.</p>
+      </div>
+
+      <div>
+        <p class="q">What happens if I miss a day?</p>
+        <p class="a">Your streak starts again, and that's all. Nothing is lost, nothing is
+          locked, and there's nothing to buy to get it back.</p>
+      </div>
+
+      <div>
+        <p class="q">Does it work offline?</p>
+        <p class="a">The daily edition and the late edition work completely offline. Only Pro's
+          practice rounds use the network.</p>
+      </div>
+
+      <div>
+        <p class="q">What do you collect about me?</p>
+        <p class="a">Nothing. No account, no analytics, no trackers. Your scores stay on your
+          phone. The <a href="https://starhiveconcept.com/quizday-privacy-policy-terms/">privacy
+          policy</a> says the same thing at greater length.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="rule-heavy"></div>
+    <div class="row">
+      <span>Quizday — a Starhive Concept app.</span>
+      <a href="https://starhiveconcept.com/quizday-privacy-policy-terms/">Privacy policy &amp; terms</a>
+      <a href="https://starhiveconcept.com/quizday-privacy-policy-terms/#support">Support</a>
+      <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Terms of Use (EULA)</a>
+      <span class="spacer mono">iPhone · iOS 17 or later</span>
+    </div>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>
