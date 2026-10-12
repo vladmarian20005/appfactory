@@ -1,0 +1,51 @@
+{
+  "_comment": "The single source of truth for what this app does with data. Three things are generated from it and must never drift apart: ios/App/PrivacyInfo.xcprivacy, store/app_privacy_details.json, and the published privacy policy page. Change this file, re-run the generators, do not hand-edit the outputs.",
+
+  "appName": "Baize",
+  "company": "Starhive Concept Srl",
+  "companyURL": "https://starhiveconcept.com/",
+  "effectiveDate": "2026-10-12",
+  "supportEmail": "support@starhiveconcept.com",
+  "pageSlug": "solitaire-privacy-policy-terms",
+
+  "collects": [],
+
+  "storesOnDevice": [
+    "The deal on the table: which deal it is and every move you have made in it, saved as you play so closing the app never costs a hand.",
+    "Every deal that came out: the date, its draw and grade, your moves, how many cards you took back, and the card you had to dig for.",
+    "Your place in the ledger, and how you are getting on with each kind of deal, which is what the next deal is chosen from.",
+    "A few settings: whether you have been through onboarding, whether sounds are on, the cloth and card back you chose, the clock, four-colour suits, large pips, the left-handed table, and the hour of the reminder if you laid one."
+  ],
+
+  "network": [],
+
+  "requiredReasonAPIs": [
+    {
+      "category": "NSPrivacyAccessedAPICategoryUserDefaults",
+      "reason": "CA92.1",
+      "why": "@AppStorage and UserDefaults, used only for this app's own settings: onboarding, sounds and the rating prompt's launch count."
+    }
+  ],
+
+  "purchases": {
+    "type": "one-time",
+    "name": "The Drawer",
+    "products": ["The Drawer"],
+    "trial": null,
+    "processor": "Apple",
+    "freeTier": "Today's proved deal every day, forever, the whole ledger and loose deals, the diary, the reminder, sounds, the clock, four-colour suits, large pips, and every cloth and back earned by playing. The drawer adds more card backs and cloths, the left-handed table, past days' deals to lay again, and the whole count."
+  },
+
+  "notifications": {
+    "used": true,
+    "why": "Only if you lay a reminder: one local notification a day at the hour you choose, reading \"Today's deal is laid.\" It is scheduled on your phone and nothing is sent anywhere."
+  },
+
+  "ads": false,
+  "analytics": false,
+  "tracking": false,
+  "account": false,
+  "childDirected": false,
+
+  "attribution": "Baize makes no network connection of any kind. Every deal was proved winnable when the app was built and ships inside it; there is no server to talk to, no account to make, and nothing to sync."
+}

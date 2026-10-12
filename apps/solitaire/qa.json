@@ -1,0 +1,96 @@
+{
+  "scheme": "Baize",
+  "bundleId": "com.starhiveconcept.solitaire",
+  "screens": [
+    {
+      "name": "01-diary",
+      "args": ["-onboarded", "-sampleData", "-done", "-screen", "diary"],
+      "note": "The first App Store screenshot, per the spec's 4.3 note: entries at 112 pt behind the top of the month page, the page on card stock with each day's buried card, today ringed in brass, the week's shape, the hem's days running, and today's line."
+    },
+    {
+      "name": "02-win",
+      "args": ["-onboarded", "-sampleData", "-won"],
+      "note": "It came out: the four fans overlapped at the centre, pips frozen mid-fall, the moves at 96 pt with the mark, the tier headline in vermilion, the clerk's line, and the diary line naming what is waiting with the week strip and Lay No. 52."
+    },
+    {
+      "name": "03-table",
+      "args": ["-onboarded", "-sampleData"],
+      "note": "Today's deal twelve moves in on the blue baize: the walnut edge and brass corners, the head with moves, draw, grade, the mark and CLEAN · n UP, the cream cards with serif indexes, the seed typed at the foot."
+    },
+    {
+      "name": "04-done",
+      "args": ["-onboarded", "-sampleData", "-done"],
+      "note": "Today's is in the diary: the fans drawn, the next ledger deal at 76 pt and Lay No. N."
+    },
+    {
+      "name": "05-first-deal",
+      "args": ["-onboarded", "-reset"],
+      "note": "A first launch: ledger No. 1 laid, the first card that can go up breathing and the ghost hand mid-drag toward its foundation. No words explain anything."
+    },
+    {
+      "name": "06-drawer",
+      "args": ["-onboarded", "-sampleData", "-pro", "-screen", "drawer"],
+      "note": "The drawer open: seven backs with the chosen one lifted, four cloths, the left-handed table, past days to lay again, and the whole count on card stock."
+    },
+    {
+      "name": "07-drawer-shut",
+      "args": ["-onboarded", "-sampleData", "-fakeProducts", "-screen", "drawer"],
+      "note": "The free tier's drawer: shut, the handle catching the lamp, THE DRAWER, and Open the drawer."
+    },
+    {
+      "name": "08-paywall",
+      "args": ["-onboarded", "-sampleData", "-fakeProducts", "-screen", "paywall"],
+      "note": "Needs -fakeProducts: a scheme's StoreKit configuration is never honoured by a simctl launch. The drawer art, card-mark bullets, one payment, Open the drawer."
+    },
+    {
+      "name": "09-settings",
+      "args": ["-onboarded", "-sampleData", "-screen", "settings"],
+      "note": "The kit's Settings on walnut rows: On the desk, sounds, the reminder, clock, four-colour, large pips, cloth and back, Clear the desk."
+    },
+    {
+      "name": "10-onboarding",
+      "args": ["-reset"],
+      "note": "Onboarding page 1: BAIZE between hairlines, the desk drawn, One deal a day, the card page marks, Turn over."
+    }
+  ],
+  "ladder": [
+    {
+      "name": "rung-5",
+      "args": ["-onboarded", "-rung", "5", "-played", "10"],
+      "note": "Session 5: ledger No. 5, draw one, grade 1, the mark forty percent over the dealer's line. Four entries; the claret cloth six away."
+    },
+    {
+      "name": "rung-51",
+      "args": ["-onboarded", "-rung", "51", "-played", "10"],
+      "note": "Session 51: draw three, grade 4, the mark thirty percent over, the deal chosen by Mastery in the shape the record is worst at. Gilt edges on every card."
+    },
+    {
+      "name": "rung-150",
+      "args": ["-onboarded", "-rung", "150", "-played", "10", "-cloth", "claret"],
+      "note": "Session 150: draw three, grade 9 — the hardest ninth of the pack — the mark ten percent over. Gilt edges, the seal, the claret cloth."
+    },
+    {
+      "name": "rung-500",
+      "args": ["-onboarded", "-rung", "500", "-played", "10", "-cloth", "claret"],
+      "note": "Session 500: draw three, grade 9, the mark five percent over — nearly the machine's own line — picked against a record five hundred deals deep. Volume two of the diary."
+    }
+  ],
+  "moments": [
+    {
+      "name": "move",
+      "args": ["-onboarded", "-demo", "move"],
+      "delay": 1.2,
+      "frames": 16,
+      "interval": 0.25,
+      "note": "The signature interaction, played by the app along the dealer's line: runs lifting and landing, cards turning, a card going up its suit's scale, then one take-back playing backwards and the move again."
+    },
+    {
+      "name": "win",
+      "args": ["-onboarded", "-demo", "win"],
+      "delay": 1.2,
+      "frames": 16,
+      "interval": 0.2,
+      "note": "The last moves before every card is face up, then the sweep — every card flying home in rank order — the fans blooming, pips falling, the count rising and the diary line."
+    }
+  ]
+}
