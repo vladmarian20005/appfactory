@@ -237,6 +237,7 @@ func seedLine(_ s: SavedTable) -> String {
 struct TodayWaits: View {
     @EnvironmentObject private var desk: Desk
     @Environment(\.brand) private var brand
+    @Environment(\.dynamicTypeSize) private var type
 
     var body: some View {
         let dials = desk.todayDials
@@ -245,7 +246,7 @@ struct TodayWaits: View {
                 Image("Desk")
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: 260)
+                    .frame(maxWidth: type.isAccessibilitySize ? 150 : 260)
                     .ambientFloat(distance: 4, period: 5)
                     .accessibilityHidden(true)
                     .padding(.top, 24)
@@ -272,6 +273,7 @@ struct TodayWaits: View {
 private struct OneAction: View {
     let title: String
     let action: () -> Void
+    @Environment(\.brand) private var brand
 
     var body: some View {
         Button(action: action) {
@@ -279,8 +281,14 @@ private struct OneAction: View {
         }
         .brandProminent()
         .padding(.horizontal, 28)
-        .padding(.top, 8)
+        .padding(.top, 20)
         .padding(.bottom, 16)
+        // The cloth thickens under the button, so what scrolls beneath it goes quiet.
+        .background {
+            LinearGradient(stops: [.init(color: brand.palette.canvas.opacity(0), location: 0),
+                                   .init(color: brand.palette.canvas.opacity(0.92), location: 0.35)],
+                           startPoint: .top, endPoint: .bottom)
+        }
     }
 }
 
@@ -288,6 +296,7 @@ private struct OneAction: View {
 struct DoneToday: View {
     @EnvironmentObject private var desk: Desk
     @Environment(\.brand) private var brand
+    @Environment(\.dynamicTypeSize) private var type
 
     var body: some View {
         let next = desk.nextLedger
@@ -296,7 +305,7 @@ struct DoneToday: View {
                 Image("Fans")
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: 280)
+                    .frame(maxWidth: type.isAccessibilitySize ? 150 : 280)
                     .ambientFloat(distance: 4, period: 5)
                     .accessibilityHidden(true)
                     .padding(.top, 24)
