@@ -32,6 +32,12 @@
       "sha": "7e3edcef2c52c848e210e937fe284b34058e77da",
       "at": "2026-10-12T10:21:52.019Z",
       "run": "https://github.com/vladmarian20005/appfactory/actions/runs/38235345399"
+    },
+    "shots": {
+      "status": "fail",
+      "sha": "72c25bce62272273e2f2c5ff5e5b3c801e51e7b5",
+      "at": "2026-10-12T10:31:42.646Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/38235856395"
     }
   }
 }
