@@ -1,0 +1,49 @@
+{
+  "_comment": "Compose with: node tools/screenshots/compose.mjs apps/solitaire/store/screenshots.json apps/solitaire/store/screenshots/en-US. Raw captures come from verify-app.sh reading qa.json, into store/raw. The diary leads, per the spec's 4.3 note that the listing must open on the day written down and the deal's number, never a bare card table like the other forty-six solitaires. The frame is the app's own baize going to lamp-lit night, walnut-free, with brass as the tint; the font is the app's New York. Titles are the three wedges in order: every deal comes out, no ads, no internet.",
+  "background": "linear-gradient(168deg,#34547A 0%,#1E3759 54%,#14243A 100%)",
+  "textColor": "#F4ECDC",
+  "accent": "#D9B35C",
+  "font": "serif",
+  "shots": [
+    {
+      "src": "raw/01-diary.png",
+      "title": "A deal a day, written down",
+      "subtitle": "The same cards for everyone who sits down to it."
+    },
+    {
+      "src": "raw/02-win.png",
+      "title": "It came out",
+      "subtitle": "The moves, the mark, and a line in the diary."
+    },
+    {
+      "src": "raw/03-table.png",
+      "title": "Every deal is proved to come out",
+      "subtitle": "A solver played each one through before the app shipped."
+    },
+    {
+      "src": "raw/05-first-deal.png",
+      "title": "No ads. Ever.",
+      "subtitle": "No coins, no lives, no energy, nothing that runs out."
+    },
+    {
+      "src": "raw/10-onboarding.png",
+      "title": "No internet, no account",
+      "subtitle": "Baize makes no network connection at all."
+    },
+    {
+      "src": "raw/09-settings.png",
+      "title": "Four-colour suits, large pips",
+      "subtitle": "On the desk and free, whenever you want them."
+    },
+    {
+      "src": "raw/06-drawer.png",
+      "title": "Seven backs, four cloths",
+      "subtitle": "The desk set the way you like it."
+    },
+    {
+      "src": "raw/08-paywall.png",
+      "title": "Pay once, or play free forever",
+      "subtitle": "No subscription. Today's deal is always free."
+    }
+  ]
+}
