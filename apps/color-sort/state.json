@@ -34,9 +34,9 @@
     },
     "compliance": {
       "status": "ok",
-      "sha": "305b3936f5ff3c55f70c8d5eb6b5f2bdfd342c76",
-      "at": "2026-09-28T17:07:09.932Z",
-      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/36455772747"
+      "sha": "e88744878ea5c68d7bba715a0e83837f2ffcdb05",
+      "at": "2026-10-12T08:39:59.661Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/38224881239"
     },
     "register": {
       "status": "ok",
