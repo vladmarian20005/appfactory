@@ -396,7 +396,8 @@ struct GhostHand: View {
     var body: some View {
         let p = path
         TimelineView(.animation(minimumInterval: 1.0 / 60, paused: Motion.isStill)) { ctx in
-            let t = Motion.isStill ? 1.2 : ctx.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 4) + 0.9
+            // A still capture freezes the drag at its middle, where the curve and the card show.
+            let t = Motion.isStill ? 1.6 : ctx.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 4) + 0.9
             let travel = min(1, max(0, (t - 0.9 - 0.3) / 0.8))
             let eased = travel * travel * (3 - 2 * travel)
             let mid = CGPoint(x: (p.start.x + p.end.x) / 2, y: min(p.start.y, p.end.y) - layout.cardH * 0.6)

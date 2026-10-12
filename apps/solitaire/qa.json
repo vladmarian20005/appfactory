@@ -80,8 +80,8 @@
       "name": "move",
       "args": ["-onboarded", "-demo", "move"],
       "delay": 1.2,
-      "frames": 16,
-      "interval": 0.25,
+      "frames": 24,
+      "interval": 0.3,
       "note": "The signature interaction, played by the app along the dealer's line: runs lifting and landing, cards turning, a card going up its suit's scale, then one take-back playing backwards and the move again."
     },
     {
