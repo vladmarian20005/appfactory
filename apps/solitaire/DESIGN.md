@@ -865,13 +865,15 @@ for the page you are on, an empty slot for each one you are not.
 
 | Mock | Shows |
 | --- | --- |
-| `design/mock-1-play.html` | The table mid-deal: today's No. 285, draw one, 31 up and clean, 118 moves against the mark 147, a run of three cards lifted under the finger and bending, the target column's top card nudged, the foundations with two suits climbing, the seed typed at the foot, the brass corners. |
+| `design/mock-1-play.html` | The table mid-deal: today's No. 285, draw one, nine up and clean, 41 moves against the mark 147, fifteen cards still face down, a seven-card run built on one column, a run of three cards lifted under the finger and bending, the target column's top card nudged with the drop ghost under it, three foundations started and the diamonds' outline waiting, the seed typed at the foot, the brass corners. |
 | `design/mock-2-win.html` | The win at its peak, `clean` tier: the four fans bloomed and overlapped at the centre, pips frozen mid-fall, **118** at 96 pt with `MOVES` and `THE MARK 147`, "It came out clean" in salmon, the clerk's line, and the diary line with the month strip, today's slot being written, and both buttons above the tab bar. |
 | `design/mock-3-first.html` | Onboarding page 1, the first thing a new user sees: the masthead, the desk drawn, "One deal a day", the card page indicator, "Turn over". |
 | `design/mock-4-diary.html` | The Diary: entries at 112 pt, the October page with its buried cards, today ringed, the week's shape, the hem, today's line and "Send the page". This is the first App Store screenshot, per the spec's 4.3 note. |
 
 All four are drawn by `design/cards.js`, which draws every card in the mocks and the art with
-one geometry, so no mock contains a card the app would draw differently.
+one geometry, so no mock contains a card the app would draw differently. `design/art.js` draws
+the four art pieces and the icon from it, and `design/make-art.mjs` writes them to disk; mock 3
+calls `Art.desk()` inline, so the onboarding mock and `art/desk.svg` are the same drawing.
 
 ### Captures
 

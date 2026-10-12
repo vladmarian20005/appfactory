@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Baize · one deal a day</title>
+<style>
+  :root {
+    --canvas: #34547A; --surface: #5E4432; --ink: #F4ECDC; --inkSoft: #D2C8B2;
+    --accent: #D9B35C; --onAccent: #241A10;
+    --display: ui-serif, "New York", Georgia, serif;
+    --body: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { width: 440px; height: 956px; overflow: hidden; }
+  body { background: var(--canvas); font-family: var(--body); color: var(--ink); position: relative; }
+  .glow { position: absolute; inset: 0;
+    background: radial-gradient(circle 520px at 12% 2%, rgba(75,110,150,1) 0%, rgba(75,110,150,0) 70%); }
+  .nap { position: absolute; inset: 0; opacity: .5; }
+  .status { position: absolute; top: 0; left: 0; right: 0; height: var(--safe-top, 62px);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 30px 11px; font: 600 16px/1 var(--body); z-index: 40; }
+  .status .r { display: flex; gap: 6px; align-items: center; }
+
+  .caps { font: 600 10.5px/1.6 var(--body); letter-spacing: 2.6px; text-transform: uppercase; color: var(--inkSoft); }
+  .mast { position: absolute; left: 40px; right: 40px; top: 96px; display: flex; align-items: center; gap: 12px; }
+  .mast .rule { flex: 1; height: .5px; background: rgba(244,236,220,.3); }
+  .mast svg { display: block; }
+
+  .art { position: absolute; left: 0; right: 0; top: 150px; height: 370px; display: flex; justify-content: center; align-items: center; }
+  .art svg { width: 372px; height: 340px; overflow: visible; filter: drop-shadow(0 18px 24px rgba(0,0,0,.28)); }
+
+  .copy { position: absolute; left: 36px; right: 36px; top: 552px; text-align: center; }
+  .copy h1 { font: 600 42px/1.08 var(--display); color: var(--ink); letter-spacing: -.6px; }
+  .copy p { margin: 16px auto 0; max-width: 330px; font: 400 19px/1.36 var(--body); color: var(--inkSoft); }
+
+  .dots { position: absolute; left: 0; right: 0; top: 792px; display: flex; justify-content: center; gap: 12px; align-items: center; }
+  .dots svg { display: block; }
+
+  .btn { position: absolute; left: 20px; right: 20px; bottom: 44px; height: 54px; border-radius: 27px;
+    background: linear-gradient(180deg, #E8C675, var(--accent)); color: var(--onAccent);
+    font: 600 17px/54px var(--body); text-align: center;
+    box-shadow: 0 1px 0 rgba(255,255,255,.45) inset, 0 8px 18px rgba(0,0,0,.28); }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <svg class="nap" id="nap"></svg>
+
+  <div class="mast"><div class="rule"></div><span class="caps">Baize</span><svg width="9" height="13" viewBox="0 0 9 13"><rect x=".5" y=".5" width="8" height="12" rx="1" fill="#F6EFE0"/></svg><div class="rule"></div></div>
+
+  <div class="art" id="art"></div>
+
+  <div class="copy">
+    <h1>One deal a day</h1>
+    <p>Laid on the baize every morning — the same cards for everyone who sits down to it.</p>
+  </div>
+
+  <div class="dots">
+    <svg width="9" height="13" viewBox="0 0 9 13"><rect x=".5" y=".5" width="8" height="12" rx="1" fill="#F6EFE0"/></svg>
+    <svg width="9" height="13" viewBox="0 0 9 13"><rect x=".5" y=".5" width="8" height="12" rx="1" fill="none" stroke="rgba(244,236,220,.4)"/></svg>
+    <svg width="9" height="13" viewBox="0 0 9 13"><rect x=".5" y=".5" width="8" height="12" rx="1" fill="none" stroke="rgba(244,236,220,.4)"/></svg>
+  </div>
+  <div class="btn">Turn over</div>
+
+  <div class="status">
+    <span>9:41</span>
+    <span class="r">
+      <svg width="17" height="11" viewBox="0 0 17 11"><g fill="#F4ECDC"><rect y="7.5" width="3" height="3.5" rx=".7"/><rect x="4.5" y="5.5" width="3" height="5.5" rx=".7"/><rect x="9" y="3" width="3" height="8" rx=".7"/><rect x="13.5" width="3" height="11" rx=".7"/></g></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 9.6 5.2 6.7a4 4 0 0 1 5.6 0Z" fill="#F4ECDC"/><path d="M2.8 4.3a7.4 7.4 0 0 1 10.4 0" stroke="#F4ECDC" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M.6 1.6a10.6 10.6 0 0 1 14.8 0" stroke="#F4ECDC" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg width="25" height="11" viewBox="0 0 25 11"><rect x=".5" y=".5" width="20" height="10" rx="2.8" fill="none" stroke="#F4ECDC" opacity=".45"/><rect x="2" y="2" width="15" height="7" rx="1.6" fill="#F4ECDC"/><path d="M22.2 3.6v3.8a2.2 2.2 0 0 0 0-3.8Z" fill="#F4ECDC" opacity=".45"/></svg>
+    </span>
+  </div>
+
+<script src="cards.js"></script>
+<script src="art.js"></script>
+<script>
+  document.getElementById('nap').innerHTML = Cards.nap(0, 0, 440, 956, 7, 0.06, 3);
+  document.getElementById('art').innerHTML = Art.desk();
+</script>
+</body>
+</html>

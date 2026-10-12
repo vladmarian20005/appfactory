@@ -429,8 +429,10 @@ target of type `bundle.unit-test` depending on the app target.
 
 Under `apps/solitaire/tools/`: `pack.mjs` (the search, the grading, the dailies), with
 `klondike.mjs` (the rules, shared with nothing in Swift but tested against it by the replay
-test). Under `apps/solitaire/design/`: `cards.js`, `make-art.mjs`, the mocks, the icon and the
-art.
+test). Under `apps/solitaire/design/`: `cards.js` (the card, drawn once), `art.js` (the four
+art pieces and the icon, drawn from it), `make-art.mjs` (writes them), the mocks, the icon and
+the art. `CardFace.swift` and `Pips.swift` reproduce `cards.js`'s geometry and paths; when a
+proportion is in doubt, `cards.js` is the reference.
 
 Nothing in FactoryKit is copied into the app: `Ladder`, `Mastery`, `Run`, `Earned`, `Tones`,
 `Haptics`, `Motion`, `CountUp`, `.confetti`, `ShareImage`, `OnboardingView`, `PaywallView`,
