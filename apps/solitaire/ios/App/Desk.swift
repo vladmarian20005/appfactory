@@ -426,21 +426,52 @@ final class Desk: ObservableObject {
                 try? await Task.sleep(nanoseconds: 650_000_000)
             }
         default:
-            var played = 0
-            for m in line.dropFirst(s.moves.count).prefix(12) {
-                await hold(m)
-                play(m)
-                played += 1
-                try? await Task.sleep(nanoseconds: 700_000_000)
-                if played == 8 {
-                    takeBack()
-                    try? await Task.sleep(nanoseconds: 900_000_000)
+            // Round and round, so whenever the tooling starts filming, something is moving.
+            while won == nil {
+                var played = 0
+                for m in line.dropFirst(s.moves.count).prefix(12) {
                     await hold(m)
                     play(m)
+                    played += 1
                     try? await Task.sleep(nanoseconds: 700_000_000)
+                    if played == 8 {
+                        takeBack()
+                        try? await Task.sleep(nanoseconds: 900_000_000)
+                        await hold(m)
+                        play(m)
+                        try? await Task.sleep(nanoseconds: 700_000_000)
+                    }
                 }
+                try? await Task.sleep(nanoseconds: 1_200_000_000)
+                guard won == nil else { break }
+                withMotion(Motion.gentle) {
+                    store(s)
+                    refresh()
+                    clerk = nil
+                }
+                try? await Task.sleep(nanoseconds: 900_000_000)
             }
         }
+    }
+
+    /// Where along the line twelve moves do the most on the cloth: turning the stock barely
+    /// changes the table, so the demo starts where cards lift, land and go up.
+    /// It ends before every card is face up, so the demo never sets off the sweep.
+    private static func busiestWindow(_ line: [Table.Move], from deal: Table, length: Int = 12) -> Int {
+        var t = deal
+        var open = line.count
+        for (i, m) in line.enumerated() {
+            t.apply(m)
+            if t.allFaceUp { open = i; break }
+        }
+        guard open > length else { return 0 }
+        func busy(_ m: Table.Move) -> Int { if case .turn = m { return 0 }; return 1 }
+        var best = 0, bestScore = -1
+        for k in 0...(open - length) {
+            let score = line[k..<(k + length)].reduce(0) { $0 + busy($1) }
+            if score > bestScore { best = k; bestScore = score }
+        }
+        return best
     }
 
     private func hold(_ m: Table.Move) async {
@@ -493,7 +524,7 @@ final class Desk: ObservableObject {
             }
             count = max(0, k - 4)
         } else if LaunchOptions.demo == "move" {
-            count = 6
+            count = Self.busiestWindow(line, from: s.deal)
         }
         for m in line.prefix(count) { play(m, instant: true) }
         clerk = nil
