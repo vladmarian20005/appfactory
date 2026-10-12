@@ -1,15 +1,15 @@
 {
-  "pass": false,
-  "scores": { "idea": 4, "look": 4, "signature": 1, "reward": 1, "voice": 4, "craft": 3, "firstMinute": 2, "escalation": 1, "pull": 1 },
-  "tells": ["nothing-moves", "ladder-interchangeable", "false-done-state", "system-large-title"],
-  "summary": "A beautifully directed desk with no cards on it: ios/App/deals.json was never generated, Pack.load() returns .empty, every lay() fails silently, and the table, win, first deal, both filmstrips and all four ladder panels are the same false 'Today's is in the diary' screen.",
+  "pass": true,
+  "scores": { "idea": 5, "look": 5, "signature": 4, "reward": 4, "voice": 5, "craft": 4, "firstMinute": 4, "escalation": 4, "pull": 4 },
+  "tells": [],
+  "summary": "A blue baize under one lamp with a clerk who keeps a diary — unmistakably its own world on every screen, with a real run, a real ladder and real things earned; its one structural flaw is that the pack holds 200 grade-9 deals, so past rung ~313 the chooser walks back down the grades and session 500 is easier than session 150.",
   "fixes": [
-    "Run node apps/solitaire/tools/pack.mjs and commit ios/App/deals.json; confirm deals.json is inside Baize.app before any capture.",
-    "Never show DoneToday unless todayState is .out; a lay() that finds no deal must not be dressed as a finished day.",
-    "Re-run every capture after the pack lands: 03-table must show cards, 05 the ghost hand, 02 the fans with 118 MOVES, moment-move and moment-win must change frame to frame, and the ladder panels must differ in grade, draw, mark and cloth.",
-    "Set the Diary, Drawer and Settings large titles in New York Semibold in ink instead of the system's black SF.",
-    "At the largest text size keep the done state's and win's one action on screen: scale No. and the 96 pt count with minimumScaleFactor or step them down at accessibility sizes.",
-    "Make -sampleData actually seed the 23-entry October page so the first App Store screenshot is the diary the spec promised, not the empty state.",
-    "Give the paywall its 'Leave it shut' dismissal as DESIGN.md names it, instead of the bare X."
+    "Play.choose descends the grades once grade 9 at draw three is spent (200 deals): keep the ladder's grade with a per-grade second pass, or pack more top-grade deals, and fix DESIGN.md's 'rung 900' claim",
+    "Mastery's choice is invisible and nearly single-valued at grade 9 (166 of 200 are Buried, none Even): put the shape in the table's head caps with one clerk line on laying, and rank grades within each shape in pack.mjs",
+    "The win's two actions sit under the fold on a 393 pt phone: cap the fans' height and pin 'Lay No. 52 / Send the card' in a bottom safeAreaInset like OneAction",
+    "Today's ending says 'Tomorrow's is laid at midnight' over a button reading 'Lay No. 51': name the ledger's next deal in Voice.nextLine for today's kind",
+    "The done state's fans art carries its own dark rounded square on the cloth: strip the background rect from fans.svg and re-render",
+    "The ghost hand on the first deal reads as a smudge at 18 % opacity: raise the fingertip and the ghost card so the capture shows the move at a glance",
+    "Small craft: HOUNDSTOOTH clipped mid-word with no scroll cue, the dark paywall's second bullet mark invisible, the Diary's today line under the tab bar, the AX win head truncating to 'MONDA…'"
   ]
 }
