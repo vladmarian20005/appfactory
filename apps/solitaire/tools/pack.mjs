@@ -456,7 +456,9 @@ export function gradeOf(stats, d) {
 
 function dayTask({ day, budget, stats, reserved, maxExact, maxAll }) {
   const { draw, grade } = dailyDials(day);
-  const rng = new SplitMix64((BigInt(day) * GOLDEN + 1n) & MASK);
+  // The start is mixed once: SplitMix64 steps by GOLDEN, so starting day d at d·GOLDEN made day
+  // d+7 the same stream as day d seven draws on — same rung, same deal, a collision.
+  const rng = new SplitMix64(new SplitMix64((BigInt(day) * GOLDEN + 1n) & MASK).next());
   const tried = [];
   let candidates = 0;
   while (candidates < maxAll) {
@@ -697,9 +699,16 @@ async function main() {
   const dailies = {};
   let inexact = [];
   for (let day = 0; day < o.days; day++) {
-    const r = D[day];
+    let r = D[day];
     if (!r || !r.deal) throw new Error(`no daily for day ${day}`);
-    if (ids.has(r.deal.id)) throw new Error(`daily id collision on day ${day}: ${r.deal.id}`);
+    if (ids.has(r.deal.id)) {
+      // Days are searched in parallel and cannot see each other: search this one again here,
+      // past every id already taken.
+      console.log(`daily id collision on day ${day}: ${r.deal.id}, searching again`);
+      const stats1 = stats[dailyDials(day).draw];
+      r = dayTask({ day, budget: o.budget, stats: stats1, reserved: [...ids], maxExact: 60, maxAll: 300 });
+      if (!r.deal || ids.has(r.deal.id)) throw new Error(`daily id collision on day ${day}`);
+    }
     ids.add(r.deal.id);
     if (!r.exact) inexact.push(`day ${day} wanted ${dailyDials(day).grade} got ${r.deal.grade}`);
     dailies[String(day)] = packDeal(r.deal);

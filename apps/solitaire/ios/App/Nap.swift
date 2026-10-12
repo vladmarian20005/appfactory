@@ -125,6 +125,8 @@ struct LedgerNumber: View {
             Text("No.").brandDisplay(size: size * 0.6)
             Text("\(number)").brandDisplay(size: size)
         }
+        .lineLimit(1)
+        .minimumScaleFactor(0.6)
         .foregroundStyle(color ?? brand.palette.ink)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Number \(number)")

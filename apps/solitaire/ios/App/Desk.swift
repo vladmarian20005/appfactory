@@ -97,15 +97,15 @@ final class Desk: ObservableObject {
             if let t = record.todayTable, t.day == day { break }
             if let t = record.todayTable { abandon(t) }
             record.todayTable = nil
-            guard record.todayEntry(day: day) == nil,
-                  let d = Play.todayDeal(day: day, pack: pack) else { break }
+            guard record.todayEntry(day: day) == nil else { break }
+            guard let d = Play.todayDeal(day: day, pack: pack) else { assertionFailure("pack empty"); break }
             record.todayTable = SavedTable(deal: d, kind: .today, day: day,
                                            tight: Play.dials(at: Play.dailyRung(day: day)).tight)
         case .ledger:
             which = .other
             if let t = record.table, case .ledger = t.kind { break }
             if let t = record.table { abandon(t) }
-            guard let d = Play.ledgerDeal(rung: record.rung, record: record, pack: pack) else { break }
+            guard let d = Play.ledgerDeal(rung: record.rung, record: record, pack: pack) else { assertionFailure("pack empty"); break }
             record.table = SavedTable(deal: d, kind: .ledger(record.rung), day: day,
                                       tight: Play.dials(at: record.rung).tight)
             record.played.insert(d.id)

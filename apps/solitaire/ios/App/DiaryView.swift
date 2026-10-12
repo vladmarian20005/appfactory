@@ -32,6 +32,7 @@ struct DiaryView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 28)
             }
+            .contentMargins(.bottom, 24, for: .scrollContent)
         }
         .baize()
         .navigationTitle("Diary")

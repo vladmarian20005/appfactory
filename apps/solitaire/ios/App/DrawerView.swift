@@ -15,6 +15,7 @@ struct DrawerView: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 16)
         }
+        .contentMargins(.bottom, 24, for: .scrollContent)
         .baize()
         .navigationTitle("Drawer")
     }
@@ -102,7 +103,7 @@ struct DrawerView: View {
                     .environment(\.cardStyle.back, b)
                     .offset(y: chosen ? -6 : 0)
                     .shadow(color: .black.opacity(chosen ? 0.35 : 0.15), radius: chosen ? 8 : 2, y: chosen ? 6 : 1)
-                Caps(b == .brassLattice && !desk.record.hasEarned("lattice") ? "Earned at 25" : b.title,
+                Caps(earnedOnly ? "Earned at 25" : b.title,
                      color: chosen ? brand.palette.accent : brand.palette.inkSoft)
                     .lineLimit(1)
                     .fixedSize()
@@ -127,7 +128,7 @@ struct DrawerView: View {
                     .frame(width: 52, height: 52)
                     .overlay(RoundedRectangle(cornerRadius: 9, style: .continuous).inset(by: -3)
                         .strokeBorder(chosen ? brand.palette.accent : .clear, lineWidth: 2))
-                Caps(c == .claret && !desk.record.hasEarned("claret") ? "Earned at 10" : c.rawValue,
+                Caps(c == .claret && !desk.record.hasEarned("claret") && !desk.isPro ? "Earned at 10" : c.rawValue,
                      color: chosen ? brand.palette.accent : brand.palette.inkSoft)
                     .fixedSize()
             }

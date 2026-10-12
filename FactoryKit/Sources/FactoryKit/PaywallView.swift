@@ -31,6 +31,7 @@ public struct PaywallView: View {
     let subhead: String?
     let cta: String?
     let hero: AnyView?
+    let dismissTitle: String?
     let onDone: () -> Void
 
     @Environment(\.brand) private var brand
@@ -40,7 +41,8 @@ public struct PaywallView: View {
 
     public init(store: Store, config: AppConfig, headline: String, bullets: [String],
                 bulletStyle: PaywallBullets = .checklist, promise: String? = nil,
-                subhead: String? = nil, cta: String? = nil, onDone: @escaping () -> Void) {
+                subhead: String? = nil, cta: String? = nil, dismissTitle: String? = nil,
+                onDone: @escaping () -> Void) {
         self.store = store
         self.config = config
         self.headline = headline
@@ -50,12 +52,13 @@ public struct PaywallView: View {
         self.subhead = subhead
         self.cta = cta
         self.hero = nil
+        self.dismissTitle = dismissTitle
         self.onDone = onDone
     }
 
     public init<Hero: View>(store: Store, config: AppConfig, headline: String, bullets: [String],
                             bulletStyle: PaywallBullets = .checklist, promise: String? = nil,
-                            subhead: String? = nil, cta: String? = nil,
+                            subhead: String? = nil, cta: String? = nil, dismissTitle: String? = nil,
                             @ViewBuilder hero: () -> Hero, onDone: @escaping () -> Void) {
         self.store = store
         self.config = config
@@ -66,6 +69,7 @@ public struct PaywallView: View {
         self.subhead = subhead
         self.cta = cta
         self.hero = AnyView(hero())
+        self.dismissTitle = dismissTitle
         self.onDone = onDone
     }
 
@@ -209,8 +213,13 @@ public struct PaywallView: View {
             .brandBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button { onDone() } label: { Image(systemName: "xmark") }
-                        .accessibilityLabel("Close")
+                    // The app's words for walking away — "Leave it shut" — where it has them.
+                    if let dismissTitle {
+                        Button(dismissTitle) { onDone() }
+                    } else {
+                        Button { onDone() } label: { Image(systemName: "xmark") }
+                            .accessibilityLabel("Close")
+                    }
                 }
             }
             .onAppear { if selected == nil { selected = store.offers.last } }

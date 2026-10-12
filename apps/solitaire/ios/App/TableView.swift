@@ -73,8 +73,10 @@ struct TableView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 12)
             }
-        } else {
+        } else if case .out = desk.todayState {
             DoneToday()
+        } else {
+            TodayWaits()
         }
     }
 
@@ -231,6 +233,57 @@ func seedLine(_ s: SavedTable) -> String {
     return parts.joined(separator: " · ")
 }
 
+/// Nothing on the cloth and today's not yet out: the date, today's dials, and one way to lay it.
+struct TodayWaits: View {
+    @EnvironmentObject private var desk: Desk
+    @Environment(\.brand) private var brand
+
+    var body: some View {
+        let dials = desk.todayDials
+        ScrollView {
+            VStack(spacing: 18) {
+                Image("Desk")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 260)
+                    .ambientFloat(distance: 4, period: 5)
+                    .accessibilityHidden(true)
+                    .padding(.top, 24)
+                Caps(Voice.dateCaps(Play.date(ofDay: desk.today)))
+                Text("Today's deal is face down")
+                    .brandFont(.title)
+                    .foregroundStyle(brand.palette.ink)
+                    .multilineTextAlignment(.center)
+                Caps("Draw \(Words.draw(dials.draw)) · Grade \(dials.grade)")
+            }
+            .padding(.horizontal, 28)
+            .padding(.bottom, 24)
+        }
+        .safeAreaInset(edge: .bottom) {
+            OneAction(title: "Lay today's deal") {
+                if case .laid = desk.todayState { desk.show(.today) } else { desk.lay(.today) }
+            }
+        }
+    }
+}
+
+/// The screen's one action, held under the scroll so it is on the first screen at every text
+/// size.
+private struct OneAction: View {
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title).font(.headline).lineLimit(2).frame(maxWidth: .infinity).padding(.vertical, 4)
+        }
+        .brandProminent()
+        .padding(.horizontal, 28)
+        .padding(.top, 8)
+        .padding(.bottom, 16)
+    }
+}
+
 /// Today's is out and nothing else is laid: the fans, the line, and the next deal in the ledger.
 struct DoneToday: View {
     @EnvironmentObject private var desk: Desk
@@ -260,16 +313,12 @@ struct DoneToday: View {
                     Caps("Draw \(Words.draw(next.draw)) · Grade \(next.grade)")
                 }
                 .padding(.top, 6)
-                Button {
-                    desk.lay(.ledger)
-                } label: {
-                    Text("Lay No. \(next.number)").font(.headline).frame(maxWidth: .infinity).padding(.vertical, 4)
-                }
-                .brandProminent()
-                .padding(.top, 8)
             }
             .padding(.horizontal, 28)
             .padding(.bottom, 24)
+        }
+        .safeAreaInset(edge: .bottom) {
+            OneAction(title: "Lay No. \(next.number)") { desk.lay(.ledger) }
         }
     }
 }

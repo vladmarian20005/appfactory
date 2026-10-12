@@ -36,6 +36,7 @@ struct RootView: View {
                         promise: AppInfo.paywallPromise,
                         subhead: AppInfo.paywallSubhead,
                         cta: AppInfo.paywallCTA,
+                        dismissTitle: AppInfo.paywallDismiss,
                         hero: { Image("Drawer").resizable().scaledToFit() }) {
                 desk.showPaywall = false
             }

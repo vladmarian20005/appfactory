@@ -74,6 +74,8 @@ struct WinView: View {
                     Haptics.impact(0.25 + 0.03 * CGFloat(n % 20))
                 }
                 .brandDisplay(size: 96)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
                 .foregroundStyle(brand.palette.ink)
                 Caps("Moves")
             }

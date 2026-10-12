@@ -38,6 +38,7 @@ enum AppInfo {
     ]
     static let paywallPromise = "Today's deal stays free, every day, and every entry you have written stays in the diary."
     static let paywallCTA = "Open the drawer"
+    static let paywallDismiss = "Leave it shut"
 }
 
 /// Onboarding's art under the masthead: `BAIZE` in the caps between two hairlines and a
