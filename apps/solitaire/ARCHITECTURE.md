@@ -473,3 +473,30 @@ Nothing in FactoryKit is copied into the app: `Ladder`, `Mastery`, `Run`, `Earne
    deal", which gathers yesterday's behind a confirmation if one is laid), today's laid and
    part played ("Back to the table"), today's out (the line). Keep it one computed
    `TodayState` enum in `Desk` that every view reads, decided in one place.
+
+## Build notes (app-build, 2026-10-12)
+
+Where the build and this document part ways, the intent kept and the simplest thing done:
+
+- **`Shape` collides with SwiftUI's `Shape`.** The enum keeps its name; the two SwiftUI shapes in
+  `Pips.swift` conform to `SwiftUI.Shape` explicitly.
+- **The sweep is its own move.** `Table.Move.home(card:)` (token `h<code>`) sends a card straight
+  up from a column top, the waste or anywhere in the stock, and `sweepMoves()` is a list of them in
+  rank order. A draw-three stock can otherwise cycle without the next card surfacing; `pack.mjs`
+  never writes this token, so the contract with the pack is unchanged.
+- **The pack loads synchronously** in `Desk.init`, not on a background task: it decodes well
+  inside the deal animation, and it saves a "waiting for the pack" state.
+- **`deals.json` seeds and lines are strings**: `seed` is 16 hex chars (a UInt64 does not survive
+  a JavaScript number) and `line` is one space-joined string of move tokens.
+- **Today's deal before the epoch.** Day numbers before Monday 19 October 2026 are negative and
+  have no packed daily; `todayDeal` uses the stated past-the-pack fallback for them (the pool deal
+  at the weekday's draw and grade with the lowest seed under a fixed multiplier and the day), so a
+  build run before launch still has a shared, deterministic daily. The `№` is omitted for those days.
+- **SavedTable carries its deal's facts** (seed, line count, shape, buried card, grade) so a table
+  replays without a pack lookup; `takenBack` and `heard` (the clerk's once-a-deal asides) live on it.
+- **Capture seeds simulate the climb.** `-sampleData` and `-rung N` build the record by running the
+  real `Play.ledgerDeal` chooser rung by rung against a scripted player who digs late and turns the
+  stock late, so Mastery's record, the count and the deal laid at rung N are the real ones. At rung
+  51 that is fifty ledger entries plus nine dailies, not the twenty-three DESIGN.md's mock shows.
+- **Not built yet:** the `BaizeTests` target; press-and-hold on "Take it back"; the fans drifting in
+  from the foundations (they bloom in place at the centre).
