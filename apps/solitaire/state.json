@@ -11,9 +11,9 @@
     },
     "verify": {
       "status": "ok",
-      "sha": "92c8e4450054e6bcbfb806a32eacc152de0b98d0",
-      "at": "2026-10-12T07:19:41.236Z",
-      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/38211430459"
+      "sha": "a5d616a381c09b1cb8bcb1d73e96016b6d735607",
+      "at": "2026-10-12T09:48:24.741Z",
+      "run": "https://github.com/vladmarian20005/appfactory/actions/runs/38217119231"
     },
     "compliance": {
       "status": "fail",
