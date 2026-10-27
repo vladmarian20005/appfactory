@@ -1,7 +1,28 @@
-stage: built
-date: 2026-09-12
+stage: content ready
+date: 2026-10-27
 spec: SPEC.md · direction: DESIGN.md · qa: qa.json · privacy source: privacy.json
-next: app-verify, then app-polish's critic → aso → shots → compliance → pages
+next: the app going live, then the owner approves the launch kit and the landing page is published
+
+## Launch kit (27 October 2026)
+
+In `content/`: `site/index.html` (built from `site/page.html` by `site/build.mjs`),
+`videos.md` and five clips in `clips/`, `posts.md`, `schedule.md`.
+
+- **The landing page is one self-contained file.** The September page loaded `shots/`, `art/`
+  and the icon as separate files, but app-content publishes `index.html` alone, so all of them
+  would have been broken once live. Every asset is now inlined (about 1 MB); edit
+  `page.html` and rerun `build.mjs`, never `index.html`. It wears the app's plaster, cobalt and
+  expanded display face, and was rendered with Playwright in light, dark and at 390 px
+  wide and read back. It has no `og:image` and no canonical, because the published URL isn't
+  known here; add both once it is.
+- **The App Store badge says "Coming soon".** The iTunes lookup for the bundle id returned
+  nothing on 27 October and `AppInfo.appStoreID` is `nil`. `schedule.md` lists the five things
+  to change on the day it goes live.
+- **Clips:** 1080×1920, 30 fps, 15.8–24 s, from the Release build. They're silent (no audio
+  device on a runner) and show the turn and the win at the slowed `-demo` pace. The
+  swept-bench take is cut before the system rating prompt, which `-sampleData` trips.
+- **No complaint quotes behind the hooks**, because the review feed was empty for every leader
+  (SPEC.md). Hooks come from what the leaders sell instead, and no competitor is named.
 
 ## Where it stands
 
