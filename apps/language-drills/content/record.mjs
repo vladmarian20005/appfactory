@@ -38,8 +38,8 @@ const CLIPS = [
     // drawn at 9.0; the first turn lands ~12, then a turn and a Got it every ~4.2 s
     { args: ["-onboarded", "-sampleData", "-demo", "turn"], seconds: 34, cut: "9-33" } ] },
   { id: "02", name: "the-wall-grows", takes: [
-    // drawn at 9.5 counting up from 189; 213 by ~13.5; the lustre crosses the wall ~18
-    { args: ["-onboarded", "-sampleData", "-demo", "win"], seconds: 26, cut: "9.5-26" } ] },
+    // drawn at 9.8 (white at 9.4) counting up from 189; 213 by ~13.5; the lustre crosses the wall ~18
+    { args: ["-onboarded", "-sampleData", "-demo", "win"], seconds: 26, cut: "9.8-26" } ] },
   { id: "03", name: "no-streak", takes: [
     // the count runs 69 → 213 from 5.5; the swept bench is drawn at 3.5, and at ~9.5 the
     // system rating prompt (factoryReviewPrompt, tripped by the sample sessions) covers it
