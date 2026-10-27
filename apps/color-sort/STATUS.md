@@ -1,7 +1,30 @@
-stage: built
-date: 2026-09-11
+stage: content ready
+date: 2026-10-27
 spec: SPEC.md · qa: qa.json · privacy source: privacy.json
-next: app-verify, then aso → shots → compliance → pages
+next: on approval, the App Store link on the landing page, then `content/schedule.md`
+
+## Launch kit (27 Oct 2026)
+
+Everything in `content/`, written on a `macos-26` runner.
+
+- **Landing page.** `content/site/page.html` is the source; `node
+  apps/color-sort/content/site/build.mjs` writes `index.html` with every asset inlined
+  (938 KB). It has to be: app-content publishes `index.html` alone, and the September page
+  pointed at `hero.jpg`, `shots/` and three SVGs that would all have been missing on the site.
+  It wears Tidepour's own deep water, mint, lantern and New York; the art comes straight from
+  `design/art/`. The App Store badge says "Coming soon" because the app has no id here yet.
+  Rendered with Playwright at 1280 and 390 wide and read back: no broken image, no failed
+  request.
+- **Footage.** Five vertical clips, 17–23 s, in `content/clips/`, recorded by
+  `content/record.mjs` from the app's own `-demo` flags. The first attempt failed in a way worth
+  knowing: a `recordVideo` left running after a failed launch holds the device, and every later
+  recording on it writes nothing. The recorder now always stops it. App Store's rating sheet
+  appeared over the first take (FactoryKit asks on the third session); the recorder now passes
+  `-factory.reviewedVersion` so it never does.
+- **Scripts, posts, schedule.** `videos.md` (hooks from the reviews, beats timed to the clips,
+  captions not yet burned in), `posts.md` (ten X posts, r/iOSGaming, r/iosapps, r/colorblind
+  only if its rules allow, Product Hunt, launch email, press blurb), `schedule.md`. Posting is
+  manual: the X connector is not authenticated.
 
 ## Where it stands
 
