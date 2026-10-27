@@ -10,7 +10,7 @@
 // SIGINT as recordVideo expects, and converted to a vertical 1080x1920 30 fps MP4 in
 // content/clips/ by vertical.swift.
 import { execFileSync, spawn } from "node:child_process";
-import { mkdirSync, rmSync, existsSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -30,22 +30,40 @@ if (!udid) throw new Error("no booted simulator and no SIM_UDID");
 // part of the raw take kept, "start-end" in seconds, so every clip starts where the app has
 // drawn rather than on the home screen. Measured from contact sheets of the raw takes
 // (frames.swift), not guessed.
+//
+// `-sampleData` only seeds an empty store, so every take that wants it also passes `-reset`:
+// without it the chart showed whatever the previous take left behind ("1 evening in a row").
 const CLIPS = [
   { id: "01", name: "the-pour", takes: [
-    { args: ["-onboarded", "-reset", "-level", "12", "-demo", "pour"], seconds: 30, cut: "CUT" } ] },
+    // drawn at 7.9; pours from 9, round and round, the rack refilling at 21
+    { args: ["-onboarded", "-reset", "-level", "12", "-demo", "pour"], seconds: 30, cut: "7.9-29" } ] },
   { id: "02", name: "the-charted-line", takes: [
-    { args: ["-onboarded", "-reset", "-level", "12", "-moves", "4", "-hint"], seconds: 16, cut: "CUT" },
-    { args: ["-onboarded", "-reset", "-level", "12", "-demo", "win"], seconds: 20, cut: "CUT" } ] },
+    // the line armed at 5, then four pours down it
+    { args: ["-onboarded", "-reset", "-level", "12", "-moves", "4", "-hint"], seconds: 16, cut: "4.8-10.5" },
+    // last two pours 6–9, the sun and the count from 13, settled by 16
+    { args: ["-onboarded", "-reset", "-level", "12", "-demo", "win"], seconds: 20, cut: "5.8-19" } ] },
   { id: "03", name: "the-same-pool", takes: [
-    { args: ["-onboarded", "-sampleData", "-screen", "progress"], seconds: 16, cut: "CUT" },
-    { args: ["-onboarded", "-reset", "-daily", "-demo", "pour"], seconds: 22, cut: "CUT" } ] },
+    // drawn at 7.5: nine evenings in a row, today's pool, the month lit
+    { args: ["-onboarded", "-reset", "-sampleData", "-screen", "progress"], seconds: 16, cut: "7.6-13" },
+    // today's shared board, pouring from 7
+    { args: ["-onboarded", "-reset", "-daily", "-demo", "pour"], seconds: 22, cut: "5.8-22" } ] },
   { id: "04", name: "nothing-runs-out", takes: [
-    { args: ["-reset"], seconds: 16, cut: "CUT" },
-    { args: ["-onboarded", "-sampleData", "-screen", "packs"], seconds: 15, cut: "CUT" },
-    { args: ["-onboarded", "-sampleData", "-fakeProducts", "-screen", "paywall"], seconds: 15, cut: "CUT" } ] },
+    { args: ["-reset"], seconds: 16, cut: "4.8-10" },                                   // onboarding
+    { args: ["-onboarded", "-reset", "-sampleData", "-screen", "packs"], seconds: 15, cut: "4.9-9.5" },
+    // the board shows first; the paywall is up from 5
+    { args: ["-onboarded", "-reset", "-sampleData", "-fakeProducts", "-screen", "paywall"], seconds: 15, cut: "4.9-12" } ] },
   { id: "05", name: "a-shape-on-every-colour", takes: [
-    { args: ["-onboarded", "-reset", "-pro", "-accessible", "-level", "34", "-demo", "pour"], seconds: 30, cut: "CUT" } ] },
+    // drawn at 5.5; pours from 9
+    { args: ["-onboarded", "-reset", "-pro", "-accessible", "-level", "34", "-demo", "pour"], seconds: 30, cut: "5.6-29" } ] },
 ];
+
+// FactoryKit asks for a rating on the third session, and a run of takes is many sessions: the
+// first clip came back with App Store's sheet over the pour. Answering "already asked for this
+// version" through the launch-argument defaults domain keeps the sheet away without touching
+// the app; @AppStorage reads that domain like any other.
+const version = readFileSync(join(here, "..", "ios", "project.yml"), "utf8")
+  .match(/MARKETING_VERSION:\s*"?([\d.]+)/)[1];
+for (const c of CLIPS) for (const t of c.takes) t.args.push("-factory.reviewedVersion", version);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const simctl = (...a) => execFileSync("xcrun", ["simctl", ...a], { stdio: "pipe" });
@@ -56,15 +74,23 @@ async function take(args, seconds, out) {
   rmSync(out, { force: true });
   const rec = spawn("xcrun", ["simctl", "io", udid, "recordVideo", "--codec=h264", "--force", out],
     { stdio: ["ignore", "pipe", "pipe"] });
+  // Listen for the exit now: a recorder that dies at once would otherwise exit before anyone
+  // waits for it, and the script would hang on an event that already happened.
+  const exited = new Promise((r) => rec.on("exit", r));
   // recordVideo prints "Recording started" once frames are flowing.
   await new Promise((resolve) => {
     const t = setTimeout(resolve, 4000);
     rec.stderr.on("data", (d) => { if (/started/i.test(d)) { clearTimeout(t); resolve(); } });
   });
-  simctl("launch", udid, bundle, ...args);
-  await sleep(seconds * 1000);
-  rec.kill("SIGINT");
-  await new Promise((r) => rec.on("exit", r));
+  try {
+    simctl("launch", udid, bundle, ...args);
+    await sleep(seconds * 1000);
+  } finally {
+    // Always stop the recorder. One left running after a failed launch holds the device, and
+    // every later recordVideo on it silently writes nothing.
+    rec.kill("SIGINT");
+    await exited;
+  }
   if (!existsSync(out)) throw new Error(`recordVideo wrote nothing to ${out}`);
 }
 
